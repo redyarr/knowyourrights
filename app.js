@@ -15,6 +15,14 @@ const categories = require('./models/Categories');
 const lawyers = require('./models/Lawyers');
 
 
+app.set('view engine', 'ejs');
+app.set('views', 'views');
+
+app.use(express.static('public'));
+app.use(express.urlencoded({extended: false}));
+
+
+
 
 db.sync().then(() => {
 app.listen(PORT)

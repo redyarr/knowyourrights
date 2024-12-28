@@ -1,21 +1,22 @@
-module.exports = (sequelize, DataTypes) => {
-    const Blogs = sequelize.define('Blogs', {
+const Sequelize = require('sequelize');
+const db = require('../util/db');
+    const Blogs = db.define('Blogs', {
      
         post_id: {
-            type: DataTypes.INTEGER,
+            type: Sequelize.INTEGER,
             primaryKey: true,
             autoIncrement: true
         },
         title: {
-            type: DataTypes.STRING,
+            type: Sequelize.STRING,
             allowNull: false
         },
         content: {
-            type: DataTypes.TEXT,
+            type: Sequelize.TEXT,
             allowNull: false
         },
         category_id: {
-            type: DataTypes.INTEGER,
+            type: Sequelize.INTEGER,
             allowNull: false,
             references: {
                 model: 'Categories',
@@ -23,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
             }
         },
         author_id: {
-            type: DataTypes.INTEGER,
+            type: Sequelize.INTEGER,
             allowNull: false,
             references: {
                 model: 'Users',
@@ -31,5 +32,5 @@ module.exports = (sequelize, DataTypes) => {
             }
         }
     });
-    return Blogs;
-};
+
+    module.exports = Blogs

@@ -12,7 +12,7 @@ const Lawyers = db.define('lawyers', {
         type: Sequelize.INTEGER,
         references: {
             model: 'users',
-            key: 'id'
+            key: 'user_id'
         }
     },
     law_firm: {

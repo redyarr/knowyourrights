@@ -1,30 +1,35 @@
-module.exports = (sequelize, DataTypes) => {
-    const Comments = sequelize.define('Comments', {
+const Sequelize = require('sequelize');
+const db = require('../util/db');
+
+    const Comments = db.define('Comments', {
     
         comment_id: {
-            type: DataTypes.INTEGER,
+            type: Sequelize.INTEGER,
             primaryKey: true,
             autoIncrement: true
         },
 
         post_id: {
-            type: DataTypes.INTEGER,
+            type: Sequelize.INTEGER,
             references: {
                 model: 'Blogs',
                 key: 'post_id'
             }
         },
         user_id: {
-            type: DataTypes.INTEGER,
+            type: Sequelize.INTEGER,
             references: {
-                model: 'Users',
+                model: 'users',
                 key: 'user_id'
             }
         },
         content: {
-            type: DataTypes.TEXT,
+            type: Sequelize.TEXT,
             allowNull: false
         }
     });
-    return Comments;
-};
+ 
+;
+
+
+module.exports = Comments;

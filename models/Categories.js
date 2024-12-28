@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const db = require('../util/db');
 
-const Categories = db.define('categories', {
+const Categories = db.define('Categories', {
 
     category_id: {
         type: Sequelize.INTEGER,

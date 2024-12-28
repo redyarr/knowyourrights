@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const db = require('../util/db');
 
-const Appointments = db.define('appointments', {
+const Appointments = db.define('Appointments', {
     appointment_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
