@@ -1,48 +1,46 @@
 const express = require('express');
-const app = express();
-const env = require('.env');
-const PORT = process.env.PORT || 3000;
-
-const db = require('./util/db');
-
-//models 
-
-const Users = require('./models/users');
-const appointmnts = require('./models/appointments');
-const blogs = require('./models/blogs');
-const comments = require('./models/Comments');
-const categories = require('./models/Categories');
-const lawyers = require('./models/Lawyers');
-
-
+const bodyParser = require('body-parser')
+const path = require('path');
+const { sequelize } = require('./models');
 //routes
 const BlogRouter = require('./routes/blog'); 
+// const UserRoutes = require('./routes/User')
+
+
+const methodOverride = require('method-override');
+const app = express();
+require('dotenv').config();
 
 
 
+// Middlewares:
+app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(methodOverride('_method'));
+app.use(methodOverride('_method', { methods: ['POST', 'GET'] }));
+app.use(express.static(path.join(__dirname, 'public')));
+// app.use(cors());
 
+
+//view engine
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-app.use(express.static('public'));
-app.use(express.urlencoded({extended: false}));
 
+app.use('/blog',BlogRouter);
+// app.use('user',UserRoute);
 
-
-
-app.get('/',BlogRouter);
-
-
-
-
-db.sync().then(async () => {
-   app.listen(PORT);
-
-    }
-).catch(err => {
-    console.error(err);
+app.get('/', (req,res)=>{
+    res.send("main route working in app.js file!")
 })
 
-
-
-
+const PORT = process.env.PORT || 3000;
+//{ force: true }
+sequelize.sync({ force: true })
+    .then(() => {
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
+    })
+    .catch(err => {
+        console.error('Failed to sync database:', err);
+    });

@@ -1,6 +1,9 @@
-const router = require('express').Router();
-
+const express = require('express');
+const router = express.Router();
 const BlogController = require('../controllers/blogs');
+
+// Middleware to parse URL-encoded bodies (for form submissions)
+router.use(express.urlencoded({ extended: true }));
 
 router.get('/', BlogController.getBlogs)
 
