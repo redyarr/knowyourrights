@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        .lawyer-info {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e9ecef;
+            border-left: 5px solid #007bff;
+        }
+
+        .lawyer-info h2 {
+            margin-top: 0;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        a:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>User Profile: <%= user.name %></h1>
+
+        <p><strong>Email:</strong> <%= user.email %></p>
+        <p><strong>Role:</strong> <%= user.role %></p>
+
+        <% if (user.lawyer) { %>
+            <div class="lawyer-info">
+                <h2>Lawyer Information:</h2>
+                <p><strong>Law Firm:</strong> <%= user.lawyer.law_firm %></p>
+                <p><strong>Specialization:</strong> <%= user.lawyer.specialization %></p>
+                <p><strong>License Number:</strong> <%= user.lawyer.license_number %></p>
+                <p><strong>Contact Number:</strong> <%= user.lawyer.contact_number %></p>
+                <p><strong>City:</strong> <%= user.lawyer.city %></p>
+                <p><strong>Country:</strong> <%= user.lawyer.country %></p>
+            </div>
+        <% } else { %>
+            <p>This user is not a lawyer.</p>
+        <% } %>
+
+        <a href="/users">Back to Users List</a>
+    </div>
+</body>
+
+</html>

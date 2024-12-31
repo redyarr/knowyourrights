@@ -10,13 +10,11 @@ const Users  = db.define('users', {
     name: Sequelize.STRING,
     email: Sequelize.STRING,
     password: Sequelize.STRING,
-
     role: {
         type: Sequelize.STRING,
         allowNull: false,
         defaultValue: "visitor"
     }
-
 });
 
 module.exports = Users;

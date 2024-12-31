@@ -1,12 +1,15 @@
 const categories = require('../models/Categories');
 
 exports.getBlogs = (req, res) => {
-    res.render('home');
-    // res.send("main blog route")
+    res.render('blog/');
 }
 
-exports.GetPostForm = (req,res)=>{
-    res.render('post-blog')
+exports.BlogForm = (req,res)=>{
+    res.render('blog/form')
+}
+
+exports.Blog = (req,res)=>{
+    res.render("blog/blog")
 }
 
 exports.PutCategories = (req, res )=>{

@@ -7,7 +7,9 @@ router.use(express.urlencoded({ extended: true }));
 
 router.get('/', BlogController.getBlogs)
 
-router.get('/BlogForm',BlogController.GetPostForm);
+router.get('/form',BlogController.BlogForm);
+
+router.get('/:id', BlogController.Blog)
 
 router.get('/Cat', BlogController.PutCategories);
 

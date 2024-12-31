@@ -2,7 +2,6 @@ const Sequelize = require('sequelize');
 const db = require('../util/db');
 
 const Lawyers = db.define('lawyers', {
- 
     lawyer_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,

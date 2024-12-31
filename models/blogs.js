@@ -1,7 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('../util/db');
     const Blogs = db.define('Blogs', {
-     
         post_id: {
             type: Sequelize.INTEGER,
             primaryKey: true,

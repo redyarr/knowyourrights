@@ -12,7 +12,7 @@ const db = require('../util/db');
         post_id: {
             type: Sequelize.INTEGER,
             references: {
-                model: 'Blogs',
+                model: 'blogs',
                 key: 'post_id'
             }
         },

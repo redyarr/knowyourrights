@@ -4,7 +4,7 @@ const path = require('path');
 const { sequelize } = require('./models');
 //routes
 const BlogRouter = require('./routes/blog'); 
-// const UserRoutes = require('./routes/User')
+const UserRouter = require('./routes/User')
 
 
 const methodOverride = require('method-override');
@@ -27,7 +27,7 @@ app.set('views', 'views');
 
 
 app.use('/blog',BlogRouter);
-// app.use('user',UserRoute);
+app.use('/users',UserRouter);
 
 app.get('/', (req,res)=>{
     res.send("main route working in app.js file!")
