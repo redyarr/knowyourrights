@@ -1,5 +1,5 @@
 const Users = require('../models/users');
-const Lawyers = require('../models/lawyers');
+const Lawyers = require('../models/Lawyers');
 
 module.exports = {
     // Controller to fetch all users and their data

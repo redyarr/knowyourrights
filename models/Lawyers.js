@@ -7,13 +7,7 @@ const Lawyers = db.define('lawyers', {
         primaryKey: true,
         autoIncrement: true
     },
-    user_id: {
-        type: Sequelize.INTEGER,
-        references: {
-            model: 'users',
-            key: 'user_id'
-        }
-    },
+   
     law_firm: {
         type: Sequelize.STRING,
         allowNull: false

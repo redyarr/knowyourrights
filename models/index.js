@@ -8,13 +8,13 @@ const Appointmnts = require('../models/appointments');
 const Blogs = require('../models/blogs');
 const Comments = require('../models/Comments');
 const Categories = require('../models/Categories');
-const Lawyers = require('./lawyers');
+const Lawyers = require('./Lawyers');
 const Reacts = require('../models/reacts')
 console.log("models imported");
 
 // Define associations
-Users.hasOne(Lawyers, { foreignKey: 'user_id' });
-Lawyers.belongsTo(Users, { foreignKey: 'user_id' });
+// Users.hasOne(Lawyers, { foreignKey: 'user_id' });
+// Lawyers.belongsTo(Users, { foreignKey: 'user_id' });
 
 Users.hasMany(Blogs, { foreignKey: 'author_id' });
 Blogs.belongsTo(Users, { foreignKey: 'author_id' });

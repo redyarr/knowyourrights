@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>create account </title>
+</head>
+<body>
+
+
+<style>
+    form {
+        width: 50%;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #f4f4f4;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    label {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    input, select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+    }
+
+    button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+</style>
+
+<form action="/lawyer/addLawyer" method="POST">
+
+    <h2>Create a Lawyer Account</h2>
+    <label for="name">Name:</label>
+    <input type="text" name="name" id="name" required />
+
+    <label for="email">Email:</label>
+    <input type="email" name="email" id="email" required />
+
+    <label for="password">Password:</label>
+    <input type="password" name="password" id="password" required />
+
+    <label for="law_firm">Law Firm:</label>
+    <input type="text" name="law_firm" id="law_firm" required />
+
+    <label for="specialization">Specialization:</label>
+
+    <select name="specialization" id="specialization" required>
+        <option value="">Select Specialization</option>
+        <option value="Criminal Law">Criminal Law</option>
+        <option value="Civil Law">Civil Law</option>
+        <option value="Family Law">Family Law</option>
+        <option value="Property Law">Property Law</option>
+        <option value="Immigration Law">Immigration Law</option>
+        <option value="Intellectual Property Law">Intellectual Property Law</option>
+        <option value="Environmental Law">Environmental Law</option>
+        <option value="Litigation Law">Litigation Law</option>
+        <option value="Business Law">Business Law</option>
+        <option value="Tax Law">Tax Law</option>
+        <option value="Education Law">Education Law</option>
+        <option value="Healthcare Law">Healthcare Law</option>
+        <option value="Military Law">Military Law</option>
+        <option value=" General Law">General Law</option>
+
+
+    </select>
+
+    <label for="license_number">License Number:</label>
+    <input type="text" name="license_number" id="license_number" required />
+
+    <label for="contact_number">Contact Number:</label>
+    <input type="text" name="contact_number" id="contact_number" required />
+
+    <label for="city">City:</label>
+    <input type="text" name="city" id="city" required />
+
+    <label for="country">Country:</label>
+    <input type="text" name="country" id="country" required />
+
+    <button type="submit">Create Account</button>
+</form>
+
+
+
+
+</body>
+</html>
