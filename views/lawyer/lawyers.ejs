@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lawyers</title>
+</head>
+<body>
+    <%- include('../includes/nav.ejs') %>
+
+    <style>
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+            margin: auto;
+            text-align: center;
+        }
+
+        .lawyer-info {
+            padding: 2px 16px;
+        }
+    </style>
+
+    <h1>Lawyers</h1>
+    <% lawyers.forEach(lawyer => { %>
+        <div class="card">
+            <div class="lawyer-info">
+                <h2><%= lawyer.name %></h2>
+                <p>Law Firm: <%= lawyer.law_firm %></p>
+                <p>Specialization: <%= lawyer.specialization %></p>
+                <p>License Number: <%= lawyer.license_number %></p>
+                <p>Contact Number: <%= lawyer.contact_number %></p>
+                <p>City: <%= lawyer.city %></p>
+                <p>Country: <%= lawyer.country %></p>
+            </div>
+        </div>
+    <% }); %>
+    
+
+
+
+
+</body>
+</html>
