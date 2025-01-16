@@ -23,7 +23,7 @@
         margin-bottom: 10px;
     }
 
-    input, select {
+    input {
         width: 100%;
         padding: 10px;
         margin-bottom: 20px;
@@ -44,9 +44,9 @@
     }
 </style>
 
-<form action="/CreateLawyer" method="POST">
+<form action="/users/create" method="POST>
 
-    <h2>Create a Lawyer Account</h2>
+    <h2>Create a User Account</h2>
     <label for="name">Name:</label>
     <input type="text" name="name" id="name" required />
 
@@ -56,42 +56,8 @@
     <label for="password">Password:</label>
     <input type="password" name="password" id="password" required />
 
-    <label for="law_firm">Law Firm:</label>
-    <input type="text" name="law_firm" id="law_firm" required />
-
-    <label for="specialization">Specialization:</label>
-
-    <select name="specialization" id="specialization" required>
-        <option value="">Select Specialization</option>
-        <option value="Criminal Law">Criminal Law</option>
-        <option value="Civil Law">Civil Law</option>
-        <option value="Family Law">Family Law</option>
-        <option value="Property Law">Property Law</option>
-        <option value="Immigration Law">Immigration Law</option>
-        <option value="Intellectual Property Law">Intellectual Property Law</option>
-        <option value="Environmental Law">Environmental Law</option>
-        <option value="Litigation Law">Litigation Law</option>
-        <option value="Business Law">Business Law</option>
-        <option value="Tax Law">Tax Law</option>
-        <option value="Education Law">Education Law</option>
-        <option value="Healthcare Law">Healthcare Law</option>
-        <option value="Military Law">Military Law</option>
-        <option value=" General Law">General Law</option>
-
-
-    </select>
-
-    <label for="license_number">License Number:</label>
-    <input type="text" name="license_number" id="license_number" required />
-
-    <label for="contact_number">Contact Number:</label>
-    <input type="text" name="contact_number" id="contact_number" required />
-
-    <label for="city">City:</label>
-    <input type="text" name="city" id="city" required />
-
-    <label for="country">Country:</label>
-    <input type="text" name="country" id="country" required />
+    <label for="phone_number">Phone Number:</label>
+    <input type="text" name="phone_number" id="phone_number" required />
 
     <button type="submit">Create Account</button>
 </form>
