@@ -1,11 +1,25 @@
 const Sequelize = require('sequelize');
 const db = require('../util/db');
+const { name } = require('ejs');
 
 const Lawyers = db.define('lawyers', {
     lawyer_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true
+    },
+
+    name: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    email: {
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    password: {
+        type: Sequelize.STRING,
+        allowNull: false
     },
    
     law_firm: {

@@ -2,9 +2,9 @@ const Lawyers  = require("../models/Lawyers");
 
 
 exports.getAllLawyers = (req ,res)  => {
-    Lawyers.find()
+    Lawyers.findAll()
    .then((lawyers) => {
-    res.render('/lawyer/lawyers',lawyers);
+    res.render('lawyer/lawyers',{lawyers});
    })
    .catch((err) => {
     console.log(err);
