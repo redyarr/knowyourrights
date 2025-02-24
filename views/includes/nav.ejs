@@ -1,44 +1,56 @@
-
 <style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    nav {
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+        background-color: #333;
+        z-index: 1000;
+    }
+
     nav ul {
         list-style-type: none;
         margin: 0;
         padding: 0;
-        overflow: hidden;
-        background-color: #333;
+        display: flex;
+        justify-content: space-around;
     }
 
     nav li {
-        float: left;
+        flex: 1;
     }
 
     nav li a {
         display: block;
         color: white;
         text-align: center;
-        padding: 14px 16px;
+        padding: 18px;
         text-decoration: none;
+        transition: background-color 0.3s ease;
     }
 
     nav li a:hover {
-        background-color: #111;
+        background-color: #555;
     }
 </style>
-
 
 <nav>
     <ul>
         <li><a href="/lawyer/lawyerForm">Lawyer Form</a></li>
         <li><a href="/lawyer/lawyers">Lawyers</a></li>
-        <li><a href="/user/profile">Profile</a></li>
+        <!-- <li><a href="/user/<=res.locals.loggedInUserId%>">Profile</a></li> -->
         <li><a href="/blog">Blogs</a></li>
         <li><a href="/blog/form">Create Blog</a></li>
-        <li><a href="/blog/Cat">Put Catigories</a></li>
-        <li><a href="/logout">Logout</a></li>
-        <li><a href="/login">Login</a></li>
-        <li><a href="/register">Register</a></li>
-        <li><a href="/users">Users</a></li>
+        <li><a href="/blog/Cat">Put Categories</a></li>
+        <li><a href="/user/login">User Login</a></li>
+        <li><a href="/user/create">Register</a></li>
+        <li><a href="/user/users">Users</a></li>
         <li><a href="/">Home</a></li>
-        
     </ul>
 </nav>
+

@@ -14,15 +14,9 @@ exports.getAllUsers = function (req, res) {
 };
 
 exports.getUserProfile = function (req, res) {
-    const userId = req.params.id;
+    const userId = req.params.id || req.session.user_id;
     Users.findOne({
         where: { user_id: userId },
-        include: [
-            {
-                model: Lawyers,
-                attributes: ['law_firm', 'specialization', 'license_number', 'contact_number', 'city', 'country'],
-            },
-        ],
     })
         .then((user) => {
             if (!user) {
@@ -50,7 +44,7 @@ exports.postUserSignUp = (req, res) => {
     const { name, email, password , phone_number} = req.body;
     Users.create({ name, email, password, phone_number })
     .then(() => {
-        res.redirect('/user/login');
+        res.redirect('/user/users');
     })
     .catch((err) => {
         console.log(err);
@@ -59,23 +53,21 @@ exports.postUserSignUp = (req, res) => {
 
 
 exports.getUserLogin = (req, res) => {
-    res.render('user/login');
+    res.render('user/userLogin');
 }
 
 
 exports.postUserLogin = (req, res) => {
     const { email, password } = req.body;
-    Users.findOne({ where: { email } })
-    .then((user) => {
-        if (!user || !user.comparePassword(password)) {
+    Users.findOne({ where: { email, password } }).then(user => {
+        if (!user) {
             return res.status(401).send('Invalid email or password');
         }
         req.session.user_id = user.user_id;
-        res.redirect('/user/profile');
+        res.redirect(`/user/${req.session.user_id}`);
     })
     .catch((err) => {
         console.log(err);   
-
     });
-
 }
+

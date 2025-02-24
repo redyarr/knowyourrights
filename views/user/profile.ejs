@@ -66,19 +66,10 @@
         <p><strong>Email:</strong> <%= user.email %></p>
         <p><strong>Role:</strong> <%= user.role %></p>
 
-        <% if (user.lawyer) { %>
-            <div class="lawyer-info">
-                <h2>Lawyer Information:</h2>
-                <p><strong>Law Firm:</strong> <%= user.lawyer.law_firm %></p>
-                <p><strong>Specialization:</strong> <%= user.lawyer.specialization %></p>
-                <p><strong>License Number:</strong> <%= user.lawyer.license_number %></p>
-                <p><strong>Contact Number:</strong> <%= user.lawyer.contact_number %></p>
-                <p><strong>City:</strong> <%= user.lawyer.city %></p>
-                <p><strong>Country:</strong> <%= user.lawyer.country %></p>
-            </div>
-        <% } else { %>
-            <p>This user is not a lawyer.</p>
-        <% } %>
+<p>     <%= user.role %>     </p>
+
+   
+    
 
         <a href="/users">Back to Users List</a>
     </div>
