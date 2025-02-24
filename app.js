@@ -32,7 +32,10 @@ app.use('/users',UserRouter);
 
 
 app.get('/', (req,res)=>{
-    res.send("main route working in app.js file!")
+    
+
+
+    res.redirect('/blog');
 })
 
 const PORT = process.env.PORT || 3000;
