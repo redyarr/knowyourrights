@@ -5,7 +5,7 @@ exports.getAllUsers = function (req, res) {
     Users.findAll()
         .then((users) => {
             // Render the users page with users data (name, email, role)
-            res.render('user/', { users });
+            res.render('user/allUsers', { users });
         })
         .catch((error) => {
             console.error('Error fetching users:', error);
