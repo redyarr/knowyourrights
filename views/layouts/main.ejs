@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= locals.title || 'Legal Hub' %></title>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/css/navbar.css">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/table.css">
+  <link rel="stylesheet" href="/css/profile.css">
+  <!-- Additional CSS files can be included here -->
+  <% if (locals.styles) { %>
+    <% styles.forEach(function(style) { %>
+      <link rel="stylesheet" href="<%= style %>">
+    <% }); %>
+  <% } %>
+</head>
+<body>
+  <!-- Include the navbar partial -->
+  <%- include('../includes/nav') %>
+  
+  <!-- Main content container -->
+  <main class="container">
+    <%- body %>
+  </main>
+  
+  <!-- Footer partial can be included here -->
+  
+  <!-- JavaScript files -->
+  <script src="/js/navbar.js"></script>
+  <!-- Additional JS files can be included here -->
+  <% if (locals.scripts) { %>
+    <% scripts.forEach(function(script) { %>
+      <script src="<%= script %>"></script>
+    <% }); %>
+  <% } %>
+</body>
+</html>

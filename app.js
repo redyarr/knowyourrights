@@ -4,7 +4,7 @@ const path = require('path');
 const session = require('express-session');
 const { sequelize } = require('./models');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
-
+const expressLayouts = require('express-ejs-layouts');
 //routes
 const BlogRouter = require('./routes/blog'); 
 const UserRouter = require('./routes/User')
@@ -43,6 +43,10 @@ app.use((req, res, next) => {
 //view engine
 app.set('view engine', 'ejs');
 app.set('views', 'views');
+
+app.use(expressLayouts); // Enable layouts
+
+app.set('layout', 'layouts/main'); // Set default layout
 
 
 

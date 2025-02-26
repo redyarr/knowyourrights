@@ -1,78 +1,70 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        .container {
-            width: 80%;
-            margin: 20px auto;
-            background: #fff;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            color: #333;
-        }
-
-        p {
-            line-height: 1.6;
-        }
-
-        .lawyer-info {
-            margin-top: 20px;
-            padding: 10px;
-            background: #e9ecef;
-            border-left: 5px solid #007bff;
-        }
-
-        .lawyer-info h2 {
-            margin-top: 0;
-        }
-
-        a {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 15px;
-            background: #007bff;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-
-        a:hover {
-            background: #0056b3;
-        }
-    </style>
+<link rel="stylesheet" href="/css/profile.css">
 
 
-</head>
-<%- include('../includes/nav.ejs') %>
 
-<body>
-    <div class="container">
-        <h1>User Profile: <%= user.name %></h1>
-
-        <p><strong>Email:</strong> <%= user.email %></p>
-        <p><strong>Role:</strong> <%= user.role %></p>
-
-<p>     <%= user.role %>     </p>
-
-   
-    
-
-        <a href="/users">Back to Users List</a>
+<div class="card">
+    <div class="card-header">
+      <h1 class="card-title">User Profile</h1>
     </div>
-</body>
-
-</html>
+    <div class="card-body">
+      <div class="profile-container">
+        <div class="profile-header">
+          <div class="profile-avatar">
+            <i class="fas fa-user-circle"></i>
+          </div>
+          <div class="profile-info">
+            <h2 class="profile-name"><%= user.name %></h2>
+            <span class="role-badge <%= user.role.toLowerCase() %>"><%= user.role %></span>
+          </div>
+        </div>
+        
+        <div class="profile-details">
+          <div class="detail-group">
+            <div class="detail-label">
+              <i class="fas fa-envelope"></i>
+              <span>Email</span>
+            </div>
+            <div class="detail-value"><%= user.email %></div>
+          </div>
+          
+          <% if (user.role === 'Lawyer') { %>
+          <div class="lawyer-info">
+            <h3><i class="fas fa-gavel"></i> Lawyer Information</h3>
+            <div class="detail-group">
+              <div class="detail-label">
+                <i class="fas fa-briefcase"></i>
+                <span>Specialization</span>
+              </div>
+              <div class="detail-value"><%= user.specialization || 'Corporate Law' %></div>
+            </div>
+            <div class="detail-group">
+              <div class="detail-label">
+                <i class="fas fa-building"></i>
+                <span>Firm</span>
+              </div>
+              <div class="detail-value"><%= user.firm || 'Legal Associates LLP' %></div>
+            </div>
+            <div class="detail-group">
+              <div class="detail-label">
+                <i class="fas fa-star"></i>
+                <span>Experience</span>
+              </div>
+              <div class="detail-value"><%= user.experience || '8 years' %></div>
+            </div>
+          </div>
+          <% } %>
+        </div>
+        
+        <div class="profile-actions">
+          <a href="/user/users" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Users
+          </a>
+          <% if (locals.loggedInUserId && locals.loggedInUserId === user.user_id) { %>
+          <a href="/user/edit/<%= user.user_id %>" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Edit Profile
+          </a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>

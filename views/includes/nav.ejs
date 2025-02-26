@@ -1,56 +1,73 @@
-<style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-    }
 
-    nav {
-        
-        width: 100%;
-        top: 0;
-        left: 0;
-        background-color: #333;
-        z-index: 1000;
-    }
+<link rel="stylesheet" href="/css/nav.css">
+<link rel="stylesheet" href="/css/style.css">
+<script src="/js/nav.js"></script>
 
-    nav ul {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: space-around;
-    }
-
-    nav li {
-        flex: 1;
-    }
-
-    nav li a {
-        display: block;
-        color: white;
-        text-align: center;
-        padding: 18px;
-        text-decoration: none;
-        transition: background-color 0.3s ease;
-    }
-
-    nav li a:hover {
-        background-color: #555;
-    }
-</style>
-
-<nav>
-    <ul>
-        <li><a href="/lawyer/lawyerForm">Lawyer Form</a></li>
-        <li><a href="/lawyer/lawyers">Lawyers</a></li>
-        <!-- <li><a href="/user/<=res.locals.loggedInUserId%>">Profile</a></li> -->
-        <li><a href="/blog">Blogs</a></li>
-        <li><a href="/blog/form">Create Blog</a></li>
-        <li><a href="/blog/Cat">Put Categories</a></li>
-        <li><a href="/user/login">User Login</a></li>
-        <li><a href="/user/create">Register</a></li>
-        <li><a href="/user/users">Users</a></li>
-        <li><a href="/">Home</a></li>
-    </ul>
-</nav>
-
+<nav class="navbar">
+    <div class="navbar-container">
+      <div class="navbar-logo">
+        <a href="/">
+          <span>Legal</span>Hub
+        </a>
+      </div>
+      
+      <div class="navbar-toggle" id="mobile-menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+      
+      <ul class="navbar-menu">
+        <li class="navbar-item">
+          <a href="/" class="navbar-link <%= locals.currentPath === '/' ? 'active' : '' %>">
+            <i class="fas fa-home"></i> Home
+          </a>
+        </li>
+        <li class="navbar-item dropdown">
+          <a href="#" class="navbar-link dropdown-toggle">
+            <i class="fas fa-gavel"></i> Lawyers <i class="fas fa-chevron-down"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="/lawyer/lawyers" class="dropdown-item <%= locals.currentPath === '/lawyer/lawyers' ? 'active' : '' %>">Find Lawyers</a>
+            <a href="/lawyer/lawyerForm" class="dropdown-item <%= locals.currentPath === '/lawyer/lawyerForm' ? 'active' : '' %>">Lawyer Form</a>
+          </div>
+        </li>
+        <li class="navbar-item dropdown">
+          <a href="#" class="navbar-link dropdown-toggle">
+            <i class="fas fa-blog"></i> Blog <i class="fas fa-chevron-down"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="/blog" class="dropdown-item <%= locals.currentPath === '/blog' ? 'active' : '' %>">All Blogs</a>
+            <a href="/blog/form" class="dropdown-item <%= locals.currentPath === '/blog/form' ? 'active' : '' %>">Create Blog</a>
+            <a href="/blog/Cat" class="dropdown-item <%= locals.currentPath === '/blog/Cat' ? 'active' : '' %>">Categories</a>
+          </div>
+        </li>
+        <li class="navbar-item dropdown">
+          <a href="#" class="navbar-link dropdown-toggle">
+            <i class="fas fa-users"></i> Users <i class="fas fa-chevron-down"></i>
+          </a>
+          <div class="dropdown-menu">
+            <a href="/user/users" class="dropdown-item <%= locals.currentPath === '/user/users' ? 'active' : '' %>">All Users</a>
+            <% if (locals.loggedInUserId) { %>
+              <a href="/user/<%= locals.loggedInUserId %>" class="dropdown-item">My Profile</a>
+            <% } %>
+          </div>
+        </li>
+      </ul>
+      
+      <div class="navbar-auth">
+        <% if (locals.loggedInUserId) { %>
+          <a href="/user/logout" class="auth-btn logout-btn">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
+        <% } else { %>
+          <a href="/user/login" class="auth-btn login-btn <%= locals.currentPath === '/user/login' ? 'active' : '' %>">
+            <i class="fas fa-sign-in-alt"></i> Login
+          </a>
+          <a href="/user/create" class="auth-btn register-btn <%= locals.currentPath === '/user/create' ? 'active' : '' %>">
+            <i class="fas fa-user-plus"></i> Register
+          </a>
+        <% } %>
+      </div>
+    </div>
+  </nav>

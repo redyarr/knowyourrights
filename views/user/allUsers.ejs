@@ -1,63 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
+<link rel="stylesheet" href="/css/userTable.css">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Users</title>
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
 
-        table,
-        th,
-        td {
-            border: 1px solid #ddd;
-        }
 
-        th,
-        td {
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f4f4f4;
-        }
-    </style>
-
-<%- include('../includes/nav.ejs') %>
-</head>
-
-<body>
-    <h1>All Users</h1>
-    <table>
-        <thead>
+<div class="card">
+    <div class="card-header">
+      <h1 class="card-title">All Users</h1>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="user-table">
+          <thead>
             <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Profile</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Actions</th>
             </tr>
-        </thead>
-        <tbody>
-            <% users.forEach(user=> { %>
-                    <td>
-                        <%= user.name %>
-                    </td>
-                    <td>
-                        <%= user.email %>
-                    </td>
-                    <td>
-                        <%= user.role %>
-                    </td>
-                    <td><a href="/user/<%= user.user_id %>">View Profile</a></td>
-                </tr>
-                <% }); %>
-        </tbody>
-    </table>
-</body>
-
-</html>
+          </thead>
+          <tbody>
+            <% users.forEach(user => { %>
+              <tr>
+                <td><%= user.name %></td>
+                <td><%= user.email %></td>
+                <td><span class="role-badge <%= user.role.toLowerCase() %>"><%= user.role %></span></td>
+                <td>
+                  <a href="/user/<%= user.user_id %>" class="btn btn-primary btn-sm">
+                    <i class="fas fa-user"></i> View Profile
+                  </a>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
