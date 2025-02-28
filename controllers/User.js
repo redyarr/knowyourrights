@@ -86,7 +86,7 @@ exports.getUserProfile = function (req, res) {
             console.log("user datassss::");
             console.log(user);
             
-            res.render('user/profile', { user, loggedInUserId: req.session.user_id });
+            res.render('user/profile', {profileUser: user, loggedInUserId: req.session.user_id });
         })
         .catch((error) => {
             console.error('Error fetching user profile:', error);

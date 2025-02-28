@@ -1,37 +1,47 @@
-<link rel="stylesheet" href="/css/userTable.css">
+<h1 class="mb-4">All Users</h1>
 
-
-
-<div class="card">
-    <div class="card-header">
-      <h1 class="card-title">All Users</h1>
-    </div>
-    <div class="card-body">
-      <div class="table-responsive">
-        <table class="user-table">
-          <thead>
+<div class="row">
+  <% if (users && users.length> 0) { %>
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Joined</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach(user=> { %>
             <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Actions</th>
+              <td>
+                <%= user.name %>
+              </td>
+              <td>
+                <%= user.email %>
+              </td>
+              <td><span
+                  class="badge bg-<%= user.role === 'admin' ? 'danger' : (user.role === 'lawyer' ? 'primary' : 'secondary') %>">
+                  <%= user.role %>
+                </span></td>
+              <td>
+                <%= new Date(user.createdAt).toLocaleDateString() %>
+              </td>
+              <td>
+                <a href="/user/<%= user.id %>" class="btn btn-sm btn-info">View</a>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            <% users.forEach(user => { %>
-              <tr>
-                <td><%= user.name %></td>
-                <td><%= user.email %></td>
-                <td><span class="role-badge <%= user.role.toLowerCase() %>"><%= user.role %></span></td>
-                <td>
-                  <a href="/user/<%= user.id %>" class="btn btn-primary btn-sm">
-                    <i class="fas fa-user"></i> View Profile
-                  </a>
-                </td>
-              </tr>
             <% }); %>
-          </tbody>
-        </table>
-      </div>
+        </tbody>
+      </table>
     </div>
-  </div>
+    <% } else { %>
+      <div class="col-12">
+        <div class="alert alert-info">
+          No users found.
+        </div>
+      </div>
+      <% } %>
+</div>

@@ -40,7 +40,6 @@ app.use((req, res, next) => {
     next();
 });
 
-
 //view engine
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -61,9 +60,7 @@ app.use('/', (req, res) => {
     res.status(404).send('Page not found');
 });
 
-
-
-//    { force: true }
+// { force: true }
 sequelize.sync()
     .then(() => {
         app.listen(PORT, () => {

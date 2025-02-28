@@ -75,7 +75,6 @@
           </button>
         </form>
         <% } else { %>
-        <h1>==> <%= locals.loggedInUserId %> </h1>
           <a href="/user/login" class="auth-btn login-btn <%= locals.currentPath === '/user/login' ? 'active' : '' %>">
             <i class="fas fa-sign-in-alt"></i> Sign In
           </a>
