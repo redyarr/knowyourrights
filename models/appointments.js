@@ -1,5 +1,7 @@
 const Sequelize = require('sequelize');
 const db = require('../util/db');
+const Lawyers = require('./Lawyers'); // Ensure Lawyers model is imported
+const Users = require('./users'); // Ensure Users model is imported
 
 const Appointments = db.define('Appointments', {
     appointment_id: {
@@ -10,15 +12,15 @@ const Appointments = db.define('Appointments', {
     lawyer_id: {
         type: Sequelize.INTEGER,
         references: {
-            model: 'lawyers',
-            key: 'lawyer_id'
+            model: Lawyers,
+            key: 'id'
         }
     },
     user_id: {
         type: Sequelize.INTEGER,
         references: {
-            model: 'users',
-            key: 'user_id'
+            model: Users,
+            key: 'id'
         }
     },
     appointment_date: {

@@ -1,40 +1,31 @@
 const Sequelize = require('sequelize');
 const db = require('../util/db');
-const { name } = require('ejs');
+const Users = require('./users'); // Import the Users model
 
 const Lawyers = db.define('lawyers', {
-    lawyer_id: {
+    id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-
-    name: {
+    userId: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+            model: Users, // Reference the Users model
+            key: 'id'
+        }
+    },
+    lawFirm: {
         type: Sequelize.STRING,
         allowNull: false
     },
-    email: {
+    licenseNumber: {
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: false,
+        unique: true
     },
-    password: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-   
-    law_firm: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    specialization: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    license_number: {
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    contact_number: {
+    contactNumber: {
         type: Sequelize.STRING,
         allowNull: false
     },
@@ -49,4 +40,3 @@ const Lawyers = db.define('lawyers', {
 });
 
 module.exports = Lawyers;
-

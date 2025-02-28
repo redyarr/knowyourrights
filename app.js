@@ -5,13 +5,13 @@ const session = require('express-session');
 const { sequelize } = require('./models');
 const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const expressLayouts = require('express-ejs-layouts');
+const methodOverride = require('method-override');
+
 //routes
-const BlogRouter = require('./routes/blog'); 
 const UserRouter = require('./routes/User')
+const BlogRouter = require('./routes/blog'); 
 const LawyerRouter = require('./routes/Lawyer')
 
-
-const methodOverride = require('method-override');
 const app = express();
 require('dotenv').config();
 const PORT = process.env.PORT || 3000;
@@ -32,30 +32,26 @@ app.use(session({
 }));
 
 app.use((req, res, next) => {
-    if (req.session && req.session.user_Id) {
-        res.locals.loggedInUserId = req.session.user_Id;
+    if (req.session && req.session.user_id) {
+        res.locals.loggedInUserId = req.session.user_id;
     } else {
         res.locals.loggedInUserId = null;
     }
     next();
 });
 
+
 //view engine
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 app.use(expressLayouts); // Enable layouts
-
 app.set('layout', 'layouts/main'); // Set default layout
 
-
-
+// using routes:
 app.use('/lawyer',LawyerRouter);
 app.use('/blog',BlogRouter);
 app.use('/user',UserRouter);
-
-
-
 
 app.get('/', (req,res)=>{
     res.redirect('/blog');
@@ -67,7 +63,7 @@ app.use('/', (req, res) => {
 
 
 
-//{ force: true }
+//    { force: true }
 sequelize.sync()
     .then(() => {
         app.listen(PORT, () => {

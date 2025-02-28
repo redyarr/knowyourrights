@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('../util/db');
+const Users = require('./users'); // Ensure Lawyers model is imported
 
     const Comments = db.define('Comments', {
     
@@ -19,8 +20,8 @@ const db = require('../util/db');
         user_id: {
             type: Sequelize.INTEGER,
             references: {
-                model: 'users',
-                key: 'user_id'
+                model: Users,
+                key: 'id'
             }
         },
         content: {

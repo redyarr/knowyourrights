@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const db = require('../util/db');
 const Users = require('./users');
-const Blogs = require('./blogs'); // or any other model
+const Blogs = require('./Blogs'); // or any other model
 
 const Reacts = db.define('Reacts', {
     react_id: {
@@ -12,8 +12,8 @@ const Reacts = db.define('Reacts', {
     user_id: {
         type: Sequelize.INTEGER,
         references: {
-            model: 'users', // refers to Users model
-            key: 'user_id',
+            model: Users, // refers to Users model
+            key: 'id',
         },
         allowNull: false,
     },
