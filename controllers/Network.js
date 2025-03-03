@@ -1,12 +1,17 @@
-const { User, Connection } = require('../models');
+const { Users, Connections } = require('../models');
 const { Op } = require('sequelize');
 
 exports.getNetwork = async (req, res) => {
+    if(req.session.user_id){
+        console.log('We have session to network:', req.session.user_id);
+    } else {
+        console.log("No session found");
+    }
     try {
         const userId = req.session.user_id;
-        
-        // Get connections where the user is either the requester or receiver and status is accepted
-        const connections = await Connection.findAll({
+
+        // Get accepted connections where the user is either the requester or receiver
+        const connections = await Connections.findAll({
             where: {
                 [Op.or]: [
                     { requesterId: userId },
@@ -16,36 +21,37 @@ exports.getNetwork = async (req, res) => {
             },
             include: [
                 { 
-                    model: User, 
-                    as: 'Requester',
+                    model: Users, 
+                    as: 'Requester', // Matches `index.js`
                     attributes: ['id', 'name', 'email', 'role'] 
                 },
                 { 
-                    model: User, 
-                    as: 'Receiver',
+                    model: Users, 
+                    as: 'Receiver', // Matches `index.js`
                     attributes: ['id', 'name', 'email', 'role'] 
                 }
             ]
         });
+        console.log('Connections:', connections);
         
         // Get pending connection requests sent to the user
-        const pendingRequests = await Connection.findAll({
+        const pendingRequests = await Connections.findAll({
             where: {
                 receiverId: userId,
                 status: 'pending'
             },
             include: [
                 { 
-                    model: User, 
-                    as: 'Requester',
+                    model: Users, 
+                    as: 'Requester', // Matches `index.js`
                     attributes: ['id', 'name', 'email', 'role'] 
                 }
             ]
         });
+        console.log('Pending Requests:', pendingRequests);
         
         // Get users who are not connected to the current user
-        // This is a simplified version - in a real app, you'd want pagination and more filtering
-        const allUsers = await User.findAll({
+        const allUsers = await Users.findAll({
             where: {
                 id: {
                     [Op.ne]: userId
@@ -53,35 +59,41 @@ exports.getNetwork = async (req, res) => {
             },
             attributes: ['id', 'name', 'email', 'role']
         });
+        console.log('All Users:', allUsers);
         
         // Filter out users who are already connected or have pending requests
         const connectedUserIds = connections.map(conn => 
             conn.requesterId === userId ? conn.receiverId : conn.requesterId
         );
+        console.log('Connected User IDs:', connectedUserIds);
         
         const pendingUserIds = pendingRequests.map(req => req.requesterId);
+        console.log('Pending User IDs:', pendingUserIds);
         
-        const sentPendingRequests = await Connection.findAll({
+        const sentPendingRequests = await Connections.findAll({
             where: {
                 requesterId: userId,
                 status: 'pending'
             },
             include: [
                 { 
-                    model: User, 
-                    as: 'Receiver',
+                    model: Users, 
+                    as: 'Receiver', // Matches `index.js`
                     attributes: ['id', 'name', 'email', 'role'] 
                 }
             ]
         });
+        console.log('Sent Pending Requests:', sentPendingRequests);
         
         const sentPendingUserIds = sentPendingRequests.map(req => req.receiverId);
+        console.log('Sent Pending User IDs:', sentPendingUserIds);
         
         const suggestedConnections = allUsers.filter(user => 
             !connectedUserIds.includes(user.id) && 
             !pendingUserIds.includes(user.id) &&
             !sentPendingUserIds.includes(user.id)
         );
+        console.log('Suggested Connections:', suggestedConnections);
         
         res.render('user/network', {
             title: 'My Network',
@@ -97,13 +109,14 @@ exports.getNetwork = async (req, res) => {
     }
 };
 
+
 exports.sendConnectionRequest = async (req, res) => {
     try {
         const requesterId = req.session.user_id;
         const receiverId = req.params.id;
         
         // Check if a connection already exists
-        const existingConnection = await Connection.findOne({
+        const existingConnection = await Connections.findOne({
             where: {
                 [Op.or]: [
                     { requesterId, receiverId },
@@ -117,7 +130,7 @@ exports.sendConnectionRequest = async (req, res) => {
         }
         
         // Create new connection request
-        await Connection.create({
+        await Connections.create({
             requesterId,
             receiverId,
             status: 'pending'
@@ -135,7 +148,7 @@ exports.acceptConnectionRequest = async (req, res) => {
         const userId = req.session.user_id;
         const connectionId = req.params.id;
         
-        const connection = await Connection.findOne({
+        const connection = await Connections.findOne({
             where: {
                 id: connectionId,
                 receiverId: userId,
@@ -161,7 +174,7 @@ exports.rejectConnectionRequest = async (req, res) => {
         const userId = req.session.user_id;
         const connectionId = req.params.id;
         
-        const connection = await Connection.findOne({
+        const connection = await Connections.findOne({
             where: {
                 id: connectionId,
                 receiverId: userId,
@@ -187,7 +200,7 @@ exports.removeConnection = async (req, res) => {
         const userId = req.session.user_id;
         const connectionId = req.params.id;
         
-        const connection = await Connection.findOne({
+        const connection = await Connections.findOne({
             where: {
                 id: connectionId,
                 [Op.or]: [

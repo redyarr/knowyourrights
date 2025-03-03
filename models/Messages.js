@@ -1,37 +1,38 @@
-module.exports = (sequelize, DataTypes) => {
-  const Message = sequelize.define('Message', {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
-    },
-    senderId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'Users',
-        key: 'id'
-      }
-    },
-    receiverId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'Users',
-        key: 'id'
-      }
-    },
-    content: {
-      type: DataTypes.TEXT,
-      allowNull: false
-    },
-    isRead: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    }
-  }, {
-    timestamps: true
-  });
+const { DataTypes } = require('sequelize');
+const sequelize = require('../util/db');
 
-  return Message;
-};
+const Message = sequelize.define('Message', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  senderId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Users',
+      key: 'id'
+    }
+  },
+  receiverId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'Users',
+      key: 'id'
+    }
+  },
+  content: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  isRead: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
+  }
+}, {
+  timestamps: true
+});
+
+module.exports = Message;

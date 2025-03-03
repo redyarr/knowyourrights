@@ -1,60 +1,46 @@
 const express = require('express');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 const path = require('path');
-const session = require('express-session');
-const { sequelize } = require('./models');
-const SequelizeStore = require('connect-session-sequelize')(session.Store);
 const expressLayouts = require('express-ejs-layouts');
 const methodOverride = require('method-override');
+require('dotenv').config();
+const { sequelize } = require('./models');
 
-//routes
-const UserRouter = require('./routes/User')
+// Import routes
+const UserRouter = require('./routes/User');
 const BlogRouter = require('./routes/blog'); 
-const LawyerRouter = require('./routes/Lawyer')
+const LawyerRouter = require('./routes/Lawyer');
+
+// Import session configuration
+const { sessionMiddleware, setLoggedInUser } = require('./middlewares/session');
 
 const app = express();
-require('dotenv').config();
-const PORT = process.env.PORT || 3000;
-// Middlewares:
+const PORT = process.env.PORT || 3001;
+
+// Middlewares
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(methodOverride('_method'));
 app.use(methodOverride('_method', { methods: ['POST', 'GET'] }));
 app.use(express.static(path.join(__dirname, 'public')));
-// app.use(cors());
 
-const myStore = new SequelizeStore({ db: sequelize });
+// Use session middleware
+app.use(sessionMiddleware);
+app.use(setLoggedInUser);
 
-app.use(session({
-    secret: process.env.SESSION_SECRET || "my secret",
-    resave: false,
-    saveUninitialized: false,
-    store: myStore
-}));
-
-app.use((req, res, next) => {
-    if (req.session && req.session.user_id) {
-        res.locals.loggedInUserId = req.session.user_id;
-    } else {
-        res.locals.loggedInUserId = null;
-    }
-    next();
-});
-
-//view engine
+// View engine
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 app.use(expressLayouts); // Enable layouts
 app.set('layout', 'layouts/main'); // Set default layout
 
-// using routes:
-app.use('/lawyer',LawyerRouter);
-app.use('/blog',BlogRouter);
-app.use('/user',UserRouter);
+// Using routes
+app.use('/lawyer', LawyerRouter);
+app.use('/blog', BlogRouter);
+app.use('/user', UserRouter);
 
-app.get('/', (req,res)=>{
+app.get('/', (req, res) => {
     res.redirect('/blog');
-})
+});
 
 app.use('/', (req, res) => {
     res.status(404).send('Page not found');

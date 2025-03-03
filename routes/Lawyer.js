@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { User, Lawyer } = require('../models');
+const { Users, Lawyers } = require('../models');
 
 // Middleware to check if user is logged in
 const isAuthenticated = (req, res, next) => {
@@ -17,7 +17,7 @@ const isLawyer = async (req, res, next) => {
   }
   
   try {
-    const user = await User.findByPk(req.session.user_id);
+    const user = await Users.findByPk(req.session.user_id);
     if (user && user.role === 'lawyer') {
       return next();
     }
@@ -31,8 +31,8 @@ const isLawyer = async (req, res, next) => {
 // Get all lawyers
 router.get('/', async (req, res) => {
   try {
-    const lawyers = await Lawyer.findAll({
-      include: [{ model: User, attributes: ['name', 'email'] }]
+    const lawyers = await Lawyers.findAll({
+      include: [{ model: Users, attributes: ['name', 'email'] }]
     });
     
     res.render('lawyer/index', { 
@@ -49,7 +49,7 @@ router.get('/', async (req, res) => {
 router.get('/register', isAuthenticated, async (req, res) => {
   try {
     // Check if user is already a lawyer
-    const existingLawyer = await Lawyer.findOne({ 
+    const existingLawyer = await Lawyers.findOne({ 
       where: { userId: req.session.user_id } 
     });
     
@@ -70,7 +70,7 @@ router.post('/register', isAuthenticated, async (req, res) => {
     const { lawFirm, licenseNumber, contactNumber, city, country } = req.body;
     
     // Check if user is already a lawyer
-    const existingLawyer = await Lawyer.findOne({ 
+    const existingLawyer = await Lawyers.findOne({ 
       where: { userId: req.session.user_id } 
     });
     
@@ -79,7 +79,7 @@ router.post('/register', isAuthenticated, async (req, res) => {
     }
     
     // Create lawyer profile
-    await Lawyer.create({
+    await Lawyers.create({
       userId: req.session.user_id,
       lawFirm,
       licenseNumber,
@@ -89,7 +89,7 @@ router.post('/register', isAuthenticated, async (req, res) => {
     });
     
     // Update user role
-    await User.update(
+    await Users.update(
       { role: 'lawyer' },
       { where: { id: req.session.user_id } }
     );
@@ -107,9 +107,9 @@ router.post('/register', isAuthenticated, async (req, res) => {
 // Get lawyer profile
 router.get('/profile', isAuthenticated, isLawyer, async (req, res) => {
   try {
-    const lawyer = await Lawyer.findOne({
+    const lawyer = await Lawyers.findOne({
       where: { userId: req.session.user_id },
-      include: [{ model: User, attributes: ['name', 'email'] }]
+      include: [{ model: Users, attributes: ['name', 'email'] }]
     });
     
     if (!lawyer) {
@@ -129,7 +129,7 @@ router.get('/profile', isAuthenticated, isLawyer, async (req, res) => {
 // Get lawyer edit form
 router.get('/edit', isAuthenticated, isLawyer, async (req, res) => {
   try {
-    const lawyer = await Lawyer.findOne({
+    const lawyer = await Lawyers.findOne({
       where: { userId: req.session.user_id }
     });
     
@@ -152,7 +152,7 @@ router.put('/update', isAuthenticated, isLawyer, async (req, res) => {
   try {
     const { lawFirm, licenseNumber, contactNumber, city, country } = req.body;
     
-    const lawyer = await Lawyer.findOne({
+    const lawyer = await Lawyers.findOne({
       where: { userId: req.session.user_id }
     });
     
@@ -178,8 +178,8 @@ router.put('/update', isAuthenticated, isLawyer, async (req, res) => {
 // Get single lawyer
 router.get('/:id', async (req, res) => {
   try {
-    const lawyer = await Lawyer.findByPk(req.params.id, {
-      include: [{ model: User, attributes: ['name', 'email'] }]
+    const lawyer = await Lawyers.findByPk(req.params.id, {
+      include: [{ model: Users, attributes: ['name', 'email'] }]
     });
     
     if (!lawyer) {

@@ -1,22 +1,25 @@
-const { User, Notification } = require('../models');
+const { Users, Notifications } = require('../models');
 
 exports.getNotifications = async (req, res) => {
     try {
         const userId = req.session.user_id;
+        console.log('Fetching notifications for user:', userId);
         
         // Get all notifications for the user
-        const notifications = await Notification.findAll({
+        const notifications = await Notifications.findAll({
             where: { userId },
             order: [['createdAt', 'DESC']]
         });
+        console.log('Fetched notifications:', notifications);
         
         // Count unread notifications
-        const unreadCount = await Notification.count({
+        const unreadCount = await Notifications.count({
             where: {
                 userId,
                 isRead: false
             }
         });
+        console.log('Unread notifications count:', unreadCount);
         
         res.render('user/notifications', {
             title: 'Notifications',
@@ -35,7 +38,7 @@ exports.markAsRead = async (req, res) => {
         const notificationId = req.params.notificationId;
         
         // Find notification
-        const notification = await Notification.findOne({
+        const notification = await Notifications.findOne({
             where: {
                 id: notificationId,
                 userId
@@ -61,7 +64,7 @@ exports.markAllAsRead = async (req, res) => {
         const userId = req.session.user_id;
         
         // Mark all notifications as read
-        await Notification.update(
+        await Notifications.update(
             { isRead: true },
             {
                 where: {

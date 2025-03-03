@@ -351,6 +351,82 @@ footer {
   background-color: #e6f7ff;
 }
 
+/* LinkedIn Messaging Box */
+.messaging-popup {
+  position: fixed;
+  bottom: 0;
+  right: 20px;
+  width: 320px;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+  transition: height 0.3s ease;
+}
+
+.messaging-popup-header {
+  background-color: #0a66c2;
+  color: white;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.messaging-popup-body {
+  background-color: white;
+  height: 350px;
+  display: flex;
+  flex-direction: column;
+}
+
+.messaging-popup-contacts {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.messaging-popup-contact {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  border-bottom: 1px solid #f3f2ef;
+  cursor: pointer;
+}
+
+.messaging-popup-contact:hover {
+  background-color: #f3f2ef;
+}
+
+.messaging-popup-contact-photo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.messaging-popup-contact-info {
+  flex: 1;
+}
+
+.messaging-popup-contact-name {
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.messaging-popup-contact-status {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.messaging-popup-collapsed {
+  height: 48px;
+}
+
+.messaging-popup-expanded {
+  height: 400px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .nav-item {
@@ -369,5 +445,9 @@ footer {
   .messages-sidebar {
     width: 100%;
     height: 300px;
+  }
+
+  .messaging-popup {
+    display: none;
   }
 }

@@ -1,9 +1,11 @@
-const { User, Message, Connection } = require('../models');
+const { Users, Connections } = require('../models');
+const Message = require('../models/Messages');
 const { Op } = require('sequelize');
 
 exports.getMessages = async (req, res) => {
     try {
         const userId = req.session.user_id;
+        console.log('Fetching messages for user:', userId);
         
         // Get all conversations (unique users the current user has exchanged messages with)
         const sentMessages = await Message.findAll({
@@ -11,12 +13,14 @@ exports.getMessages = async (req, res) => {
             attributes: ['receiverId'],
             group: ['receiverId']
         });
+        console.log('Sent messages:', sentMessages);
         
         const receivedMessages = await Message.findAll({
             where: { receiverId: userId },
             attributes: ['senderId'],
             group: ['senderId']
         });
+        console.log('Received messages:', receivedMessages);
         
         // Combine unique user IDs from sent and received messages
         const conversationUserIds = [
@@ -25,12 +29,14 @@ exports.getMessages = async (req, res) => {
                 ...receivedMessages.map(m => m.senderId)
             ])
         ];
+        console.log('Conversation user IDs:', conversationUserIds);
         
         // Get user details for each conversation
-        const conversations = await User.findAll({
+        const conversations = await Users.findAll({
             where: { id: conversationUserIds },
             attributes: ['id', 'name', 'email']
         });
+        console.log('Conversations:', conversations);
         
         // Get the latest message for each conversation
         const conversationsWithLastMessage = await Promise.all(
@@ -44,6 +50,7 @@ exports.getMessages = async (req, res) => {
                     },
                     order: [['createdAt', 'DESC']]
                 });
+                console.log(`Last message with user ${user.id}:`, lastMessage);
                 
                 // Count unread messages
                 const unreadCount = await Message.count({
@@ -53,6 +60,7 @@ exports.getMessages = async (req, res) => {
                         isRead: false
                     }
                 });
+                console.log(`Unread messages from user ${user.id}:`, unreadCount);
                 
                 return {
                     user,
@@ -66,6 +74,7 @@ exports.getMessages = async (req, res) => {
         conversationsWithLastMessage.sort((a, b) => {
             return new Date(b.lastMessage.createdAt) - new Date(a.lastMessage.createdAt);
         });
+        console.log('Sorted conversations:', conversationsWithLastMessage);
         
         res.render('user/messages', {
             title: 'Messages',
@@ -85,7 +94,7 @@ exports.getConversation = async (req, res) => {
         const conversationId = req.params.conversationId;
         
         // Check if users are connected
-        const isConnected = await Connection.findOne({
+        const isConnected = await Connections.findOne({
             where: {
                 [Op.or]: [
                     { requesterId: userId, receiverId: conversationId, status: 'accepted' },
@@ -99,7 +108,7 @@ exports.getConversation = async (req, res) => {
         }
         
         // Get conversation partner details
-        const conversationPartner = await User.findByPk(conversationId, {
+        const conversationPartner = await Users.findByPk(conversationId, {
             attributes: ['id', 'name', 'email']
         });
         
@@ -150,7 +159,7 @@ exports.getConversation = async (req, res) => {
             ])
         ];
         
-        const conversations = await User.findAll({
+        const conversations = await Users.findAll({
             where: { id: conversationUserIds },
             attributes: ['id', 'name', 'email']
         });
@@ -207,7 +216,7 @@ exports.sendMessage = async (req, res) => {
         const { receiverId, content } = req.body;
         
         // Check if users are connected
-        const isConnected = await Connection.findOne({
+        const isConnected = await Connections.findOne({
             where: {
                 [Op.or]: [
                     { requesterId: senderId, receiverId, status: 'accepted' },
