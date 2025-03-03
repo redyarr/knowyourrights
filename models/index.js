@@ -3,14 +3,14 @@ console.log("====================================");
 console.log("Initializing models...");
 
 // Import models
-const Users = require('./users');
+const Users = require('./Users');
 const Appointments = require('./Appointments');
 const Blogs = require('./Blogs');
 const Comments = require('./comments');
-const Categories = require('./categories');
+const Categories = require('./Categories');
 const Lawyers = require('./Lawyers');
 const Reacts = require('./Reacts');
-const Contacts = require('./Contact');
+const Contacts = require('./Contacts');
 const Specializations = require('./Specializations')
 
 console.log("Models imported successfully");

@@ -1,88 +1,70 @@
-<link rel="stylesheet" href="/css/nav.css">
-<link rel="stylesheet" href="/css/style.css">
-<script src="/js/nav.js" defer></script>
-<!-- Font Awesome for icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<nav class="navbar">
-  <div class="navbar-container">
-    <div class="navbar-logo">
-      <a href="/">
-        <span class="logo-primary">Legal</span><span class="logo-secondary">Hub</span>
-      </a>
-    </div>
-
-    <div class="navbar-toggle" id="mobile-menu" aria-label="Toggle navigation">
-      <span class="bar"></span>
-      <span class="bar"></span>
-      <span class="bar"></span>
-    </div>
-
-    <ul class="navbar-menu" id="navbar-menu">
-      <li class="navbar-item">
-        <a href="/" class="navbar-link <%= locals.currentPath === '/' ? 'active' : '' %>">
-          <i class="fas fa-home"></i> Home
-        </a>
-      </li>
-      <li class="navbar-item dropdown">
-        <a href="#"
-          class="navbar-link dropdown-toggle <%= locals.currentPath && locals.currentPath.startsWith('/lawyer') ? 'active' : '' %>"
-          aria-haspopup="true" aria-expanded="false">
-          <i class="fas fa-gavel"></i> Lawyers <i class="fas fa-chevron-down dropdown-icon"></i>
-        </a>
-        <div class="dropdown-menu" aria-label="submenu">
-          <a href="/lawyer/lawyers"
-            class="dropdown-item <%= locals.currentPath === '/lawyer/lawyers' ? 'active' : '' %>">Find Lawyers</a>
-        </div>
-      </li>
-      <li class="navbar-item dropdown">
-        <a href="#"
-          class="navbar-link dropdown-toggle <%= locals.currentPath && locals.currentPath.startsWith('/blog') ? 'active' : '' %>"
-          aria-haspopup="true" aria-expanded="false">
-          <i class="fas fa-blog"></i> Blog <i class="fas fa-chevron-down dropdown-icon"></i>
-        </a>
-        <div class="dropdown-menu" aria-label="submenu">
-          <a href="/blog" class="dropdown-item <%= locals.currentPath === '/blog' ? 'active' : '' %>">All Blogs</a>
-          <a href="/blog/form" class="dropdown-item <%= locals.currentPath === '/blog/form' ? 'active' : '' %>">Create
-            Blog</a>
-          <a href="/blog/Cat"
-            class="dropdown-item <%= locals.currentPath === '/blog/Cat' ? 'active' : '' %>">Categories</a>
-        </div>
-      </li>
-      <li class="navbar-item dropdown">
-        <a href="#"
-          class="navbar-link dropdown-toggle <%= locals.currentPath && locals.currentPath.startsWith('/user') ? 'active' : '' %>"
-          aria-haspopup="true" aria-expanded="false">
-          <i class="fas fa-users"></i> Users <i class="fas fa-chevron-down dropdown-icon"></i>
-        </a>
-        <div class="dropdown-menu" aria-label="submenu">
-          <a href="/user/users" class="dropdown-item <%= locals.currentPath === '/user/users' ? 'active' : '' %>">All
-            Users</a>
-          <% if (locals.loggedInUserId) { %>
-            <a href="/user/<%= locals.loggedInUserId %>"
-              class="dropdown-item <%= locals.currentPath === '/user/' + locals.loggedInUserId ? 'active' : '' %>">My
-              Profile</a>
-            <% } %>
-        </div>
-      </li>
-    </ul>
-
-    <div class="navbar-auth">
-      <% if (locals.loggedInUserId) { %>
-        <form action="/user/logout" method="POST">
-          <button type="submit" class="auth-btn logout-btn">
-            <i class="fas fa-sign-out-alt"></i> Sign Out
-          </button>
-        </form>
-        <% } else { %>
-          <a href="/user/login" class="auth-btn login-btn <%= locals.currentPath === '/user/login' ? 'active' : '' %>">
-            <i class="fas fa-sign-in-alt"></i> Sign In
+<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="/">LegalNet</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mx-auto">
+        <li class="nav-item">
+          <a class="nav-link <%= path === '/blog' ? 'active' : '' %>" href="/blog">
+            <i class="fas fa-home"></i>
+            Home
           </a>
-          <a href="/user/create"
-            class="auth-btn register-btn <%= locals.currentPath === '/user/create' ? 'active' : '' %>">
-            <i class="fas fa-user-plus"></i> Sign Up
-          </a>
+        </li>
+        <% if (locals.loggedInUserId) { %>
+          <li class="nav-item">
+            <a class="nav-link <%= path === '/user/network' ? 'active' : '' %>" href="/user/network">
+              <i class="fas fa-user-friends"></i>
+              My Network
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link <%= path === '/user/' + locals.loggedInUserId + '/messages' ? 'active' : '' %>"
+              href="/user/<%= locals.loggedInUserId %>/messages">
+              <i class="fas fa-comment-dots"></i>
+              Messaging
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link <%= path === '/user/' + locals.loggedInUserId + '/notifications' ? 'active' : '' %>"
+              href="/user/<%= locals.loggedInUserId %>/notifications">
+              <i class="fas fa-bell"></i>
+              Notifications
+            </a>
+          </li>
           <% } %>
+      </ul>
+      <ul class="navbar-nav">
+        <% if (locals.loggedInUserId) { %>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+              aria-expanded="false">
+              <img src="https://via.placeholder.com/150" alt="Profile" class="nav-profile-img">
+              Me
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+              <li><a class="dropdown-item" href="/user/<%= locals.loggedInUserId %>">View Profile</a></li>
+              <li>
+                <hr class="dropdown-divider">
+              </li>
+              <li>
+                <form action="/user/logout" method="POST">
+                  <button type="submit" class="dropdown-item">Sign Out</button>
+                </form>
+              </li>
+            </ul>
+          </li>
+          <% } else { %>
+            <li class="nav-item">
+              <a class="nav-link" href="/user/login">Sign In</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link btn btn-outline-primary ms-2" href="/user/create">Join Now</a>
+            </li>
+            <% } %>
+      </ul>
     </div>
   </div>
 </nav>

@@ -1,9 +1,10 @@
-const Users = require('../models/users');
-const Lawyers = require('../models/Lawyers');
+// const { User, Blog } = require('../models');
+const User = require('../models/Users')
+const Blog = require('../models/Blogs') 
 const bcrypt = require('bcrypt');
 
 exports.getAllUsers = function (req, res) {
-    Users.findAll()
+    User.findAll()
         .then((users) => {
             // Render the users page with users data (name, email, role)
             res.render('user/users', { users });
@@ -15,14 +16,17 @@ exports.getAllUsers = function (req, res) {
 };
 
 exports.getUserSignUp = (req, res) => {
-    res.render('user/createUser');
+    res.render('user/createUser', { title: 'Join LegalNet' });
 };
 
 exports.postUserSignUp = (req, res) => {
     const { name, email, password } = req.body;
-    Users.create({ name, email, password })
+    console.log(`addin user who name is ${name} and email is ${email} and pass: ${password}`);
+    
+    User.create({ name, email, password })
         .then((user) => {
             req.session.user_id = user.id;
+            
             console.log("Session Data:", req.session); // Log full session data
             res.redirect(`/user/${user.id}`);
         })
@@ -33,12 +37,12 @@ exports.postUserSignUp = (req, res) => {
 };
 
 exports.getUserLogin = (req, res) => {
-    res.render('user/userLogin');
+    res.render('user/userLogin', { title: 'Sign In to LegalNet' });
 };
 
 exports.postUserLogin = (req, res) => {
     const { email, password } = req.body;
-    Users.findOne({ where: { email } })
+    User.findOne({ where: { email } })
         .then(user => {
             if (!user) {
                 return res.status(401).send('User not found');
@@ -75,21 +79,80 @@ exports.getUserProfile = function (req, res) {
     console.log("userId:");
     console.log(userId);
     
-    Users.findOne({
+    User.findOne({
         where: { id: userId },
+        include: [
+            { model: Blog }
+        ]
     })
         .then((user) => {
             if (!user) {
                 return res.status(404).send('User not found');
             }
             // Render the user's profile page with all details
-            console.log("user datassss::");
+            console.log("user data:");
             console.log(user);
             
-            res.render('user/profile', {profileUser: user, loggedInUserId: req.session.user_id });
+            res.render('user/profile', { 
+                title: user.name + ' | LegalNet',
+                user, 
+                loggedInUserId: req.session.user_id 
+            });
         })
         .catch((error) => {
             console.error('Error fetching user profile:', error);
+            res.status(500).send('Internal Server Error');
+        });
+};
+
+exports.getEditProfile = function (req, res) {
+    const userId = req.params.id;
+    
+    // Check if the logged-in user is trying to edit their own profile
+    if (req.session.user_id != userId) {
+        return res.status(403).send('Unauthorized');
+    }
+    
+    User.findByPk(userId)
+        .then((user) => {
+            if (!user) {
+                return res.status(404).send('User not found');
+            }
+            
+            res.render('user/editProfile', { 
+                title: 'Edit Profile',
+                user 
+            });
+        })
+        .catch((error) => {
+            console.error('Error fetching user for edit:', error);
+            res.status(500).send('Internal Server Error');
+        });
+};
+
+exports.postEditProfile = function (req, res) {
+    const userId = req.params.id;
+    
+    // Check if the logged-in user is trying to edit their own profile
+    if (req.session.user_id != userId) {
+        return res.status(403).send('Unauthorized');
+    }
+    
+    const { name, email } = req.body;
+    
+    User.findByPk(userId)
+        .then((user) => {
+            if (!user) {
+                return res.status(404).send('User not found');
+            }
+            
+            return user.update({ name, email });
+        })
+        .then(() => {
+            res.redirect(`/user/${userId}`);
+        })
+        .catch((error) => {
+            console.error('Error updating user profile:', error);
             res.status(500).send('Internal Server Error');
         });
 };

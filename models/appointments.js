@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const db = require('../util/db');
 const Lawyers = require('./Lawyers'); // Ensure Lawyers model is imported
-const Users = require('./users'); // Ensure Users model is imported
+const Users = require('./Users'); // Ensure Users model is imported
 
 const Appointments = db.define('Appointments', {
     appointment_id: {

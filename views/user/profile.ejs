@@ -1,45 +1,166 @@
-<div class="row justify-content-center">
-  <div class="col-md-6">
-    <div class="card">
-      <div class="card-header">
-        <% if (typeof profileUser !== 'undefined' && typeof profileUser._id !== 'undefined' && typeof locals.loggedInUserId !== 'undefined' && profileUser._id.toString() !== locals.loggedInUserId.toString()) { %>
-          <h2 class="text-center">
-            <%= profileUser.name %>'s Profile
-          </h2>
-          <% } else { %>
-            <h2 class="text-center">My Profile</h2>
-            <% } %>
-      </div>
-      <div class="card-body">
-        <% if (typeof profileUser !== 'undefined' && typeof profileUser._id !== 'undefined' && typeof locals.loggedInUserId !== 'undefined' && profileUser._id.toString() === locals.loggedInUserId.toString()) { %>
-          <!-- User's own profile -->
-          <div class="mb-3">
-            <label for="name" class="form-label">Name</label>
-            <input type="text" class="form-control" id="name" name="name" value="<%= profileUser.name %>" readonly>
-          </div>
+<div class="row">
+  <div class="col-md-8 mx-auto">
+    <div class="card mb-4">
+      <div class="card-body profile-header">
+        <div class="profile-background"></div>
+        <img src="https://via.placeholder.com/150" alt="Profile" class="profile-photo">
 
-          <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" value="<%= profileUser.email %>" readonly>
-          </div>
+        <div class="profile-info">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h2 class="mb-1">
+                <%= user.name %>
+              </h2>
+              <p class="text-muted mb-2">
+                <%= user.role.charAt(0).toUpperCase() + user.role.slice(1) %> at LegalNet
+              </p>
+              <p class="text-muted mb-3">New York, United States</p>
 
-          <div class="d-grid">
-            <a href="/user/edit" class="btn btn-primary">Edit Profile</a>
-          </div>
-          <% } else { %>
-            <!-- Visiting other user's profile -->
-            <div class="mb-3">
-              <label for="name" class="form-label">Name</label>
-              <input type="text" class="form-control" id="name" name="name" value="<%= profileUser.name %>" readonly>
+              <div class="d-flex mb-3">
+                <span class="me-3"><a href="#" class="text-decoration-none">500+ connections</a></span>
+                <span><a href="#" class="text-decoration-none">Contact info</a></span>
+              </div>
             </div>
 
-            <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input type="email" class="form-control" id="email" name="email" value="<%= profileUser.email %>"
-                readonly>
-            </div>
-            <% } %>
+            <% if (locals.loggedInUserId && locals.loggedInUserId===user.id) { %>
+              <div>
+                <a href="/user/<%= user.id %>/edit" class="btn btn-outline-primary">
+                  <i class="fas fa-pencil-alt me-1"></i> Edit Profile
+                </a>
+              </div>
+              <% } else { %>
+                <div>
+                  <button class="btn btn-primary me-2">Connect</button>
+                  <button class="btn btn-outline-primary">Message</button>
+                </div>
+                <% } %>
+          </div>
+        </div>
       </div>
     </div>
+
+    <div class="card mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">About</h5>
+      </div>
+      <div class="card-body">
+        <p>Experienced legal professional with a passion for helping clients navigate complex legal matters.
+          Specializing in corporate law and contract negotiations.</p>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Experience</h5>
+        <% if (locals.loggedInUserId && locals.loggedInUserId===user.id) { %>
+          <button class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-plus"></i>
+          </button>
+          <% } %>
+      </div>
+      <div class="card-body">
+        <div class="d-flex mb-4">
+          <div class="me-3">
+            <img src="https://via.placeholder.com/60" alt="Company Logo" class="rounded"
+              style="width: 60px; height: 60px; object-fit: cover;">
+          </div>
+          <div>
+            <h5 class="mb-1">Senior Legal Counsel</h5>
+            <p class="text-muted mb-1">Smith & Associates Law Firm</p>
+            <p class="text-muted small mb-2">Jan 2022 - Present · 3 years</p>
+            <p>Providing legal counsel on corporate matters, contract negotiations, and regulatory compliance.</p>
+          </div>
+        </div>
+
+        <div class="d-flex">
+          <div class="me-3">
+            <img src="https://via.placeholder.com/60" alt="Company Logo" class="rounded"
+              style="width: 60px; height: 60px; object-fit: cover;">
+          </div>
+          <div>
+            <h5 class="mb-1">Legal Associate</h5>
+            <p class="text-muted mb-1">Johnson Legal Group</p>
+            <p class="text-muted small mb-2">Jun 2018 - Dec 2021 · 3.5 years</p>
+            <p>Assisted with case preparation, legal research, and client consultations.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-4">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Education</h5>
+        <% if (locals.loggedInUserId && locals.loggedInUserId===user.id) { %>
+          <button class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-plus"></i>
+          </button>
+          <% } %>
+      </div>
+      <div class="card-body">
+        <div class="d-flex mb-4">
+          <div class="me-3">
+            <img src="https://via.placeholder.com/60" alt="University Logo" class="rounded"
+              style="width: 60px; height: 60px; object-fit: cover;">
+          </div>
+          <div>
+            <h5 class="mb-1">Harvard Law School</h5>
+            <p class="text-muted mb-1">Juris Doctor (J.D.)</p>
+            <p class="text-muted small mb-2">2015 - 2018</p>
+          </div>
+        </div>
+
+        <div class="d-flex">
+          <div class="me-3">
+            <img src="https://via.placeholder.com/60" alt="University Logo" class="rounded"
+              style="width: 60px; height: 60px; object-fit: cover;">
+          </div>
+          <div>
+            <h5 class="mb-1">Yale University</h5>
+            <p class="text-muted mb-1">Bachelor of Arts, Political Science</p>
+            <p class="text-muted small mb-2">2011 - 2015</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Skills</h5>
+        <% if (locals.loggedInUserId && locals.loggedInUserId===user.id) { %>
+          <button class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-plus"></i>
+          </button>
+          <% } %>
+      </div>
+      <div class="card-body">
+        <div class="mb-3">
+          <h6>Corporate Law</h6>
+          <p class="text-muted small">Endorsed by 24 colleagues</p>
+        </div>
+
+        <div class="mb-3">
+          <h6>Contract Negotiation</h6>
+          <p class="text-muted small">Endorsed by 18 colleagues</p>
+        </div>
+
+        <div class="mb-3">
+          <h6>Legal Research</h6>
+          <p class="text-muted small">Endorsed by 15 colleagues</p>
+        </div>
+
+        <div>
+          <h6>Regulatory Compliance</h6>
+          <p class="text-muted small">Endorsed by 12 colleagues</p>
+        </div>
+      </div>
+    </div>
+
+    <% if (locals.loggedInUserId && locals.loggedInUserId===user.id) { %>
+      <div class="mt-4">
+        <form action="/user/logout" method="POST">
+          <button type="submit" class="btn btn-outline-secondary">Sign Out</button>
+        </form>
+      </div>
+      <% } %>
   </div>
 </div>

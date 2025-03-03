@@ -1,17 +1,30 @@
 const express = require('express');
 const router = express.Router();
-const BlogController = require('../controllers/Blog');
+const blogController = require('../controllers/Blog');
+const { isAuthenticated } = require('../middlewares/auth');
 
-// Middleware to parse URL-encoded bodies (for form submissions)
-router.use(express.urlencoded({ extended: true }));
+// Get all blogs
+router.get('/', blogController.getAllBlogs);
 
-router.get('/', BlogController.getBlogs)
+// Get blog creation form
+router.get('/create', isAuthenticated, blogController.getCreateForm);
 
-router.get('/form',BlogController.BlogForm);
+// Create new blog
+router.post('/create', isAuthenticated, blogController.createBlog);
 
-router.get('/:id', BlogController.Blog)
+// Get single blog
+router.get('/:id', blogController.getSingleBlog);
 
-router.get('/Cat', BlogController.PutCategories);
+// Get blog edit form
+router.get('/:id/edit', isAuthenticated, blogController.getEditForm);
 
+// Update blog
+router.put('/:id', isAuthenticated, blogController.updateBlog);
 
-module.exports= router;
+// Delete blog
+router.delete('/:id', isAuthenticated, blogController.deleteBlog);
+
+// Populate categories (one-time operation)
+router.post('/categories', blogController.populateCategories);
+
+module.exports = router;

@@ -1,0 +1,56 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="messages-container">
+            <div class="messages-sidebar">
+                <div class="p-3 border-bottom">
+                    <h5 class="mb-0">Messages</h5>
+                </div>
+
+                <% if (conversations.length> 0) { %>
+                    <% conversations.forEach(conv=> { %>
+                        <a href="/user/<%= userId %>/messages/<%= conv.user.id %>"
+                            class="text-decoration-none text-dark">
+                            <div
+                                class="d-flex p-3 border-bottom <%= conv.unreadCount > 0 ? 'bg-light' : '' %> <%= activeConversation == conv.user.id ? 'bg-primary bg-opacity-10' : '' %>">
+                                <img src="https://via.placeholder.com/150" alt="Profile" class="rounded-circle me-3"
+                                    style="width: 48px; height: 48px; object-fit: cover;">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between align-items-center mb-1">
+                                        <h6 class="mb-0">
+                                            <%= conv.user.name %>
+                                        </h6>
+                                        <small class="text-muted">
+                                            <%= new Date(conv.lastMessage.createdAt).toLocaleDateString() %>
+                                        </small>
+                                    </div>
+                                    <p
+                                        class="text-truncate mb-0 small <%= conv.unreadCount > 0 ? 'fw-bold' : 'text-muted' %>">
+                                        <%= conv.lastMessage.content %>
+                                    </p>
+                                </div>
+                                <% if (conv.unreadCount> 0) { %>
+                                    <span class="badge bg-primary rounded-pill ms-2">
+                                        <%= conv.unreadCount %>
+                                    </span>
+                                    <% } %>
+                            </div>
+                        </a>
+                        <% }); %>
+                            <% } else { %>
+                                <div class="p-4 text-center">
+                                    <p>No messages yet.</p>
+                                    <p>Connect with other professionals to start messaging.</p>
+                                </div>
+                                <% } %>
+            </div>
+
+            <div class="messages-content d-flex align-items-center justify-content-center text-center p-4">
+                <div>
+                    <i class="fas fa-comments fa-4x text-muted mb-3"></i>
+                    <h4>Your Messages</h4>
+                    <p class="text-muted">Select a conversation to view messages</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

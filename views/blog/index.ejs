@@ -1,11 +1,197 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>here to show all blogs:</h1>
-</body>
-</html>
+<div class="row">
+    <div class="col-md-3">
+        <!-- Profile Card -->
+        <% if (locals.loggedInUserId) { %>
+            <div class="card mb-4">
+                <div class="card-body text-center">
+                    <img src="https://via.placeholder.com/150" alt="Profile" class="rounded-circle mb-3"
+                        style="width: 80px; height: 80px; object-fit: cover;">
+                    <h5 class="card-title mb-1">Your Profile</h5>
+                    <p class="text-muted small">View your profile</p>
+                    <a href="/user/<%= locals.loggedInUserId %>" class="btn btn-outline-primary btn-sm w-100">View
+                        Profile</a>
+                </div>
+            </div>
+            <% } %>
+
+                <!-- Topics Card -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0">Recent Topics</h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item"><a href="#" class="text-decoration-none">Corporate Law</a></li>
+                            <li class="list-group-item"><a href="#" class="text-decoration-none">Family Law</a></li>
+                            <li class="list-group-item"><a href="#" class="text-decoration-none">Criminal Defense</a>
+                            </li>
+                            <li class="list-group-item"><a href="#" class="text-decoration-none">Intellectual
+                                    Property</a></li>
+                            <li class="list-group-item"><a href="#" class="text-decoration-none">Immigration Law</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+    </div>
+
+    <div class="col-md-6">
+        <!-- Post Creator -->
+        <% if (locals.loggedInUserId) { %>
+            <div class="card mb-4">
+                <div class="card-body p-3">
+                    <div class="post-composer">
+                        <img src="https://via.placeholder.com/150" alt="Profile" class="rounded-circle"
+                            style="width: 40px; height: 40px; object-fit: cover;">
+                        <a href="/blog/create" class="post-composer-input text-decoration-none text-dark">Start a
+                            post</a>
+                    </div>
+                    <div class="post-actions">
+                        <div class="post-action">
+                            <i class="fas fa-image text-primary"></i>
+                            <span>Photo</span>
+                        </div>
+                        <div class="post-action">
+                            <i class="fas fa-video text-success"></i>
+                            <span>Video</span>
+                        </div>
+                        <div class="post-action">
+                            <i class="fas fa-calendar-alt text-warning"></i>
+                            <span>Event</span>
+                        </div>
+                        <div class="post-action">
+                            <i class="fas fa-newspaper text-danger"></i>
+                            <span>Article</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+
+                <!-- Blog Posts -->
+                <% if (blogs && blogs.length> 0) { %>
+                    <% blogs.forEach(blog=> { %>
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="d-flex mb-3">
+                                    <img src="https://via.placeholder.com/150" alt="Profile" class="rounded-circle me-3"
+                                        style="width: 48px; height: 48px; object-fit: cover;">
+                                    <div>
+                                        <h6 class="mb-0">
+                                            <%= blog.User ? blog.User.name : 'Unknown' %>
+                                        </h6>
+                                        <p class="text-muted small mb-0">
+                                            <%= new Date(blog.createdAt).toLocaleDateString() %>
+                                        </p>
+                                    </div>
+                                </div>
+                                <h5 class="card-title">
+                                    <%= blog.title %>
+                                </h5>
+                                <p class="card-text">
+                                    <%= blog.content.substring(0, 150) %>...
+                                </p>
+                                <% if (blog.image) { %>
+                                    <img src="<%= blog.image %>" class="img-fluid rounded mb-3" alt="<%= blog.title %>">
+                                    <% } %>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <a href="/blog/<%= blog.id %>"
+                                                    class="btn btn-link text-decoration-none p-0">Read more</a>
+                                            </div>
+                                            <div class="d-flex">
+                                                <button class="btn btn-sm btn-outline-secondary me-2">
+                                                    <i class="far fa-thumbs-up me-1"></i> Like
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary me-2">
+                                                    <i class="far fa-comment me-1"></i> Comment
+                                                </button>
+                                                <button class="btn btn-sm btn-outline-secondary">
+                                                    <i class="far fa-share-square me-1"></i> Share
+                                                </button>
+                                            </div>
+                                        </div>
+                            </div>
+                        </div>
+                        <% }); %>
+                            <% } else { %>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="alert alert-info mb-0">
+                                            No posts found. <% if (locals.loggedInUserId) { %><a
+                                                    href="/blog/create">Create one</a>
+                                                <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                                <% } %>
+    </div>
+
+    <div class="col-md-3">
+        <!-- Trending Card -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h6 class="mb-0">Trending Legal News</h6>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <a href="#" class="text-decoration-none">Supreme Court Rules on Major Case</a>
+                        <p class="text-muted small mb-0">1,234 readers</p>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#" class="text-decoration-none">New Legislation Impacts Corporate Law</a>
+                        <p class="text-muted small mb-0">987 readers</p>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#" class="text-decoration-none">Legal Tech Innovations in 2025</a>
+                        <p class="text-muted small mb-0">756 readers</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Suggested Connections -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">People You May Know</h6>
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <div class="d-flex align-items-center">
+                            <img src="https://via.placeholder.com/150" alt="Profile" class="rounded-circle me-3"
+                                style="width: 40px; height: 40px; object-fit: cover;">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">Jane Smith</h6>
+                                <p class="text-muted small mb-0">Corporate Lawyer</p>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary">Connect</button>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex align-items-center">
+                            <img src="https://via.placeholder.com/150" alt="Profile" class="rounded-circle me-3"
+                                style="width: 40px; height: 40px; object-fit: cover;">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">John Doe</h6>
+                                <p class="text-muted small mb-0">Criminal Defense Attorney</p>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary">Connect</button>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="d-flex align-items-center">
+                            <img src="https://via.placeholder.com/150" alt="Profile" class="rounded-circle me-3"
+                                style="width: 40px; height: 40px; object-fit: cover;">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">Sarah Johnson</h6>
+                                <p class="text-muted small mb-0">Family Law Specialist</p>
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary">Connect</button>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

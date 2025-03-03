@@ -1,7 +1,9 @@
 
 const { Sequelize } = require('sequelize');
+require('dotenv').config();
+const DB_password = process.env.DB_PASSWORD
 
-const sequelize = new Sequelize('knowyourrights', 'root', '(Aland&DB)', {
+const sequelize = new Sequelize('knowyourrights', 'root', DB_password, {
   host: 'localhost',
   dialect: 'mysql'// or 'postgres', 'sqlite', 'mariadb', etc.
 });

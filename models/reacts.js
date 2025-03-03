@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('../util/db');
-const Users = require('./users');
+const Users = require('./Users');
 const Blogs = require('./Blogs'); // or any other model
 
 const Reacts = db.define('Reacts', {
