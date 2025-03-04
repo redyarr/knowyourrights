@@ -5,7 +5,7 @@ const Categories = require('../models/Categories');
 exports.getAllBlogs = async (req, res) => {
   try {
     const blogs = await Blogs.findAll({
-      include: [{ model: Users, attributes: ['name', 'email'] }],
+      include: [{ model: Users, as: 'user', attributes: ['name', 'email'] }],
       order: [['createdAt', 'DESC']]
     });
 
@@ -18,6 +18,7 @@ exports.getAllBlogs = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
+
 
 // Get blog creation form
 exports.getCreateForm = (req, res) => {

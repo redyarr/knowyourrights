@@ -120,13 +120,11 @@ exports.postUserLogin = (req, res) => {
             if (!user) {
                 return res.status(401).send('User not found');
             }
-            
             bcrypt.compare(password, user.password)
                 .then((isMatch) => {
                     if (!isMatch) {
                         return res.status(401).send('Password is wrong');
                     }
-
                     req.session.user_id = user.id;
                     res.redirect(`/user/${user.id}`);
                 })
@@ -134,6 +132,9 @@ exports.postUserLogin = (req, res) => {
                     console.error('Error comparing passwords:', err);
                     res.status(500).send('Internal Server Error');
                 });
+            // if (password !== user.password) {
+            //     return res.status(401).send('Password is wrong');
+            // }
         })
         .catch((err) => {
             console.error('Error during login:', err);

@@ -1,20 +1,28 @@
 const express = require('express');
+const http = require('http')
+const {Server} = require('socket.io')
+
 const bodyParser = require('body-parser');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const methodOverride = require('method-override');
 require('dotenv').config();
 const { sequelize } = require('./models');
+const storeRouter = require('./util/store.js');
+
 
 // Import routes
 const UserRouter = require('./routes/User');
 const BlogRouter = require('./routes/blog'); 
 const LawyerRouter = require('./routes/Lawyer');
 
+
 // Import session configuration
 const { sessionMiddleware, setLoggedInUser } = require('./middlewares/session');
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
 const PORT = process.env.PORT || 3001;
 
 // Middlewares
@@ -37,19 +45,22 @@ app.set('layout', 'layouts/main'); // Set default layout
 app.use('/lawyer', LawyerRouter);
 app.use('/blog', BlogRouter);
 app.use('/user', UserRouter);
+app.use('/sql', storeRouter); 
 
+// Redirect root URL to /blog
 app.get('/', (req, res) => {
     res.redirect('/blog');
 });
 
-app.use('/', (req, res) => {
+// Handle 404 errors
+app.use((req, res) => {
     res.status(404).send('Page not found');
 });
 
 // { force: true }
 sequelize.sync()
     .then(() => {
-        app.listen(PORT, () => {
+        server.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
         });
     })
