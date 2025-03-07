@@ -1,5 +1,5 @@
 const { Blogs, Users } = require('../models');
-const Categories = require('../models/Categories'); 
+const Categories = require('../models/category'); 
 
 // Get all blogs
 exports.getAllBlogs = async (req, res) => {

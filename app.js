@@ -7,15 +7,15 @@ const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const methodOverride = require('method-override');
 require('dotenv').config();
-const { sequelize } = require('./models');
-const storeRouter = require('./util/store.js');
+const {sequelize} = require('./models');
+// const {sequelize} = require('./util/db.js')
 
 
 // Import routes
 const UserRouter = require('./routes/User');
 const BlogRouter = require('./routes/blog'); 
 const LawyerRouter = require('./routes/Lawyer');
-
+const storeRouter = require('./util/store.js');
 
 // Import session configuration
 const { sessionMiddleware, setLoggedInUser } = require('./middlewares/session');
@@ -57,8 +57,11 @@ app.use((req, res) => {
     res.status(404).send('Page not found');
 });
 
+console.log("below");
+// console.log(sequelize);
+
 // { force: true }
-sequelize.sync()
+sequelize.sync({ force: true })
     .then(() => {
         server.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);

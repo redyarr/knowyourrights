@@ -1,7 +1,6 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../util/db');
+const {sequelize, DataTypes} = require('../util/db');
 
-const Connections = sequelize.define('Connections', {
+const Connection = sequelize.define('connections', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -16,11 +15,11 @@ const Connections = sequelize.define('Connections', {
         allowNull: false,
     },
     status: {
-        type: DataTypes.STRING, // e.g., 'pending', 'accepted', 'rejected'
+        type: DataTypes.STRING, 
         allowNull: false,
     },
 }, {
     timestamps: true,
 });
 
-module.exports = Connections;
+module.exports = Connection;

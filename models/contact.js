@@ -1,20 +1,14 @@
-const { DataTypes } = require('sequelize');
-const db = require('../util/db');
-const Lawyer = require('./Lawyers'); // Ensure Lawyer model is imported
+const {sequelize, DataTypes} = require('../util/db');
 
-const Contact = db.define('Contact', {
+const Contact = sequelize.define('contacts', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    lawyerId: {
+    userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        references: {
-            model: Lawyer,
-            key: 'id'
-        }
     },
     number: {
         type: DataTypes.STRING,
@@ -27,7 +21,6 @@ const Contact = db.define('Contact', {
     }
 }, {
     timestamps: true,
-    underscored: true
 });
 
 module.exports = Contact;

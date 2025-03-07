@@ -1,7 +1,6 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../util/db');
+const {sequelize, DataTypes} = require('../util/db');
 
-const Message = sequelize.define('Message', {
+const Message = sequelize.define('messages', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -10,18 +9,10 @@ const Message = sequelize.define('Message', {
   senderId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: {
-      model: 'Users',
-      key: 'id'
-    }
   },
   receiverId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: {
-      model: 'Users',
-      key: 'id'
-    }
   },
   content: {
     type: DataTypes.TEXT,

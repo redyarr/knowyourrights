@@ -1,11 +1,14 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../util/db');
+const {sequelize, DataTypes} = require('../util/db');
 
-const Notification = sequelize.define('Notification', {
+const Notification = sequelize.define('notifications', {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
+  },
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
   },
   title: {
     type: DataTypes.STRING,
@@ -19,19 +22,8 @@ const Notification = sequelize.define('Notification', {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
 }, {
   timestamps: true,
 });
-
-Notification.associate = function(models) {
-  Notification.belongsTo(models.User, {
-    foreignKey: 'userId',
-    as: 'user',
-  });
-};
 
 module.exports = Notification;

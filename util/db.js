@@ -1,5 +1,5 @@
 
-const { Sequelize } = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');
 require('dotenv').config();
 const DB_password = process.env.DB_PASSWORD
 
@@ -16,5 +16,4 @@ sequelize.authenticate()
     console.error('Unable to connect to the database:', err);
   });
 
-module.exports = sequelize;
-
+module.exports = { sequelize, DataTypes};
