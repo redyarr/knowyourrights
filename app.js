@@ -8,8 +8,6 @@ const expressLayouts = require('express-ejs-layouts');
 const methodOverride = require('method-override');
 require('dotenv').config();
 const {sequelize} = require('./models');
-// const {sequelize} = require('./util/db.js')
-
 
 // Import routes
 const UserRouter = require('./routes/User');
@@ -61,7 +59,7 @@ console.log("below");
 // console.log(sequelize);
 
 // { force: true }
-sequelize.sync({ force: true })
+sequelize.sync()
     .then(() => {
         server.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);

@@ -19,17 +19,9 @@ const Lawyer = sequelize.define('lawyers', {
         allowNull: false,
         unique: true
     },
-    contactNumber: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    city: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    country: {
-        type: DataTypes.STRING,
-        allowNull: false
+    summery:{
+        type: DataTypes.TEXT,
+        allowNull:true,
     }
 },{
         underscored: true,

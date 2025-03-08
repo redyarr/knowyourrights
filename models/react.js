@@ -16,11 +16,8 @@ const React = sequelize.define('reacts', {
         allowNull: false,
     },
     reaction: { 
-        type: DataTypes.STRING, 
+        type: DataTypes.ENUM('like', 'love', 'haha', 'wow', 'sad', 'angry'), 
         allowNull: false, 
-        validate: {
-            isIn: [['like', 'dislike', 'love', 'haha', 'sad', 'angry']] // Example reactions
-        }
     },
     createdAt: {
         type: DataTypes.DATE,

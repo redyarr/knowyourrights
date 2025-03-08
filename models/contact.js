@@ -1,4 +1,4 @@
-const {sequelize, DataTypes} = require('../util/db');
+const { sequelize, DataTypes } = require('../util/db');
 
 const Contact = sequelize.define('contacts', {
     id: {
@@ -10,17 +10,18 @@ const Contact = sequelize.define('contacts', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    number: {
-        type: DataTypes.STRING,
+    number: { 
+        type: DataTypes.STRING(20),
         allowNull: false,
         validate: {
             notEmpty: true,
-            isNumeric: true
+            isNumeric: { msg: "Must be a number" }
         },
         unique: true
     }
 }, {
-    timestamps: true,
+    timestamps: false,
+    underscored: true
 });
 
 module.exports = Contact;

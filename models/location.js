@@ -1,10 +1,14 @@
-const {sequelize, DataTypes} = require('../util/db');
+const { sequelize, DataTypes } = require('../util/db');
 
 const Location = sequelize.define('locations', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
+    },
+    userId: {
+        type: DataTypes.INTEGER,
+        allowNull: false
     },
     country: { 
         type: DataTypes.STRING, 
@@ -16,7 +20,14 @@ const Location = sequelize.define('locations', {
     },
 }, {
     timestamps: false,
-    underscored: true
-})
+    underscored: true,
+    indexes: [
+        {
+            name: 'unique_country_city', 
+            unique: true,
+            fields: ['country', 'city']
+        }
+    ]
+});
 
-module.exports = Location
+module.exports = Location;

@@ -4,6 +4,10 @@ const SequelizeStore = require('connect-session-sequelize')(session.Store);
 
 const myStore = new SequelizeStore({ db: sequelize });
 
+myStore.sync().catch(err => {
+    console.error('Failed to sync session store:', err);
+});
+
 const sessionMiddleware = session({
     secret: process.env.SESSION_SECRET || "my secret",
     resave: false,
@@ -11,6 +15,9 @@ const sessionMiddleware = session({
     store: myStore
 });
 
+/**
+ * Middleware to set the logged-in user ID in response locals.
+ */
 const setLoggedInUser = (req, res, next) => {
     if (req.session && req.session.user_id) {
         res.locals.loggedInUserId = req.session.user_id;

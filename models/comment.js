@@ -1,4 +1,4 @@
-const {sequelize, DataTypes} = require('../util/db');
+const { sequelize, DataTypes } = require('../util/db');
 
 const Comment = sequelize.define('comments', {
     id: {
@@ -8,22 +8,24 @@ const Comment = sequelize.define('comments', {
     },
     postId: {
         type: DataTypes.INTEGER,
+        allowNull: false,
     },
     userId: {
         type: DataTypes.INTEGER,
+        allowNull: false,
     },
     content: {
         type: DataTypes.TEXT,
-        allowNull: false
+        allowNull: false,
     },
     createdAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW
     },
 }, {
     timestamps: false,
-    underscored: true
+    underscored: true,
 });
 
 module.exports = Comment;

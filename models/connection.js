@@ -1,4 +1,4 @@
-const {sequelize, DataTypes} = require('../util/db');
+const { sequelize, DataTypes } = require('../util/db');
 
 const Connection = sequelize.define('connections', {
     id: {
@@ -9,17 +9,37 @@ const Connection = sequelize.define('connections', {
     requesterId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        validate: {
+            isInt: true,
+            min: 1,
+        },
     },
     receiverId: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        validate: {
+            isInt: true,
+            min: 1,
+        },
     },
     status: {
-        type: DataTypes.STRING, 
+        type: DataTypes.ENUM('pending', 'accepted', 'rejected'),
         allowNull: false,
     },
+    CreatedAt:{
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW,
+    }
 }, {
-    timestamps: true,
+    indexes: [
+        {
+            unique: true,
+            fields: ['requester_id', 'receiver_id'],
+        },
+    ],
+    timestamps: false,
+    underscored: true,
 });
 
 module.exports = Connection;

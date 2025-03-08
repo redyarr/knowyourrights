@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { Users, Blogs, Comments, Reacts, Notifications, Categories } = require('../models'); // Import Sequelize models
+const { Users, Posts, Comments, Reacts, Notifications, Categories } = require('../models'); // Import Sequelize models
 const bcrypt = require('bcrypt'); // Make sure to require bcrypt
 
 // Seed database (runs only once)

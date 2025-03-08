@@ -1,6 +1,6 @@
 const {sequelize, DataTypes} = require('../util/db');
 
-const ProfileImage = sequelize.define('profile_images', {
+const PostPhoto = sequelize.define('post_photos', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -10,8 +10,8 @@ const ProfileImage = sequelize.define('profile_images', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    imagePath: {
-        type: DataTypes.STRING,
+    photoId: {
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
 }, {
@@ -19,4 +19,4 @@ const ProfileImage = sequelize.define('profile_images', {
     underscored: true
 })
 
-module.exports = ProfileImage
+module.exports = PostPhoto

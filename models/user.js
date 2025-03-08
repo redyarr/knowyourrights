@@ -1,4 +1,4 @@
-const {sequelize, DataTypes} = require('../util/db');
+const { sequelize, DataTypes } = require('../util/db');
 const bcrypt = require('bcrypt');
 
 const User = sequelize.define('users', {
@@ -44,8 +44,24 @@ const User = sequelize.define('users', {
             const salt = await bcrypt.genSalt(10);
             user.password = await bcrypt.hash(user.password, salt);
             return user;
+        },
+        beforeUpdate: async (user) => {
+            if (user.changed('password')) {
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(user.password, salt);
+            }
+            return user;
+        }
+    },
+    instanceMethods: {
+        validPassword: async function(password) {
+            return await bcrypt.compare(password, this.password);
         }
     }
 });
+
+User.prototype.validPassword = async function(password) {
+    return await bcrypt.compare(password, this.password);
+};
 
 module.exports = User;

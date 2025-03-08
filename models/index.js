@@ -1,74 +1,93 @@
 const { sequelize } = require('../util/db');
-console.log("====================================");
 console.log("Initializing models...");
 
 // Import models
-const Users = require('./user');
-const Posts = require('./Post');
-const Lawyers = require('./lawyer');
-const Comments = require('./comment');
-const Categories = require('./category');
-const Reacts = require('./react');
-const Contacts = require('./contact');
-const Connections = require('./connection');
-const Messages = require('./message');
-const Notifications = require('./notification');
-const Shares = require('./share');
-const PostImages = require('./postImage');
-const PostCategories = require('./postCategory')
+const User = require('./user');
+const Category = require('./category');
+const Connection = require('./connection');
+const Post = require('./post');
+const Lawyer = require('./lawyer');
+const Comment = require('./comment');
+const React = require('./react');
+const Message = require('./message');
+const Contact = require('./contact');
+const Notification = require('./notification');
+const Share = require('./share');
+const PostPhoto = require('./postPhoto');
+const Photo = require('./photo');
+const PostCategory = require('./postCategory');
+const Location = require('./location');
+const UserNotification = require('./userNotification');
+const ProfileImage = require('./profileImage');
+const Education = require('./education');
+const LawyerEducation = require('./lawyerEducation')
+
 
 console.log("Models imported successfully");
 
 // Define associations
 try {
-    Users.hasOne(Lawyers, { foreignKey: 'user_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
-    Lawyers.belongsTo(Users, { foreignKey: 'user_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    // User and Lawyer
+    User.hasOne(Lawyer, { foreignKey: 'user_id' });
+    Lawyer.belongsTo(User, { foreignKey: 'user_id' });
 
-    Users.hasMany(Posts, { foreignKey: 'author_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
-    Posts.belongsTo(Users, { foreignKey: 'author_id', onDelete: 'CASCADE', onUpdate: 'CASCADE' });
+    // Lawyer and Education
+    Lawyer.belongsToMany(Education, { through: LawyerEducation, foreignKey: 'lawyer_id' });
+    Education.belongsToMany(Lawyer, { through: LawyerEducation, foreignKey: 'education_id' });
 
-    Lawyers.hasMany(Contacts, { foreignKey: 'lawyerId' });
-    Contacts.belongsTo(Lawyers, { foreignKey: 'lawyerId' });
+    // User and Post
+    User.hasMany(Post, { foreignKey: 'author_id' });
+    Post.belongsTo(User, { foreignKey: 'author_id' });
 
-    Users.hasMany(Reacts, { foreignKey: 'user_id' });
-    Reacts.belongsTo(Users, { foreignKey: 'user_id' });
+    // User and Contact
+    User.hasMany(Contact, { foreignKey: 'user_id' });
+    Contact.belongsTo(User, { foreignKey: 'user_id' });
 
-    Posts.hasMany(Reacts, { foreignKey: 'post_id' });
-    Reacts.belongsTo(Posts, { foreignKey: 'post_id' });
+    // User and Location
+    User.hasOne(Location, { foreignKey: 'user_id' });
+    Location.belongsTo(User, { foreignKey: 'user_id' });
 
-    Users.hasMany(Connections, { foreignKey: 'requester_id' });
-    Users.hasMany(Connections, { foreignKey: 'receive_id' });
-    Connections.belongsTo(Users, { foreignKey: 'requester_id' });
-    Connections.belongsTo(Users, { foreignKey: 'receive_id' });
+    // User and Connection
+    User.hasMany(Connection, { foreignKey: 'requester_id' });
+    User.hasMany(Connection, { foreignKey: 'receiver_id' });
+    Connection.belongsTo(User, { foreignKey: 'requester_id' });
+    Connection.belongsTo(User, { foreignKey: 'receiver_id' });
 
-    Users.hasMany(Messages, { foreignKey: 'sender_id' });
-    Users.hasMany(Messages, { foreignKey: 'receive_id' });
-    Messages.belongsTo(Users, { foreignKey: 'sender_id' });
-    Messages.belongsTo(Users, { foreignKey: 'receive_id' });
+    // User and Message
+    User.hasMany(Message, { foreignKey: 'sender_id' });
+    User.hasMany(Message, { foreignKey: 'receiver_id' });
+    Message.belongsTo(User, { foreignKey: 'sender_id' });
+    Message.belongsTo(User, { foreignKey: 'receiver_id' });
 
-    Users.hasMany(Notifications, { foreignKey: 'user_id' });
-    Notifications.belongsTo(Users, { foreignKey: 'user_id' });
+    // User and UserNotification
+    User.hasMany(UserNotification, { foreignKey: 'user_id' });
+    UserNotification.belongsTo(User, { foreignKey: 'user_id' });
+    Notification.hasMany(UserNotification, { foreignKey: 'notification_id' });
+    UserNotification.belongsTo(Notification, { foreignKey: 'notification_id' });
 
-    Users.hasMany(Shares, { foreignKey: 'user_id' });
-    Shares.belongsTo(Users, { foreignKey: 'user_id' });
-    
-    Categories.hasMany(Posts, { foreignKey: 'category_id' });
-    Posts.belongsTo(Categories, { foreignKey: 'category_id' });
+    // User and Share
+    User.hasMany(Share, { foreignKey: 'user_id' });
+    Share.belongsTo(User, { foreignKey: 'user_id' });
 
-    Posts.hasMany(Shares, { foreignKey: 'post_id' });
-    Shares.belongsTo(Posts, { foreignKey: 'post_id' });
+    // Post and Share
+    Post.hasMany(Share, { foreignKey: 'post_id' });
+    Share.belongsTo(Post, { foreignKey: 'post_id' });
 
-    Posts.hasMany(Comments, { foreignKey: 'post_id' });
-    Comments.belongsTo(Posts, { foreignKey: 'post_id' });
-    
-    Posts.hasMany(PostImages, { foreignKey: 'post_id' });
-    PostImages.belongsTo(Posts, { foreignKey: 'post_id' });
-    
-    Users.hasMany(Comments, { foreignKey: 'user_id' });
-    Comments.belongsTo(Users, { foreignKey: 'user_id' });
+    // Post and Comment
+    Post.hasMany(Comment, { foreignKey: 'post_id' });
+    Comment.belongsTo(Post, { foreignKey: 'post_id' });
 
-    Posts.belongsToMany(Categories, { through: PostCategories, foreignKey: 'postId' });
-    Categories.belongsToMany(Posts, { through: PostCategories, foreignKey: 'category_id' });
+    // Post and Photo
+    Post.belongsToMany(Photo, { through: PostPhoto, foreignKey: 'post_id' });
+    Photo.belongsToMany(Post, { through: PostPhoto, foreignKey: 'photo_id' });
+
+    // Post and Category
+    Post.belongsToMany(Category, { through: PostCategory, foreignKey: 'post_id' });
+    Category.belongsToMany(Post, { through: PostCategory, foreignKey: 'category_id' });
+
+    // User and ProfileImage
+    User.hasOne(ProfileImage, { foreignKey: 'user_id' });
+    ProfileImage.belongsTo(User, { foreignKey: 'user_id' });
 
     console.log("Associations defined successfully");
 } catch (error) {
@@ -77,17 +96,25 @@ try {
 
 module.exports = {
     sequelize,
-    Users,
-    Posts,
-    Comments,
-    Categories,
-    Lawyers,
-    Reacts,
-    Contacts,
-    Connections,
-    Notifications,
-    Shares,
-    PostImages
+    User,
+    Post,
+    Comment,
+    Category,
+    Lawyer,
+    React,
+    Contact,
+    Connection,
+    Notification,
+    PostCategory,
+    Message,
+    Share,
+    PostPhoto,
+    Location,
+    UserNotification,
+    Photo,
+    ProfileImage,
+    Education,
+    LawyerEducation
 };
 
 console.log("Models exported");

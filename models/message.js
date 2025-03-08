@@ -23,7 +23,8 @@ const Message = sequelize.define('messages', {
     defaultValue: false
   }
 }, {
-  timestamps: true
+  timestamps: true,
+  underscored:true
 });
 
 module.exports = Message;
