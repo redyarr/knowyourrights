@@ -1,17 +1,17 @@
 const {sequelize, DataTypes} = require('../util/db');
 
-const Share = sequelize.define('shares', {
+const UserReport = sequelize.define('user_reports', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
     },
-    userId: {
+    userId: { 
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    postId: {
-        type: DataTypes.INTEGER,
+    reportType: {
+        type: DataTypes.ENUM('SPAM', 'ABUSE', 'OTHER'),
         allowNull: false,
     },
     createdAt: {
@@ -20,8 +20,8 @@ const Share = sequelize.define('shares', {
     defaultValue: DataTypes.NOW
     },
 }, {
-    underscored: true,
-    timestamps: false
-});
+    timestamps: false,
+    underscored: true
+})
 
-module.exports = Share;
+module.exports = UserReport

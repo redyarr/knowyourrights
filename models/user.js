@@ -31,13 +31,16 @@ const User = sequelize.define('users', {
         type: DataTypes.ENUM('visitor', 'lawyer', 'admin'),
         defaultValue: 'visitor'
     },
-    createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-        defaultValue: DataTypes.NOW
+    country: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    city: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 }, {
-    timestamps: false,
+    timestamps: true,
     underscored: true,
     hooks: {
         beforeCreate: async (user) => {
@@ -51,11 +54,6 @@ const User = sequelize.define('users', {
                 user.password = await bcrypt.hash(user.password, salt);
             }
             return user;
-        }
-    },
-    instanceMethods: {
-        validPassword: async function(password) {
-            return await bcrypt.compare(password, this.password);
         }
     }
 });

@@ -12,7 +12,7 @@ const sessionMiddleware = session({
     secret: process.env.SESSION_SECRET || "my secret",
     resave: false,
     saveUninitialized: false,
-    store: myStore
+    store: myStore,
 });
 
 /**
@@ -26,6 +26,8 @@ const setLoggedInUser = (req, res, next) => {
     }
     next();
 };
+
+// const setAdminLoged
 
 module.exports = {
     sessionMiddleware,

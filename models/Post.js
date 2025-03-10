@@ -17,6 +17,9 @@ const Post = sequelize.define('posts', {
     content: {
         type: DataTypes.TEXT,
         allowNull: false
+    },
+    postType:{
+        type: DataTypes.ENUM('BLOG', 'JOB')
     },    
     createdAt: {
         type: DataTypes.DATE,

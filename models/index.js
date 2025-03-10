@@ -16,11 +16,14 @@ const Share = require('./share');
 const PostPhoto = require('./postPhoto');
 const Photo = require('./photo');
 const PostCategory = require('./postCategory');
-const Location = require('./location');
 const UserNotification = require('./userNotification');
 const ProfileImage = require('./profileImage');
 const Education = require('./education');
 const LawyerEducation = require('./lawyerEducation')
+const PostReport = require('./postReport');
+const UserReport = require('./userReport');
+const JobApply = require('./jobApply')
+// const Job
 
 
 console.log("Models imported successfully");
@@ -39,13 +42,29 @@ try {
     User.hasMany(Post, { foreignKey: 'author_id' });
     Post.belongsTo(User, { foreignKey: 'author_id' });
 
+    // Post and PostReport
+    Post.hasMany(PostReport, { foreignKey: 'post_id' });
+    PostReport.belongsTo(Post, { foreignKey: 'post_id' });
+
+    // User and PostReport
+    User.hasMany(PostReport, { foreignKey: 'user_id' });
+    PostReport.belongsTo(User, { foreignKey: 'user_id' });
+
+    // Post and JobApply
+    Post.hasMany(JobApply, { foreignKey: 'post_id' });
+    JobApply.belongsTo(Post, { foreignKey: 'post_id' });
+
+    // User and JobApply
+    User.hasMany(JobApply, { foreignKey: 'user_id' });
+    JobApply.belongsTo(User, { foreignKey: 'user_id' });
+
+    // User and UserReport
+    User.hasMany(UserReport, { foreignKey: 'user_id' });
+    UserReport.belongsTo(User, { foreignKey: 'user_id' });
+
     // User and Contact
     User.hasMany(Contact, { foreignKey: 'user_id' });
     Contact.belongsTo(User, { foreignKey: 'user_id' });
-
-    // User and Location
-    User.hasOne(Location, { foreignKey: 'user_id' });
-    Location.belongsTo(User, { foreignKey: 'user_id' });
 
     // User and Connection
     User.hasMany(Connection, { foreignKey: 'requester_id' });
@@ -68,6 +87,18 @@ try {
     // User and Share
     User.hasMany(Share, { foreignKey: 'user_id' });
     Share.belongsTo(User, { foreignKey: 'user_id' });
+
+    // User and Comment
+    User.hasMany(Comment, { foreignKey: 'user_id' });
+    Comment.belongsTo(User, { foreignKey: 'user_id' });
+
+    // User and React
+    User.hasMany(React, { foreignKey: 'user_id' });
+    React.belongsTo(User, { foreignKey: 'user_id' });
+
+    // Post and React
+    Post.hasMany(React, { foreignKey: 'post_id' });
+    React.belongsTo(Post, { foreignKey: 'post_id' });
 
     // Post and Share
     Post.hasMany(Share, { foreignKey: 'post_id' });
@@ -109,12 +140,14 @@ module.exports = {
     Message,
     Share,
     PostPhoto,
-    Location,
     UserNotification,
     Photo,
     ProfileImage,
     Education,
-    LawyerEducation
+    LawyerEducation,
+    JobApply,
+    PostReport,
+    UserReport
 };
 
 console.log("Models exported");

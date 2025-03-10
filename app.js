@@ -11,9 +11,8 @@ const {sequelize} = require('./models');
 
 // Import routes
 const UserRouter = require('./routes/User');
-const BlogRouter = require('./routes/blog'); 
-const LawyerRouter = require('./routes/Lawyer');
-const storeRouter = require('./util/store.js');
+const PostRouter = require('./routes/Post');
+const storeRouter = require('./util/seed.js');
 
 // Import session configuration
 const { sessionMiddleware, setLoggedInUser } = require('./middlewares/session');
@@ -40,22 +39,21 @@ app.use(expressLayouts); // Enable layouts
 app.set('layout', 'layouts/main'); // Set default layout
 
 // Using routes
-app.use('/lawyer', LawyerRouter);
-app.use('/blog', BlogRouter);
 app.use('/user', UserRouter);
-app.use('/sql', storeRouter); 
+app.use('/', PostRouter);
+app.use('/seed', storeRouter); 
 
 // Redirect root URL to /blog
-app.get('/', (req, res) => {
-    res.redirect('/blog');
-});
+// app.get('/', (req, res) => {
+//     res.redirect('/blog');
+// });
 
 // Handle 404 errors
-app.use((req, res) => {
-    res.status(404).send('Page not found');
-});
+// app.use((req, res) => {
+//     res.status(404).send('Page not found');
+// });
 
-console.log("below");
+// console.log("below");
 // console.log(sequelize);
 
 // { force: true }

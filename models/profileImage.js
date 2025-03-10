@@ -6,7 +6,7 @@ const ProfileImage = sequelize.define('profile_images', {
         primaryKey: true,
         autoIncrement: true
     },
-    postId: { 
+    userId: { 
         type: DataTypes.INTEGER,
         allowNull: false,
     },

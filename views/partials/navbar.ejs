@@ -1,124 +1,112 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top border-bottom">
-  <div class="container">
-    <!-- Logo -->
-    <a class="navbar-brand text-primary fw-bold" href="/">
-      <i class="fab fa-linkedin me-1"></i> LegalNet
-    </a>
+<nav class="bg-white border-b border-gray-200 fixed w-full top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex justify-between h-16 items-center">
 
-    <!-- Search Bar -->
-    <div class="d-none d-md-flex position-relative mx-2 flex-grow-1" style="max-width: 280px;">
-      <div class="input-group">
-        <span class="input-group-text bg-light border-end-0">
-          <i class="fas fa-search text-muted"></i>
-        </span>
-        <input type="text" class="form-control bg-light border-start-0" placeholder="Search">
+      <!-- Left nav -->
+      <div class="flex items-center">
+        <a href="/" class="flex items-center text-blue-700 font-bold text-xl">
+          <i class="fab fa-linkedin mr-2"></i> LegalNet
+        </a>
+        <div class="ml-4 relative">
+          <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
+            <i class="fas fa-search text-gray-400"></i>
+          </span>
+          <input type="text" placeholder="Search"
+            class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500">
+        </div>
       </div>
-    </div>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav mx-auto">
-        <li class="nav-item text-center">
-          <a class="nav-link <%= path === '/blog' || path === '/' ? 'active' : '' %>" href="/blog">
-            <i class="fas fa-home fs-5"></i>
-            <span class="d-block small">Home</span>
+      <!-- Center nav -->
+      <% if (locals.loggedInUserId) { %>
+        <div class="hidden md:flex space-x-8">
+          <a href="/"
+            class="flex flex-col items-center text-gray-500 hover:text-gray-900 text-sm <%= (path === '/' || path === '/blog') ? 'font-bold text-blue-700' : '' %>">
+            <i class="fas fa-home text-xl"></i>
+            <span>Home</span>
           </a>
-        </li>
-        <% if (locals.loggedInUserId) { %>
-          <li class="nav-item text-center">
-            <a class="nav-link <%= path.includes('/user/network') ? 'active' : '' %>" href="/user/network">
-              <i class="fas fa-user-friends fs-5"></i>
-              <span class="d-block small">My Network</span>
-            </a>
-          </li>
-          <li class="nav-item text-center">
-            <a class="nav-link <%= path.includes('/messages') ? 'active' : '' %>"
-              href="/user/<%= locals.loggedInUserId %>/messages">
-              <i class="fas fa-comment-dots fs-5"></i>
-              <span class="d-block small">Messaging</span>
-              <% if (locals.unreadMessageCount && locals.unreadMessageCount> 0) { %>
-                <span class="position-absolute top-0 start-75 translate-middle badge rounded-pill bg-danger">
-                  <%= locals.unreadMessageCount %>
-                </span>
-                <% } %>
-            </a>
-          </li>
-          <li class="nav-item text-center">
-            <a class="nav-link <%= path.includes('/notifications') ? 'active' : '' %>"
-              href="/user/<%= locals.loggedInUserId %>/notifications">
-              <i class="fas fa-bell fs-5"></i>
-              <span class="d-block small">Notifications</span>
-              <% if (locals.unreadNotificationCount && locals.unreadNotificationCount> 0) { %>
-                <span class="position-absolute top-0 start-75 translate-middle badge rounded-pill bg-danger">
-                  <%= locals.unreadNotificationCount %>
-                </span>
-                <% } %>
-            </a>
-          </li>
-          <% } %>
-      </ul>
+          <a href="/user/network"
+            class="flex flex-col items-center text-gray-500 hover:text-gray-900 text-sm <%= path.includes('/user/network') ? 'font-bold text-blue-700' : '' %>">
+            <i class="fas fa-user-friends text-xl"></i>
+            <span>My Network</span>
+          </a>
+          <a href="/user/<%= locals.loggedInUserId %>/jobs"
+            class="flex flex-col items-center text-gray-500 hover:text-gray-900 text-sm <%= path.includes('/jobs') ? 'font-bold text-blue-700' : '' %>">
+            <i class="fas fa-briefcase text-xl"></i>
+            <span>Jobs</span>
+          </a>
+          <a href="/user/<%= locals.loggedInUserId %>/messages"
+            class="relative flex flex-col items-center text-gray-500 hover:text-gray-900 text-sm <%= path.includes('/messages') ? 'font-bold text-blue-700' : '' %>">
+            <i class="fas fa-comment-dots text-xl"></i>
+            <span>Messaging</span>
+            <% if (locals.unreadMessageCount> 0) { %>
+              <span
+                class="absolute top-0 right-0 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                <%= locals.unreadMessageCount %>
+              </span>
+              <% } %>
+          </a>
+          <a href="/user/<%= locals.loggedInUserId %>/notifications"
+            class="relative flex flex-col items-center text-gray-500 hover:text-gray-900 text-sm <%= path.includes('/notifications') ? 'font-bold text-blue-700' : '' %>">
+            <i class="fas fa-bell text-xl"></i>
+            <span>Notifications</span>
+            <% if (locals.unreadNotificationCount> 0) { %>
+              <span
+                class="absolute top-0 right-0 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                <%= locals.unreadNotificationCount %>
+              </span>
+              <% } %>
+          </a>
+        </div>
+        <% } %>
 
-      <ul class="navbar-nav ms-auto">
-        <% if (locals.loggedInUserId) { %>
-          <li class="nav-item dropdown text-center">
-            <a class="nav-link dropdown-togglee" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-              aria-expanded="false">
-              <div class="position-relative">
-                <img src="https://media.licdn.com/dms/image/v2/D4D03AQF9FvdZ1W1_9g/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1712227644410?e=1746662400&v=beta&t=h_guvHTPpOuEEWiAAnuGwQLiaaMLVRgSJGwzP79vRlU" 
-                      alt="Profile" class="rounded-circle"
-                  style="width: 24px; height: 24px; object-fit: cover;">
-              </div>
-              <span class="d-block small">Me <i class="fas fa-caret-down fa-fw"></i></span>
-
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-              <li class="dropdown-header">
-                <div class="d-flex align-items-center">
-                  <img src="https://media.licdn.com/dms/image/v2/D4D03AQF9FvdZ1W1_9g/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1712227644410?e=1746662400&v=beta&t=h_guvHTPpOuEEWiAAnuGwQLiaaMLVRgSJGwzP79vRlU" 
-                        alt="Profile" class="rounded-circle me-2"
-                    style="width: 48px; height: 48px; object-fit: cover;">
-                  <div>
-                    <h6 class="mb-0">Your Profile</h6>
-                    <small class="text-muted">See your profile</small>
+          <!-- Right nav -->
+          <div class="flex items-center space-x-4">
+            <% if (locals.loggedInUserId) { %>
+              <div class="relative group">
+                <button id="profileButton" class="flex items-center text-gray-500 hover:text-gray-900 focus:outline-none">
+                  <img src="https://ui-avatars.com/api/?background=random" alt="Profile" class="h-8 w-8 rounded-full">
+                  <span class="ml-2 text-sm">Me <i class="fas fa-caret-down ml-1"></i></span>
+                </button>
+                <div id="profileMenu"
+                  class="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg hidden z-50">
+                  <div class="p-4 border-b">
+                    <div class="flex items-center space-x-3">
+                      <img src="https://ui-avatars.com/api/?background=random" alt="Profile"
+                        class="h-16 w-16 rounded-full">
+                      <div>
+                        <h4 class="font-semibold text-gray-800">
+                          <%= user.firstName %>
+                            <%= user.lastName %>
+                        </h4>
+                        <p class="text-sm text-gray-600">
+                          <%= user.role==='lawyer' ? 'Lawyer' : 'Member' %>
+                        </p>
+                      </div>
+                    </div>
+                    <a href="/user/<%= locals.loggedInUserId %>"
+                      class="block mt-2 px-4 py-2 text-sm text-blue-600 text-center hover:bg-blue-50 rounded-md">View
+                      Profile</a>
+                  </div>
+                  <div class="py-2">
+                    <a href="/settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings &
+                      Privacy</a>
+                    <a href="/help" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Help Center</a>
+                    <a href="/user/logout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign Out</a>
                   </div>
                 </div>
-              </li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
-              <li><a class="dropdown-item" href="/user/<%= locals.loggedInUserId %>">View Profile</a></li>
-              <li><a class="dropdown-item" href="/user/edit/<%= locals.loggedInUserId %>">Edit Profile</a></li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
-              <li>
-                <h6 class="dropdown-header">Account</h6>
-              </li>
-              <li><a class="dropdown-item" href="#">Settings & Privacy</a></li>
-              <li><a class="dropdown-item" href="#">Help Center</a></li>
-              <li>
-                <hr class="dropdown-divider">
-              </li>
-              <li>
-                <form action="/user/logout" method="POST">
-                  <button type="submit" class="dropdown-item">Sign Out</button>
-                </form>
-              </li>
-            </ul>
-          </li>
-          <% } else { %>
-            <li class="nav-item">
-              <a class="nav-link btn btn-outline-primary rounded-pill px-3 me-2" href="/user/login">Sign In</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link btn btn-primary rounded-pill px-3" href="/user/create">Join Now</a>
-            </li>
-            <% } %>
-      </ul>
+              </div>
+              <% } else { %>
+                <a href="/user/login" class="text-gray-700 hover:text-gray-900 px-3 py-2">Sign in</a>
+                <a href="/user/register"
+                  class="ml-4 px-4 py-2 rounded-full text-blue-700 hover:bg-blue-50 border border-blue-700">Join now</a>
+                <% } %>
+          </div>
     </div>
   </div>
 </nav>
+<script>
+  document.getElementById('profileButton').addEventListener('click', function() {
+    var menu = document.getElementById('profileMenu');
+    menu.classList.toggle('hidden');
+  });
+</script>

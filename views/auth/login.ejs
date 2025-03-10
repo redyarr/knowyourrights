@@ -1,0 +1,40 @@
+<div class="min-h-screen flex flex-col items-center justify-center bg-[#f3f2ef] py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full">
+        <div class="text-center">
+            <h2 class="text-3xl font-bold mb-2">Sign in to Legal Network</h2>
+            <p class="text-gray-600 mb-8">Stay updated on your professional world</p>
+        </div>
+
+        <div class="bg-white p-8 rounded-lg shadow-sm">
+            <% if (error) { %>
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    <%= error %>
+                </div>
+                <% } %>
+
+                    <form action="/user/login" method="POST" class="space-y-6">
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2" for="email">Email</label>
+                            <input type="email" name="email" id="email" required
+                                class="w-full border border-gray-300 rounded-lg p-3">
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2" for="password">Password</label>
+                            <input type="password" name="password" id="password" required
+                                class="w-full border border-gray-300 rounded-lg p-3">
+                        </div>
+
+                        <button type="submit"
+                            class="w-full bg-blue-600 text-white py-3 px-4 rounded-full hover:bg-blue-700 font-medium">
+                            Sign in
+                        </button>
+                    </form>
+
+                    <p class="mt-6 text-center text-gray-600">
+                        New to Legal Network?
+                        <a href="/user/register" class="text-blue-600 hover:text-blue-700 font-medium">Join now</a>
+                    </p>
+        </div>
+    </div>
+</div>

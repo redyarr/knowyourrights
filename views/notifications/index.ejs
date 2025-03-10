@@ -1,0 +1,42 @@
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow">
+        <!-- Notifications header -->
+        <div class="p-4 border-b">
+            <h1 class="text-2xl font-bold">Notifications</h1>
+        </div>
+
+        <!-- Notifications list -->
+        <div class="divide-y max-h-[calc(100vh-200px)] overflow-y-auto custom-scrollbar">
+            <% notifications.forEach(notification=> { %>
+                <div class="p-4 <%= !notification.isRead ? 'notification-unread' : '' %> hover:bg-gray-50">
+                    <div class="flex items-start space-x-3">
+                        <div class="flex-shrink-0">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fas fa-bell text-blue-500"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-semibold">
+                                <%= notification.notification.title %>
+                            </h4>
+                            <p class="text-gray-600 mt-1">
+                                <%= notification.notification.message %>
+                            </p>
+                            <p class="text-sm text-gray-500 mt-2">
+                                <%= new Date(notification.createdAt).toLocaleDateString() %>
+                            </p>
+                        </div>
+                        <% if (!notification.isRead) { %>
+                            <form method="POST" action="/notifications/mark-read">
+                                <input type="hidden" name="notificationId" value="<%= notification.notificationId %>">
+                                <button type="submit" class="text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-circle text-xs"></i>
+                                </button>
+                            </form>
+                            <% } %>
+                    </div>
+                </div>
+                <% }) %>
+        </div>
+    </div>
+</div>

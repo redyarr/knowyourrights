@@ -1,0 +1,45 @@
+/* Custom styles for Messaging Popup */
+.messaging-popup {
+    transition: transform 0.3s ease-in-out;
+}
+
+.messaging-popup-collapsed {
+    transform: translateY(calc(100% - 3rem));
+    /* Only header visible */
+}
+
+/* Navigation styles */
+.nav-link-active {
+    color: #0a66c2;
+    font-weight: 600;
+}
+
+/* Profile card styles */
+.profile-background {
+    background: linear-gradient(to right, #0073b1, #0a66c2);
+    height: 200px;
+}
+
+/* Message list styles */
+.message-unread {
+    background-color: rgba(10, 102, 194, 0.1);
+}
+
+/* Notification styles */
+.notification-unread {
+    background-color: #f3f9ff;
+}
+
+/* Custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
