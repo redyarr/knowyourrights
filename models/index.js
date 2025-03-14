@@ -2,15 +2,19 @@ const { sequelize } = require('../util/db');
 console.log("Initializing models...");
 
 // Import models
+const Connection = require('./connection');
+const Contact = require('./contact');
+const Education = require('./education');
+const Job = require('./job')
+const JobApply = require('./jobApply')
+const JobReport = require('./jobReport')
 const User = require('./user');
 const Category = require('./category');
-const Connection = require('./connection');
 const Post = require('./post');
 const Lawyer = require('./lawyer');
 const Comment = require('./comment');
 const React = require('./react');
 const Message = require('./message');
-const Contact = require('./contact');
 const Notification = require('./notification');
 const Share = require('./share');
 const Photo = require('./photo');
@@ -18,13 +22,9 @@ const PostPhoto = require('./postPhoto');
 const PostCategory = require('./postCategory');
 const UserNotification = require('./userNotification');
 const ProfileImage = require('./profileImage');
-const Education = require('./education');
 const LawyerEducation = require('./lawyerEducation')
 const PostReport = require('./postReport');
 const UserReport = require('./userReport');
-const Job = require('./job')
-const JobReport = require('./jobReport')
-const JobApply = require('./jobApply')
 const lawyerDoc = require('./lawwyerDoc');
 
 

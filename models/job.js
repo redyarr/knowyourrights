@@ -22,6 +22,11 @@ const Job = sequelize.define('jobs', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW
+    }
 })
 
 module.exports = Job;

@@ -10,7 +10,7 @@ const UserNotification = sequelize.define('user_notifications', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
-    notificationId: {
+    notification_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
     },

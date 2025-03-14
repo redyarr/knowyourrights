@@ -1,33 +1,30 @@
 <div class="max-w-4xl mx-auto px-4">
-  <!-- Profile Header Card -->
-  <div class="relative bg-white shadow rounded-lg overflow-hidden">
-    <!-- Background Image -->
-    <div class="h-48 bg-cover bg-center" style="background-image: url('<%= profile.backgroundImage || "https://via.placeholder.com/800x200" %>');"></div>
-    <!-- Profile Image and Action Buttons -->
+  <!-- Profile Header -->
+  <div class="relative bg-white shadow-lg rounded-lg overflow-hidden">
+    <div class="h-48 bg-cover bg-center" style="background-image: url('<%= profile?.backgroundImage || "https://via.placeholder.com/800x200" %>');"></div>
+
     <div class="absolute top-32 left-6 flex items-end">
-      <img src="<%= profile.dataValues.profile_image.dataValues.imagePath || 'https://via.placeholder.com/150' %>" alt="Profile" class="w-32 h-32 rounded-full border-4 border-white object-cover">
+      <img src="<%= profile.dataValues.profile_image.dataValues.imagePath || 'https://via.placeholder.com/150' %>" 
+        alt="Profile" class="w-32 h-32 rounded-full border-4 border-white object-cover">
     </div>
+
     <div class="absolute top-6 right-6">
-      <% if (locals.loggedInUserId && locals.loggedInUserId === profile.id) { %>
+      <% if (locals.loggedInUserId && locals.loggedInUserId === profile?.id) { %>
         <a href="/user/<%= profile.id %>/edit"
-          class="flex items-center px-4 py-2 border border-blue-600 text-blue-600 rounded-full hover:bg-blue-50 transition duration-200">
+          class="flex items-center px-4 py-2 border border-blue-600 text-blue-600 rounded-full hover:bg-blue-50 transition">
           <i class="fas fa-pencil-alt mr-1"></i> Edit Profile
         </a>
       <% } else { %>
-        <div class="flex space-x-2">
-          <button class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-200">Connect</button>
-          <button class="border border-blue-600 text-blue-600 px-4 py-2 rounded-full hover:bg-blue-50 transition duration-200">Message</button>
-        </div>
+        <button class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition">Connect</button>
       <% } %>
     </div>
+
     <div class="pt-20 pb-6 px-6">
-      <h2 class="text-2xl font-bold"><%= profile.firstName %> <%= profile.lastName %></h2>
-      <p class="text-gray-600">
-        <%= profile.role.charAt(0).toUpperCase() + profile.role.slice(1) %> at LegalNet
-      </p>
-      <p class="text-gray-500 text-sm"><%= profile.location || "New York, United States" %></p>
+      <h2 class="text-2xl font-bold"><%= profile?.firstName %> <%= profile?.lastName %></h2>
+      <p class="text-gray-600"><%= profile?.role?.charAt(0).toUpperCase() + profile?.role?.slice(1) %></p>
+      <p class="text-gray-500 text-sm"><%= profile?.location || "New York, United States" %></p>
       <div class="flex mt-3 space-x-4">
-        <a href="#" class="text-blue-600 hover:underline text-sm"><%= profile.connectionsCount || "500+" %> connections</a>
+        <a href="#" class="text-blue-600 hover:underline text-sm"><%= profile?.connections?.length || "500+" %> connections</a>
         <a href="#" class="text-blue-600 hover:underline text-sm">Contact info</a>
       </div>
     </div>
@@ -39,126 +36,50 @@
       <h3 class="text-xl font-bold">About</h3>
     </div>
     <div class="px-6 py-4">
-      <p class="text-gray-700">
-        <%= profile.about ||
-        "Experienced legal professional with a passion for helping clients navigate complex legal matters. Specializing in corporate law and contract negotiations." %>
-      </p>
+      <p class="text-gray-700"><%= profile?.about || "No description available." %></p>
     </div>
   </div>
 
-  <!-- Experience Section -->
-  <% if (profile.experiences && profile.experiences.length > 0) { %>
-    <div class="bg-white shadow rounded-lg mb-5">
-      <div class="border-b px-6 py-3 flex justify-between items-center">
-        <h3 class="text-xl font-bold">Experience</h3>
-        <% if (locals.loggedInUserId && locals.loggedInUserId === profile.id) { %>
-          <a href="/user/<%= profile.id %>/add-experience"
-            class="px-3 py-1 border border-gray-400 text-gray-600 rounded hover:bg-gray-100 transition duration-200">
-            <i class="fas fa-plus"></i>
-          </a>
-        <% } %>
-      </div>
-      <div class="px-6 py-4 space-y-4">
-        <% profile.experiences.forEach(exp => { %>
-          <div class="flex space-x-4">
-            <div>
-              <img src="<%= exp.companyLogo || 'https://via.placeholder.com/60' %>" alt="Company Logo"
-                class="w-16 h-16 rounded object-cover">
-            </div>
-            <div>
-              <h4 class="font-bold text-lg"><%= exp.title %></h4>
-              <p class="text-gray-600"><%= exp.company %></p>
-              <p class="text-gray-500 text-sm"><%= exp.startDate %> - <%= exp.endDate || 'Present' %> · <%= exp.duration %></p>
-              <p class="text-gray-700"><%= exp.description %></p>
-            </div>
-          </div>
-        <% }); %>
-      </div>
-    </div>
-  <% } %>
-
-  <!-- Education Section (for Lawyers) -->
-  <% if (profile.role === 'lawyer' && profile.lawyer && profile.lawyer.educations && profile.lawyer.educations.length > 0) { %>
+  <!-- Education Section -->
+  <% if (profile?.Lawyer?.Education?.length > 0) { %>
     <div class="bg-white shadow rounded-lg mb-5">
       <div class="border-b px-6 py-3 flex justify-between items-center">
         <h3 class="text-xl font-bold">Education</h3>
-        <% if (locals.loggedInUserId && locals.loggedInUserId === profile.id) { %>
-          <a href="/user/<%= profile.id %>/add-education"
-            class="px-3 py-1 border border-gray-400 text-gray-600 rounded hover:bg-gray-100 transition duration-200">
-            <i class="fas fa-plus"></i>
-          </a>
-        <% } %>
       </div>
       <div class="px-6 py-4 space-y-4">
-        <% profile.lawyer.educations.forEach(education => { %>
-          <div class="flex space-x-4">
-            <div>
-              <img src="<%= education.universityLogo || 'https://via.placeholder.com/60' %>" alt="University Logo"
-                class="w-16 h-16 rounded object-cover">
-            </div>
-            <div>
-              <h4 class="font-bold text-lg"><%= education.university %></h4>
-              <p class="text-gray-600"><%= education.degree %> • <%= education.department %></p>
-              <p class="text-gray-500 text-sm"><%= education.college %></p>
-            </div>
+        <% profile?.Lawyer?.Education?.forEach(edu => { %>
+          <div class="border p-4 rounded-lg">
+            <h4 class="font-semibold text-lg"><%= edu?.institution %></h4>
+            <p class="text-gray-600"><%= edu?.degree %>, <%= edu?.fieldOfStudy %></p>
+            <p class="text-gray-500 text-sm"><%= edu?.startYear %> - <%= edu?.endYear || 'Present' %></p>
           </div>
         <% }); %>
       </div>
     </div>
   <% } %>
 
-  <!-- Skills Section -->
-  <% if (profile.skills && profile.skills.length > 0) { %>
+  <!-- Posts Section -->
+  <% if (profile?.Posts?.length > 0) { %>
     <div class="bg-white shadow rounded-lg mb-5">
-      <div class="border-b px-6 py-3 flex justify-between items-center">
-        <h3 class="text-xl font-bold">Skills</h3>
-        <% if (locals.loggedInUserId && locals.loggedInUserId === profile.id) { %>
-          <a href="/user/<%= profile.id %>/add-skill"
-            class="px-3 py-1 border border-gray-400 text-gray-600 rounded hover:bg-gray-100 transition duration-200">
-            <i class="fas fa-plus"></i>
-          </a>
-        <% } %>
-      </div>
-      <div class="px-6 py-4 grid grid-cols-2 gap-4">
-        <% profile.skills.forEach(skill => { %>
-          <div class="bg-gray-50 p-3 rounded-lg">
-            <h4 class="font-semibold"><%= skill.name %></h4>
-            <p class="text-gray-500 text-sm">Endorsed by <%= skill.endorsements %> colleagues</p>
-          </div>
-        <% }); %>
-      </div>
-    </div>
-  <% } %>
-
-  <!-- Accomplishments Section -->
-  <% if (profile.accomplishments && profile.accomplishments.length > 0) { %>
-    <div class="bg-white shadow rounded-lg mb-5">
-      <div class="border-b px-6 py-3 flex justify-between items-center">
-        <h3 class="text-xl font-bold">Accomplishments</h3>
-        <% if (locals.loggedInUserId && locals.loggedInUserId === profile.id) { %>
-          <a href="/user/<%= profile.id %>/add-accomplishment"
-            class="px-3 py-1 border border-gray-400 text-gray-600 rounded hover:bg-gray-100 transition duration-200">
-            <i class="fas fa-plus"></i>
-          </a>
-        <% } %>
+      <div class="border-b px-6 py-3">
+        <h3 class="text-xl font-bold">Posts</h3>
       </div>
       <div class="px-6 py-4 space-y-4">
-        <% profile.accomplishments.forEach(accomplishment => { %>
-          <div>
-            <h4 class="font-semibold text-lg"><%= accomplishment.title %></h4>
-            <p class="text-gray-500 text-sm"><%= accomplishment.description %></p>
+        <% profile?.Posts?.forEach(post => { %>
+          <div class="border p-4 rounded-lg">
+            <h4 class="font-semibold text-lg"><%= post?.title %></h4>
+            <p class="text-gray-700"><%= post?.content %></p>
           </div>
         <% }); %>
       </div>
     </div>
   <% } %>
 
-  <!-- Logout Button (for profile owner) -->
-  <% if (locals.loggedInUserId && locals.loggedInUserId === profile.id) { %>
+  <!-- Logout Button -->
+  <% if (locals.loggedInUserId === profile?.id) { %>
     <div class="mt-4 text-center">
       <form action="/user/logout" method="get">
-        <button type="submit"
-          class="px-4 py-2 border border-gray-400 text-gray-600 rounded hover:bg-gray-100 transition duration-200">
+        <button type="submit" class="px-4 py-2 border border-gray-400 rounded hover:bg-gray-100">
           Sign Out
         </button>
       </form>

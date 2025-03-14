@@ -14,10 +14,9 @@ router.get('/logout', isAuthenticated, AuthController.logout);
 
 // user profile
 // router.get('/profile', isAuthenticated, ProfileController.getProfile);
-router.get('/profile/:id', isAuthenticated, ProfileController.getProfile);
-router.get('/profile/:id/update', isAuthenticated, ProfileController.updateProfile);
+router.get('/:id', isAuthenticated, ProfileController.getProfile);
 // Network routes
-router.get('/notification', isAuthenticated, NotificationController.getNotifications);
+router.get('/:id/notifications', isAuthenticated, NotificationController.getNotifications);
 // router.get('/notification', isAuthenticated, NotificationController.getNotifications);
 // router.post('/network/connect/:id', isAuthenticated, AuthController.sendConnectionRequest);
 // router.post('/network/accept/:id', isAuthenticated, AuthController.acceptConnection);

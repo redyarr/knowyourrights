@@ -26,7 +26,7 @@ const Connection = sequelize.define('connections', {
         type: DataTypes.ENUM('pending', 'accepted', 'blocked'),
         allowNull: false,
     },
-    CreatedAt:{
+    createdAt:{
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: DataTypes.NOW,

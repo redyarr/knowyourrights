@@ -57,7 +57,7 @@ app.use('/seed', storeRouter);
 // console.log(sequelize);
 
 // { force: true }
-sequelize.sync( { force: true })
+sequelize.sync()
     .then(() => {
         server.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
