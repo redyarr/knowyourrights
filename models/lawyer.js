@@ -22,6 +22,9 @@ const Lawyer = sequelize.define('lawyers', {
     summery:{
         type: DataTypes.TEXT,
         allowNull:true,
+    },
+    Authority: {
+        type: DataTypes.ENUM('training', 'approved', 'consultant')
     }
 },{
         underscored: true,

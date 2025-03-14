@@ -14,12 +14,8 @@ const Notification = sequelize.define('notifications', {
     type: DataTypes.TEXT,
     allowNull: false,
   },
-  isRead: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false,
-  },
 }, {
-  timestamps: true,
+  timestamps: false,
   underscored:true
 });
 

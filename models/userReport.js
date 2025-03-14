@@ -10,14 +10,18 @@ const UserReport = sequelize.define('user_reports', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+    reporterId: { 
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
     reportType: {
         type: DataTypes.ENUM('SPAM', 'ABUSE', 'OTHER'),
         allowNull: false,
     },
     createdAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: DataTypes.NOW
+        type: DataTypes.DATE,
+        allowNull: false,
+        defaultValue: DataTypes.NOW
     },
 }, {
     timestamps: false,

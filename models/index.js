@@ -13,8 +13,8 @@ const Message = require('./message');
 const Contact = require('./contact');
 const Notification = require('./notification');
 const Share = require('./share');
-const PostPhoto = require('./postPhoto');
 const Photo = require('./photo');
+const PostPhoto = require('./postPhoto');
 const PostCategory = require('./postCategory');
 const UserNotification = require('./userNotification');
 const ProfileImage = require('./profileImage');
@@ -22,8 +22,11 @@ const Education = require('./education');
 const LawyerEducation = require('./lawyerEducation')
 const PostReport = require('./postReport');
 const UserReport = require('./userReport');
+const Job = require('./job')
+const JobReport = require('./jobReport')
 const JobApply = require('./jobApply')
-// const Job
+const lawyerDoc = require('./lawwyerDoc');
+
 
 
 console.log("Models imported successfully");
@@ -38,9 +41,24 @@ try {
     Lawyer.belongsToMany(Education, { through: LawyerEducation, foreignKey: 'lawyer_id' });
     Education.belongsToMany(Lawyer, { through: LawyerEducation, foreignKey: 'education_id' });
 
+    // Lawyer and LawyerDoc
+    Lawyer.hasMany(lawyerDoc, { foreignKey: 'lawyer_id' });
+    lawyerDoc.belongsTo(Lawyer, { foreignKey: 'lawyer_id' });
+
     // User and Post
     User.hasMany(Post, { foreignKey: 'author_id' });
     Post.belongsTo(User, { foreignKey: 'author_id' });
+
+    // User and Job
+    User.hasMany(Job, { foreignKey: 'job_id' });
+    Job.belongsTo(User, { foreignKey: 'job_id' });
+
+    // Job and JobReport
+    Job.hasMany(JobReport, { foreignKey: 'job_id' });
+    JobReport.belongsTo(Job, { foreignKey: 'job_id' });
+    // User and JobReport
+    User.hasMany(JobReport, { foreignKey: 'user_id' });
+    JobReport.belongsTo(User, { foreignKey: 'user_id' });
 
     // Post and PostReport
     Post.hasMany(PostReport, { foreignKey: 'post_id' });
@@ -50,9 +68,9 @@ try {
     User.hasMany(PostReport, { foreignKey: 'user_id' });
     PostReport.belongsTo(User, { foreignKey: 'user_id' });
 
-    // Post and JobApply
-    Post.hasMany(JobApply, { foreignKey: 'post_id' });
-    JobApply.belongsTo(Post, { foreignKey: 'post_id' });
+    // Job and JobApply
+    Job.hasMany(JobApply, { foreignKey: 'job_id' });
+    JobApply.belongsTo(Job, { foreignKey: 'job_id' });
 
     // User and JobApply
     User.hasMany(JobApply, { foreignKey: 'user_id' });
@@ -61,6 +79,10 @@ try {
     // User and UserReport
     User.hasMany(UserReport, { foreignKey: 'user_id' });
     UserReport.belongsTo(User, { foreignKey: 'user_id' });
+
+    // Reporter and UserReport
+    User.hasMany(UserReport, { foreignKey: 'reporter_id' });
+    UserReport.belongsTo(User, { foreignKey: 'reporter_id' });
 
     // User and Contact
     User.hasMany(Contact, { foreignKey: 'user_id' });
@@ -78,11 +100,9 @@ try {
     Message.belongsTo(User, { foreignKey: 'sender_id' });
     Message.belongsTo(User, { foreignKey: 'receiver_id' });
 
-    // User and UserNotification
-    User.hasMany(UserNotification, { foreignKey: 'user_id' });
-    UserNotification.belongsTo(User, { foreignKey: 'user_id' });
-    Notification.hasMany(UserNotification, { foreignKey: 'notification_id' });
-    UserNotification.belongsTo(Notification, { foreignKey: 'notification_id' });
+    // User and Notification through UserNotification
+    User.belongsToMany(Notification, { through: UserNotification, foreignKey: 'user_id' });
+    Notification.belongsToMany(User, { through: UserNotification, foreignKey: 'notification_id' });
 
     // User and Share
     User.hasMany(Share, { foreignKey: 'user_id' });
@@ -112,7 +132,7 @@ try {
     Post.belongsToMany(Photo, { through: PostPhoto, foreignKey: 'post_id' });
     Photo.belongsToMany(Post, { through: PostPhoto, foreignKey: 'photo_id' });
 
-    // Post and Category
+    // Post and Category through PostCategory
     Post.belongsToMany(Category, { through: PostCategory, foreignKey: 'post_id' });
     Category.belongsToMany(Post, { through: PostCategory, foreignKey: 'category_id' });
 
@@ -147,7 +167,10 @@ module.exports = {
     LawyerEducation,
     JobApply,
     PostReport,
-    UserReport
+    UserReport,
+    lawyerDoc,
+    Job,
+    JobReport
 };
 
 console.log("Models exported");

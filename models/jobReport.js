@@ -1,7 +1,7 @@
 const {sequelize, DataTypes} = require('../util/db');
 // const { Users, Posts } = require('../models'); 
 
-const JobApply = sequelize.define('job_applier', {
+const JobReport = sequelize.define('job_reports', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -15,6 +15,10 @@ const JobApply = sequelize.define('job_applier', {
         type: DataTypes.INTEGER,
         allowNull: false,
     },
+    RoportType: { 
+        type: DataTypes.ENUM('SPAM', 'ABUSE', 'OTHER'), 
+        allowNull: false, 
+    },
     createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
@@ -25,4 +29,4 @@ const JobApply = sequelize.define('job_applier', {
         underscored: true,
 });
 
-module.exports = JobApply;
+module.exports = JobReport;

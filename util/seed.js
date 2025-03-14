@@ -102,16 +102,16 @@ async function seedDatabase() {
 
     // 4. LawyerEducations (depends on Lawyers and Educations)
     const lawyerEducations = [
-      { LawyerId: 1, EducationId: 1 },
-      { LawyerId: 2, EducationId: 2 },
-      { LawyerId: 3, EducationId: 3 },
-      { LawyerId: 4, EducationId: 4 },
-      { LawyerId: 5, EducationId: 5 },
-      { LawyerId: 6, EducationId: 6 },
-      { LawyerId: 7, EducationId: 7 },
-      { LawyerId: 8, EducationId: 8 },
-      { LawyerId: 9, EducationId: 9 },
-      { LawyerId: 10, EducationId: 10 }
+      { lawyerId: 1, educationId: 1 },
+      { lawyerId: 2, educationId: 2 },
+      { lawyerId: 3, educationId: 3 },
+      { lawyerId: 4, educationId: 4 },
+      { lawyerId: 5, educationId: 5 },
+      { lawyerId: 6, educationId: 6 },
+      { lawyerId: 7, educationId: 7 },
+      { lawyerId: 8, educationId: 8 },
+      { lawyerId: 9, educationId: 9 },
+      { lawyerId: 10, educationId: 10 }
     ];
     await LawyerEducation.bulkCreate(lawyerEducations, { ignoreDuplicates: true });
     console.log("LawyerEducations inserted");
@@ -166,32 +166,32 @@ async function seedDatabase() {
 
     // 8. PostCategories (depends on Posts and Categories)
     const postCategories = [
-      { postId: 1, categoryId: 2 },
-      { postId: 3, categoryId: 4 },
-      { postId: 5, categoryId: 6 },
-      { postId: 4, categoryId: 4 },
-      { postId: 5, categoryId: 5 },
-      { postId: 6, categoryId: 6 },
-      { postId: 7, categoryId: 7 },
-      { postId: 8, categoryId: 8 },
-      { postId: 9, categoryId: 9 },
-      { postId: 10, categoryId: 10 }
+      { post_id: 1, category_id: 2 },
+      { post_id: 2, category_id: 3 },
+      { post_id: 3, category_id: 4 },
+      { post_id: 4, category_id: 5 },
+      { post_id: 5, category_id: 6 },
+      { post_id: 6, category_id: 7 },
+      { post_id: 7, category_id: 8 },
+      { post_id: 8, category_id: 9 },
+      { post_id: 9, category_id: 10 },
+      { post_id: 10, category_id: 1 }
     ];
     await PostCategory.bulkCreate(postCategories, { ignoreDuplicates: true });
     console.log("PostCategories inserted");
 
     // 9. PostPhotos (depends on Posts and Photos)
     const postPhotos = [
-      { postId: 1, photoId: 1 },
-      { postId: 2, photoId: 2 },
-      { postId: 3, photoId: 3 },
-      { postId: 4, photoId: 4 },
-      { postId: 5, photoId: 5 },
-      { postId: 6, photoId: 6 },
-      { postId: 7, photoId: 7 },
-      { postId: 8, photoId: 8 },
-      { postId: 9, photoId: 9 },
-      { postId: 10, photoId: 10 }
+      { post_id: 1, photo_id: 1 },
+      { post_id: 2, photo_id: 2 },
+      { post_id: 3, photo_id: 3 },
+      { post_id: 4, photo_id: 4 },
+      { post_id: 5, photo_id: 5 },
+      { post_id: 6, photo_id: 6 },
+      { post_id: 7, photo_id: 7 },
+      { post_id: 8, photo_id: 8 },
+      { post_id: 9, photo_id: 9 },
+      { post_id: 10, photo_id: 10 }
     ];
     await PostPhoto.bulkCreate(postPhotos, { ignoreDuplicates: true });
     console.log("PostPhotos inserted");
@@ -259,22 +259,6 @@ async function seedDatabase() {
     ];
     await Contact.bulkCreate(contacts, { ignoreDuplicates: true });
     console.log("Contacts inserted");
-
-    // 12. Locations (depends on Users)
-    const locations = [
-      { userId: 1, country: 'USA', city: 'New York' },
-      { userId: 2, country: 'USA', city: 'Los Angeles' },
-      { userId: 3, country: 'USA', city: 'Chicago' },
-      { userId: 4, country: 'Canada', city: 'Toronto' },
-      { userId: 5, country: 'Canada', city: 'Vancouver' },
-      { userId: 6, country: 'UK', city: 'London' },
-      { userId: 7, country: 'UK', city: 'Manchester' },
-      { userId: 8, country: 'Australia', city: 'Sydney' },
-      { userId: 9, country: 'Australia', city: 'Melbourne' },
-      { userId: 10, country: 'Germany', city: 'Berlin' }
-    ];
-    await Location.bulkCreate(locations, { ignoreDuplicates: true });
-    console.log("Locations inserted");
 
     // 13. Messages (depends on Users)
     const messages = [
@@ -376,13 +360,13 @@ async function seedDatabase() {
     const connections = [
       { requesterId: 101, receiverId: 201, status: 'pending', createdAt: new Date() },
       { requesterId: 102, receiverId: 202, status: 'accepted', createdAt: new Date() },
-      { requesterId: 103, receiverId: 203, status: 'rejected', createdAt: new Date() },
+      { requesterId: 103, receiverId: 203, status: 'blocked', createdAt: new Date() },
       { requesterId: 104, receiverId: 204, status: 'pending', createdAt: new Date() },
       { requesterId: 105, receiverId: 205, status: 'accepted', createdAt: new Date() },
-      { requesterId: 106, receiverId: 206, status: 'rejected', createdAt: new Date() },
+      { requesterId: 106, receiverId: 206, status: 'blocked', createdAt: new Date() },
       { requesterId: 107, receiverId: 207, status: 'pending', createdAt: new Date() },
       { requesterId: 108, receiverId: 208, status: 'accepted', createdAt: new Date() },
-      { requesterId: 109, receiverId: 209, status: 'rejected', createdAt: new Date() },
+      { requesterId: 109, receiverId: 209, status: 'blocked', createdAt: new Date() },
       { requesterId: 110, receiverId: 210, status: 'pending', createdAt: new Date() }
     ];
     await Connection.bulkCreate(connections, { ignoreDuplicates: true });

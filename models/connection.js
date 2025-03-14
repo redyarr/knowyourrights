@@ -23,7 +23,7 @@ const Connection = sequelize.define('connections', {
         },
     },
     status: {
-        type: DataTypes.ENUM('pending', 'accepted', 'rejected','blocked'),
+        type: DataTypes.ENUM('pending', 'accepted', 'blocked'),
         allowNull: false,
     },
     CreatedAt:{
