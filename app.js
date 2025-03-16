@@ -11,7 +11,7 @@ const {sequelize} = require('./models');
 
 // Import routes
 const UserRouter = require('./routes/User');
-const PostRouter = require('./routes/Post');
+const PostRouter = require('./routes/post');
 const storeRouter = require('./util/seed.js');
 
 // Import session configuration
