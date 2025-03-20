@@ -28,7 +28,7 @@
      }
   %>
 
-  <%- include('../partials/navbar', { path: path, locals: locals }) %>
+  <%- include('./navbar', { path: path, locals: locals }) %>
 
   <main class="pt-20 pb-8">
     <div class="max-w-7xl mx-auto px-4">
@@ -93,7 +93,8 @@
   <% } %>
 
   <!-- Footer -->
-  <footer class="bg-white mt-8 py-4 border-t border-gray-200">
+  <%- include('./footer') %>
+  <!-- <footer class="bg-white mt-8 py-4 border-t border-gray-200">
     <div class="max-w-7xl mx-auto px-4">
       <div class="flex justify-between items-center">
         <div class="text-gray-600">© 2025 LegalNet</div>
@@ -104,7 +105,7 @@
         </div>
       </div>
     </div>
-  </footer>
+  </footer> -->
 
   <!-- Optional: JS to toggle the messaging popup -->
   <script>

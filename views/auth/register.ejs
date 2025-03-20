@@ -1,144 +1,184 @@
 <div class="min-h-screen flex flex-col items-center justify-center bg-[#f3f2ef] py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-md w-full">
-        <div class="text-center">
-            <h2 class="text-3xl font-bold mb-2">Join Legal Network</h2>
-            <p class="text-gray-600 mb-8">Make the most of your professional life</p>
-        </div>
-
-        <div class="bg-white p-8 rounded-lg shadow-sm">
-            <% if (error) { %>
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-                    <%= error %>
-                </div>
-                <% } %>
-
-                    <form action="/user/register" method="POST" class="space-y-6">
-                        <div>
-                            <label class="block text-gray-700 font-medium mb-2" for="role">I want to join as:</label>
-                            <select name="role" id="role" class="w-full border border-gray-300 rounded-lg p-3"
-                                onchange="toggleLawyerFields()">
-                                <option value="visitor">Regular User</option>
-                                <option value="lawyer">Lawyer</option>
-                            </select>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-gray-700 font-medium mb-2" for="firstName">First name</label>
-                                <input type="text" name="firstName" id="firstName" required
-                                    class="w-full border border-gray-300 rounded-lg p-3">
-                            </div>
-                            <div>
-                                <label class="block text-gray-700 font-medium mb-2" for="lastName">Last name</label>
-                                <input type="text" name="lastName" id="lastName" required
-                                    class="w-full border border-gray-300 rounded-lg p-3">
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-gray-700 font-medium mb-2" for="email">Email</label>
-                            <input type="email" name="email" id="email" required
-                                class="w-full border border-gray-300 rounded-lg p-3">
-                        </div>
-
-                        <div>
-                            <label class="block text-gray-700 font-medium mb-2" for="password">Password (6 or more
-                                characters)</label>
-                            <input type="password" name="password" id="password" required minlength="6"
-                                class="w-full border border-gray-300 rounded-lg p-3">
-                        </div>
-
-                        <div id="lawyerFields" class="hidden space-y-6">
-                            <div>
-                                <label class="block text-gray-700 font-medium mb-2" for="lawFirm">Law Firm</label>
-                                <input type="text" name="lawFirm" id="lawFirm"
-                                    class="w-full border border-gray-300 rounded-lg p-3">
-                            </div>
-
-                            <div>
-                                <label class="block text-gray-700 font-medium mb-2" for="licenseNumber">License
-                                    Number</label>
-                                <input type="text" name="licenseNumber" id="licenseNumber"
-                                    class="w-full border border-gray-300 rounded-lg p-3">
-                            </div>
-
-                            <div>
-                                <label class="block text-gray-700 font-medium mb-2" for="summary">Professional
-                                    Summary</label>
-                                <textarea name="summary" id="summary" rows="3"
-                                    class="w-full border border-gray-300 rounded-lg p-3"></textarea>
-                            </div>
-
-                            <div>
-                                <label class="block text-gray-700 font-medium mb-2" for="contactNumber">Contact
-                                    Number</label>
-                                <input type="tel" name="contactNumber" id="contactNumber"
-                                    class="w-full border border-gray-300 rounded-lg p-3">
-                            </div>
-
-                            <div class="space-y-4">
-                                <h3 class="font-medium text-gray-900">Education</h3>
-                                <div>
-                                    <label class="block text-gray-700 text-sm mb-1" for="university">University</label>
-                                    <input type="text" name="university" id="university"
-                                        class="w-full border border-gray-300 rounded-lg p-3">
-                                </div>
-                                <div>
-                                    <label class="block text-gray-700 text-sm mb-1" for="college">College</label>
-                                    <input type="text" name="college" id="college"
-                                        class="w-full border border-gray-300 rounded-lg p-3">
-                                </div>
-                                <div>
-                                    <label class="block text-gray-700 text-sm mb-1" for="department">Department</label>
-                                    <input type="text" name="department" id="department"
-                                        class="w-full border border-gray-300 rounded-lg p-3">
-                                </div>
-                                <div>
-                                    <label class="block text-gray-700 text-sm mb-1" for="degree">Degree</label>
-                                    <input type="text" name="degree" id="degree"
-                                        class="w-full border border-gray-300 rounded-lg p-3">
-                                </div>
-                            </div>
-                        </div>
-
-                        <button type="submit"
-                            class="w-full bg-blue-600 text-white py-3 px-4 rounded-full hover:bg-blue-700 font-medium">
-                            Agree & Join
-                        </button>
-                    </form>
-
-                    <p class="mt-6 text-center text-gray-600">
-                        Already on Legal Network?
-                        <a href="/user/login" class="text-blue-600 hover:text-blue-700 font-medium">Sign in</a>
-                    </p>
-        </div>
+  <div class="max-w-md w-full">
+    <div class="text-center">
+      <h2 class="text-3xl font-bold mb-2">Join Legal Network</h2>
+      <p class="text-gray-600 mb-8">Make the most of your professional life</p>
     </div>
+
+    <div class="bg-white p-8 rounded-lg shadow-sm">
+      <% if (error) { %>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <%= error %>
+        </div>
+      <% } %>
+
+      <form action="/register" method="POST" class="space-y-6">
+        <!-- Basic Info -->
+        <div>
+          <label class="block text-gray-700 font-medium mb-2" for="role">I want to join as:</label>
+          <select name="role" id="role" class="w-full border border-gray-300 rounded-lg p-3"
+            onchange="toggleLawyerFields()">
+            <option value="visitor">Regular User</option>
+            <option value="lawyer">Lawyer</option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-gray-700 font-medium mb-2" for="firstName">First name</label>
+            <input type="text" name="firstName" id="firstName" required
+              class="w-full border border-gray-300 rounded-lg p-3">
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-2" for="lastName">Last name</label>
+            <input type="text" name="lastName" id="lastName" required
+              class="w-full border border-gray-300 rounded-lg p-3">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-medium mb-2" for="email">Email</label>
+          <input type="email" name="email" id="email" required
+            class="w-full border border-gray-300 rounded-lg p-3">
+        </div>
+
+        <div>
+          <label class="block text-gray-700 font-medium mb-2" for="password">Password (6 or more characters)</label>
+          <input type="password" name="password" id="password" required minlength="6"
+            class="w-full border border-gray-300 rounded-lg p-3">
+        </div>
+
+        <!-- Lawyer Specific Fields -->
+        <div id="lawyerFields" class="hidden space-y-6">
+          <div>
+            <label class="block text-gray-700 font-medium mb-2" for="lawFirm">Law Firm</label>
+            <input type="text" name="lawFirm" id="lawFirm"
+              class="w-full border border-gray-300 rounded-lg p-3">
+          </div>
+
+          <div>
+            <label class="block text-gray-700 font-medium mb-2" for="licenseNumber">License Number</label>
+            <input type="text" name="licenseNumber" id="licenseNumber"
+              class="w-full border border-gray-300 rounded-lg p-3">
+          </div>
+
+          <div>
+            <label class="block text-gray-700 font-medium mb-2" for="summary">Professional Summary</label>
+            <textarea name="summary" id="summary" rows="3"
+              class="w-full border border-gray-300 rounded-lg p-3"></textarea>
+          </div>
+
+          <div>
+            <label class="block text-gray-700 font-medium mb-2" for="contactNumber">Contact Number</label>
+            <input type="tel" name="contactNumber" id="contactNumber"
+              class="w-full border border-gray-300 rounded-lg p-3">
+          </div>
+
+          <!-- Education Section -->
+          <div class="space-y-4">
+            <h3 class="font-medium text-gray-900">Education</h3>
+            <!-- University -->
+            <div>
+              <label class="block text-gray-700 text-sm mb-1" for="universitySelect">University</label>
+              <select name="universitySelect" id="universitySelect" class="w-full border border-gray-300 rounded-lg p-3" 
+                      onchange="toggleInput('universitySelect', 'universityInput')">
+                <% educations.forEach(function(edu) { %>
+                  <option value="<%= edu.university %>"><%= edu.university %></option>
+                <% }) %>
+                <option value="other">Other</option>
+              </select>
+              <input type="text" name="university" id="universityInput" placeholder="Enter new university" 
+                     class="w-full border border-gray-300 rounded-lg p-3 hidden">
+            </div>
+
+            <!-- College -->
+            <div>
+              <label class="block text-gray-700 text-sm mb-1" for="collegeSelect">College</label>
+              <select name="collegeSelect" id="collegeSelect" class="w-full border border-gray-300 rounded-lg p-3" 
+                      onchange="toggleInput('collegeSelect', 'collegeInput')">
+                <% educations.forEach(function(edu) { %>
+                  <option value="<%= edu.college %>"><%= edu.college %></option>
+                <% }) %>
+                <option value="other">Other</option>
+              </select>
+              <input type="text" name="college" id="collegeInput" placeholder="Enter new college" 
+                     class="w-full border border-gray-300 rounded-lg p-3 hidden">
+            </div>
+
+            <!-- Department -->
+            <div>
+              <label class="block text-gray-700 text-sm mb-1" for="departmentSelect">Department</label>
+              <select name="departmentSelect" id="departmentSelect" class="w-full border border-gray-300 rounded-lg p-3" 
+                      onchange="toggleInput('departmentSelect', 'departmentInput')">
+                <% educations.forEach(function(edu) { %>
+                  <option value="<%= edu.department %>"><%= edu.department %></option>
+                <% }) %>
+                <option value="other">Other</option>
+              </select>
+              <input type="text" name="department" id="departmentInput" placeholder="Enter new department" 
+                     class="w-full border border-gray-300 rounded-lg p-3 hidden">
+            </div>
+
+            <!-- Degree (Always input) -->
+            <div>
+              <label class="block text-gray-700 text-sm mb-1" for="degree">Degree</label>
+              <input type="text" name="degree" id="degree" required
+                     class="w-full border border-gray-300 rounded-lg p-3">
+            </div>
+          </div>
+        </div>
+
+        <button type="submit"
+                class="w-full bg-blue-600 text-white py-3 px-4 rounded-full hover:bg-blue-700 font-medium">
+          Agree & Join
+        </button>
+      </form>
+
+      <p class="mt-6 text-center text-gray-600">
+        Already on Legal Network?
+        <a href="/user/login" class="text-blue-600 hover:text-blue-700 font-medium">Sign in</a>
+      </p>
+    </div>
+  </div>
 </div>
 
 <script>
-    function toggleLawyerFields() {
-        const role = document.getElementById('role').value;
-        const lawyerFields = document.getElementById('lawyerFields');
-        const requiredFields = [
-            'lawFirm',
-            'licenseNumber',
-            'contactNumber',
-            'university',
-            'college',
-            'department',
-            'degree'
-        ];
+  function toggleLawyerFields() {
+    const role = document.getElementById('role').value;
+    const lawyerFields = document.getElementById('lawyerFields');
+    const requiredFields = [
+      'lawFirm',
+      'licenseNumber',
+      'contactNumber',
+      'universitySelect',
+      'collegeSelect',
+      'departmentSelect',
+      'degree'
+    ];
 
-        if (role === 'lawyer') {
-            lawyerFields.classList.remove('hidden');
-            requiredFields.forEach(field => {
-                document.getElementById(field).required = true;
-            });
-        } else {
-            lawyerFields.classList.add('hidden');
-            requiredFields.forEach(field => {
-                document.getElementById(field).required = false;
-            });
-        }
+    if (role === 'lawyer') {
+      lawyerFields.classList.remove('hidden');
+      requiredFields.forEach(field => {
+        document.getElementById(field).required = true;
+      });
+    } else {
+      lawyerFields.classList.add('hidden');
+      requiredFields.forEach(field => {
+        document.getElementById(field).required = false;
+      });
     }
+  }
+
+  // Generic function to toggle text input visibility when "Other" is selected
+  function toggleInput(selectId, inputId) {
+    const selectElem = document.getElementById(selectId);
+    const inputElem = document.getElementById(inputId);
+    if (selectElem.value === 'other') {
+      inputElem.classList.remove('hidden');
+      inputElem.required = true;
+    } else {
+      inputElem.classList.add('hidden');
+      inputElem.required = false;
+    }
+  }
 </script>

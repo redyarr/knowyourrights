@@ -6,7 +6,7 @@ const Connection = sequelize.define('connections', {
         primaryKey: true,
         autoIncrement: true,
     },
-    requesterId: {
+    requester_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
@@ -14,7 +14,7 @@ const Connection = sequelize.define('connections', {
             min: 1,
         },
     },
-    receiverId: {
+    receiver_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
         validate: {
@@ -26,7 +26,7 @@ const Connection = sequelize.define('connections', {
         type: DataTypes.ENUM('pending', 'accepted', 'blocked'),
         allowNull: false,
     },
-    createdAt:{
+    created_at:{
         type: DataTypes.DATE,
         allowNull: false,
         defaultValue: DataTypes.NOW,
@@ -39,7 +39,6 @@ const Connection = sequelize.define('connections', {
         },
     ],
     timestamps: false,
-    underscored: true,
 });
 
 module.exports = Connection;

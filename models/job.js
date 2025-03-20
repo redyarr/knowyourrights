@@ -10,7 +10,7 @@ const Job = sequelize.define('jobs', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    desciption: {
+    summary: {
         type: DataTypes.STRING,
         allowNull: false,
     },
@@ -27,6 +27,9 @@ const Job = sequelize.define('jobs', {
         allowNull: false,
         defaultValue: DataTypes.NOW
     }
+}, {
+    timestamps: false,
+    underscored: true
 })
 
 module.exports = Job;

@@ -10,8 +10,13 @@ require('dotenv').config();
 const {sequelize} = require('./models');
 
 // Import routes
-const UserRouter = require('./routes/User');
-const PostRouter = require('./routes/post');
+const AuthRouter = require('./routes/auth.js')
+const FeedRouter = require('./routes/feed.js');
+const MyNetwork = require('./routes/mynetwork.js');
+const ProfileRouter = require('./routes/profile.js');
+const JobsRouter = require('./routes/jobs.js');
+const MessaginRouter = require('./routes/messagin.js');
+const NotificationsRouter = require('./routes/notifications.js');
 const storeRouter = require('./util/seed.js');
 
 // Import session configuration
@@ -39,22 +44,14 @@ app.use(expressLayouts); // Enable layouts
 app.set('layout', 'layouts/main'); // Set default layout
 
 // Using routes
-app.use('/user', UserRouter);
-app.use('/', PostRouter);
+app.use('/', AuthRouter); // authenticate the user and redirect tp route '/feed'
+app.use('/feed', FeedRouter); // show all posts as feed
+app.use('/in', ProfileRouter); // redirect route '/in/:user_id'
+app.use('/mynetwork', MyNetwork);  
+app.use('/jobs', JobsRouter)  
+app.use('/messaging', MessaginRouter)  
+app.use('/notifications', NotificationsRouter)  
 app.use('/seed', storeRouter); 
-
-// Redirect root URL to /blog
-// app.get('/', (req, res) => {
-//     res.redirect('/blog');
-// });
-
-// Handle 404 errors
-// app.use((req, res) => {
-//     res.status(404).send('Page not found');
-// });
-
-// console.log("below");
-// console.log(sequelize);
 
 // { force: true }
 sequelize.sync()

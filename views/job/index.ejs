@@ -1,0 +1,13 @@
+        <% if (jobs && jobs.length > 0) { %>
+            <ul>
+                <% jobs.forEach(job => { %>
+                    <li>
+                        <h2><%=// job.authorId %></h2>
+                        <p><%= job.summary  %></p>
+                        <p><strong>Posted on:</strong> <%= new Date(job.createdAt).toLocaleDateString() %></p>
+                    </li>
+                <% }); %>
+            </ul>
+        <% } else { %>
+            <p>No jobs available at the moment. Please check back later.</p>
+        <% } %>

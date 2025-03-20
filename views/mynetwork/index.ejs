@@ -1,0 +1,47 @@
+<section>
+    <h2>Your Connections</h2>
+
+    <!-- Display Connection Requests -->
+    <h3>Connection Requests</h3>
+    <% if (connectionRequests && connectionRequests.length > 0) { %>
+        <ul>
+            <% connectionRequests.forEach(request => { %>
+                <li>
+                    <div class="connection">
+                        <% if (request.requester.ProfileImage && request.requester.ProfileImage.imagePath) { %>
+                            <img src="<%= request.requester.ProfileImage.imagePath %>" alt="<%= request.requester.firstName %>'s profile image" class="profile-image">
+                        <% } else { %>
+                            <img src="/images/default-profile.png" alt="Default profile image" class="profile-image">
+                        <% } %>
+                        <p><%= request.requester.firstName %> <%= request.requester.lastName %></p>
+                        <button class="accept-btn">Accept</button>
+                        <button class="decline-btn">Decline</button>
+                    </div>
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p>No connection requests at the moment.</p>
+    <% } %>
+
+    <!-- Display Friends -->
+    <h3>Your Friends</h3>
+    <% if (friends && friends.length > 0) { %>
+        <ul>
+            <% friends.forEach(friend => { %>
+                <li>
+                    <div class="connection">
+                        <% if (friend.connectedUser.ProfileImage && friend.connectedUser.ProfileImage.imagePath) { %>
+                            <img src="<%= friend.connectedUser.ProfileImage.imagePath %>" alt="<%= friend.connectedUser.firstName %>'s profile image" class="profile-image">
+                        <% } else { %>
+                            <img src="/images/default-profile.png" alt="Default profile image" class="profile-image">
+                        <% } %>
+                        <p><%= friend.connectedUser.firstName %> <%= friend.connectedUser.lastName %></p>
+                    </div>
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p>You have no friends yet. Start connecting with others!</p>
+    <% } %>
+</section>

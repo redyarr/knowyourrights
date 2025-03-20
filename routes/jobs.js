@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const PostController = require('../controllers/postController');
 const { isAuthenticated } = require('../middlewares/auth');
 
-router.get('/', isAuthenticated, PostController.getAllPosts);
+// Import controllers
+const JobsController = require('../controllers/jobsController');
+
+// Authentication routes
+router.get('/', JobsController.getJobs);
 
 module.exports = router;

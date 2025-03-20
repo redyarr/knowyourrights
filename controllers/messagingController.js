@@ -1,5 +1,4 @@
-const { Users, Connections } = require('../models');
-const Message = require('../models/message');
+const { User, Connection, Message } = require('../models');
 const { Op } = require('sequelize');
 
 exports.getMessages = async (req, res) => {
@@ -32,9 +31,9 @@ exports.getMessages = async (req, res) => {
         console.log('Conversation user IDs:', conversationUserIds);
         
         // Get user details for each conversation
-        const conversations = await Users.findAll({
-            where: { id: conversationUserIds },
-            attributes: ['id', 'name', 'email']
+        const conversations = await User.findAll({
+            where: { id: { [Op.in]: conversationUserIds } },
+            attributes: ['id', 'firstName', 'lastName', 'email']
         });
         console.log('Conversations:', conversations);
         
@@ -76,11 +75,12 @@ exports.getMessages = async (req, res) => {
         });
         console.log('Sorted conversations:', conversationsWithLastMessage);
         
-        res.render('user/messages', {
+        res.render('messaging/index', {
             title: 'Messages',
-            conversations: conversationsWithLastMessage,
+            messages: conversationsWithLastMessage, // Pass the conversations as "messages"
             userId,
-            activeConversation: null
+            activeConversation: null,
+            user: req.session.user
         });
     } catch (error) {
         console.error('Error fetching messages:', error);
@@ -94,7 +94,7 @@ exports.getConversation = async (req, res) => {
         const conversationId = req.params.conversationId;
         
         // Check if users are connected
-        const isConnected = await Connections.findOne({
+        const isConnected = await Connection.findOne({
             where: {
                 [Op.or]: [
                     { requesterId: userId, receiverId: conversationId, status: 'accepted' },
@@ -216,7 +216,7 @@ exports.sendMessage = async (req, res) => {
         const { receiverId, content } = req.body;
         
         // Check if users are connected
-        const isConnected = await Connections.findOne({
+        const isConnected = await Connection.findOne({
             where: {
                 [Op.or]: [
                     { requesterId: senderId, receiverId, status: 'accepted' },

@@ -182,7 +182,7 @@ SELECT * FROM post_reports;
 
 -- 12. jobs
 -- Depends on users
-INSERT INTO jobs (id, author_id, description, country, city, created_at) VALUES
+INSERT INTO jobs (id, author_id, summary, country, city, created_at) VALUES
   (1, 1, 'I need a financial lawyer', 'USA', 'New York', CURRENT_TIMESTAMP),
   (2, 2, 'Looking for a corporate lawyer', 'USA', 'Los Angeles', CURRENT_TIMESTAMP),
   (3, 3, 'Need a criminal defense lawyer', 'USA', 'Chicago', CURRENT_TIMESTAMP),

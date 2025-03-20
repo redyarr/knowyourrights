@@ -36,13 +36,13 @@ exports.getAllPosts = async (req, res) => {
         //     }
         // });
             
-        res.render('post/index', {
+        res.render('feed/index', {
             title: 'Home | Legal Network',
             posts,
             user: req.session.user
         });
     } catch (error) {
         console.error('Error fetching posts:', error);
-        res.status(500).render('error', { error: error.message });
+        res.status(500).send(`Error: ${error.message}`);
     }
 };

@@ -50,12 +50,13 @@ try {
     Post.belongsTo(User, { foreignKey: 'author_id' });
 
     // User and Job
-    User.hasMany(Job, { foreignKey: 'job_id' });
-    Job.belongsTo(User, { foreignKey: 'job_id' });
+    User.hasMany(Job, { foreignKey: 'author_id' });
+    Job.belongsTo(User, { foreignKey: 'author_id' });
 
     // Job and JobReport
     Job.hasMany(JobReport, { foreignKey: 'job_id' });
     JobReport.belongsTo(Job, { foreignKey: 'job_id' });
+
     // User and JobReport
     User.hasMany(JobReport, { foreignKey: 'user_id' });
     JobReport.belongsTo(User, { foreignKey: 'user_id' });
@@ -89,10 +90,8 @@ try {
     Contact.belongsTo(User, { foreignKey: 'user_id' });
 
     // User and Connection
-    User.hasMany(Connection, { foreignKey: 'requester_id' });
-    User.hasMany(Connection, { foreignKey: 'receiver_id' });
-    Connection.belongsTo(User, { foreignKey: 'requester_id' });
-    Connection.belongsTo(User, { foreignKey: 'receiver_id' });
+    User.hasMany(Connection, { as: 'connections', foreignKey: 'requesterId' });
+    Connection.belongsTo(User, { as: 'connectedUser', foreignKey: 'receiverId' });
 
     // User and Message
     User.hasMany(Message, { foreignKey: 'sender_id' });
@@ -101,8 +100,11 @@ try {
     Message.belongsTo(User, { foreignKey: 'receiver_id' });
 
     // User and Notification through UserNotification
-    User.belongsToMany(Notification, { through: UserNotification, foreignKey: 'user_id' });
-    Notification.belongsToMany(User, { through: UserNotification, foreignKey: 'notification_id' });
+    User.hasMany(UserNotification, { foreignKey: 'user_id' });
+    UserNotification.belongsTo(User, { foreignKey: 'user_id' });
+
+    Notification.hasMany(UserNotification, { foreignKey: 'notification_id' });
+    UserNotification.belongsTo(Notification, { foreignKey: 'notification_id' });
 
     // User and Share
     User.hasMany(Share, { foreignKey: 'user_id' });

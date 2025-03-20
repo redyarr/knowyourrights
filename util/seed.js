@@ -243,18 +243,18 @@ async function seedDatabase() {
 
     // --- 12. Seed Jobs (depends on Users, now 12 rows) ---
     const jobs = [
-      { authorId: 1, description: 'I need a financial lawyer', country: 'USA', city: 'New York', createdAt: new Date() },
-      { authorId: 2, description: 'Looking for a corporate lawyer', country: 'USA', city: 'Los Angeles', createdAt: new Date() },
-      { authorId: 3, description: 'Need a criminal defense lawyer', country: 'USA', city: 'Chicago', createdAt: new Date() },
-      { authorId: 4, description: 'Family lawyer needed', country: 'Canada', city: 'Toronto', createdAt: new Date() },
-      { authorId: 5, description: 'Intellectual property lawyer required', country: 'Canada', city: 'Vancouver', createdAt: new Date() },
-      { authorId: 6, description: 'Immigration lawyer wanted', country: 'UK', city: 'London', createdAt: new Date() },
-      { authorId: 7, description: 'Environmental lawyer needed', country: 'UK', city: 'Manchester', createdAt: new Date() },
-      { authorId: 8, description: 'Labor lawyer required', country: 'Australia', city: 'Sydney', createdAt: new Date() },
-      { authorId: 9, description: 'Tax lawyer wanted', country: 'Australia', city: 'Melbourne', createdAt: new Date() },
-      { authorId: 10, description: 'Commercial litigation lawyer needed', country: 'Germany', city: 'Berlin', createdAt: new Date() },
-      { authorId: 11, description: 'Real estate lawyer required', country: 'France', city: 'Paris', createdAt: new Date() },
-      { authorId: 12, description: 'International law expert needed', country: 'Spain', city: 'Madrid', createdAt: new Date() }
+      { authorId: 1, summary: 'I need a financial lawyer', country: 'USA', city: 'New York', createdAt: new Date() },
+      { authorId: 2, summary: 'Looking for a corporate lawyer', country: 'USA', city: 'Los Angeles', createdAt: new Date() },
+      { authorId: 3, summary: 'Need a criminal defense lawyer', country: 'USA', city: 'Chicago', createdAt: new Date() },
+      { authorId: 4, summary: 'Family lawyer needed', country: 'Canada', city: 'Toronto', createdAt: new Date() },
+      { authorId: 5, summary: 'Intellectual property lawyer required', country: 'Canada', city: 'Vancouver', createdAt: new Date() },
+      { authorId: 6, summary: 'Immigration lawyer wanted', country: 'UK', city: 'London', createdAt: new Date() },
+      { authorId: 7, summary: 'Environmental lawyer needed', country: 'UK', city: 'Manchester', createdAt: new Date() },
+      { authorId: 8, summary: 'Labor lawyer required', country: 'Australia', city: 'Sydney', createdAt: new Date() },
+      { authorId: 9, summary: 'Tax lawyer wanted', country: 'Australia', city: 'Melbourne', createdAt: new Date() },
+      { authorId: 10, summary: 'Commercial litigation lawyer needed', country: 'Germany', city: 'Berlin', createdAt: new Date() },
+      { authorId: 11, summary: 'Real estate lawyer required', country: 'France', city: 'Paris', createdAt: new Date() },
+      { authorId: 12, summary: 'International law expert needed', country: 'Spain', city: 'Madrid', createdAt: new Date() }
     ];
     await Job.bulkCreate(jobs, { ignoreDuplicates: true });
     console.log("Jobs inserted");
