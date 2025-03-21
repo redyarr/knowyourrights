@@ -3,8 +3,6 @@ const { Sequelize, DataTypes } = require('sequelize');
 require('dotenv').config();
 // const DB_password = process.env.DB_PASSWORD
 
-const { Sequelize } = require('sequelize');
-
 const sequelize = new Sequelize(
   process.env.DB_NAME,    // Database name
   process.env.DB_USER,    // Username
