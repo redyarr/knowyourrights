@@ -1,12 +1,26 @@
 
 const { Sequelize, DataTypes } = require('sequelize');
 require('dotenv').config();
-const DB_password = process.env.DB_PASSWORD
+// const DB_password = process.env.DB_PASSWORD
 
-const sequelize = new Sequelize('knowyourrights', 'root', DB_password, {
-  host: 'localhost',
-  dialect: 'mysql'// or 'postgres', 'sqlite', 'mariadb', etc.
-});
+const { Sequelize } = require('sequelize');
+
+const sequelize = new Sequelize(
+  process.env.DB_NAME,    // Database name
+  process.env.DB_USER,    // Username
+  process.env.DB_PASSWORD, // Password
+  {
+    host: process.env.DB_HOST, // Hostname
+    dialect: 'mysql',
+    dialectOptions: {
+      // Depending on InfinityFree, SSL may not be required:
+      // ssl: { require: true, rejectUnauthorized: false }
+    }
+  }
+);
+
+module.exports = sequelize;
+
 
 sequelize.authenticate()
   .then(() => {
