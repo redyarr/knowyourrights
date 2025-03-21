@@ -25,7 +25,7 @@ const { sessionMiddleware, setLoggedInUser } = require('./middlewares/session');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 // Middlewares
 app.use(bodyParser.urlencoded({ extended: true }));
