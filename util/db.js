@@ -4,11 +4,11 @@ require('dotenv').config();
 // const DB_password = process.env.DB_PASSWORD
 
 const sequelize = new Sequelize(
-  process.env.DB_NAME,    // Database name
-  process.env.DB_USER,    // Username
+  process.env.DB_NAME || "knowyourrights",    // Database name
+  process.env.DB_USER || "root",    // Username
   process.env.DB_PASSWORD, // Password
   {
-    host: process.env.DB_HOST, // Hostname
+    host: process.env.DB_HOST || 'localhost', // Hostname
     dialect: 'mysql',
     dialectOptions: {
       // Depending on InfinityFree, SSL may not be required:
