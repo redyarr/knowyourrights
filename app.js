@@ -18,6 +18,7 @@ const JobsRouter = require('./routes/jobs.js');
 const MessaginRouter = require('./routes/messagin.js');
 const NotificationsRouter = require('./routes/notifications.js');
 const storeRouter = require('./util/seed.js');
+const postRouter = require('./routes/posts.js');
 
 // Import session configuration
 const { sessionMiddleware, setLoggedInUser } = require('./middlewares/session');
@@ -52,6 +53,7 @@ app.use('/jobs', JobsRouter)
 app.use('/messaging', MessaginRouter)  
 app.use('/notifications', NotificationsRouter)  
 app.use('/seed', storeRouter); 
+app.use('/posts', postRouter); // posts router
 
 // { force: true }
 sequelize.sync()
