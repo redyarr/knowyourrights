@@ -5,9 +5,9 @@ console.log("Initializing models...");
 const Connection = require('./connection');
 const Contact = require('./contact');
 const Education = require('./education');
-const Job = require('./job')
-const JobApply = require('./jobApply')
-const JobReport = require('./jobReport')
+const Job = require('./job');
+const JobApply = require('./jobApply');
+const JobReport = require('./jobReport');
 const User = require('./user');
 const Category = require('./category');
 const Post = require('./post');
@@ -22,12 +22,10 @@ const PostPhoto = require('./postPhoto');
 const PostCategory = require('./postCategory');
 const UserNotification = require('./userNotification');
 const ProfileImage = require('./profileImage');
-const LawyerEducation = require('./lawyerEducation')
+const LawyerEducation = require('./lawyerEducation');
 const PostReport = require('./postReport');
 const UserReport = require('./userReport');
-const lawyerDoc = require('./lawwyerDoc');
-
-
+const LawyerDoc = require('./lawyerDoc');
 
 console.log("Models imported successfully");
 
@@ -42,8 +40,8 @@ try {
     Education.belongsToMany(Lawyer, { through: LawyerEducation, foreignKey: 'education_id' });
 
     // Lawyer and LawyerDoc
-    Lawyer.hasMany(lawyerDoc, { foreignKey: 'lawyer_id' });
-    lawyerDoc.belongsTo(Lawyer, { foreignKey: 'lawyer_id' });
+    Lawyer.hasMany(LawyerDoc, { foreignKey: 'lawyer_id' });
+    LawyerDoc.belongsTo(Lawyer, { foreignKey: 'lawyer_id' });
 
     // User and Post
     User.hasMany(Post, { foreignKey: 'author_id' });
@@ -142,6 +140,14 @@ try {
     User.hasOne(ProfileImage, { foreignKey: 'user_id' });
     ProfileImage.belongsTo(User, { foreignKey: 'user_id' });
 
+    // User and Post
+    User.hasMany(Post, { foreignKey: 'authorId' });
+    Post.belongsTo(User, { foreignKey: 'authorId' });
+
+    // Category and Post
+    Category.hasMany(Post, { foreignKey: 'categoryId' });
+    Post.belongsTo(Category, { foreignKey: 'categoryId' });
+
     console.log("Associations defined successfully");
 } catch (error) {
     console.error("Error defining associations:", error);
@@ -149,30 +155,30 @@ try {
 
 module.exports = {
     sequelize,
-    User,
-    Post,
-    Comment,
-    Category,
-    Lawyer,
-    React,
-    Contact,
     Connection,
-    Notification,
-    PostCategory,
-    Message,
-    Share,
-    PostPhoto,
-    UserNotification,
-    Photo,
-    ProfileImage,
+    Contact,
     Education,
-    LawyerEducation,
+    Job,
     JobApply,
+    JobReport,
+    User,
+    Category,
+    Post,
+    Lawyer,
+    Comment,
+    React,
+    Message,
+    Notification,
+    Share,
+    Photo,
+    PostPhoto,
+    PostCategory,
+    UserNotification,
+    ProfileImage,
+    LawyerEducation,
     PostReport,
     UserReport,
-    lawyerDoc,
-    Job,
-    JobReport
+    LawyerDoc
 };
 
 console.log("Models exported");
