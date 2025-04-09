@@ -28,7 +28,7 @@ const io = new Server(server);
 const PORT = process.env.PORT || 3000;
 
 // Middlewares
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method', { methods: ['POST', 'GET'] }));
 app.use(express.static(path.join(__dirname, 'public')));
 

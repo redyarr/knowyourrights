@@ -72,23 +72,32 @@ exports.updateProfile = async (req, res) => {
     }
 };
 
-exports.CreatePost = async (req, res) => {
-    try {
-        const { title, content } = req.body;
-        const userId = req.params.id;
+exports.CreatePost = (req, res) => {
+    const { title, content } = req.body;
+    const authorId = req.params.id;
 
-        // Create a new post
-        const newPost = await Post.create({
-            title,
-            content,
-            userId
-        });
+    // Log the incoming data for debugging
+    console.log("Request body:", req.body);
+    console.log("Author ID:", authorId);
 
-        res.redirect(`/profile/${userId}`);
-    } catch (error) {
+    // Validate the input
+    if (!title || !content || !authorId) {
+        console.error("Validation error: Missing required fields");
+        return res.status(400).render('error', { error: "Missing required fields: title, content, or author ID." });
+    }
+
+    Post.create({
+        authorId,
+        title,
+        content,
+    })
+    .then(() => {
+        res.redirect(`/profile/${authorId}`);
+    })
+    .catch(error => {
         console.error("Error creating post:", error);
         res.status(500).render('error', { error: "An unexpected error occurred while creating the post." });
-    }
+    });
 };
 
 // Update an existing post
