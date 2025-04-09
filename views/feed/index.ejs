@@ -43,35 +43,22 @@
 
             <!-- Main Content -->
             <div class="lg:col-span-6">
-                <!-- Post Creator -->
-                <% if (locals.loggedInUserId) { %>
-                    <div class="bg-white rounded-lg shadow mb-4">
-                        <div class="p-4">
-                            <div class="flex items-center space-x-3">
-                                <img src="https://media.licdn.com/dms/image/v2/D4D03AQF9FvdZ1W1_9g/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1712227644410?e=1746662400&v=beta&t=h_guvHTPpOuEEWiAAnuGwQLiaaMLVRgSJGwzP79vRlU"
-                                    alt="Profile" class="rounded-full"
-                                    style="width: 40px; height: 40px; object-fit: cover;">
-                                <a href="/blog/create"
-                                    class="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Start
-                                    a post</a>
-                            </div>
-                            <div class="flex justify-around mt-4">
-                                <div class="flex items-center space-x-1 text-blue-500 cursor-pointer">
-                                    <i class="fas fa-image"></i>
-                                    <span class="text-sm">Photo</span>
-                                </div>
-                                <div class="flex items-center space-x-1 text-yellow-500 cursor-pointer">
-                                    <i class="fas fa-calendar-alt"></i>
-                                    <span class="text-sm">Event</span>
-                                </div>
-                                <div class="flex items-center space-x-1 text-red-500 cursor-pointer">
-                                    <i class="fas fa-newspaper"></i>
-                                    <span class="text-sm">Article</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <% } %>
+                 <!-- Post Creator -->
+    <% if (locals.loggedInUserId) { %>
+        <div class="bg-white rounded-lg shadow mb-4">
+            <div class="p-4">
+                <div class="flex items-center space-x-3">
+                    <img src="https://media.licdn.com/dms/image/v2/D4D03AQF9FvdZ1W1_9g/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1712227644410?e=1746662400&v=beta&t=h_guvHTPpOuEEWiAAnuGwQLiaaMLVRgSJGwzP79vRlU"
+                        alt="Profile" class="rounded-full"
+                        style="width: 40px; height: 40px; object-fit: cover;">
+                    <button onclick="togglePostModal()"
+                        class="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                        Start a post
+                    </button>
+                </div>
+            </div>
+        </div>
+    <% } %>
 
                         <!-- Posts -->
                         <% if (posts && posts.length> 0) { %>
@@ -236,6 +223,33 @@
                                         <% } %>
             </div>
 
+            <!-- Modal for Creating a Post -->
+<div id="postModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-lg w-96 p-6 relative">
+        <button onclick="togglePostModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">
+            &times;
+        </button>
+        <h3 class="text-lg font-semibold mb-4">Create a Post</h3>
+        <form action="/in/<%=user.id%>/create-post" method="POST" >
+            <div class="mb-4">
+                <label for="title" class="block text-sm font-medium text-gray-700">Title</label>
+                <input type="text" name="title" id="title" required
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
+            </div>
+            <div class="mb-4">
+                <label for="content" class="block text-sm font-medium text-gray-700">Content</label>
+                <textarea name="content" id="content" rows="4" required
+                    class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
+            </div>
+          
+            <button type="submit"
+                class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 focus:outline-none">
+                Post
+            </button>
+        </form>
+    </div>
+</div>
+
             <!-- Right Sidebar -->
             <div class="lg:col-span-3">
                 <!-- Trending Card -->
@@ -330,4 +344,10 @@
             document.body.appendChild(form);
             form.submit();
         }
+
+        function togglePostModal() {
+        const modal = document.getElementById('postModal');
+        modal.classList.toggle('hidden');
+        document.body.classList.toggle('overflow-hidden'); // Prevent scrolling when modal is open
+    }
     </script>
