@@ -61,10 +61,12 @@ exports.getRegister = async (req, res) => {
   }
   try {
     const educations = await Education.findAll();
+
+    console.log(educations);
     res.render('auth/register', {
       title: 'Join Legal Network',
       error: null,
-      educations
+      educations:educations
     });
   } catch (error) {
     console.error("Error fetching educations:", error.message);
@@ -121,7 +123,7 @@ exports.register = async (req, res) => {
         userId: user.id,
         lawFirm,
         licenseNumber,
-        summery: summary || '' // Note: model expects 'summery'
+        summary: summary || 'defaulttt text' // Note: model expects 'summery'
       });
       console.log("5. Lawyer profile created with ID:", lawyer.id);
 
@@ -153,8 +155,11 @@ exports.register = async (req, res) => {
         console.log("6. Existing Education record found with ID:", education.id);
       }
 
-      // Associate the education record with the lawyer
-      await lawyer.addEducation(education);
+      // Manually create the association between lawyer and education
+      await LawyerEducation.create({
+        lawyerId: lawyer.id,
+        educationId: education.id
+      });
       console.log("7. Education associated with lawyer");
 
       // Create the contact record
@@ -179,15 +184,17 @@ exports.register = async (req, res) => {
     console.log("11. Registration process completed, redirecting to '/'");
   } catch (error) {
     console.error("Error during registration process:", error.message);
+
+    // Fetch education data to pass to the view
+    const educations = await Education.findAll();
+
     res.render('auth/register', {
       title: 'Join Legal Network',
-      error: error.message
+      error: error.message,
+      educations
     });
   }
 };
-
-
-
 
 // Get login form
 exports.getLogin = (req, res) => {
