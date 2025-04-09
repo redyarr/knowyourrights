@@ -6,11 +6,11 @@ const { isAuthenticated } = require('../middlewares/auth');
 const AuthController = require('../controllers/authController');
 
 // Authentication routes
-router.get('/', AuthController.get);
-router.get('/register', AuthController.getRegister);
-router.post('/register', AuthController.register);
+router.get('/', AuthController.get); // complete
+router.get('/register', AuthController.getRegister); 
+router.post('/register', AuthController.register); 
 router.get('/login', AuthController.getLogin);
 router.post('/login', AuthController.login);
-router.get('/signout', isAuthenticated, AuthController.signout);
+router.get('/signout', isAuthenticated, AuthController.signout); // complete
 
 module.exports = router;

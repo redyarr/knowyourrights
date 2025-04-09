@@ -27,9 +27,10 @@ const setLoggedInUser = (req, res, next) => {
     next();
 };
 
+
 // const setAdminLoged
 
 module.exports = {
     sessionMiddleware,
-    setLoggedInUser
+    setLoggedInUser,
 };

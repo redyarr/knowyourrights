@@ -79,7 +79,6 @@ exports.getRegister = async (req, res) => {
 exports.register = async (req, res) => {
   try {
     console.log("1. Starting registration process");
-
     const { 
       firstName, 
       lastName, 
@@ -165,7 +164,7 @@ exports.register = async (req, res) => {
       });
       console.log("8. Contact record created");
     }
-
+//
     // Set session information for both regular users and lawyers
     req.session.user_id = user.id;
     req.session.user = user;
