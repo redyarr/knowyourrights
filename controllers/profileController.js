@@ -92,7 +92,7 @@ exports.CreatePost = (req, res) => {
         content,
     })
     .then(() => {
-        res.redirect(`/profile/${authorId}`);
+        res.redirect(`/`);
     })
     .catch(error => {
         console.error("Error creating post:", error);
