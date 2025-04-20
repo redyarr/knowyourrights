@@ -1,0 +1,260 @@
+<%- include('../layouts/main.ejs', {title: 'Lawyer Feedback'}) %>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2 class="mb-4">Lawyer Feedback</h2>
+            
+            <!-- Lawyer Information -->
+            <div id="lawyer-info" class="card mb-4">
+                <div class="card-body">
+                    <h3 id="lawyer-name">Loading...</h3>
+                    <p id="lawyer-firm"></p>
+                    <div class="d-flex align-items-center mb-2">
+                        <div id="average-rating" class="me-2">0.0</div>
+                        <div id="rating-stars" class="me-2"></div>
+                        <div id="total-reviews">(0 reviews)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Feedback Form -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Submit Your Feedback</h4>
+                </div>
+                <div class="card-body">
+                    <form id="feedback-form">
+                        <input type="hidden" id="lawyer-id" name="lawyerId">
+                        
+                        <div class="mb-3">
+                            <label for="rating" class="form-label">Rating</label>
+                            <div class="rating-input">
+                                <% for(let i=5; i>=1; i--) { %>
+                                <input type="radio" id="star<%= i %>" name="rating" value="<%= i %>" />
+                                <label for="star<%= i %>" title="<%= i %> stars">★</label>
+                                <% } %>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="review" class="form-label">Your Review</label>
+                            <textarea class="form-control" id="review" name="review" rows="4" placeholder="Share your experience with this lawyer"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Feedback List -->
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h4 class="mb-0">Reviews</h4>
+                </div>
+                <div class="card-body">
+                    <div id="feedback-list">
+                        <!-- Feedback items will be loaded here -->
+                        <div class="text-center" id="loading-feedback">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .rating-input {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+    
+    .rating-input input {
+        display: none;
+    }
+    
+    .rating-input label {
+        font-size: 30px;
+        color: #ddd;
+        cursor: pointer;
+        margin: 0 5px;
+    }
+    
+    .rating-input label:hover,
+    .rating-input label:hover ~ label,
+    .rating-input input:checked ~ label {
+        color: #ffd700;
+    }
+    
+    .feedback-item {
+        border-bottom: 1px solid #eee;
+        padding: 15px 0;
+    }
+    
+    .feedback-item:last-child {
+        border-bottom: none;
+    }
+    
+    .feedback-stars {
+        color: #ffd700;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get lawyer ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const lawyerId = urlParams.get('id');
+        
+        if (!lawyerId) {
+            alert('Lawyer ID is required');
+            window.location.href = '/feed';
+            return;
+        }
+        
+        // Set lawyer ID in form
+        document.getElementById('lawyer-id').value = lawyerId;
+        
+        // Fetch lawyer details and feedback
+        fetchLawyerDetails(lawyerId);
+        fetchLawyerFeedback(lawyerId);
+        
+        // Handle form submission
+        document.getElementById('feedback-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitFeedback();
+        });
+    });
+    
+    function fetchLawyerDetails(lawyerId) {
+        // This would be replaced with an actual API call to get lawyer details
+        fetch(`/profile/lawyer/${lawyerId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.lawyer) {
+                    document.getElementById('lawyer-name').textContent = `${data.lawyer.User.firstName} ${data.lawyer.User.lastName}`;
+                    document.getElementById('lawyer-firm').textContent = data.lawyer.lawFirm;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching lawyer details:', error);
+            });
+    }
+    
+    function fetchLawyerFeedback(lawyerId) {
+        fetch(`/feedback/lawyer/${lawyerId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loading-feedback').style.display = 'none';
+                
+                // Update average rating and total reviews
+                document.getElementById('average-rating').textContent = data.averageRating;
+                document.getElementById('total-reviews').textContent = `(${data.totalReviews} reviews)`;
+                
+                // Update rating stars
+                const starsHtml = generateStars(data.averageRating);
+                document.getElementById('rating-stars').innerHTML = starsHtml;
+                
+                // Display feedback items
+                const feedbackList = document.getElementById('feedback-list');
+                
+                if (data.feedback.length === 0) {
+                    feedbackList.innerHTML = '<p class="text-center">No reviews yet. Be the first to leave a review!</p>';
+                    return;
+                }
+                
+                let feedbackHtml = '';
+                data.feedback.forEach(item => {
+                    const date = new Date(item.created_at).toLocaleDateString();
+                    feedbackHtml += `
+                        <div class="feedback-item">
+                            <div class="d-flex justify-content-between">
+                                <h5>${item.User.firstName} ${item.User.lastName}</h5>
+                                <small>${date}</small>
+                            </div>
+                            <div class="feedback-stars mb-2">${generateStars(item.rating)}</div>
+                            <p>${item.review || 'No written review provided.'}</p>
+                        </div>
+                    `;
+                });
+                
+                feedbackList.innerHTML = feedbackHtml;
+            })
+            .catch(error => {
+                console.error('Error fetching lawyer feedback:', error);
+                document.getElementById('loading-feedback').style.display = 'none';
+                document.getElementById('feedback-list').innerHTML = '<p class="text-center text-danger">Error loading reviews. Please try again later.</p>';
+            });
+    }
+    
+    function generateStars(rating) {
+        const fullStars = Math.floor(rating);
+        const halfStar = rating % 1 >= 0.5;
+        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+        
+        let starsHtml = '';
+        
+        // Full stars
+        for (let i = 0; i < fullStars; i++) {
+            starsHtml += '<span class="feedback-stars">★</span>';
+        }
+        
+        // Half star
+        if (halfStar) {
+            starsHtml += '<span class="feedback-stars">★</span>';
+        }
+        
+        // Empty stars
+        for (let i = 0; i < emptyStars; i++) {
+            starsHtml += '<span style="color: #ddd;">★</span>';
+        }
+        
+        return starsHtml;
+    }
+    
+    function submitFeedback() {
+        const lawyerId = document.getElementById('lawyer-id').value;
+        const ratingInput = document.querySelector('input[name="rating"]:checked');
+        const review = document.getElementById('review').value;
+        
+        if (!ratingInput) {
+            alert('Please select a rating');
+            return;
+        }
+        
+        const rating = parseInt(ratingInput.value);
+        
+        const data = {
+            lawyerId,
+            rating,
+            review
+        };
+        
+        fetch('/feedback/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            alert(data.message);
+            // Refresh feedback list
+            fetchLawyerFeedback(lawyerId);
+            // Reset form
+            document.getElementById('feedback-form').reset();
+        })
+        .catch(error => {
+            console.error('Error submitting feedback:', error);
+            alert('Error submitting feedback. Please try again.');
+        });
+    }
+</script>
+
+<%- include('../layouts/footer.ejs') %>

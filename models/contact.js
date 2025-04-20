@@ -17,7 +17,7 @@ const Contact = sequelize.define('contacts', {
             notEmpty: true,
             isNumeric: { msg: "Must be a number" }
         },
-        unique: true
+        unique: { msg: "This phone number is already registered" }
     }
 }, {
     timestamps: false,
