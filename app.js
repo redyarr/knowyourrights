@@ -57,7 +57,7 @@ app.use('/feedback', FeedbackRouter); // lawyer feedback system
 app.use('/seed', storeRouter); 
 
 // { force: true }
-sequelize.sync( { force: true })
+sequelize.sync( { force: false })
     .then(() => {
         server.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);

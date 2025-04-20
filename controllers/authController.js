@@ -216,6 +216,11 @@ exports.login = async (req, res) => {
 
     req.session.user_id = user.id;
     req.session.user = user;
+    log('User session:', req.session.user);
+    if (user.Lawyer) {
+      req.session.lawyer = user.Lawyer;
+      log('Lawyer session:', req.session.lawyer);
+    }
     res.redirect('/');
   } catch (error) {
     res.render('auth/login', {
