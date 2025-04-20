@@ -143,28 +143,61 @@
 </div>
 
 <script>
+  // Call toggleLawyerFields when the page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    toggleLawyerFields();
+  });
+
   function toggleLawyerFields() {
     const role = document.getElementById('role').value;
     const lawyerFields = document.getElementById('lawyerFields');
-    const requiredFields = [
+    const lawyerInputs = [
       'lawFirm',
       'licenseNumber',
+      'summary',
       'contactNumber',
       'universitySelect',
+      'universityInput',
       'collegeSelect',
+      'collegeInput',
       'departmentSelect',
+      'departmentInput',
       'degree'
     ];
-
+  
     if (role === 'lawyer') {
       lawyerFields.classList.remove('hidden');
-      requiredFields.forEach(field => {
-        document.getElementById(field).required = true;
+      lawyerInputs.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+          field.disabled = false;
+          // Restore the name attribute to ensure form submission includes these fields
+          if (field.dataset.originalName) {
+            field.name = field.dataset.originalName;
+          }
+          if (!field.id.endsWith('Input')) {
+            field.required = true;
+          }
+        }
       });
     } else {
       lawyerFields.classList.add('hidden');
-      requiredFields.forEach(field => {
-        document.getElementById(field).required = false;
+      lawyerInputs.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+          // Store the original name attribute before removing it
+          if (field.name) {
+            field.dataset.originalName = field.name;
+            field.name = ''; // Remove name attribute to prevent form submission
+          }
+          field.disabled = true;
+          field.required = false;
+          if (field.tagName === 'SELECT') {
+            field.selectedIndex = 0;
+          } else {
+            field.value = '';
+          }
+        }
       });
     }
   }

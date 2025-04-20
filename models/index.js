@@ -26,6 +26,8 @@ const LawyerEducation = require('./lawyerEducation')
 const PostReport = require('./postReport');
 const UserReport = require('./userReport');
 const lawyerDoc = require('./lawwyerDoc');
+const LawyerFeedback = require('./lawyerFeedback');
+
 
 
 
@@ -44,6 +46,14 @@ try {
     // Lawyer and LawyerDoc
     Lawyer.hasMany(lawyerDoc, { foreignKey: 'lawyer_id' });
     lawyerDoc.belongsTo(Lawyer, { foreignKey: 'lawyer_id' });
+    
+    // Lawyer and LawyerFeedback
+    Lawyer.hasMany(LawyerFeedback, { foreignKey: 'lawyer_id' });
+    LawyerFeedback.belongsTo(Lawyer, { foreignKey: 'lawyer_id' });
+    
+    // User and LawyerFeedback
+    User.hasMany(LawyerFeedback, { foreignKey: 'user_id' });
+    LawyerFeedback.belongsTo(User, { foreignKey: 'user_id' });
 
     // User and Post
     User.hasMany(Post, { foreignKey: 'author_id' });
@@ -172,7 +182,8 @@ module.exports = {
     UserReport,
     lawyerDoc,
     Job,
-    JobReport
+    JobReport,
+    LawyerFeedback
 };
 
 console.log("Models exported");

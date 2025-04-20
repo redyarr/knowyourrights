@@ -17,6 +17,7 @@ const ProfileRouter = require('./routes/profile.js');
 const JobsRouter = require('./routes/jobs.js');
 const MessaginRouter = require('./routes/messagin.js');
 const NotificationsRouter = require('./routes/notifications.js');
+const FeedbackRouter = require('./routes/feedback.js');
 const storeRouter = require('./util/seed.js');
 
 // Import session configuration
@@ -29,6 +30,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middlewares
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); // Add JSON body parser for API requests
 app.use(methodOverride('_method', { methods: ['POST', 'GET'] }));
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -51,6 +53,7 @@ app.use('/mynetwork', MyNetwork);
 app.use('/jobs', JobsRouter)  
 app.use('/messaging', MessaginRouter)  
 app.use('/notifications', NotificationsRouter)  
+app.use('/feedback', FeedbackRouter); // lawyer feedback system
 app.use('/seed', storeRouter); 
 
 // { force: true }

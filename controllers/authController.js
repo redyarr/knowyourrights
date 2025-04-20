@@ -19,54 +19,11 @@ exports.getRegister = async (req, res) => {
   }
   try {
     const educations = await Education.findAll();
-    res.render('auth/register', {
-      title: 'Join Legal Network',
-      error: null,
-      educations
-    });
-  } catch (error) {
-    console.error("Error fetching educations:", error.message);
-    res.render('auth/register', {
-      title: 'Join Legal Network',
-      error: 'Failed to load education data'
-    });
-  }
-};
-
-// Register a new user
-exports.getRegister = async (req, res) => {
-  if (req.session.user) {
-    return res.redirect('/feed');
-  }
-  try {
-    const educations = await Education.findAll();
-    res.render('auth/register', {
-      title: 'Join Legal Network',
-      error: null,
-      educations
-    });
-  } catch (error) {
-    console.error("Error fetching educations:", error.message);
-    res.render('auth/register', {
-      title: 'Join Legal Network',
-      error: 'Failed to load education data'
-    });
-  }
-};
-
-// Register a new user (with education record handling for lawyers)
-exports.getRegister = async (req, res) => {
-  if (req.session.user) {
-    return res.redirect('/feed');
-  }
-  try {
-    const educations = await Education.findAll();
-
     console.log(educations);
     res.render('auth/register', {
       title: 'Join Legal Network',
       error: null,
-      educations:educations
+      educations: educations
     });
   } catch (error) {
     console.error("Error fetching educations:", error.message);
@@ -103,6 +60,20 @@ exports.register = async (req, res) => {
 
     console.log("2. Received form data:", req.body);
 
+    // Check if email already exists
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      throw new Error('Email already in use. Please use a different email address.');
+    }
+
+    // Check if contact number already exists (for lawyers)
+    if (role === 'lawyer' && contactNumber) {
+      const existingContact = await Contact.findOne({ where: { number: contactNumber } });
+      if (existingContact) {
+        throw new Error('Contact number already in use. Please use a different number.');
+      }
+    }
+
     // Create the user
     const user = await User.create({
       firstName,
@@ -119,11 +90,19 @@ exports.register = async (req, res) => {
     if (role === 'lawyer') {
       console.log("4. Registering as a lawyer");
 
+      // Check if license number already exists
+      const existingLawyer = await Lawyer.findOne({ where: { licenseNumber } });
+      if (existingLawyer) {
+        // Delete the user we just created since we can't complete registration
+        await User.destroy({ where: { id: user.id } });
+        throw new Error('License number already in use. Please check and try again.');
+      }
+
       lawyer = await Lawyer.create({
         userId: user.id,
         lawFirm,
         licenseNumber,
-        summary: summary || 'defaulttt text' // Note: model expects 'summery'
+        summary: summary || 'Default professional summary' // Fixed comment
       });
       console.log("5. Lawyer profile created with ID:", lawyer.id);
 
@@ -163,16 +142,30 @@ exports.register = async (req, res) => {
       console.log("7. Education associated with lawyer");
 
       // Create the contact record
-      await Contact.create({
-        userId: user.id,
-        number: contactNumber
-      });
-      console.log("8. Contact record created");
+      try {
+        await Contact.create({
+          userId: user.id,
+          number: contactNumber
+        });
+        console.log("8. Contact record created");
+      } catch (contactError) {
+        // If contact creation fails, clean up the created records
+        await LawyerEducation.destroy({ where: { lawyerId: lawyer.id } });
+        await Lawyer.destroy({ where: { id: lawyer.id } });
+        await User.destroy({ where: { id: user.id } });
+        throw new Error('Error creating contact: ' + contactError.message);
+      }
     }
-//
+
     // Set session information for both regular users and lawyers
     req.session.user_id = user.id;
-    req.session.user = user;
+    req.session.user = {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role
+    };
     console.log("9. Session set for user", req.session);
 
     if (lawyer) {
@@ -180,8 +173,8 @@ exports.register = async (req, res) => {
       console.log("10. Lawyer-specific session info set");
     }
 
-    res.redirect('/');
-    console.log("11. Registration process completed, redirecting to '/'");
+    res.redirect('/feed');
+    console.log("11. Registration process completed, redirecting to '/feed'");
   } catch (error) {
     console.error("Error during registration process:", error.message);
 
