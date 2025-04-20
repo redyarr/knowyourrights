@@ -315,18 +315,18 @@ async function seedDatabase() {
 
     // --- 16. Seed ProfileImages (depends on Users, already 12 rows) ---
     const profileImages = [
-      { userId: 1, imagePath: 'https://randomuser.me/api/portraits/men/1.jpg' },
-      { userId: 2, imagePath: 'https://randomuser.me/api/portraits/women/2.jpg' },
-      { userId: 3, imagePath: 'https://randomuser.me/api/portraits/women/3.jpg' },
-      { userId: 4, imagePath: 'https://randomuser.me/api/portraits/men/4.jpg' },
-      { userId: 5, imagePath: 'https://randomuser.me/api/portraits/men/5.jpg' },
-      { userId: 6, imagePath: 'https://randomuser.me/api/portraits/women/6.jpg' },
-      { userId: 7, imagePath: 'https://randomuser.me/api/portraits/men/7.jpg' },
-      { userId: 8, imagePath: 'https://randomuser.me/api/portraits/women/8.jpg' },
-      { userId: 9, imagePath: 'https://randomuser.me/api/portraits/men/9.jpg' },
-      { userId: 10, imagePath: 'https://randomuser.me/api/portraits/women/10.jpg' },
-      { userId: 11, imagePath: 'https://randomuser.me/api/portraits/men/11.jpg' },
-      { userId: 12, imagePath: 'https://randomuser.me/api/portraits/men/12.jpg' }
+      { userId: 1, imagePath: '/profile_images/img1.jpg' },
+      { userId: 2, imagePath: '/profile_images/img2.jpg' },
+      { userId: 3, imagePath: '/profile_images/img3.jpg' },
+      { userId: 4, imagePath: '/profile_images/img4.jpg' },
+      { userId: 5, imagePath: '/profile_images/img5.jpg' },
+      { userId: 6, imagePath: '/profile_images/img6.jpg' },
+      { userId: 7, imagePath: '/profile_images/img7.jpg' },
+      { userId: 8, imagePath: '/profile_images/img8.jpg' },
+      { userId: 9, imagePath: '/profile_images/img9.jpg' },
+      { userId: 10, imagePath: '/profile_images/img10.jpg' },
+      { userId: 11, imagePath: 'https://media.licdn.com/dms/image/v2/D4D03AQF9FvdZ1W1_9g/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1712227644410?e=1747267200&v=beta&t=gtyFT7KVD2DSofgabD6bc-_-F_F49OBRbRzSrjaDqZ0' },
+      { userId: 12, imagePath: 'https://media.licdn.com/dms/image/v2/D4D03AQFNmASyBMQboA/profile-displayphoto-shrink_100_100/B4DZRbZ7x9HYAU-/0/1736700313204?e=1747267200&v=beta&t=q6BItntvASBeWeEROT5ZIKQDQDqyFWd6VvINNk-3qPM' }
     ];
     await ProfileImage.bulkCreate(profileImages, { ignoreDuplicates: true });
     console.log("ProfileImages inserted");

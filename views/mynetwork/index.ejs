@@ -1,77 +1,47 @@
-<section class="max-w-2xl mx-auto p-4 space-y-8">
-    <h2 class="text-2xl font-semibold text-gray-900">Your Connections</h2>
+<section>
+    <h2>Your Connections</h2>
 
-    <!-- Connection Requests -->
-    <div class="space-y-4">
-        <h3 class="text-lg font-medium text-gray-900">Connection Requests</h3>
-        <% if (connectionRequests && connectionRequests.length > 0) { %>
-            <ul class="space-y-4">
-                <% connectionRequests.forEach(request => { %>
-                    <li class="bg-white rounded-lg shadow-sm p-4">
-                        <div class="flex items-center space-x-4">
-                            <div class="flex-shrink-0">
-                                <% if (request.requester.ProfileImage && request.requester.ProfileImage.imagePath) { %>
-                                    <img src="<%= request.requester.ProfileImage.imagePath %>" 
-                                         alt="<%= request.requester.firstName %>'s profile image" 
-                                         class="w-16 h-16 rounded-full object-cover">
-                                <% } else { %>
-                                    <img src="/images/default-profile.png" 
-                                         alt="Default profile image" 
-                                         class="w-16 h-16 rounded-full object-cover bg-gray-100">
-                                <% } %>
-                            </div>
-                            <div class="flex-grow">
-                                <p class="font-medium text-gray-900">
-                                    <%= request.requester.firstName %> <%= request.requester.lastName %>
-                                </p>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200">
-                                    Accept
-                                </button>
-                                <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors duration-200">
-                                    Decline
-                                </button>
-                            </div>
-                        </div>
-                    </li>
-                <% }); %>
-            </ul>
-        <% } else { %>
-            <p class="text-gray-600 text-center py-4">No connection requests at the moment.</p>
-        <% } %>
-    </div>
+    <!-- Display Connection Requests -->
+    <h3>Connection Requests</h3>
+    <% if (connectionRequests && connectionRequests.length > 0) { %>
+        <ul>
+            <% connectionRequests.forEach(request => { %>
+                <li>
+                    <div class="connection">
+                        <% if (request.requester.ProfileImage && request.requester.ProfileImage.imagePath) { %>
+                            <img src="<%= request.requester.ProfileImage.imagePath %>" alt="<%= request.requester.firstName %>'s profile image" class="profile-image">
+                        <% } else { %>
+                            <img src="/images/default-profile.png" alt="Default profile image" class="profile-image">
+                        <% } %>
+                        <p><%= request.requester.firstName %> <%= request.requester.lastName %></p>
+                        <button class="accept-btn">Accept</button>
+                        <button class="decline-btn">Decline</button>
+                    </div>
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p>No connection requests at the moment.</p>
+    <% } %>
 
-    <!-- Friends List -->
-    <div class="space-y-4">
-        <h3 class="text-lg font-medium text-gray-900">Your Friends</h3>
-        <% if (friends && friends.length > 0) { %>
-            <ul class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <% friends.forEach(friend => { %>
-                    <li class="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow duration-200">
-                        <div class="flex items-center space-x-4">
-                            <div class="flex-shrink-0">
-                                <% if (friend.connectedUser.ProfileImage && friend.connectedUser.ProfileImage.imagePath) { %>
-                                    <img src="<%= friend.connectedUser.ProfileImage.imagePath %>" 
-                                         alt="<%= friend.connectedUser.firstName %>'s profile image" 
-                                         class="w-12 h-12 rounded-full object-cover">
-                                <% } else { %>
-                                    <img src="/images/default-profile.png" 
-                                         alt="Default profile image" 
-                                         class="w-12 h-12 rounded-full object-cover bg-gray-100">
-                                <% } %>
-                            </div>
-                            <div>
-                                <p class="font-medium text-gray-900">
-                                    <%= friend.connectedUser.firstName %> <%= friend.connectedUser.lastName %>
-                                </p>
-                            </div>
-                        </div>
-                    </li>
-                <% }); %>
-            </ul>
-        <% } else { %>
-            <p class="text-gray-600 text-center py-4">You have no friends yet. Start connecting with others!</p>
-        <% } %>
-    </div>
+    <!-- Display Friends -->
+    <h3>Your Friends</h3>
+    <% if (friends && friends.length > 0) { %>
+        <ul>
+            <% friends.forEach(friend => { %>
+                <li>
+                    <div class="connection">
+                        <% if (friend.connectedUser.ProfileImage && friend.connectedUser.ProfileImage.imagePath) { %>
+                            <img src="<%= friend.connectedUser.ProfileImage.imagePath %>" alt="<%= friend.connectedUser.firstName %>'s profile image" class="profile-image">
+                        <% } else { %>
+                            <img src="/images/default-profile.png" alt="Default profile image" class="profile-image">
+                        <% } %>
+                        <p><%= friend.connectedUser.firstName %> <%= friend.connectedUser.lastName %></p>
+                    </div>
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p>You have no friends yet. Start connecting with others!</p>
+    <% } %>
 </section>
