@@ -1,6 +1,64 @@
 const { User, Connection, Message } = require('../models');
 const { Op } = require('sequelize');
 
+// Search for users
+exports.searchUsers = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const query = req.query.q || '';
+        const page = parseInt(req.query.page) || 1;
+        const limit = 10; // Users per page
+        const offset = (page - 1) * limit;
+        
+        let whereClause = { id: { [Op.ne]: userId } }; // Exclude current user
+        let totalUsers = 0;
+        
+        // If query exists, filter by it
+        if (query) {
+            whereClause = {
+                ...whereClause,
+                [Op.or]: [
+                    { firstName: { [Op.like]: `%${query}%` } },
+                    { lastName: { [Op.like]: `%${query}%` } },
+                    { email: { [Op.like]: `%${query}%` } }
+                ]
+            };
+        }
+        
+        // Count total users for pagination
+        totalUsers = await User.count({ where: whereClause });
+        
+        // Get users with pagination
+        const users = await User.findAll({
+            where: whereClause,
+            attributes: ['id', 'firstName', 'lastName', 'email'],
+            limit,
+            offset,
+            order: [['firstName', 'ASC']]
+        });
+        
+        // Calculate pagination info
+        const totalPages = Math.ceil(totalUsers / limit);
+        
+        res.render('messaging/search', {
+            title: 'Find Users',
+            users,
+            query,
+            userId,
+            user: req.session.user,
+            pagination: {
+                page,
+                limit,
+                totalUsers,
+                totalPages
+            }
+        });
+    } catch (error) {
+        console.error('Error searching users:', error);
+        res.status(500).send('Server error');
+    }
+};
+
 exports.getMessages = async (req, res) => {
     try {
         const userId = req.session.user_id;

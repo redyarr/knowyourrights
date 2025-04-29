@@ -1,0 +1,240 @@
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-lg shadow">
+        <!-- Search header -->
+        <div class="p-4 border-b flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Find Users</h1>
+            <div class="flex space-x-2">
+                <a href="/messaging" class="p-2 hover:bg-gray-100 rounded-full">
+                    <i class="fas fa-arrow-left text-gray-600"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- User search -->
+        <div class="p-4 border-b">
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
+                    <i class="fas fa-search text-gray-400"></i>
+                </span>
+                <input type="text" id="userSearchInput" name="q" placeholder="Search users by name or email" value="<%= query || '' %>"
+                    class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-1 focus:ring-blue-500">
+            </div>
+        </div>
+
+        <!-- Search results -->
+        <div id="userResults" class="divide-y max-h-[calc(100vh-350px)] overflow-y-auto custom-scrollbar">
+            <% if (locals.users && users.length > 0) { %>
+                <% users.forEach(user => { %>
+                    <div class="user-item p-4 hover:bg-gray-50">
+                        <div class="flex items-center space-x-3">
+                            <img src="https://ui-avatars.com/api/?name=<%= user.firstName %>+<%= user.lastName %>"
+                                alt="<%= user.firstName %>" class="w-12 h-12 rounded-full">
+                            <div class="flex-1">
+                                <h4 class="font-semibold user-name">
+                                    <%= user.firstName %> <%= user.lastName %>
+                                </h4>
+                                <p class="text-sm text-gray-600 user-email">
+                                    <%= user.email %>
+                                </p>
+                            </div>
+                            <a href="/messaging/user/<%= userId %>/messages/<%= user.id %>" 
+                               class="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition">
+                                Message
+                            </a>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else if (query) { %>
+                <div class="p-8 text-center text-gray-500">
+                    <div class="text-5xl mb-4">
+                        <i class="far fa-frown"></i>
+                    </div>
+                    <p class="text-xl font-semibold">No users found</p>
+                    <p>Try a different search term</p>
+                </div>
+            <% } else { %>
+                <div class="p-8 text-center text-gray-500">
+                    <div class="text-5xl mb-4">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <p class="text-xl font-semibold">Search for users</p>
+                    <p>Find people to connect with</p>
+                </div>
+            <% } %>
+        </div>
+        
+        <!-- Pagination -->
+        <% if (locals.pagination && pagination.totalPages > 1) { %>
+        <div class="p-4 border-t flex justify-center">
+            <div class="flex space-x-2">
+                <% if (pagination.page > 1) { %>
+                <a href="/messaging/search?q=<%= query %>&page=<%= pagination.page - 1 %>" 
+                   class="px-3 py-1 border rounded hover:bg-gray-100">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+                <% } %>
+                
+                <% 
+                let startPage = Math.max(1, pagination.page - 2);
+                let endPage = Math.min(pagination.totalPages, startPage + 4);
+                if (endPage - startPage < 4) {
+                    startPage = Math.max(1, endPage - 4);
+                }
+                %>
+                
+                <% for (let i = startPage; i <= endPage; i++) { %>
+                <a href="/messaging/search?q=<%= query %>&page=<%= i %>" 
+                   class="px-3 py-1 border rounded <%= i === pagination.page ? 'bg-blue-500 text-white' : 'hover:bg-gray-100' %>">
+                    <%= i %>
+                </a>
+                <% } %>
+                
+                <% if (pagination.page < pagination.totalPages) { %>
+                <a href="/messaging/search?q=<%= query %>&page=<%= pagination.page + 1 %>" 
+                   class="px-3 py-1 border rounded hover:bg-gray-100">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+                <% } %>
+            </div>
+        </div>
+        <% } %>
+        
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const searchInput = document.getElementById('userSearchInput');
+                const userItems = document.querySelectorAll('.user-item');
+                const paginationContainer = document.querySelector('.p-4.border-t.flex.justify-center');
+                let typingTimer;
+                const doneTypingInterval = 500; // Wait time after typing stops (ms)
+                let lastSearchTerm = searchInput.value.toLowerCase();
+                
+                // Function to filter users client-side
+                function filterUsers(searchTerm) {
+                    let visibleCount = 0;
+                    let noResultsMessage = document.querySelector('.no-results-message');
+                    
+                    // Remove existing no results message if it exists
+                    if (noResultsMessage) {
+                        noResultsMessage.remove();
+                    }
+                    
+                    // Filter the user items
+                    userItems.forEach(item => {
+                        const name = item.querySelector('.user-name').textContent.toLowerCase();
+                        const email = item.querySelector('.user-email').textContent.toLowerCase();
+                        
+                        if (name.includes(searchTerm) || email.includes(searchTerm) || searchTerm === '') {
+                            // Show with smooth transition
+                            item.style.display = 'block';
+                            item.style.opacity = '1';
+                            visibleCount++;
+                        } else {
+                            // Hide with smooth transition
+                            item.style.opacity = '0';
+                            setTimeout(() => {
+                                item.style.display = 'none';
+                            }, 200);
+                        }
+                    });
+                    
+                    // Show no results message if needed
+                    if (visibleCount === 0 && searchTerm !== '') {
+                        const resultsContainer = document.getElementById('userResults');
+                        noResultsMessage = document.createElement('div');
+                        noResultsMessage.className = 'no-results-message p-8 text-center text-gray-500';
+                        noResultsMessage.innerHTML = `
+                            <div class="text-5xl mb-4">
+                                <i class="far fa-frown"></i>
+                            </div>
+                            <p class="text-xl font-semibold">No users found</p>
+                            <p>Try a different search term</p>
+                        `;
+                        resultsContainer.appendChild(noResultsMessage);
+                    }
+                    
+                    // Hide pagination if filtering client-side
+                    if (paginationContainer) {
+                        paginationContainer.style.display = searchTerm ? 'none' : 'flex';
+                    }
+                }
+                
+                // Add CSS for smooth transitions
+                const style = document.createElement('style');
+                style.textContent = `
+                    .user-item {
+                        transition: opacity 0.2s ease-in-out;
+                    }
+                    .search-loading {
+                        position: absolute;
+                        right: 15px;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        width: 20px;
+                        height: 20px;
+                        border: 2px solid rgba(59, 130, 246, 0.2);
+                        border-radius: 50%;
+                        border-top-color: rgba(59, 130, 246, 1);
+                        animation: spin 0.8s linear infinite;
+                    }
+                    @keyframes spin {
+                        to { transform: translateY(-50%) rotate(360deg); }
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                // Create loading indicator
+                const loadingIndicator = document.createElement('div');
+                loadingIndicator.className = 'search-loading';
+                loadingIndicator.style.display = 'none';
+                searchInput.parentNode.appendChild(loadingIndicator);
+                
+                // Real-time search functionality with debounce
+                searchInput.addEventListener('input', function(e) {
+                    const searchTerm = e.target.value.toLowerCase();
+                    
+                    // Show loading indicator
+                    loadingIndicator.style.display = 'block';
+                    
+                    // Clear the previous timer
+                    clearTimeout(typingTimer);
+                    
+                    // Immediately filter client-side for responsive feel
+                    filterUsers(searchTerm);
+                    
+                    // Set a new timer for server-side search
+                    typingTimer = setTimeout(function() {
+                        // If search term is significantly different from last one, do server search
+                        if (Math.abs(searchTerm.length - lastSearchTerm.length) > 3 || 
+                            (searchTerm.length === 0 && lastSearchTerm.length > 0)) {
+                            
+                            // Hide loading indicator before redirect
+                            loadingIndicator.style.display = 'none';
+                            
+                            // If empty, go to first page
+                            if (searchTerm.length === 0) {
+                                window.location.href = '/messaging/search';
+                                return;
+                            }
+                            
+                            // If significant change and 2+ chars, do server search
+                            if (searchTerm.length >= 2) {
+                                window.location.href = `/messaging/search?q=${encodeURIComponent(searchTerm)}`;
+                                return;
+                            }
+                        }
+                        
+                        // Hide loading indicator
+                        loadingIndicator.style.display = 'none';
+                        
+                    }, doneTypingInterval);
+                    
+                    // Update last search term
+                    lastSearchTerm = searchTerm;
+                });
+                
+                // Focus search input on page load
+                searchInput.focus();
+            });
+        </script>
+    </div>
+</div>
