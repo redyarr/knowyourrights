@@ -18,7 +18,7 @@
                     <% } else { %>
                         <div class="flex space-x-2">
                             <button class="bg-blue-600 text-white px-4 py-2 rounded-full">Connect</button>
-                            <button class="border border-blue-600 text-blue-600 px-4 py-2 rounded-full">Message</button>
+                            <a href="/messaging/user/<%= locals.loggedInUserId %>/messages/<%= profile.id %>" class="border border-blue-600 text-blue-600 px-4 py-2 rounded-full text-center">Message</a>
                         </div>
                         <% } %>
             </div>

@@ -51,7 +51,7 @@ app.use('/feed', FeedRouter); // show all posts as feed
 app.use('/in', ProfileRouter); // redirect route '/in/:user_id'
 app.use('/mynetwork', MyNetwork);  
 app.use('/jobs', JobsRouter)  
-app.use('/messaging', MessaginRouter)  
+app.use('/messaging', MessaginRouter)  // Handles all messaging routes including conversations
 app.use('/notifications', NotificationsRouter)  
 app.use('/feedback', FeedbackRouter); // lawyer feedback system
 app.use('/seed', storeRouter); 

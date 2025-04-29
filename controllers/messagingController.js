@@ -103,13 +103,14 @@ exports.getConversation = async (req, res) => {
             }
         });
         
-        if (!isConnected) {
-            return res.status(403).send('You need to be connected to message this user');
-        }
+        // For now, skip connection check to allow messaging between any users
+        // if (!isConnected) {
+        //     return res.status(403).send('You need to be connected to message this user');
+        // }
         
         // Get conversation partner details
-        const conversationPartner = await Users.findByPk(conversationId, {
-            attributes: ['id', 'name', 'email']
+        const conversationPartner = await User.findByPk(conversationId, {
+            attributes: ['id', 'firstName', 'lastName', 'email']
         });
         
         if (!conversationPartner) {
@@ -159,9 +160,9 @@ exports.getConversation = async (req, res) => {
             ])
         ];
         
-        const conversations = await Users.findAll({
-            where: { id: conversationUserIds },
-            attributes: ['id', 'name', 'email']
+        const conversations = await User.findAll({
+            where: { id: { [Op.in]: conversationUserIds } },
+            attributes: ['id', 'firstName', 'lastName', 'email']
         });
         
         const conversationsWithLastMessage = await Promise.all(
@@ -197,12 +198,13 @@ exports.getConversation = async (req, res) => {
         });
         
         res.render('user/conversation', {
-            title: `Conversation with ${conversationPartner.name}`,
+            title: `Conversation with ${conversationPartner.firstName} ${conversationPartner.lastName}`,
             conversations: conversationsWithLastMessage,
             messages,
             conversationPartner,
             userId,
-            activeConversation: conversationId
+            activeConversation: conversationId,
+            user: req.session.user
         });
     } catch (error) {
         console.error('Error fetching conversation:', error);
@@ -213,7 +215,12 @@ exports.getConversation = async (req, res) => {
 exports.sendMessage = async (req, res) => {
     try {
         const senderId = req.session.user_id;
-        const { receiverId, content } = req.body;
+        const receiverId = req.params.conversationId;
+        const { content } = req.body;
+        
+        if (!content || content.trim() === '') {
+            return res.status(400).send('Message content cannot be empty');
+        }
         
         // Check if users are connected
         const isConnected = await Connection.findOne({
@@ -225,9 +232,10 @@ exports.sendMessage = async (req, res) => {
             }
         });
         
-        if (!isConnected) {
-            return res.status(403).send('You need to be connected to message this user');
-        }
+        // For now, skip connection check to allow messaging between any users
+        // if (!isConnected) {
+        //     return res.status(403).send('You need to be connected to message this user');
+        // }
         
         // Create message
         await Message.create({
@@ -236,7 +244,7 @@ exports.sendMessage = async (req, res) => {
             content
         });
         
-        res.redirect(`/user/${senderId}/messages/${receiverId}`);
+        res.redirect(`/messaging/user/${senderId}/messages/${receiverId}`);
     } catch (error) {
         console.error('Error sending message:', error);
         res.status(500).send('Server error');

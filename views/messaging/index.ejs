@@ -27,24 +27,26 @@
         <!-- Messages list -->
         <div class="divide-y max-h-[calc(100vh-300px)] overflow-y-auto custom-scrollbar">
             <% messages.forEach(message=> { %>
-                <div class="message-item p-4 hover:bg-gray-50 cursor-pointer flex items-center space-x-3">
-                    <img src="https://ui-avatars.com/api/?name=<%= message.user.firstName %>+<%= message.user.lastName %>"
-                        alt="Contact" class="w-12 h-12 rounded-full">
-                    <div class="flex-1 min-w-0">
-                        <div class="flex justify-between items-baseline">
-                            <h4 class="font-semibold truncate message-name">
-                                <%= message.user.firstName %>
-                                    <%= message.user.lastName %>
-                            </h4>
-                            <span class="text-xs text-gray-500">
-                                <%= new Date(message.lastMessage.createdAt).toLocaleDateString() %>
-                            </span>
+                <a href="/messaging/user/<%= userId %>/messages/<%= message.user.id %>" class="block">
+                    <div class="message-item p-4 hover:bg-gray-50 cursor-pointer flex items-center space-x-3">
+                        <img src="https://ui-avatars.com/api/?name=<%= message.user.firstName %>+<%= message.user.lastName %>"
+                            alt="Contact" class="w-12 h-12 rounded-full">
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-baseline">
+                                <h4 class="font-semibold truncate message-name">
+                                    <%= message.user.firstName %>
+                                        <%= message.user.lastName %>
+                                </h4>
+                                <span class="text-xs text-gray-500">
+                                    <%= new Date(message.lastMessage.createdAt).toLocaleDateString() %>
+                                </span>
+                            </div>
+                            <p class="text-sm text-gray-600 truncate message-preview">
+                                <%= message.lastMessage.content %>
+                            </p>
                         </div>
-                        <p class="text-sm text-gray-600 truncate message-preview">
-                            <%= message.lastMessage.content %>
-                        </p>
                     </div>
-                </div>
+                </a>
                 <% }) %>
         </div>
     </div>

@@ -30,4 +30,30 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
   }
+
+  // Scroll to bottom of message container on page load
+  const messageContainer = document.getElementById('messageContainer');
+  if (messageContainer) {
+    messageContainer.scrollTop = messageContainer.scrollHeight;
+  }
+
+  // Handle conversation search in conversation view
+  const conversationSearch = document.getElementById('conversationSearch');
+  if (conversationSearch) {
+    conversationSearch.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      const conversationItems = document.querySelectorAll('.conversation-item');
+      
+      conversationItems.forEach(item => {
+        const name = item.querySelector('.conversation-name')?.textContent.toLowerCase() || '';
+        const preview = item.querySelector('.conversation-preview')?.textContent.toLowerCase() || '';
+        
+        if (name.includes(searchTerm) || preview.includes(searchTerm)) {
+          item.style.display = 'block';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+  }
 });
