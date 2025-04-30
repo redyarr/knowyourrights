@@ -255,7 +255,7 @@ exports.getConversation = async (req, res) => {
             return new Date(b.lastMessage.createdAt) - new Date(a.lastMessage.createdAt);
         });
         
-        res.render('user/conversation', {
+        res.render('messaging/conversation', {
             title: `Conversation with ${conversationPartner.firstName} ${conversationPartner.lastName}`,
             conversations: conversationsWithLastMessage,
             messages,
@@ -302,7 +302,7 @@ exports.sendMessage = async (req, res) => {
             content
         });
         
-        res.redirect(`/messaging/user/${senderId}/messages/${receiverId}`);
+        res.redirect(`/messaging/${receiverId}`);
     } catch (error) {
         console.error('Error sending message:', error);
         res.status(500).send('Server error');

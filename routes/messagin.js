@@ -12,7 +12,7 @@ router.get('/', isAuthenticated, MessagingController.getMessages);
 router.get('/search', isAuthenticated, MessagingController.searchUsers);
 
 // Conversation routes
-router.get('/user/:userId/messages/:conversationId', isAuthenticated, MessagingController.getConversation);
-router.post('/user/:userId/messages/:conversationId/send', isAuthenticated, MessagingController.sendMessage);
+router.get('/:conversationId', isAuthenticated, MessagingController.getConversation);
+router.post('/:conversationId/send', isAuthenticated, MessagingController.sendMessage);
 
 module.exports = router;

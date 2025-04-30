@@ -204,25 +204,35 @@ exports.getLogin = (req, res) => {
 // Login user
 exports.login = async (req, res) => {
   try {
+    console.log("1. Starting login process");
     const { email, password } = req.body;
+    console.log("2. Received login data:", { email });
+
     const user = await User.findOne({ 
       where: { email },
       include: [{ model: Lawyer }]
     });
+    console.log("3. User lookup result:", user);
 
     if (!user || !(await user.validPassword(password))) {
+      console.log("4. Invalid email or password");
       throw new Error('Invalid email or password');
     }
 
+    console.log("5. Valid user found, setting session");
     req.session.user_id = user.id;
     req.session.user = user;
-    log('User session:', req.session.user);
+    console.log("6. User session set:", req.session.user);
+
     if (user.Lawyer) {
       req.session.lawyer = user.Lawyer;
-      log('Lawyer session:', req.session.lawyer);
+      console.log("7. Lawyer session set:", req.session.lawyer);
     }
+
+    console.log("8. Redirecting to '/'");
     res.redirect('/');
   } catch (error) {
+    console.error("Error during login process:", error.message);
     res.render('auth/login', {
       title: 'Sign In | Legal Network',
       error: error.message
@@ -232,6 +242,19 @@ exports.login = async (req, res) => {
 
 // Logout user
 exports.signout = (req, res) => {
-  req.session.destroy();
-  res.redirect('/');
+  try {
+    console.log("1. Starting signout process");
+    req.session.destroy((err) => {
+      if (err) {
+        console.error("2. Error destroying session:", err.message);
+        return res.status(500).send("Failed to sign out. Please try again.");
+      }
+      console.log("3. Session destroyed successfully");
+      res.redirect('/');
+      console.log("4. Redirected to '/' after signout");
+    });
+  } catch (error) {
+    console.error("Error during signout process:", error.message);
+    res.status(500).send("An unexpected error occurred during signout.");
+  }
 };

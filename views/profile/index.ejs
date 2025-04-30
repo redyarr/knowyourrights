@@ -18,7 +18,7 @@
                     <% } else { %>
                         <div class="flex space-x-2">
                             <button class="bg-blue-600 text-white px-4 py-2 rounded-full">Connect</button>
-                            <a href="/messaging/user/<%= locals.loggedInUserId %>/messages/<%= profile.id %>" class="border border-blue-600 text-blue-600 px-4 py-2 rounded-full text-center">Message</a>
+                            <a href="/messaging/<%= profile.id %>" class="border border-blue-600 text-blue-600 px-4 py-2 rounded-full text-center">Message</a>
                         </div>
                         <% } %>
             </div>
@@ -159,7 +159,7 @@
                             <!-- Logout Button (only for profile owner) -->
                             <% if (locals.loggedInUserId && locals.loggedInUserId===profile.id) { %>
                                 <div class="mt-4 text-center">
-                                    <form action="/signout" method="GET">
+                                    <form action="/signout" method="post">
                                         <button type="submit"
                                             class="px-4 py-2 border border-gray-400 text-gray-600 rounded hover:bg-gray-100">Sign
                                             Out</button>

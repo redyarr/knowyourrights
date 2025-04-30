@@ -137,7 +137,7 @@
                             <%= user.lastName %>
                         </h4>
                         <p class="text-sm text-gray-600">
-                          <%= user.role==='lawyer' ? 'Lawyer' : 'Member' %>
+                          <%= locals.userRole === 'admin' ? 'admin' : locals.userRole === 'lawyer' ? 'Lawyer' : 'visitor' %>
                         </p>
                       </div>
                     </div>
@@ -149,7 +149,9 @@
                     <a href="/settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings &
                       Privacy</a>
                     <a href="/help" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Help Center</a>
-                    <a href="/signout" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign Out</a>
+                    <form action="/signout" method="POST" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      <button type="submit">Sign Out</button>
+                    </form>
                   </div>
                 </div>
               </div>
