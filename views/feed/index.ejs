@@ -281,44 +281,111 @@
                 <!-- Suggested Connections -->
                 <div class="bg-white rounded-lg shadow">
                     <div class="border-b px-4 py-2">
-                        <h6 class="font-semibold text-gray-700">People You May Know</h6>
+                        <h6 class="font-semibold text-gray-700">Connect with Lawyers</h6>
                     </div>
                     <div class="p-4">
-                        <ul class="space-y-3 text-sm">
-                            <li class="flex items-center">
-                                <img src="https://media.licdn.com/dms/image/v2/D4D22AQFzLvoUlYQU2A/feedshare-shrink_800/B4DZVbmswmHAAg-/0/1740998628391?e=1743638400&v=beta&t=DSsihuRaXlkPJLt65Xh2U2z8-Ro5TUdp_JHGUzBq36Y"
-                                    alt="Profile" class="rounded-full mr-3"
-                                    style="width: 40px; height: 40px; object-fit: cover;">
-                                <div class="flex-1">
-                                    <h6 class="font-semibold">Jane Smith</h6>
-                                    <p class="text-gray-500">Corporate Lawyer</p>
-                                </div>
-                                <button
-                                    class="text-blue-600 border border-blue-600 rounded px-2 py-1 text-xs">Connect</button>
-                            </li>
-                            <li class="flex items-center">
-                                <img src="something.jpg" alt="Profile" class="rounded-full mr-3"
-                                    style="width: 40px; height: 40px; object-fit: cover;">
-                                <div class="flex-1">
-                                    <h6 class="font-semibold">John Doe</h6>
-                                    <p class="text-gray-500">Criminal Defense Attorney</p>
-                                </div>
-                                <button
-                                    class="text-blue-600 border border-blue-600 rounded px-2 py-1 text-xs">Connect</button>
-                            </li>
-                            <li class="flex items-center">
-                                <img src="something.jpg" alt="Profile" class="rounded-full mr-3"
-                                    style="width: 40px; height: 40px; object-fit: cover;">
-                                <div class="flex-1">
-                                    <h6 class="font-semibold">Sarah Johnson</h6>
-                                    <p class="text-gray-500">Family Law Specialist</p>
-                                </div>
-                                <button
-                                    class="text-blue-600 border border-blue-600 rounded px-2 py-1 text-xs">Connect</button>
-                            </li>
+                        <ul class="space-y-3 text-sm" id="suggestedLawyers">
+                            <!-- Lawyer suggestions will be loaded here -->
+                            <li class="text-center text-gray-500 py-2">Loading suggestions...</li>
                         </ul>
                     </div>
                 </div>
+                
+                <script>
+                    // Fetch suggested lawyers when the page loads
+                    document.addEventListener('DOMContentLoaded', function() {
+                        fetchSuggestedLawyers();
+                        
+                        // Function to fetch suggested lawyers
+                        function fetchSuggestedLawyers() {
+                            fetch('/mynetwork/suggested-lawyers')
+                                .then(response => {
+                                    if (!response.ok) {
+                                        throw new Error('Network response was not ok');
+                                    }
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    displaySuggestedLawyers(data.lawyers);
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching suggested lawyers:', error);
+                                    document.getElementById('suggestedLawyers').innerHTML = 
+                                        '<li class="text-center text-gray-500 py-2">Failed to load suggestions</li>';
+                                });
+                        }
+                        
+                        // Function to display suggested lawyers
+                        function displaySuggestedLawyers(lawyers) {
+                            const container = document.getElementById('suggestedLawyers');
+                            
+                            if (!lawyers || lawyers.length === 0) {
+                                container.innerHTML = '<li class="text-center text-gray-500 py-2">No suggestions available</li>';
+                                return;
+                            }
+                            
+                            let html = '';
+                            lawyers.forEach(lawyer => {
+                                const imageSrc = lawyer.ProfileImage && lawyer.ProfileImage.imagePath ?
+                                    lawyer.ProfileImage.imagePath :
+                                    `https://ui-avatars.com/api/?name=${lawyer.firstName}+${lawyer.lastName}`;
+                                    
+                                html += `
+                                <li class="flex items-center">
+                                    <img src="${imageSrc}" alt="${lawyer.firstName}'s Profile" class="rounded-full mr-3"
+                                        style="width: 40px; height: 40px; object-fit: cover;">
+                                    <div class="flex-1">
+                                        <h6 class="font-semibold">${lawyer.firstName} ${lawyer.lastName}</h6>
+                                        <p class="text-gray-500">${lawyer.Lawyer ? lawyer.Lawyer.lawFirm : 'Lawyer'}</p>
+                                    </div>
+                                    <button class="connect-btn text-blue-600 border border-blue-600 rounded px-2 py-1 text-xs"
+                                        data-user-id="${lawyer.id}">Connect</button>
+                                </li>`;
+                            });
+                            
+                            container.innerHTML = html;
+                            
+                            // Add event listeners to connect buttons
+                            document.querySelectorAll('.connect-btn').forEach(button => {
+                                button.addEventListener('click', function() {
+                                    const userId = this.getAttribute('data-user-id');
+                                    sendConnectionRequest(userId, this);
+                                });
+                            });
+                        }
+                        
+                        // Function to send connection request
+                        function sendConnectionRequest(userId, button) {
+                            button.disabled = true;
+                            button.textContent = 'Sending...';
+                            
+                            fetch(`/mynetwork/connect/${userId}`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    button.textContent = 'Request Sent';
+                                    button.classList.remove('text-blue-600', 'border-blue-600');
+                                    button.classList.add('text-gray-400', 'border-gray-400');
+                                } else {
+                                    button.textContent = 'Connect';
+                                    button.disabled = false;
+                                    alert(data.message);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                button.textContent = 'Connect';
+                                button.disabled = false;
+                                alert('An error occurred. Please try again.');
+                            });
+                        }
+                    });
+                </script>
             </div>
         </div>
     </div>

@@ -133,8 +133,11 @@
                         class="h-16 w-16 rounded-full">
                       <div>
                         <h4 class="font-semibold text-gray-800">
-                          <%= user.firstName %>
-                            <%= user.lastName %>
+                          <% if (typeof user !== 'undefined' && user) { %>
+                            <%= user.firstName %> <%= user.lastName %>
+                          <% } else { %>
+                            Guest User
+                          <% } %>
                         </h4>
                         <p class="text-sm text-gray-600">
                           <%= locals.userRole === 'admin' ? 'admin' : locals.userRole === 'lawyer' ? 'Lawyer' : 'visitor' %>

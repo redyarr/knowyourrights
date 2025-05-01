@@ -27,10 +27,32 @@ const setLoggedInUser = (req, res, next) => {
         if (req.session.user_id) {
             console.log('User ID found in session:', req.session.user_id);
             res.locals.loggedInUserId = req.session.user_id;
-            res.locals.userDetails = req.session.user;
-            res.locals.userRole = req.session.user.role;
-            console.log('User details:', req.session.user);
-            console.log("User Role:", res.locals.userRole);
+            
+            // Check if user object exists in session
+            if (req.session.user) {
+                res.locals.userDetails = req.session.user;
+                res.locals.userRole = req.session.user.role;
+                res.locals.user = req.session.user; // Add user directly to locals for templates
+                console.log('User details:', req.session.user);
+                console.log("User Role:", res.locals.userRole);
+            } else {
+                // Fetch user from database if not in session
+                const { User } = require('../models');
+                User.findByPk(req.session.user_id)
+                    .then(user => {
+                        if (user) {
+                            // Store user in session for future requests
+                            req.session.user = user;
+                            res.locals.userDetails = user;
+                            res.locals.userRole = user.role;
+                            res.locals.user = user; // Add user directly to locals for templates
+                            console.log('User details fetched from DB:', user);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error fetching user:', err);
+                    });
+            }
             
         } else {
             console.log('No user ID found in session');

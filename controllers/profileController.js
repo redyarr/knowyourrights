@@ -30,7 +30,7 @@ exports.getProfile = async (req, res) => {
             return res.status(404).render('error', { error: "User profile not found." });
         }
 
-        res.render('profile', {
+        res.render('profile/index', {
             title: 'Profile | Legal Network',
             profile: user,
             user: req.session.user

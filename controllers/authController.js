@@ -221,7 +221,13 @@ exports.login = async (req, res) => {
 
     console.log("5. Valid user found, setting session");
     req.session.user_id = user.id;
-    req.session.user = user;
+    req.session.user = {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role
+    };
     console.log("6. User session set:", req.session.user);
 
     if (user.Lawyer) {

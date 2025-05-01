@@ -1,47 +1,232 @@
-<section>
-    <h2>Your Connections</h2>
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">Your Network</h1>
 
-    <!-- Display Connection Requests -->
-    <h3>Connection Requests</h3>
-    <% if (connectionRequests && connectionRequests.length > 0) { %>
-        <ul>
-            <% connectionRequests.forEach(request => { %>
-                <li>
-                    <div class="connection">
-                        <% if (request.requester.ProfileImage && request.requester.ProfileImage.imagePath) { %>
-                            <img src="<%= request.requester.ProfileImage.imagePath %>" alt="<%= request.requester.firstName %>'s profile image" class="profile-image">
-                        <% } else { %>
-                            <img src="/images/default-profile.png" alt="Default profile image" class="profile-image">
-                        <% } %>
-                        <p><%= request.requester.firstName %> <%= request.requester.lastName %></p>
-                        <button class="accept-btn">Accept</button>
-                        <button class="decline-btn">Decline</button>
-                    </div>
-                </li>
-            <% }); %>
-        </ul>
-    <% } else { %>
-        <p>No connection requests at the moment.</p>
-    <% } %>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Left Column: Connection Requests -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Connection Requests</h2>
+            <% if (connectionRequests && connectionRequests.length > 0) { %>
+                <ul class="space-y-4">
+                    <% connectionRequests.forEach(request => { %>
+                        <li class="border-b pb-4" data-connection-id="<%= request.id %>">
+                            <div class="flex items-center space-x-3">
+                                <% if (request.requester && request.requester.ProfileImage && request.requester.ProfileImage.imagePath) { %>
+                                    <img src="<%= request.requester.ProfileImage.imagePath %>" alt="<%= request.requester.firstName %>'s profile image" class="w-12 h-12 rounded-full object-cover">
+                                <% } else { %>
+                                    <img src="https://ui-avatars.com/api/?name=<%= request.requester ? request.requester.firstName : '' %>+<%= request.requester ? request.requester.lastName : '' %>" alt="Profile image" class="w-12 h-12 rounded-full object-cover">
+                                <% } %>
+                                <div class="flex-1">
+                                    <p class="font-medium"><%= request.requester ? request.requester.firstName : '' %> <%= request.requester ? request.requester.lastName : '' %></p>
+                                    <% if (request.requester && request.requester.role === 'lawyer' && request.requester.Lawyer) { %>
+                                        <p class="text-sm text-gray-500">Lawyer at <%= request.requester.Lawyer.lawFirm %></p>
+                                    <% } else { %>
+                                        <p class="text-sm text-gray-500"><%= request.requester ? request.requester.role : '' %></p>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex space-x-2">
+                                <button class="accept-btn bg-blue-600 text-white px-3 py-1 rounded-full text-sm hover:bg-blue-700 transition" data-connection-id="<%= request.id %>">Accept</button>
+                                <button class="decline-btn border border-gray-300 px-3 py-1 rounded-full text-sm hover:bg-gray-100 transition" data-connection-id="<%= request.id %>">Decline</button>
+                            </div>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p class="text-gray-500 text-center py-4">No connection requests at the moment.</p>
+            <% } %>
+        </div>
 
-    <!-- Display Friends -->
-    <h3>Your Friends</h3>
-    <% if (friends && friends.length > 0) { %>
-        <ul>
-            <% friends.forEach(friend => { %>
-                <li>
-                    <div class="connection">
-                        <% if (friend.connectedUser.ProfileImage && friend.connectedUser.ProfileImage.imagePath) { %>
-                            <img src="<%= friend.connectedUser.ProfileImage.imagePath %>" alt="<%= friend.connectedUser.firstName %>'s profile image" class="profile-image">
-                        <% } else { %>
-                            <img src="/images/default-profile.png" alt="Default profile image" class="profile-image">
-                        <% } %>
-                        <p><%= friend.connectedUser.firstName %> <%= friend.connectedUser.lastName %></p>
-                    </div>
-                </li>
-            <% }); %>
-        </ul>
-    <% } else { %>
-        <p>You have no friends yet. Start connecting with others!</p>
-    <% } %>
-</section>
+        <!-- Middle Column: Your Connections -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Your Connections</h2>
+            <% if (friends && friends.length > 0) { %>
+                <ul class="space-y-4">
+                    <% friends.forEach(friend => { %>
+                        <li class="border-b pb-4 last:border-0">
+                            <div class="flex items-center space-x-3">
+                                <% if (friend.connectedUser && friend.connectedUser.ProfileImage && friend.connectedUser.ProfileImage.imagePath) { %>
+                                    <img src="<%= friend.connectedUser.ProfileImage.imagePath %>" alt="<%= friend.connectedUser.firstName %>'s profile image" class="w-12 h-12 rounded-full object-cover">
+                                <% } else { %>
+                                    <img src="https://ui-avatars.com/api/?name=<%= friend.connectedUser ? friend.connectedUser.firstName : '' %>+<%= friend.connectedUser ? friend.connectedUser.lastName : '' %>" alt="Profile image" class="w-12 h-12 rounded-full object-cover">
+                                <% } %>
+                                <div>
+                                    <p class="font-medium"><%= friend.connectedUser ? friend.connectedUser.firstName : '' %> <%= friend.connectedUser ? friend.connectedUser.lastName : '' %></p>
+                                    <% if (friend.connectedUser && friend.connectedUser.role === 'lawyer' && friend.connectedUser.Lawyer) { %>
+                                        <p class="text-sm text-gray-500">Lawyer at <%= friend.connectedUser.Lawyer.lawFirm %></p>
+                                    <% } else { %>
+                                        <p class="text-sm text-gray-500"><%= friend.connectedUser ? friend.connectedUser.role : '' %></p>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <a href="/messaging/<%= friend.connectedUser ? friend.connectedUser.id : '' %>" class="text-blue-600 text-sm hover:underline">Message</a>
+                                <a href="/in/<%= friend.connectedUser ? friend.connectedUser.id : '' %>" class="text-blue-600 text-sm hover:underline ml-4">View Profile</a>
+                            </div>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p class="text-gray-500 text-center py-4">You have no connections yet. Start connecting with others!</p>
+            <% } %>
+        </div>
+
+        <!-- Right Column: Suggested Lawyers -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h2 class="text-xl font-semibold mb-4">Suggested Lawyers</h2>
+            <% if (suggestedLawyers && suggestedLawyers.length > 0) { %>
+                <ul class="space-y-4">
+                    <% suggestedLawyers.forEach(lawyer => { %>
+                        <li class="border-b pb-4 last:border-0">
+                            <div class="flex items-center space-x-3">
+                                <% if (lawyer.ProfileImage && lawyer.ProfileImage.imagePath) { %>
+                                    <img src="<%= lawyer.ProfileImage.imagePath %>" alt="<%= lawyer.firstName %>'s profile image" class="w-12 h-12 rounded-full object-cover">
+                                <% } else { %>
+                                    <img src="https://ui-avatars.com/api/?name=<%= lawyer.firstName %>+<%= lawyer.lastName %>" alt="Profile image" class="w-12 h-12 rounded-full object-cover">
+                                <% } %>
+                                <div class="flex-1">
+                                    <p class="font-medium"><%= lawyer.firstName %> <%= lawyer.lastName %></p>
+                                    <% if (lawyer.Lawyer) { %>
+                                        <p class="text-sm text-gray-500">Lawyer at <%= lawyer.Lawyer.lawFirm %></p>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex justify-between">
+                                <button class="connect-btn bg-blue-600 text-white px-3 py-1 rounded-full text-sm hover:bg-blue-700 transition" data-user-id="<%= lawyer.id %>">Connect</button>
+                                <a href="/in/<%= lawyer.id %>" class="text-blue-600 text-sm hover:underline self-center">View Profile</a>
+                            </div>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p class="text-gray-500 text-center py-4">No suggested lawyers at the moment.</p>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Connect button functionality
+        const connectButtons = document.querySelectorAll('.connect-btn');
+        connectButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const userId = this.getAttribute('data-user-id');
+                sendConnectionRequest(userId, this);
+            });
+        });
+
+        // Accept button functionality
+        const acceptButtons = document.querySelectorAll('.accept-btn');
+        acceptButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const connectionId = this.getAttribute('data-connection-id');
+                acceptConnectionRequest(connectionId, this);
+            });
+        });
+
+        // Decline button functionality
+        const declineButtons = document.querySelectorAll('.decline-btn');
+        declineButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const connectionId = this.getAttribute('data-connection-id');
+                declineConnectionRequest(connectionId, this);
+            });
+        });
+
+        // Function to send connection request
+        function sendConnectionRequest(userId, button) {
+            button.disabled = true;
+            button.textContent = 'Sending...';
+
+            fetch(`/mynetwork/connect/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    button.textContent = 'Request Sent';
+                    button.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    button.classList.add('bg-gray-400');
+                } else {
+                    button.textContent = 'Connect';
+                    button.disabled = false;
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                button.textContent = 'Connect';
+                button.disabled = false;
+                alert('An error occurred. Please try again.');
+            });
+        }
+
+        // Function to accept connection request
+        function acceptConnectionRequest(connectionId, button) {
+            button.disabled = true;
+            button.textContent = 'Accepting...';
+
+            fetch(`/mynetwork/accept/${connectionId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove the connection request from the list
+                    const listItem = button.closest('li');
+                    listItem.remove();
+                    
+                    // Refresh the page to update the connections list
+                    window.location.reload();
+                } else {
+                    button.textContent = 'Accept';
+                    button.disabled = false;
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                button.textContent = 'Accept';
+                button.disabled = false;
+                alert('An error occurred. Please try again.');
+            });
+        }
+
+        // Function to decline connection request
+        function declineConnectionRequest(connectionId, button) {
+            button.disabled = true;
+            button.textContent = 'Declining...';
+
+            fetch(`/mynetwork/decline/${connectionId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Remove the connection request from the list
+                    const listItem = button.closest('li');
+                    listItem.remove();
+                } else {
+                    button.textContent = 'Decline';
+                    button.disabled = false;
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                button.textContent = 'Decline';
+                button.disabled = false;
+                alert('An error occurred. Please try again.');
+            });
+        }
+    });
+</script>

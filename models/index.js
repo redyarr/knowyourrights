@@ -100,8 +100,11 @@ try {
     Contact.belongsTo(User, { foreignKey: 'user_id' });
 
     // User and Connection
-    User.hasMany(Connection, { as: 'connections', foreignKey: 'requesterId' });
-    Connection.belongsTo(User, { as: 'connectedUser', foreignKey: 'receiverId' });
+    User.hasMany(Connection, { as: 'sentRequests', foreignKey: 'requester_id' });
+    User.hasMany(Connection, { as: 'receivedRequests', foreignKey: 'receiver_id' });
+    Connection.belongsTo(User, { as: 'requester', foreignKey: 'requester_id' });
+    Connection.belongsTo(User, { as: 'receiver', foreignKey: 'receiver_id' });
+    Connection.belongsTo(User, { as: 'connectedUser', foreignKey: 'receiver_id' });
 
     // User and Message
     User.hasMany(Message, { foreignKey: 'sender_id' });
