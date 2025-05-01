@@ -95,6 +95,14 @@
   <!-- Footer -->
   <%- include('./footer') %>
   
+  <!-- Core Scripts -->
+  <script src="/js/main.js"></script>
+  
+  <!-- Feature-specific Scripts -->
+  <% if (typeof title !== 'undefined' && title.includes('Home')) { %>
+    <script src="/js/feed.js"></script>
+  <% } %>
+  
   <script>
     const messagingPopupHeader = document.getElementById('messagingPopupHeader');
     const messagingPopup = document.getElementById('messagingPopup');
