@@ -47,7 +47,7 @@
             </div>
             
             <!-- Conversation Content -->
-            <div class="col-span-8 flex flex-col">
+            <div class="col-span-8 flex flex-col h-full">
                 <% if (conversationPartner) { %>
                     <!-- Conversation Header -->
                     <div class="p-4 border-b flex items-center space-x-3">
@@ -59,24 +59,27 @@
                         </div>
                     </div>
                     
-                    <!-- Messages -->
-                    <div class="flex-1 p-4 overflow-y-auto" id="messageContainer">
-                        <% messages.forEach(message => { %>
-                            <div class="mb-4 <%= message.senderId == userId ? 'flex justify-end' : 'flex justify-start' %>">
-                                <div class="<%= message.senderId == userId ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800' %> rounded-lg px-4 py-2 max-w-xs lg:max-w-md">
-                                    <p><%= message.content %></p>
-                                    <p class="text-xs <%= message.senderId == userId ? 'text-blue-100' : 'text-gray-500' %> text-right mt-1">
-                                        <%= new Date(message.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
-                                    </p>
+                    <!-- Messages Container with Fixed Height -->
+                    <div class="relative flex-grow overflow-hidden" style="height: calc(100% - 140px);">
+                        <!-- Scrollable Messages Area -->
+                        <div class="absolute inset-0 p-4 overflow-y-scroll" id="messageContainer">
+                            <% messages.forEach(message => { %>
+                                <div class="mb-4 <%= message.senderId == userId ? 'flex justify-end' : 'flex justify-start' %>">
+                                    <div class="<%= message.senderId == userId ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800' %> rounded-lg px-4 py-2 max-w-xs lg:max-w-md">
+                                        <p><%= message.content %></p>
+                                        <p class="text-xs <%= message.senderId == userId ? 'text-blue-100' : 'text-gray-500' %> text-right mt-1">
+                                            <%= new Date(message.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        <% }) %>
+                            <% }) %>
+                        </div>
                     </div>
                     
                     <!-- Message Input -->
-                    <div class="p-4 border-t">
-                        <form action="/messaging/<%= conversationPartner.id %>/send" method="POST" class="flex space-x-2">
-                            <input type="text" name="content" placeholder="Type a message" required
+                    <div class="p-4 border-t mt-auto">
+                        <form action="/messaging/<%= conversationPartner.id %>/send" method="POST" class="flex space-x-2" id="messageForm">
+                            <input type="text" name="content" placeholder="Type a message" required id="messageInput"
                                 class="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
                             <button type="submit" class="bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600">
                                 <i class="fas fa-paper-plane"></i>
@@ -100,31 +103,94 @@
 </div>
 
 <script>
-    // Scroll to bottom of message container on page load
-    document.addEventListener('DOMContentLoaded', function() {
+    // Improved function to scroll to bottom of message container
+    function scrollToBottom() {
         const messageContainer = document.getElementById('messageContainer');
         if (messageContainer) {
-            messageContainer.scrollTop = messageContainer.scrollHeight;
+            // Force scroll to absolute bottom
+            messageContainer.scrollTop = messageContainer.scrollHeight + 1000;
+            console.log('Scrolled to bottom, height:', messageContainer.scrollHeight);
         }
+    }
+    
+    // Function to focus the message input
+    function focusMessageInput() {
+        const messageInput = document.getElementById('messageInput');
+        if (messageInput) {
+            messageInput.focus();
+            console.log('Message input focused');
+        }
+    }
+
+    // Scroll on page load with multiple attempts and focus input
+    document.addEventListener('DOMContentLoaded', function() {
+        // Scroll immediately
+        scrollToBottom();
         
-        // Handle message search
+        // Schedule multiple scroll attempts with increasing delays
+        [100, 300, 500, 1000].forEach(delay => {
+            setTimeout(scrollToBottom, delay);
+        });
+        
+        // Focus the message input after a short delay
+        setTimeout(focusMessageInput, 300);
+        
+        // Handle message search functionality
         const messageSearch = document.getElementById('messageSearch');
         if (messageSearch) {
             messageSearch.addEventListener('input', (e) => {
                 const searchTerm = e.target.value.toLowerCase();
-                const conversationItems = document.querySelectorAll('.conversation-item');
+                const conversationLinks = document.querySelectorAll('.col-span-4 .border-r a[href^="/messaging/"]');
                 
-                conversationItems.forEach(item => {
-                    const name = item.querySelector('.conversation-name').textContent.toLowerCase();
-                    const preview = item.querySelector('.conversation-preview').textContent.toLowerCase();
+                conversationLinks.forEach(link => {
+                    const nameElement = link.querySelector('h4');
+                    const previewElement = link.querySelector('p');
+                    
+                    if (!nameElement || !previewElement) return;
+                    
+                    const name = nameElement.textContent.toLowerCase();
+                    const preview = previewElement.textContent.toLowerCase();
                     
                     if (name.includes(searchTerm) || preview.includes(searchTerm)) {
-                        item.style.display = 'block';
+                        link.style.display = 'block';
                     } else {
-                        item.style.display = 'none';
+                        link.style.display = 'none';
                     }
                 });
             });
         }
+        
+        // Set up form submission handler
+        const messageForm = document.getElementById('messageForm');
+        if (messageForm) {
+            messageForm.addEventListener('submit', function() {
+                // Store a flag in localStorage to indicate a message was just sent
+                localStorage.setItem('messageSent', 'true');
+                localStorage.setItem('messageTimestamp', Date.now().toString());
+                console.log('Message form submitted, flag set');
+            });
+        }
     });
+    
+    // Also scroll when all resources are fully loaded and focus input
+    window.addEventListener('load', function() {
+        scrollToBottom();
+        // Try again after a short delay
+        setTimeout(scrollToBottom, 200);
+        // Focus the message input
+        focusMessageInput();
+    });
+    
+    // Check if we just sent a message and need to scroll
+    if (localStorage.getItem('messageSent') === 'true') {
+        // Clear the flag
+        localStorage.removeItem('messageSent');
+        // Scroll to bottom with multiple attempts
+        scrollToBottom();
+        [100, 300, 500].forEach(delay => {
+            setTimeout(scrollToBottom, delay);
+        });
+        // Focus the message input after a short delay
+        setTimeout(focusMessageInput, 300);
+    }
 </script>
