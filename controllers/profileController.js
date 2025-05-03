@@ -7,6 +7,9 @@ exports.findProfile = async (req, res) => {
 
 exports.getProfile = async (req, res) => {
     const userId = req.params.id;
+    const loggedInUserId = req.session.user_id;
+    const { Op } = require('sequelize');
+    
     try {
         const user = await User.findOne({
             where: { id: userId },
@@ -14,26 +17,53 @@ exports.getProfile = async (req, res) => {
             include: [
                 {
                     model: Lawyer,
-                    include: [{ model: Education }]
+                    as: 'lawyer',
+                    include: [{ model: Education, as: 'Educations' }]
                 },
                 { model: Contact },
                 { model: Post },
                 { model: ProfileImage },
                 {
                     model: Connection,
-                    as: 'connections',
-                    attributes: ['id'],
+                    as: 'sentRequests',
+                    attributes: ['id', 'status', 'requester_id', 'receiver_id'],
+                },
+                {
+                    model: Connection,
+                    as: 'receivedRequests',
+                    attributes: ['id', 'status', 'requester_id', 'receiver_id'],
                 }
             ]
         });
-                if (!user) {
+        
+        if (!user) {
             return res.status(404).render('error', { error: "User profile not found." });
         }
+        
+        // Count connections
+        const connectionsCount = user.connections ? user.connections.length : 0;
+        
+        // Check if logged-in user has a connection with this profile
+        let connectionStatus = null;
+        if (loggedInUserId && loggedInUserId !== userId) {
+            const connection = await Connection.findOne({
+                where: {
+                    [Op.or]: [
+                        { requester_id: loggedInUserId, receiver_id: userId },
+                        { requester_id: userId, receiver_id: loggedInUserId }
+                    ]
+                }
+            });
+            
+            connectionStatus = connection ? connection.status : null;
+        }
 
-        res.render('profile/index', {
+        res.render('in/index', {
             title: 'Profile | Legal Network',
             profile: user,
-            user: req.session.user
+            loggedInUserId: loggedInUserId,
+            connectionStatus: connectionStatus,
+            connectionsCount: connectionsCount
         });
 
     } catch (error) {

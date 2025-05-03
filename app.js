@@ -18,6 +18,7 @@ const JobsRouter = require('./routes/jobs.js');
 const MessaginRouter = require('./routes/messagin.js');
 const NotificationsRouter = require('./routes/notifications.js');
 const FeedbackRouter = require('./routes/feedback.js');
+const SearchRouter = require('./routes/search.js');
 const storeRouter = require('./util/seed.js');
 
 // Import session configuration
@@ -48,6 +49,7 @@ app.set('layout', 'layouts/main'); // Set default layout
 // Using routes
 app.use('/', AuthRouter); // authenticate the user and redirect tp route '/feed'
 app.use('/feed', FeedRouter); // show all posts as feed
+app.use('/search', SearchRouter); // search for users
 app.use('/in', ProfileRouter); // redirect route '/in/:user_id'
 app.use('/mynetwork', MyNetwork);  
 app.use('/jobs', JobsRouter)  

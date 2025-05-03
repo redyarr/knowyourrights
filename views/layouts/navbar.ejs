@@ -65,13 +65,19 @@
             </g>
           </svg>
         </a>
-        <div class="ml-4 relative">
+        <form id="searchForm" class="ml-4 relative" action="/search" method="GET">
           <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
             <i class="fas fa-search text-gray-400"></i>
           </span>
-          <input type="text" placeholder="Search"
+          <input 
+            type="text" 
+            name="query" 
+            id="searchInput"
+            placeholder="Search users..." 
+            autocomplete="off"
             class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500">
-        </div>
+          <div id="searchResults" class="absolute mt-1 w-full bg-white shadow-lg rounded-md overflow-hidden hidden z-50"></div>
+        </form>
       </div>
 
       <!-- Center nav -->

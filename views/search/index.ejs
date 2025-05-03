@@ -1,0 +1,73 @@
+<%- include('../layouts/main', { title: 'Search Results' }) %>
+
+<div class="max-w-7xl mx-auto px-4 py-8 mt-16">
+    <h1 class="text-2xl font-bold mb-6">Search Results for "<%= query %>"</h1>
+    
+    <% if (users.length === 0) { %>
+        <div class="bg-white rounded-lg shadow p-6 text-center">
+            <p class="text-gray-500">No users found matching your search.</p>
+        </div>
+    <% } else { %>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <% users.forEach(user => { %>
+                <div class="bg-white rounded-lg shadow overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <% if (user.profileImage && user.profileImage.imagePath) { %>
+                                <img src="<%= user.profileImage.imagePath %>" 
+                                    alt="<%= user.firstName %> <%= user.lastName %>" 
+                                    class="w-16 h-16 rounded-full mr-4 object-cover">
+                            <% } else { %>
+                                <img src="https://ui-avatars.com/api/?name=<%= user.firstName %>+<%= user.lastName %>" 
+                                    alt="<%= user.firstName %> <%= user.lastName %>" 
+                                    class="w-16 h-16 rounded-full mr-4">
+                            <% } %>
+                            <div>
+                                <h2 class="text-xl font-semibold"><%= user.firstName %> <%= user.lastName %></h2>
+                                <p class="text-gray-600">
+                                    <% if (user.role === 'lawyer' && user.lawyer) { %>
+                                        Lawyer at <%= user.lawyer.lawFirm %>
+                                    <% } else { %>
+                                        User
+                                    <% } %>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 flex justify-between">
+                            <a href="/in/<%= user.id %>" class="text-blue-600 hover:text-blue-800">View Profile</a>
+                            <% if (user.id !== loggedInUserId) { %>
+                                <button onclick="connectWithUser(<%= user.id %>)" class="text-blue-600 hover:text-blue-800">
+                                    Connect
+                                </button>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    <% } %>
+</div>
+
+<script>
+    function connectWithUser(userId) {
+        fetch(`/mynetwork/connect/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Connection request sent!');
+            } else {
+                alert(data.error || 'Failed to send connection request');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while sending the connection request');
+        });
+    }
+</script>

@@ -10,17 +10,23 @@
                     class="w-32 h-32 rounded-full border-4 border-white object-cover">
             </div>
             <div class="mt-8">
-                <% if (locals.loggedInUserId && locals.loggedInUserId===profile.id) { %>
+                <% if (loggedInUserId && loggedInUserId == profile.id) { %>
                     <a href="/user/<%= profile.id %>/edit"
                         class="flex items-center px-4 py-2 border border-blue-600 text-blue-600 rounded-full hover:bg-blue-50">
                         <i class="fas fa-pencil-alt mr-1"></i> Edit Profile
                     </a>
-                    <% } else { %>
-                        <div class="flex space-x-2">
-                            <button class="bg-blue-600 text-white px-4 py-2 rounded-full">Connect</button>
-                            <a href="/messaging/<%= profile.id %>" class="border border-blue-600 text-blue-600 px-4 py-2 rounded-full text-center">Message</a>
-                        </div>
+                <% } else if (loggedInUserId) { %>
+                    <div class="flex space-x-2">
+                        <% if (!connectionStatus) { %>
+                            <button onclick="connectWithUser(<%= profile.id %>)" class="bg-blue-600 text-white px-4 py-2 rounded-full">Connect</button>
+                        <% } else if (connectionStatus === 'pending') { %>
+                            <button class="bg-gray-400 text-white px-4 py-2 rounded-full">Pending</button>
+                        <% } else if (connectionStatus === 'accepted') { %>
+                            <button class="bg-green-600 text-white px-4 py-2 rounded-full">Connected</button>
                         <% } %>
+                        <a href="/messaging/<%= profile.id %>" class="border border-blue-600 text-blue-600 px-4 py-2 rounded-full text-center">Message</a>
+                    </div>
+                <% } %>
             </div>
         </div>
         <!-- Profile Info -->
@@ -36,7 +42,7 @@
                 <p class="text-gray-500 text-sm">New York, United States</p>
             </div>
             <div class="flex mt-3 space-x-4">
-                <a href="#" class="text-blue-600 hover:underline text-sm">500+ connections</a>
+                <a href="#" class="text-blue-600 hover:underline text-sm"><%= connectionsCount || 0 %> connections</a>
                 <a href="#" class="text-blue-600 hover:underline text-sm">Contact info</a>
             </div>
         </div>
@@ -61,7 +67,7 @@
         <div class="bg-white rounded-lg shadow mb-5">
             <div class="border-b px-6 py-3 flex justify-between items-center">
                 <h3 class="text-xl font-bold">Experience</h3>
-                <% if (locals.loggedInUserId && locals.loggedInUserId===profile.id) { %>
+                <% if (loggedInUserId && loggedInUserId === profile.id) { %>
                     <button class="px-3 py-1 border border-gray-400 text-gray-600 rounded">
                         <i class="fas fa-plus"></i>
                     </button>
@@ -100,7 +106,7 @@
                 <div class="bg-white rounded-lg shadow mb-5">
                     <div class="border-b px-6 py-3 flex justify-between items-center">
                         <h3 class="text-xl font-bold">Education</h3>
-                        <% if (locals.loggedInUserId && locals.loggedInUserId===profile.id) { %>
+                        <% if (loggedInUserId && loggedInUserId === profile.id) { %>
                             <button class="px-3 py-1 border border-gray-400 text-gray-600 rounded">
                                 <i class="fas fa-plus"></i>
                             </button>
@@ -116,12 +122,15 @@
                                 </div>
                                 <div>
                                     <h4 class="font-bold">
-                                        <%= education.university %>
+                                        <%= education.degree %>
                                     </h4>
                                     <p class="text-gray-600">
-                                        <%= education.degree %> • <%= education.department %>
+                                        <%= education.university %>
                                     </p>
                                     <p class="text-gray-500 text-sm">
+                                        <%= education.startYear %> - <%= education.endYear || 'Present' %>
+                                    </p>
+                                    <p class="text-gray-700">
                                         <%= education.college %>
                                     </p>
                                 </div>
@@ -136,7 +145,7 @@
                         <div class="bg-white rounded-lg shadow mb-5">
                             <div class="border-b px-6 py-3 flex justify-between items-center">
                                 <h3 class="text-xl font-bold">Skills</h3>
-                                <% if (locals.loggedInUserId && locals.loggedInUserId===profile.id) { %>
+                                <% if (loggedInUserId && loggedInUserId===profile.id) { %>
                                     <button class="px-3 py-1 border border-gray-400 text-gray-600 rounded">
                                         <i class="fas fa-plus"></i>
                                     </button>
@@ -145,7 +154,7 @@
                             <div class="px-6 py-4 space-y-4">
                                 <% profile.skills.forEach(skill=> { %>
                                     <div>
-                                        <h4 class="font-semibold">
+                                        <h4 class="font-bold">
                                             <%= skill.name %>
                                         </h4>
                                         <p class="text-gray-500 text-sm">Endorsed by <%= skill.endorsements %>
@@ -156,14 +165,39 @@
                         </div>
                         <% } %>
 
-                            <!-- Logout Button (only for profile owner) -->
-                            <% if (locals.loggedInUserId && locals.loggedInUserId===profile.id) { %>
-                                <div class="mt-4 text-center">
-                                    <form action="/signout" method="post">
+                            <!-- Logout Button (only for own profile) -->
+                            <% if (loggedInUserId && loggedInUserId===profile.id) { %>
+                                <div class="mt-5">
+                                    <form action="/auth/logout" method="POST">
                                         <button type="submit"
-                                            class="px-4 py-2 border border-gray-400 text-gray-600 rounded hover:bg-gray-100">Sign
+                                            class="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700">Log
                                             Out</button>
                                     </form>
                                 </div>
                                 <% } %>
 </div>
+
+<script>
+    function connectWithUser(userId) {
+        fetch(`/mynetwork/connect/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Connection request sent!');
+                // Reload the page to show updated status
+                window.location.reload();
+            } else {
+                alert(data.error || 'Failed to send connection request');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while sending the connection request');
+        });
+    }
+</script>
