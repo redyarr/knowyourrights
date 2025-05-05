@@ -12,4 +12,12 @@ router.get('/', FeedController.getAllPosts);
 router.post('/post/:id/react', isAuthenticated, FeedController.reactToPost);
 router.post('/post/:id/comment', isAuthenticated, FeedController.commentOnPost);
 
+// Edit and delete post routes
+router.put('/post/:id/edit', isAuthenticated, FeedController.editPost);
+router.delete('/post/:id/delete', isAuthenticated, FeedController.deletePost);
+
+// Edit and delete comment routes
+router.put('/comment/:id/edit', isAuthenticated, FeedController.editComment);
+router.delete('/comment/:id/delete', isAuthenticated, FeedController.deleteComment);
+
 module.exports = router;

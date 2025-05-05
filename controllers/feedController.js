@@ -36,6 +36,77 @@ exports.getAllPosts = async (req, res) => {
     }
 };
 
+// Edit a post
+exports.editPost = async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const userId = req.session.user_id;
+        const { title, content } = req.body;
+        // Only allow editing if the user is the author
+        const post = await Post.findOne({ where: { id: postId, authorId: userId } });
+        if (!post) {
+            return res.status(403).json({ success: false, error: "You do not have permission to edit this post." });
+        }
+        await post.update({ title, content });
+        return res.json({ success: true, post });
+    } catch (error) {
+        console.error('Error editing post:', error);
+        return res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Delete a post
+exports.deletePost = async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const userId = req.session.user_id;
+        const post = await Post.findOne({ where: { id: postId, authorId: userId } });
+        if (!post) {
+            return res.status(403).json({ success: false, error: "You do not have permission to delete this post." });
+        }
+        await post.destroy();
+        return res.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting post:', error);
+        return res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Edit a comment
+exports.editComment = async (req, res) => {
+    try {
+        const commentId = req.params.id;
+        const userId = req.session.user_id;
+        const { content } = req.body;
+        const comment = await Comment.findOne({ where: { id: commentId, userId } });
+        if (!comment) {
+            return res.status(403).json({ success: false, error: "You do not have permission to edit this comment." });
+        }
+        await comment.update({ content });
+        return res.json({ success: true, comment });
+    } catch (error) {
+        console.error('Error editing comment:', error);
+        return res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Delete a comment
+exports.deleteComment = async (req, res) => {
+    try {
+        const commentId = req.params.id;
+        const userId = req.session.user_id;
+        const comment = await Comment.findOne({ where: { id: commentId, userId } });
+        if (!comment) {
+            return res.status(403).json({ success: false, error: "You do not have permission to delete this comment." });
+        }
+        await comment.destroy();
+        return res.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting comment:', error);
+        return res.status(500).json({ success: false, error: error.message });
+    }
+};
+
 // Handle post reactions
 exports.reactToPost = async (req, res) => {
     try {
@@ -64,6 +135,77 @@ exports.reactToPost = async (req, res) => {
         return res.json({ success: true });
     } catch (error) {
         console.error('Error reacting to post:', error);
+        return res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Edit a post
+exports.editPost = async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const userId = req.session.user_id;
+        const { title, content } = req.body;
+        // Only allow editing if the user is the author
+        const post = await Post.findOne({ where: { id: postId, authorId: userId } });
+        if (!post) {
+            return res.status(403).json({ success: false, error: "You do not have permission to edit this post." });
+        }
+        await post.update({ title, content });
+        return res.json({ success: true, post });
+    } catch (error) {
+        console.error('Error editing post:', error);
+        return res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Delete a post
+exports.deletePost = async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const userId = req.session.user_id;
+        const post = await Post.findOne({ where: { id: postId, authorId: userId } });
+        if (!post) {
+            return res.status(403).json({ success: false, error: "You do not have permission to delete this post." });
+        }
+        await post.destroy();
+        return res.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting post:', error);
+        return res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Edit a comment
+exports.editComment = async (req, res) => {
+    try {
+        const commentId = req.params.id;
+        const userId = req.session.user_id;
+        const { content } = req.body;
+        const comment = await Comment.findOne({ where: { id: commentId, userId } });
+        if (!comment) {
+            return res.status(403).json({ success: false, error: "You do not have permission to edit this comment." });
+        }
+        await comment.update({ content });
+        return res.json({ success: true, comment });
+    } catch (error) {
+        console.error('Error editing comment:', error);
+        return res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Delete a comment
+exports.deleteComment = async (req, res) => {
+    try {
+        const commentId = req.params.id;
+        const userId = req.session.user_id;
+        const comment = await Comment.findOne({ where: { id: commentId, userId } });
+        if (!comment) {
+            return res.status(403).json({ success: false, error: "You do not have permission to delete this comment." });
+        }
+        await comment.destroy();
+        return res.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting comment:', error);
         return res.status(500).json({ success: false, error: error.message });
     }
 };
@@ -102,6 +244,77 @@ exports.commentOnPost = async (req, res) => {
         });
     } catch (error) {
         console.error('Error commenting on post:', error);
+        return res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Edit a post
+exports.editPost = async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const userId = req.session.user_id;
+        const { title, content } = req.body;
+        // Only allow editing if the user is the author
+        const post = await Post.findOne({ where: { id: postId, authorId: userId } });
+        if (!post) {
+            return res.status(403).json({ success: false, error: "You do not have permission to edit this post." });
+        }
+        await post.update({ title, content });
+        return res.json({ success: true, post });
+    } catch (error) {
+        console.error('Error editing post:', error);
+        return res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Delete a post
+exports.deletePost = async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const userId = req.session.user_id;
+        const post = await Post.findOne({ where: { id: postId, authorId: userId } });
+        if (!post) {
+            return res.status(403).json({ success: false, error: "You do not have permission to delete this post." });
+        }
+        await post.destroy();
+        return res.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting post:', error);
+        return res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Edit a comment
+exports.editComment = async (req, res) => {
+    try {
+        const commentId = req.params.id;
+        const userId = req.session.user_id;
+        const { content } = req.body;
+        const comment = await Comment.findOne({ where: { id: commentId, userId } });
+        if (!comment) {
+            return res.status(403).json({ success: false, error: "You do not have permission to edit this comment." });
+        }
+        await comment.update({ content });
+        return res.json({ success: true, comment });
+    } catch (error) {
+        console.error('Error editing comment:', error);
+        return res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Delete a comment
+exports.deleteComment = async (req, res) => {
+    try {
+        const commentId = req.params.id;
+        const userId = req.session.user_id;
+        const comment = await Comment.findOne({ where: { id: commentId, userId } });
+        if (!comment) {
+            return res.status(403).json({ success: false, error: "You do not have permission to delete this comment." });
+        }
+        await comment.destroy();
+        return res.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting comment:', error);
         return res.status(500).json({ success: false, error: error.message });
     }
 };
