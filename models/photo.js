@@ -1,6 +1,6 @@
 const {sequelize, DataTypes} = require('../util/db');
 
-const PostPhoto = sequelize.define('photos', {
+const Photo = sequelize.define('photos', {
     id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -15,4 +15,4 @@ const PostPhoto = sequelize.define('photos', {
     underscored: true
 })
 
-module.exports = PostPhoto
+module.exports = Photo;

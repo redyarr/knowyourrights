@@ -190,3 +190,10 @@ module.exports = {
 };
 
 console.log("Models exported");
+
+// Post and PostPhoto
+Post.hasMany(PostPhoto, { foreignKey: 'postId' });
+PostPhoto.belongsTo(Post, { foreignKey: 'postId' });
+// PostPhoto and Photo
+PostPhoto.belongsTo(Photo, { foreignKey: 'photoId' });
+Photo.hasMany(PostPhoto, { foreignKey: 'photoId' });

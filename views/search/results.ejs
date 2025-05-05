@@ -1,0 +1,21 @@
+<%- include('../layouts/navbar') %>
+<div class="max-w-4xl mx-auto px-4 py-8">
+    <h2 class="text-2xl font-bold mb-6 text-blue-700">Search Results for "<%= query %>"</h2>
+    <% if (results && results.length > 0) { %>
+        <ul class="space-y-4">
+            <% results.forEach(result => { %>
+                <li class="bg-white rounded-xl shadow p-4">
+                    <h3 class="text-lg font-semibold text-blue-800"><%= result.title || result.name %></h3>
+                    <p class="text-gray-700"><%= result.summary || result.content || result.description || '' %></p>
+                    <% if (result.link) { %>
+                        <a href="<%= result.link %>" class="text-blue-600 hover:underline">View Details</a>
+                    <% } %>
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <div class="bg-blue-50 text-blue-700 rounded-xl p-6 text-center text-lg font-medium">
+            No results found for your search.
+        </div>
+    <% } %>
+</div>

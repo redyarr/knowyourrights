@@ -4,10 +4,24 @@ const { isAuthenticated } = require('../middlewares/auth');
 
 // Import controllers
 const ProfileController = require('../controllers/profileController');
+const multer = require('multer');
+const path = require('path');
+
+// Multer storage configuration (should match controller)
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, '../public/uploads/posts'));
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + '-' + file.originalname);
+    }
+});
+const upload = multer({ storage: storage });
 
 // view profile routes
 router.get('/', ProfileController.findProfile);
-router.post('/:id/create-post', ProfileController.CreatePost);
+router.post('/:id/create-post', upload.single('image'), ProfileController.CreatePost);
 router.post('/:id/edit-post', ProfileController.updatePost);
 
 router.post('/:id/edit', ProfileController.updateProfile)

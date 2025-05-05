@@ -235,8 +235,8 @@ exports.login = async (req, res) => {
       console.log("7. Lawyer session set:", req.session.lawyer);
     }
 
-    console.log("8. Redirecting to '/'");
-    res.redirect('/');
+    console.log("8. Redirecting to '/feed'");
+    res.redirect('/feed');
   } catch (error) {
     console.error("Error during login process:", error.message);
     res.render('auth/login', {

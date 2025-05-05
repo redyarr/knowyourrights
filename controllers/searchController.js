@@ -42,15 +42,14 @@ exports.searchUsers = async (req, res) => {
     try {
         const { query } = req.query;
         const userId = req.session?.user_id;
-        
+        // Always render results.ejs, never index.ejs
         if (!query) {
-            return res.render('search/index', { 
-                users: [], 
+            return res.render('search/results', {
+                results: [],
                 query: '',
                 loggedInUserId: userId
             });
         }
-        
         const users = await User.findAll({
             where: {
                 [Op.or]: [
@@ -68,11 +67,17 @@ exports.searchUsers = async (req, res) => {
                     model: Lawyer,
                     required: false
                 }
-            ]
+            ],
+            limit: 20
         });
-        
-        return res.render('search/index', { 
-            users, 
+        // Map users to a generic result format for the template
+        const results = users.map(user => ({
+            title: user.firstName + ' ' + user.lastName,
+            summary: user.email,
+            link: '/in/' + user.id
+        }));
+        return res.render('search/results', {
+            results,
             query,
             loggedInUserId: userId
         });

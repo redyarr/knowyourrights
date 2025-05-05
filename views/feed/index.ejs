@@ -64,6 +64,9 @@
                             <% if (post.image) { %>
                                 <img src="<%= post.image %>" alt="<%= post.title %>" class="w-full rounded-xl mb-3 shadow">
                             <% } %>
+                            <% if (post.PostPhotos && post.PostPhotos.length > 0 && post.PostPhotos[0].Photo && post.PostPhotos[0].Photo.photoPath) { %>
+                                <img src="<%= post.PostPhotos[0].Photo.photoPath %>" alt="<%= post.title %>" class="w-full rounded-xl mb-3 shadow">
+                            <% } %>
                             <!-- Post Stats -->
                             <div class="flex justify-between items-center text-sm text-gray-500 border-t pt-3 mb-2">
                                 <div class="flex items-center">
@@ -159,7 +162,7 @@
                     <div class="bg-white rounded-2xl shadow-2xl w-96 p-8 relative">
                         <button onclick="togglePostModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
                         <h3 class="text-2xl font-bold mb-6 text-blue-700">Create a Post</h3>
-                        <form action="/in/<%= typeof user !== 'undefined' && user ? user.id : '' %>/create-post" method="POST">
+                        <form action="/in/<%= typeof user !== 'undefined' && user ? user.id : '' %>/create-post" method="POST" enctype="multipart/form-data">
                             <div class="mb-5">
                                 <label for="title" class="block text-md font-medium text-gray-700 mb-1">Title</label>
                                 <input type="text" name="title" id="title" required class="w-full border border-blue-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
@@ -167,6 +170,10 @@
                             <div class="mb-5">
                                 <label for="content" class="block text-md font-medium text-gray-700 mb-1">Content</label>
                                 <textarea name="content" id="content" rows="4" required class="w-full border border-blue-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
+                            </div>
+                            <div class="mb-5">
+                                <label for="image" class="block text-md font-medium text-gray-700 mb-1">Image (optional)</label>
+                                <input type="file" name="image" id="image" accept="image/*" class="w-full border border-blue-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
                             </div>
                             <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 focus:outline-none font-semibold">Post</button>
                         </form>
@@ -229,6 +236,7 @@
         document.body.classList.toggle('overflow-hidden'); // Prevent scrolling when modal is open
     }
     </script>
+    <script src="/js/feed.js"></script>
 
     <!-- Font Awesome CDN for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />

@@ -1,4 +1,7 @@
-const { User, Lawyer, Education, Contact, Post, ProfileImage, Connection, } = require('../models');
+const { User, Lawyer, Education, Contact, Post, ProfileImage, Connection } = require('../models');
+const multer = require('multer');
+const path = require('path');
+const { PostPhoto, Photo } = require('../models');
 
 exports.findProfile = async (req, res) => {
     const userId = req.session.user_id;
@@ -102,32 +105,39 @@ exports.updateProfile = async (req, res) => {
     }
 };
 
-exports.CreatePost = (req, res) => {
-    const { title, content } = req.body;
-    const authorId = req.params.id;
-
-    // Log the incoming data for debugging
-    console.log("Request body:", req.body);
-    console.log("Author ID:", authorId);
-
-    // Validate the input
-    if (!title || !content || !authorId) {
-        console.error("Validation error: Missing required fields");
-        return res.status(400).render('error', { error: "Missing required fields: title, content, or author ID." });
+// Multer storage configuration
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, path.join(__dirname, '../public/uploads/posts'));
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + '-' + file.originalname);
     }
+});
+const upload = multer({ storage: storage });
 
-    Post.create({
-        authorId,
-        title,
-        content,
-    })
-    .then(() => {
+// Updated CreatePost to handle image upload
+exports.CreatePost = async (req, res) => {
+    try {
+        const { title, content } = req.body;
+        const authorId = req.params.id;
+        // Validate the input
+        if (!title || !content || !authorId) {
+            return res.status(400).render('error', { error: "Missing required fields: title, content, or author ID." });
+        }
+        // Create the post
+        const post = await Post.create({ authorId, title, content });
+        // Handle image upload if present
+        if (req.file) {
+            const photo = await Photo.create({ photoPath: '/uploads/posts/' + req.file.filename });
+            await PostPhoto.create({ postId: post.id, photoId: photo.id });
+        }
         res.redirect(`/`);
-    })
-    .catch(error => {
+    } catch (error) {
         console.error("Error creating post:", error);
         res.status(500).render('error', { error: "An unexpected error occurred while creating the post." });
-    });
+    }
 };
 
 // Update an existing post

@@ -182,16 +182,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function createCommentElement(comment) {
         const commentDiv = document.createElement('div');
         commentDiv.className = 'flex items-start space-x-3';
-        
-        const userInitials = `${comment.user.firstName.charAt(0)}${comment.user.lastName.charAt(0)}`;
         const userName = `${comment.user.firstName} ${comment.user.lastName}`;
-        
         commentDiv.innerHTML = `
             <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}" 
-                alt="Commenter" class="rounded-full"
-                style="width: 32px; height: 32px; object-fit: cover;">
+                alt="Commenter" class="rounded-full shadow" style="width: 32px; height: 32px; object-fit: cover;">
             <div>
-                <div class="bg-gray-100 rounded-lg px-3 py-2">
+                <div class="bg-blue-50 rounded-lg px-3 py-2">
                     <p class="text-sm text-gray-800">${comment.content}</p>
                 </div>
                 <div class="mt-1 text-xs text-gray-500">
@@ -199,7 +195,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
         `;
-        
         return commentDiv;
     }
 });
