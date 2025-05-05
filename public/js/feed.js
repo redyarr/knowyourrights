@@ -130,40 +130,59 @@ document.addEventListener('DOMContentLoaded', function() {
                 contentInput.value = '';
                 
                 // Make sure comments section is visible
-                const commentsList = document.getElementById(`commentsList-${postId}`);
-                const showCommentsBtn = document.getElementById(`showCommentsBtn-${postId}`);
+                let commentsList = document.getElementById(`commentsList-${postId}`);
+                let showCommentsBtn = document.getElementById(`showCommentsBtn-${postId}`);
                 
+                // If commentsList does not exist (first comment), create it dynamically
+                if (!commentsList) {
+                    // Find the parent container where comments should be inserted
+                    const postContainer = document.getElementById(`post-${postId}`);
+                    if (postContainer) {
+                        // Create the commentsList div
+                        commentsList = document.createElement('div');
+                        commentsList.id = `commentsList-${postId}`;
+                        commentsList.className = 'space-y-3';
+                        postContainer.querySelector('.px-4.py-2.border-t.border-gray-200.mt-3').prepend(commentsList);
+                    }
+                }
+                // If showCommentsBtn does not exist, create it
+                if (!showCommentsBtn) {
+                    const postContainer = document.getElementById(`post-${postId}`);
+                    if (postContainer) {
+                        showCommentsBtn = document.createElement('button');
+                        showCommentsBtn.id = `showCommentsBtn-${postId}`;
+                        showCommentsBtn.className = 'text-sm text-blue-600 hover:text-blue-800 mb-3';
+                        showCommentsBtn.onclick = function() { toggleComments(postId); };
+                        showCommentsBtn.textContent = 'Hide Comments (1)';
+                        commentsList.before(showCommentsBtn);
+                    }
+                }
+                // Show comments section if it was hidden
                 if (commentsList && commentsList.classList.contains('hidden')) {
-                    // Show comments section if it was hidden
                     toggleComments(postId);
                 }
-                
                 // Add the new comment to the UI without page reload
                 if (commentsList) {
                     // Create and add the new comment element
                     const newComment = createCommentElement(data.comment);
-                    
                     // Add to the beginning of the list for better visibility
                     if (commentsList.firstChild) {
                         commentsList.insertBefore(newComment, commentsList.firstChild);
                     } else {
                         commentsList.appendChild(newComment);
                     }
-                    
                     // Update the comment count in the stats section
                     const countElement = document.querySelector(`#post-${postId} .comment-count`);
                     if (countElement) {
                         const currentCount = parseInt(countElement.textContent.split(' ')[0] || '0');
                         countElement.textContent = `${currentCount + 1} comments`;
                     }
-                    
                     // Update the Show Comments button text
-                    if (showCommentsBtn) {
-                        const currentCount = parseInt(showCommentsBtn.textContent.match(/\d+/)[0] || '0');
-                        showCommentsBtn.textContent = `Hide Comments (${currentCount + 1})`;
+                    if (showCommentsBtn && commentsList) {
+                        const commentCount = commentsList.childElementCount;
+                        showCommentsBtn.textContent = `Hide Comments (${commentCount})`;
                     }
                 }
-                
                 // Hide the comment form after submission
                 toggleCommentForm(postId);
             } else {
