@@ -157,8 +157,10 @@ document.addEventListener('DOMContentLoaded', function() {
             <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}" 
                 alt="Commenter" class="rounded-full shadow" style="width: 32px; height: 32px; object-fit: cover;">
             <div>
-                <div class="bg-blue-50 rounded-lg px-3 py-2">
-                    <p class="text-sm text-gray-800">${comment.content}</p>
+                <div class="bg-blue-50 rounded-lg px-3 py-2 relative">
+                    <div class="pr-16">
+                        <p class="text-sm text-gray-800 break-words whitespace-normal" style="word-wrap: break-word; max-width: 100%; overflow-wrap: break-word;">${comment.content.replace(/(.{50})/g, "$1\n")}</p>
+                    </div>
                 </div>
                 <div class="mt-1 text-xs text-gray-500">
                     <span>${new Date(comment.createdAt).toLocaleDateString()}</span>

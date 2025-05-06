@@ -25,9 +25,36 @@ exports.getAllPosts = async (req, res) => {
             ],
             order: [['created_at', 'DESC']]
         });
+        console.log('Original posts:', posts.map(p => ({ id: p.id, authorId: p.authorId })));
+        
+        // Map authorId to userId for template compatibility
+        const mappedPosts = posts.map(post => {
+            let plainPost;
+            try {
+                // Try to use get method if available
+                plainPost = post.get({ plain: true });
+                console.log('Post after get():', { id: plainPost.id, authorId: plainPost.authorId });
+            } catch (e) {
+                console.log('Error using get method, falling back to JSON conversion:', e.message);
+                // If get method is not available, use the post object directly
+                plainPost = JSON.parse(JSON.stringify(post));
+                console.log('Post after JSON conversion:', { id: plainPost.id, authorId: plainPost.authorId });
+            }
+            
+            // Add userId field for template compatibility
+            plainPost.userId = plainPost.authorId; 
+            console.log('Post after mapping:', { id: plainPost.id, authorId: plainPost.authorId, userId: plainPost.userId });
+            return plainPost;
+        });
+        
+        console.log('Logged in user ID:', req.session.user_id);
+        console.log('Sample post check:', mappedPosts.length > 0 ? 
+            { id: mappedPosts[0].id, authorId: mappedPosts[0].authorId, userId: mappedPosts[0].userId } : 'No posts');
+
+        
         res.render('feed/index', {
             title: 'Home | Legal Network',
-            posts,
+            posts: mappedPosts,
             user: req.session.user
         });
     } catch (error) {
