@@ -241,6 +241,81 @@ document.addEventListener('DOMContentLoaded', function() {
             showEditPostModal(postId, title, content);
         });
     });
+    
+    // Attach event listeners for inline comment editing
+    document.querySelectorAll('.edit-comment-inline-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const commentId = this.getAttribute('data-comment-id');
+            const content = this.getAttribute('data-content');
+            const commentContainer = this.closest('.bg-blue-50');
+            const commentText = commentContainer.querySelector('p.text-sm');
+            
+            // Create inline editing form
+            const originalContent = commentText.innerHTML;
+            const textArea = document.createElement('textarea');
+            textArea.className = 'w-full text-sm border border-blue-300 rounded p-2 focus:outline-none focus:ring-1 focus:ring-blue-500';
+            textArea.value = content.replace(/\n/g, '');
+            textArea.rows = 3;
+            
+            // Create save and cancel buttons
+            const buttonsDiv = document.createElement('div');
+            buttonsDiv.className = 'flex justify-end space-x-2 mt-2';
+            
+            const saveButton = document.createElement('button');
+            saveButton.className = 'px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-all';
+            saveButton.textContent = 'Save';
+            
+            const cancelButton = document.createElement('button');
+            cancelButton.className = 'px-3 py-1 bg-gray-300 text-gray-700 text-xs rounded hover:bg-gray-400 transition-all';
+            cancelButton.textContent = 'Cancel';
+            
+            buttonsDiv.appendChild(cancelButton);
+            buttonsDiv.appendChild(saveButton);
+            
+            // Replace comment text with editing form
+            commentText.innerHTML = '';
+            commentText.appendChild(textArea);
+            commentText.appendChild(buttonsDiv);
+            
+            // Hide edit and delete buttons while editing
+            const actionButtons = this.closest('.absolute');
+            if (actionButtons) actionButtons.style.display = 'none';
+            
+            // Handle save button click
+            saveButton.addEventListener('click', function() {
+                const newContent = textArea.value.trim();
+                if (!newContent) return;
+                
+                fetch(`/feed/comment/${commentId}/edit`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: newContent })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update the comment text with line breaks
+                        commentText.innerHTML = newContent.replace(/(.{50})/g, "$1\n");
+                        // Update the data-content attribute for future edits
+                        button.setAttribute('data-content', newContent);
+                        // Show action buttons again
+                        if (actionButtons) actionButtons.style.display = '';
+                    } else {
+                        alert(data.error || 'Failed to edit comment.');
+                    }
+                });
+            });
+            
+            // Handle cancel button click
+            cancelButton.addEventListener('click', function() {
+                commentText.innerHTML = originalContent;
+                if (actionButtons) actionButtons.style.display = '';
+            });
+            
+            // Focus the textarea
+            textArea.focus();
+        });
+    });
 
     window.showEditCommentModalFromButton = function(btn) {
         const commentId = btn.getAttribute('data-comment-id');
