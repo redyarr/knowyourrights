@@ -308,7 +308,17 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Handle cancel button click
             cancelButton.addEventListener('click', function() {
-                commentText.innerHTML = originalContent;
+                // Clear the edit form completely
+                commentText.innerHTML = '';
+                
+                // Add back the original content with proper formatting (line breaks every 50 chars)
+                commentText.innerHTML = content.replace(/(.{50})/g, "$1\n");
+                
+                // Restore proper styling
+                commentText.className = 'text-sm text-gray-800 break-words whitespace-normal';
+                commentText.style.cssText = 'word-wrap: break-word; max-width: 100%; overflow-wrap: break-word;';
+                
+                // Show action buttons again
                 if (actionButtons) actionButtons.style.display = '';
             });
             
