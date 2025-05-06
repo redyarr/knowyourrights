@@ -61,43 +61,51 @@ exports.searchUsers = async (req, res) => {
 
 exports.getMessages = async (req, res) => {
     try {
+        console.log('=== Start of getMessages ===');
+        
         const userId = req.session.user_id;
-        console.log('Fetching messages for user:', userId);
+        console.log('1. User ID:', userId);
         
         // Get all conversations (unique users the current user has exchanged messages with)
+        console.log('2. Fetching sent messages...');
         const sentMessages = await Message.findAll({
             where: { senderId: userId },
             attributes: ['receiverId'],
             group: ['receiverId']
         });
-        console.log('Sent messages:', sentMessages);
+        console.log('3. Sent messages result:', JSON.stringify(sentMessages, null, 2));
         
+        console.log('4. Fetching received messages...');
         const receivedMessages = await Message.findAll({
             where: { receiverId: userId },
             attributes: ['senderId'],
             group: ['senderId']
         });
-        console.log('Received messages:', receivedMessages);
+        console.log('5. Received messages result:', JSON.stringify(receivedMessages, null, 2));
         
         // Combine unique user IDs from sent and received messages
+        console.log('6. Combining user IDs...');
         const conversationUserIds = [
             ...new Set([
                 ...sentMessages.map(m => m.receiverId),
                 ...receivedMessages.map(m => m.senderId)
             ])
         ];
-        console.log('Conversation user IDs:', conversationUserIds);
+        console.log('7. Combined unique user IDs:', conversationUserIds);
         
         // Get user details for each conversation
+        console.log('8. Fetching user details...');
         const conversations = await User.findAll({
             where: { id: { [Op.in]: conversationUserIds } },
             attributes: ['id', 'firstName', 'lastName', 'email']
         });
-        console.log('Conversations:', conversations);
+        console.log('9. User details retrieved:', JSON.stringify(conversations, null, 2));
         
         // Get the latest message for each conversation
+        console.log('10. Getting latest messages for each conversation...');
         const conversationsWithLastMessage = await Promise.all(
             conversations.map(async (user) => {
+                console.log(`11. Processing user ${user.id}...`);
                 const lastMessage = await Message.findOne({
                     where: {
                         [Op.or]: [
@@ -107,7 +115,7 @@ exports.getMessages = async (req, res) => {
                     },
                     order: [['createdAt', 'DESC']]
                 });
-                console.log(`Last message with user ${user.id}:`, lastMessage);
+                console.log(`12. Last message for user ${user.id}:`, JSON.stringify(lastMessage, null, 2));
                 
                 // Count unread messages
                 const unreadCount = await Message.count({
@@ -117,7 +125,7 @@ exports.getMessages = async (req, res) => {
                         isRead: false
                     }
                 });
-                console.log(`Unread messages from user ${user.id}:`, unreadCount);
+                console.log(`13. Unread count for user ${user.id}:`, unreadCount);
                 
                 return {
                     user,
@@ -128,20 +136,25 @@ exports.getMessages = async (req, res) => {
         );
         
         // Sort conversations by the latest message
+        console.log('14. Sorting conversations...');
         conversationsWithLastMessage.sort((a, b) => {
             return new Date(b.lastMessage.createdAt) - new Date(a.lastMessage.createdAt);
         });
-        console.log('Sorted conversations:', conversationsWithLastMessage);
+        console.log('15. Final sorted conversations:', JSON.stringify(conversationsWithLastMessage, null, 2));
         
+        console.log('16. Rendering view...');
         res.render('messaging/index', {
             title: 'Messages',
-            messages: conversationsWithLastMessage, // Pass the conversations as "messages"
+            messages: conversationsWithLastMessage,
             userId,
             activeConversation: null,
             user: req.session.user
         });
+        console.log('=== End of getMessages ===');
     } catch (error) {
-        console.error('Error fetching messages:', error);
+        console.error('=== Error in getMessages ===');
+        console.error('Error details:', error);
+        console.error('Error stack:', error.stack);
         res.status(500).send('Server error');
     }
 };
@@ -155,8 +168,8 @@ exports.getConversation = async (req, res) => {
         const isConnected = await Connection.findOne({
             where: {
                 [Op.or]: [
-                    { requesterId: userId, receiverId: conversationId, status: 'accepted' },
-                    { requesterId: conversationId, receiverId: userId, status: 'accepted' }
+                    { requester_id: userId, receiver_id: conversationId, status: 'accepted' },
+                    { requester_id: conversationId, receiver_id: userId, status: 'accepted' }
                 ]
             }
         });
@@ -272,39 +285,56 @@ exports.getConversation = async (req, res) => {
 
 exports.sendMessage = async (req, res) => {
     try {
+        console.log('=== Start of sendMessage ===');
+        
+        console.log('1. Getting user IDs and message content');
         const senderId = req.session.user_id;
         const receiverId = req.params.conversationId;
         const { content } = req.body;
         
+        console.log('2. Sender ID:', senderId);
+        console.log('3. Receiver ID:', receiverId);
+        console.log('4. Message content:', content);
+        
         if (!content || content.trim() === '') {
+            console.log('5. Error: Empty message content');
             return res.status(400).send('Message content cannot be empty');
         }
         
+        console.log('6. Checking connection between users');
         // Check if users are connected
         const isConnected = await Connection.findOne({
             where: {
                 [Op.or]: [
-                    { requesterId: senderId, receiverId, status: 'accepted' },
-                    { requesterId: receiverId, receiverId: senderId, status: 'accepted' }
+                    { requester_id: senderId, receiver_id: receiverId, status: 'accepted' },
+                    { requester_id: receiverId, receiver_id: senderId, status: 'accepted' }
                 ]
             }
         });
+        console.log('7. Connection status:', isConnected);
         
         // For now, skip connection check to allow messaging between any users
         // if (!isConnected) {
         //     return res.status(403).send('You need to be connected to message this user');
         // }
         
+        console.log('8. Creating new message');
         // Create message
-        await Message.create({
+        const newMessage = await Message.create({
             senderId,
             receiverId,
             content
         });
+        console.log('9. New message created:', JSON.stringify(newMessage, null, 2));
         
+        console.log('10. Redirecting to conversation');
         res.redirect(`/messaging/${receiverId}`);
+        
+        console.log('=== End of sendMessage ===');
     } catch (error) {
-        console.error('Error sending message:', error);
+        console.error('=== Error in sendMessage ===');
+        console.error('Error details:', error);
+        console.error('Error stack:', error.stack);
         res.status(500).send('Server error');
     }
 };
