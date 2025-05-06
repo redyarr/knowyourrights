@@ -483,10 +483,20 @@ async function seedDatabase() {
 }
 
 // --- Express route to trigger database seeding ---
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
   try {
-    await seedDatabase();
-    res.send("Database seeded successfully!");
+    // Check if data already exists by counting users
+    const userCount = await User.count();
+    
+    if (userCount === 0) {
+      // Only seed if no data exists
+      await seedDatabase();
+      res.send("Database seeded successfully!");
+    } 
+    else {
+      res.send("Database already contains data - skipping seed");
+    }
+    // Remove the next() call since we're already sending a response
   } catch (err) {
     console.error("Seeding failed:", err);
     res.status(500).send("Error seeding database.");

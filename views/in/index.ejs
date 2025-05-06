@@ -1,7 +1,7 @@
 <div class="max-w-4xl mx-auto px-4 py-8">
   <!-- Profile Card -->
   <div class="relative bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl rounded-3xl overflow-hidden mb-8">
-    <div class="h-48 bg-cover bg-center" style="background-image: url('<%= profile?.backgroundImage || 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80' %>');"></div>
+    <div class="h-48 bg-cover bg-center" style="background-image: url('<%= profile && profile.backgroundImage ? profile.backgroundImage : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80' %>');"></div>
     <div class="absolute top-32 left-10 flex items-end">
       <img src="<%= (profile.ProfileImage && profile.ProfileImage.imagePath) ? profile.ProfileImage.imagePath : 'https://randomuser.me/api/portraits/men/32.jpg' %>" alt="Profile" class="w-36 h-36 rounded-full border-4 border-white shadow-lg object-cover">
     </div>
@@ -11,8 +11,10 @@
           <i class="fas fa-pencil-alt mr-2"></i> Edit Profile
         </a>
       <% } else { %>
-        <button class="bg-blue-600 text-white px-5 py-2 rounded-full shadow hover:bg-blue-700 transition">Connect</button>
-      <% } %>
+        <form action="/mynetwork/connect/<%= profile.id %>" method="POST" class="inline">
+          <button type="submit" class="inline-block bg-blue-600 text-white px-5 py-2 rounded-full shadow hover:bg-blue-700 transition">Connect</button>
+        </form>
+      <% } %> 
     </div>
     <div class="pt-24 pb-8 px-10">
       <h2 class="text-3xl font-extrabold text-gray-900"><%= profile?.firstName %> <%= profile?.lastName %></h2>
