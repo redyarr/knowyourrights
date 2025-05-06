@@ -1,5 +1,35 @@
 const { Post, User, Lawyer, Comment, React, PostPhoto, Photo } = require('../models');
 
+// Create a new post
+exports.createPost = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const { title, content } = req.body;
+        
+        if (!title || !content) {
+            return res.status(400).json({ success: false, error: "Title and content are required." });
+        }
+        
+        const post = await Post.create({
+            authorId: userId,
+            title,
+            content,
+            createdAt: new Date()
+        });
+        
+        // Handle image upload if present
+        if (req.file) {
+            const photo = await Photo.create({ photoPath: '/uploads/posts/' + req.file.filename });
+            await PostPhoto.create({ postId: post.id, photoId: photo.id });
+        }
+        
+        return res.json({ success: true, post });
+    } catch (error) {
+        console.error('Error creating post:', error);
+        return res.status(500).json({ success: false, error: error.message });
+    }
+};
+
 // Get all posts
 exports.getAllPosts = async (req, res) => {
     try {

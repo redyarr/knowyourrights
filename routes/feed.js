@@ -5,6 +5,9 @@ const { isAuthenticated } = require('../middlewares/auth');
 // Import controllers
 const FeedController = require('../controllers/feedController');
 
+// Create post route
+router.post('/create-post', isAuthenticated, upload.single('image'), FeedController.createPost);
+
 // Feed routes
 router.get('/', FeedController.getAllPosts);
 
