@@ -78,17 +78,7 @@
                                 <div class="flex-1">
                                     <h5 class="font-semibold text-xl text-blue-800 mb-2"><%= post.title %></h5>
                                     <p class="text-gray-700 mb-3"><%= post.content.length > 150 ? post.content.substring(0, 150) + '...' : post.content %></p>
-                                    <% if (post.post_photos && post.post_photos.length > 0) { %>
-                                        <div class="mt-3 mb-4 overflow-hidden rounded-lg shadow-sm">
-                                            <% post.post_photos.forEach(postPhoto => { %>
-                                                <div class="relative pb-[56.25%] overflow-hidden bg-gray-100">
-                                                    <img src="<%= postPhoto.photo ? postPhoto.photo.photoPath.startsWith('/') ? postPhoto.photo.photoPath : '/' + postPhoto.photo.photoPath : '' %>" 
-                                                         alt="Post image" 
-                                                         class="absolute inset-0 w-full h-full object-contain md:object-cover">
-                                                </div>
-                                            <% }); %>
-                                        </div>
-                                    <% } %>
+                                    <% if (post.post_photos && post.post_photos.length > 0) { %>\n    <% post.post_photos.forEach(postPhoto => { %>\n        <% if (postPhoto.photo && postPhoto.photo.photoPath) { %>\n            <img src="<%= postPhoto.photo.photoPath.startsWith('/') ? postPhoto.photo.photoPath : '/' + postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-auto object-contain md:object-cover">\n        <% } %>\n    <% }); %>\n<% } %>
                                 </div>
                             </div>
                             <!-- Post Stats -->

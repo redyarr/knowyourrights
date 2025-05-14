@@ -1,9 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middlewares/auth');
+const multer = require('multer');
 
 // Import controllers
 const FeedController = require('../controllers/feedController');
+
+const upload = multer({ dest: 'public/uploads/posts/' });
 
 // Create post route
 router.post('/create-post', isAuthenticated, upload.single('image'), FeedController.createPost);
