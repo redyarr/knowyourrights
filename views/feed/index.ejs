@@ -78,7 +78,7 @@
                                 <div class="flex-1">
                                     <h5 class="font-semibold text-xl text-blue-800 mb-2"><%= post.title %></h5>
                                     <p class="text-gray-700 mb-3"><%= post.content.length > 150 ? post.content.substring(0, 150) + '...' : post.content %></p>
-                                    <% if (post.post_photos && post.post_photos.length > 0) { %>\n    <% post.post_photos.forEach(postPhoto => { %>\n        <% if (postPhoto.photo && postPhoto.photo.photoPath) { %>\n            <img src="<%= postPhoto.photo.photoPath.startsWith('/') ? postPhoto.photo.photoPath : '/' + postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-auto object-contain md:object-cover">\n        <% } %>\n    <% }); %>\n<% } %>
+                                    <% if (post.post_photos && post.post_photos.length > 0) { %><div class="flex justify-center items-center"><% post.post_photos.forEach(postPhoto => { %><% if (postPhoto.photo && postPhoto.photo.photoPath) { %><img src="<%= postPhoto.photo.photoPath.startsWith('/') ? postPhoto.photo.photoPath : '/' + postPhoto.photo.photoPath %>" alt="Post Image" class="max-w-full h-auto object-cover rounded-lg shadow-md"><% } %><% }); %></div><% } %>
                                 </div>
                             </div>
                             <!-- Post Stats -->
