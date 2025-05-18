@@ -48,7 +48,7 @@
                 <% } %>
                 <% if (posts && posts.length > 0) { %>
                     <% posts.forEach(post => { let groupedReactions = {}; if (post.reacts && post.reacts.length > 0) { post.reacts.forEach(r => { groupedReactions[r.reaction] = (groupedReactions[r.reaction] || 0) + 1; }); } %>
-                    <div id="post-<%= post.id %>" class="bg-white rounded-2xl shadow-lg mb-8 overflow-hidden">
+                    <div id="post-<%= post.id %>" class="bg-white rounded-2xl shadow-lg mb-8">
                         <div class="p-6">
                             <!-- Post Header -->
                             <div class="flex items-center mb-4">
@@ -97,21 +97,18 @@
                             </div>
                             <!-- Post Actions -->
                             <div class="flex justify-around border-t pt-3 relative">
-                                <button class="flex items-center space-x-2 text-gray-600 hover:text-blue-600 font-medium" onclick="toggleReactionPopup(<%= post.id %>)">
+                                <button class="flex items-center space-x-2 text-gray-600 hover:text-blue-600 font-medium like-button" onclick="toggleReactionPopup(<%= post.id %>, this)">
                                     <i class="far fa-thumbs-up"></i><span>Like</span>
                                 </button>
                                 <div id="reactionPopup-<%= post.id %>" class="hidden absolute bg-white rounded-lg shadow-lg p-2 z-10" style="bottom: 100%; left: 0;">
                                     <div class="flex space-x-2">
                                         <% Object.entries(reactionTypes).forEach(([key, emoji]) => { %>
-                                            <button onclick="submitReaction(<%= post.id %>, '<%= key %>')" class="text-2xl hover:scale-125 transition-transform"><%= emoji %></button>
+                                            <button onclick="submitReaction(<%= post.id %>, '<%= key %>', this)" class="text-2xl hover:scale-125 transition-transform"><%= emoji %></button>
                                         <% }); %>
                                     </div>
                                 </div>
                                 <button class="flex items-center space-x-2 text-gray-600 hover:text-blue-600 font-medium" onclick="toggleCommentForm(<%= post.id %>)">
                                     <i class="far fa-comment"></i><span>Comment</span>
-                                </button>
-                                <button class="flex items-center space-x-2 text-gray-600 hover:text-blue-600 font-medium">
-                                    <i class="far fa-share-square"></i><span>Share</span>
                                 </button>
                             </div>
                             <div class="px-4 py-2 border-t border-gray-200 mt-3">
@@ -252,24 +249,54 @@
 
     <!-- Inline JavaScript for Reaction Popup -->
     <script>
-        function toggleReactionPopup(postId) {
+        function toggleReactionPopup(postId, buttonElement) {
             const popup = document.getElementById(`reactionPopup-${postId}`);
             if (popup) {
                 popup.classList.toggle('hidden');
             }
         }
-        function submitReaction(postId, reaction) {
-            // Create a dynamic form submission for the reaction
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `/post/${postId}/react`;
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'reaction';
-            input.value = reaction;
-            form.appendChild(input);
-            document.body.appendChild(form);
-            form.submit();
+        function submitReaction(postId, reaction, reactionButtonElement) {
+            const likeButton = reactionButtonElement.closest('.flex.justify-around').querySelector('.like-button');
+            fetch(`/post/${postId}/react`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ reaction: reaction })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the like button text and icon
+                    if (likeButton) {
+                        const icon = likeButton.querySelector('i');
+                        const span = likeButton.querySelector('span');
+                        if (icon && span) {
+                            // Assuming reactionTypes is available globally or passed appropriately
+                            span.textContent = reactionTypes[reaction] || reaction; 
+                            // You might want to change the icon as well, e.g., to a filled thumb
+                            // icon.className = 'fas fa-thumbs-up'; // Example for a filled thumb
+                        }
+                    }
+                    // Optionally, update reaction counts or other UI elements
+                    // For example, re-fetch posts or update counts directly if the backend returns them
+                    // Hide the popup
+                    const popup = document.getElementById(`reactionPopup-${postId}`);
+                    if (popup) {
+                        popup.classList.add('hidden');
+                    }
+                    // Reload the page to see the changes
+                    window.location.reload();
+                } else {
+                    // Handle error
+                    console.error('Failed to submit reaction:', data.message);
+                    alert('Failed to react: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting reaction:', error);
+                alert('Error reacting to post.');
+            });
         }
 
         function togglePostModal() {

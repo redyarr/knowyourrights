@@ -26,6 +26,10 @@ const LawyerFeedback = sequelize.define('lawyer_feedbacks', {
         type: DataTypes.TEXT,
         allowNull: true
     },
+    conversation_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true // Or false if a conversation ID is always required
+    },
     created_at: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW

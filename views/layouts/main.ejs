@@ -37,6 +37,8 @@
   </main>
 
   <!-- Messaging Popup -->
+
+
   <% if (locals.loggedInUserId) { %>
     <div id="messagingPopup" class="messaging-popup messaging-popup-collapsed fixed bottom-0 right-6 w-80 bg-white shadow-lg rounded-t-lg z-50">
       <div id="messagingPopupHeader" class="flex justify-between items-center p-3 border-b border-gray-200 cursor-pointer">
@@ -106,15 +108,7 @@
   <!-- Search Script -->
   <script src="/js/search.js"></script>
   
-  <script>
-    const messagingPopupHeader = document.getElementById('messagingPopupHeader');
-    const messagingPopup = document.getElementById('messagingPopup');
-    if (messagingPopupHeader && messagingPopup) {
-      messagingPopupHeader.addEventListener('click', () => {
-        messagingPopup.classList.toggle('messaging-popup-collapsed');
-      });
-    }
-  </script>
+  
 </body>
 
 </html>

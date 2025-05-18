@@ -181,7 +181,7 @@ exports.getConversation = async (req, res) => {
         
         // Get conversation partner details
         const conversationPartner = await User.findByPk(conversationId, {
-            attributes: ['id', 'firstName', 'lastName', 'email']
+            attributes: ['id', 'firstName', 'lastName', 'email', 'role'] // Added 'role'
         });
         
         if (!conversationPartner) {

@@ -2,11 +2,17 @@ const { User, Lawyer, LawyerFeedback } = require('../models');
 
 exports.submitFeedback = async (req, res) => {
     try {
-        const { lawyerId, rating, review } = req.body;
+        const { lawyerId, rating, review, conversationId } = req.body;
         const userId = req.session.user.id;
 
+        console.log('--- SUBMIT FEEDBACK ---');
+        console.log('Received lawyerId (User ID):', lawyerId);
+        console.log('Received conversationId:', conversationId);
+        console.log('Session userId:', userId);
+
         // Check if lawyer exists
-        const lawyer = await Lawyer.findByPk(lawyerId);
+        const lawyer = await Lawyer.findOne({ where: { userId: lawyerId } });
+        console.log('Lawyer found:', lawyer ? lawyer.toJSON() : null);
         if (!lawyer) {
             return res.status(404).json({ message: 'Lawyer not found' });
         }
@@ -15,15 +21,16 @@ exports.submitFeedback = async (req, res) => {
         const existingFeedback = await LawyerFeedback.findOne({
             where: {
                 user_id: userId,
-                lawyer_id: lawyerId
+                lawyer_id: lawyer.id // Use lawyer's actual ID
             }
         });
-
 
         if (existingFeedback) {
             // Update existing feedback
             existingFeedback.rating = rating;
             existingFeedback.review = review;
+            existingFeedback.conversation_id = conversationId; // Update conversation_id if provided
+            // Note: lawyer_id should not change for an existing feedback, so no update needed here for lawyer_id
             await existingFeedback.save();
             return res.status(200).json({ message: 'Feedback updated successfully', feedback: existingFeedback });
         }
@@ -31,9 +38,10 @@ exports.submitFeedback = async (req, res) => {
         // Create new feedback
         const feedback = await LawyerFeedback.create({
             user_id: userId,
-            lawyer_id: lawyerId,
+            lawyer_id: lawyer.id, // Use lawyer's actual ID
             rating,
-            review
+            review,
+            conversation_id: conversationId
         });
 
         res.status(201).json({ message: 'Feedback submitted successfully', feedback });
@@ -48,14 +56,14 @@ exports.getLawyerFeedback = async (req, res) => {
         const { lawyerId } = req.params;
 
         // Check if lawyer exists
-        const lawyer = await Lawyer.findByPk(lawyerId);
+        const lawyer = await Lawyer.findOne({ where: { userId: lawyerId } });
         if (!lawyer) {
             return res.status(404).json({ message: 'Lawyer not found' });
         }
 
         // Get all feedback for the lawyer
         const feedback = await LawyerFeedback.findAll({
-            where: { lawyer_id: lawyerId },
+            where: { lawyer_id: lawyer.id },
             include: [{
                 model: User,
                 attributes: ['id', 'firstName', 'lastName', 'email']

@@ -57,6 +57,11 @@
                             <h3 class="font-semibold"><%= conversationPartner.firstName %> <%= conversationPartner.lastName %></h3>
                             <p class="text-xs text-gray-500">Active now</p>
                         </div>
+                        <% if (conversationPartner && conversationPartner.role === 'lawyer') { %>
+                        <button id="giveFeedbackBtn" class="ml-auto bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                            Give Feedback
+                        </button>
+                        <% } %>
                     </div>
                     
                     <!-- Messages Container with Half Screen Height -->
@@ -99,6 +104,39 @@
                 <% } %>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Feedback Modal -->
+<div id="feedbackModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center" style="display: none;">
+    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-md mx-auto">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-2xl font-semibold">Give Feedback</h3>
+            <button id="closeFeedbackModal" class="text-gray-700 hover:text-gray-900">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form id="feedbackForm">
+            <input type="hidden" id="feedbackLawyerId" name="lawyerId" value="<%= conversationPartner ? conversationPartner.id : '' %>">
+            <input type="hidden" id="feedbackConversationId" name="conversationId" value="<%= activeConversation ? activeConversation : '' %>"> <!-- Assuming activeConversation holds the conversation ID -->
+            <div class="mb-4">
+                <label for="rating" class="block text-sm font-medium text-gray-700 mb-1">Rating</label>
+                <div class="flex items-center" id="starRating">
+                    <% for(let i = 1; i <= 5; i++) { %>
+                        <i class="far fa-star text-2xl text-yellow-400 cursor-pointer star" data-value="<%= i %>"></i>
+                    <% } %>
+                </div>
+                <input type="hidden" name="rating" id="feedbackRating" required>
+            </div>
+            <div class="mb-6">
+                <label for="review" class="block text-sm font-medium text-gray-700 mb-1">Comment (Optional)</label>
+                <textarea id="feedbackReview" name="review" rows="4" class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
+            </div>
+            <div class="flex justify-end">
+                <button type="button" id="cancelFeedback" class="mr-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-md">Cancel</button>
+                <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md">Submit Feedback</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -192,5 +230,100 @@
         });
         // Focus the message input after a short delay
         setTimeout(focusMessageInput, 300);
+    }
+
+    // Feedback Modal Logic
+    const giveFeedbackBtn = document.getElementById('giveFeedbackBtn');
+    const feedbackModal = document.getElementById('feedbackModal');
+    const closeFeedbackModalBtn = document.getElementById('closeFeedbackModal');
+    const cancelFeedbackBtn = document.getElementById('cancelFeedback');
+    const feedbackForm = document.getElementById('feedbackForm');
+    const stars = document.querySelectorAll('#starRating .star');
+    const feedbackRatingInput = document.getElementById('feedbackRating');
+
+    if (giveFeedbackBtn) {
+        giveFeedbackBtn.addEventListener('click', () => {
+            if (feedbackModal) feedbackModal.style.display = 'flex';
+        });
+    }
+
+    if (closeFeedbackModalBtn) {
+        closeFeedbackModalBtn.addEventListener('click', () => {
+            if (feedbackModal) feedbackModal.style.display = 'none';
+        });
+    }
+
+    if (cancelFeedbackBtn) {
+        cancelFeedbackBtn.addEventListener('click', () => {
+            if (feedbackModal) feedbackModal.style.display = 'none';
+        });
+    }
+
+    // Close modal if clicked outside of it
+    if (feedbackModal) {
+        feedbackModal.addEventListener('click', (event) => {
+            if (event.target === feedbackModal) {
+                feedbackModal.style.display = 'none';
+            }
+        });
+    }
+
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            const value = parseInt(star.dataset.value);
+            feedbackRatingInput.value = value;
+            stars.forEach((s, index) => {
+                if (index < value) {
+                    s.classList.remove('far');
+                    s.classList.add('fas');
+                } else {
+                    s.classList.remove('fas');
+                    s.classList.add('far');
+                }
+            });
+        });
+    });
+
+    if (feedbackForm) {
+        feedbackForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(feedbackForm);
+            const data = Object.fromEntries(formData.entries());
+
+            // Ensure lawyerId and conversationId are correctly populated
+            // These might need to be dynamically set if the conversationPartner changes without a page reload
+            data.lawyerId = document.getElementById('feedbackLawyerId').value;
+            data.conversationId = document.getElementById('feedbackConversationId').value;
+
+            if (!data.rating) {
+                alert('Please select a rating.');
+                return;
+            }
+
+            try {
+                const response = await fetch('/feedback/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message || 'Feedback submitted successfully!');
+                    if (feedbackModal) feedbackModal.style.display = 'none';
+                    feedbackForm.reset();
+                    stars.forEach(s => {
+                        s.classList.remove('fas');
+                        s.classList.add('far');
+                    });
+                } else {
+                    alert(result.message || 'Failed to submit feedback.');
+                }
+            } catch (error) {
+                console.error('Error submitting feedback:', error);
+                alert('An error occurred. Please try again.');
+            }
+        });
     }
 </script>

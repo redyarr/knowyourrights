@@ -4,11 +4,26 @@ document.addEventListener('DOMContentLoaded', function() {
   const messagingToggle = document.getElementById('messagingPopupToggle');
 
   if (messagingPopupHeader && messagingPopup) {
-    messagingPopupHeader.addEventListener('click', () => {
+    messagingPopupHeader.addEventListener('click', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
       messagingPopup.classList.toggle('messaging-popup-collapsed');
       messagingToggle.classList.toggle('fa-chevron-up');
       messagingToggle.classList.toggle('fa-chevron-down');
     });
+
+    document.addEventListener('click', (e) => {
+      if (!messagingPopup.contains(e.target) && !messagingPopupHeader.contains(e.target)) {
+        messagingPopup.classList.add('messaging-popup-collapsed');
+        messagingToggle.classList.remove('fa-chevron-down');
+        messagingToggle.classList.add('fa-chevron-up');
+      }
+    });
+
+    // Ensure popup is visible on initial load
+    messagingPopup.classList.remove('messaging-popup-collapsed');
+    messagingToggle.classList.remove('fa-chevron-up');
+    messagingToggle.classList.add('fa-chevron-down');
   }
 
   // Handle message search
@@ -56,4 +71,48 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
   }
+
+  // Fetch and display conversations
+  async function loadConversations() {
+    try {
+      const response = await fetch('/messaging'); // Ensure this endpoint returns the correct JSON structure
+      if (response.ok) {
+        const data = await response.json(); // Assuming the server sends { messages: [...] }
+        const messages = data.messages; // Access the messages array
+        const messagingBody = document.querySelector('.messaging-popup-body');
+        messagingBody.innerHTML = ''; // Clear existing messages
+
+        if (messages && messages.length > 0) {
+          messagingBody.innerHTML = messages.map(msg => `
+            <div class="flex items-center space-x-3 p-2 hover:bg-gray-100 rounded-lg cursor-pointer message-item" data-user-id="${msg.user.id}" data-conversation-id="${msg.user.id}">
+              <img src="${msg.user.profileImage || '/images/default-profile.png'}" alt="Contact" class="w-10 h-10 rounded-full">
+              <div>
+                <div class="font-medium message-name">${msg.user.firstName} ${msg.user.lastName}</div>
+                <div class="text-sm text-gray-500 message-preview">${msg.lastMessage?.content || 'No messages yet'}</div>
+              </div>
+            </div>
+          `).join('');
+
+          // Add event listeners to new message items
+          document.querySelectorAll('.message-item').forEach(item => {
+            item.addEventListener('click', function() {
+              const userId = this.dataset.userId;
+              // TODO: Implement logic to open conversation with userId
+              console.log('Open conversation with user ID:', userId);
+              // Example: window.location.href = `/messaging/conversation/${userId}`;
+            });
+          });
+        } else {
+          messagingBody.innerHTML = '<p class="text-center text-gray-500">No conversations yet.</p>';
+        }
+      }
+    } catch (error) {
+      console.error('Error loading conversations:', error);
+      const messagingBody = document.querySelector('.messaging-popup-body');
+      messagingBody.innerHTML = '<p class="text-center text-red-500">Error loading conversations.</p>';
+    }
+  }
+
+  // Initial load of conversations
+  loadConversations();
 });
