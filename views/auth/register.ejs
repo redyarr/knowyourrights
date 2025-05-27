@@ -52,166 +52,76 @@
         <div id="lawyerFields" class="hidden space-y-6">
           <div>
             <label class="block text-gray-700 font-medium mb-2" for="lawFirm">Law Firm</label>
-            <input type="text" name="lawFirm" id="lawFirm"
-              class="w-full border border-gray-300 rounded-lg p-3">
+            <input type="text" name="lawFirm" id="lawFirm" class="w-full border border-gray-300 rounded-lg p-3">
           </div>
 
           <div>
             <label class="block text-gray-700 font-medium mb-2" for="licenseNumber">License Number</label>
-            <input type="text" name="licenseNumber" id="licenseNumber"
-              class="w-full border border-gray-300 rounded-lg p-3">
+            <input type="text" name="licenseNumber" id="licenseNumber" class="w-full border border-gray-300 rounded-lg p-3">
+          </div>
+
+          <div>
+            <label class="block text-gray-700 font-medium mb-2" for="authority">Issuing Authority</label>
+            <select name="authority" id="authority" class="w-full border border-gray-300 rounded-lg p-3" required>
+              <option value="">Select Authority</option>
+              <option value="Training">Training</option>
+              <option value="Working">Working</option>
+              <option value="Legal Consultant">Legal Consultant</option>
+            </select>
           </div>
 
           <div>
             <label class="block text-gray-700 font-medium mb-2" for="summary">Professional Summary</label>
-            <textarea name="summary" id="summary" rows="3"
-              class="w-full border border-gray-300 rounded-lg p-3"></textarea>
+            <textarea name="summary" id="summary" rows="3" class="w-full border border-gray-300 rounded-lg p-3"></textarea>
           </div>
 
           <div>
-            <label class="block text-gray-700 font-medium mb-2" for="contactNumber">Contact Number</label>
-            <input type="tel" name="contactNumber" id="contactNumber"
-              class="w-full border border-gray-300 rounded-lg p-3">
+            <label class="block text-gray-700 font-medium mb-2" for="badgeId">Badge ID</label>
+            <input type="text" name="badgeId" id="badgeId" class="w-full border border-gray-300 rounded-lg p-3">
           </div>
 
-          <!-- Education Section -->
-          <div class="space-y-4">
-            <h3 class="font-medium text-gray-900">Education</h3>
-            <!-- University -->
-            <div>
-              <label class="block text-gray-700 text-sm mb-1" for="universitySelect">University</label>
-              <select name="universitySelect" id="universitySelect" class="w-full border border-gray-300 rounded-lg p-3" 
-                      onchange="toggleInput('universitySelect', 'universityInput')">
-                <% educations.forEach(function(edu) { %>
-                  <option value="<%= edu.university %>"><%= edu.university %></option>
-                <% }) %>
-                <option value="other">Other</option>
-              </select>
-              <input type="text" name="university" id="universityInput" placeholder="Enter new university" 
-                     class="w-full border border-gray-300 rounded-lg p-3 hidden">
-            </div>
-
-            <!-- College -->
-            <div>
-              <label class="block text-gray-700 text-sm mb-1" for="collegeSelect">College</label>
-              <select name="collegeSelect" id="collegeSelect" class="w-full border border-gray-300 rounded-lg p-3" 
-                      onchange="toggleInput('collegeSelect', 'collegeInput')">
-                <% educations.forEach(function(edu) { %>
-                  <option value="<%= edu.college %>"><%= edu.college %></option>
-                <% }) %>
-                <option value="other">Other</option>
-              </select>
-              <input type="text" name="college" id="collegeInput" placeholder="Enter new college" 
-                     class="w-full border border-gray-300 rounded-lg p-3 hidden">
-            </div>
-
-            <!-- Department -->
-            <div>
-              <label class="block text-gray-700 text-sm mb-1" for="departmentSelect">Department</label>
-              <select name="departmentSelect" id="departmentSelect" class="w-full border border-gray-300 rounded-lg p-3" 
-                      onchange="toggleInput('departmentSelect', 'departmentInput')">
-                <% educations.forEach(function(edu) { %>
-                  <option value="<%= edu.department %>"><%= edu.department %></option>
-                <% }) %>
-                <option value="other">Other</option>
-              </select>
-              <input type="text" name="department" id="departmentInput" placeholder="Enter new department" 
-                     class="w-full border border-gray-300 rounded-lg p-3 hidden">
-            </div>
-
-            <!-- Degree (Always input) -->
-            <div>
-              <label class="block text-gray-700 text-sm mb-1" for="degree">Degree</label>
-              <input type="text" name="degree" id="degree" required
-                     class="w-full border border-gray-300 rounded-lg p-3">
-            </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-2" for="badgeIssueDate">Badge Issue Date</label>
+            <input type="date" name="badgeIssueDate" id="badgeIssueDate" class="w-full border border-gray-300 rounded-lg p-3">
           </div>
+
+          <div>
+            <label class="block text-gray-700 font-medium mb-2" for="badgeExpiryDate">Badge Expiry Date</label>
+            <input type="date" name="badgeExpiryDate" id="badgeExpiryDate" class="w-full border border-gray-300 rounded-lg p-3">
+          </div>
+
+          <div>
+            <label class="block text-gray-700 font-medium mb-2" for="university">University</label>
+            <input type="text" name="university" id="university" class="w-full border border-gray-300 rounded-lg p-3" required>
+          </div>
+          <div>
+            <label class="block text-gray-700 font-medium mb-2" for="degreeLevel">Degree Level</label>
+            <select name="degreeLevel" id="degreeLevel" class="w-full border border-gray-300 rounded-lg p-3" required>
+              <option value="">Select Degree</option>
+              <option value="LLB">LLB</option>
+              <option value="LLM">LLM</option>
+              <option value="JD">JD</option>
+              <option value="PhD in Law">PhD in Law</option>
+            </select>
+          </div>
+          <!-- Badge image upload is not included here since this is a general auth/register page. Add if needed. -->
         </div>
 
-        <button type="submit"
-                class="w-full bg-blue-600 text-white py-3 px-4 rounded-full hover:bg-blue-700 font-medium">
-          Agree & Join
-        </button>
+        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold">Register</button>
       </form>
-
-      <p class="mt-6 text-center text-gray-600">
-        Already on Legal Network?
-        <a href="/user/login" class="text-blue-600 hover:text-blue-700 font-medium">Sign in</a>
-      </p>
     </div>
   </div>
 </div>
-
 <script>
-  // Call toggleLawyerFields when the page loads
-  document.addEventListener('DOMContentLoaded', function() {
-    toggleLawyerFields();
-  });
-
-  function toggleLawyerFields() {
-    const role = document.getElementById('role').value;
-    const lawyerFields = document.getElementById('lawyerFields');
-    const lawyerInputs = [
-      'lawFirm',
-      'licenseNumber',
-      'summary',
-      'contactNumber',
-      'universitySelect',
-      'universityInput',
-      'collegeSelect',
-      'collegeInput',
-      'departmentSelect',
-      'departmentInput',
-      'degree'
-    ];
-  
-    if (role === 'lawyer') {
-      lawyerFields.classList.remove('hidden');
-      lawyerInputs.forEach(fieldId => {
-        const field = document.getElementById(fieldId);
-        if (field) {
-          field.disabled = false;
-          // Restore the name attribute to ensure form submission includes these fields
-          if (field.dataset.originalName) {
-            field.name = field.dataset.originalName;
-          }
-          if (!field.id.endsWith('Input')) {
-            field.required = true;
-          }
-        }
-      });
-    } else {
-      lawyerFields.classList.add('hidden');
-      lawyerInputs.forEach(fieldId => {
-        const field = document.getElementById(fieldId);
-        if (field) {
-          // Store the original name attribute before removing it
-          if (field.name) {
-            field.dataset.originalName = field.name;
-            field.name = ''; // Remove name attribute to prevent form submission
-          }
-          field.disabled = true;
-          field.required = false;
-          if (field.tagName === 'SELECT') {
-            field.selectedIndex = 0;
-          } else {
-            field.value = '';
-          }
-        }
-      });
-    }
+function toggleLawyerFields() {
+  var role = document.getElementById('role').value;
+  var lawyerFields = document.getElementById('lawyerFields');
+  if (role === 'lawyer') {
+    lawyerFields.classList.remove('hidden');
+  } else {
+    lawyerFields.classList.add('hidden');
   }
-
-  // Generic function to toggle text input visibility when "Other" is selected
-  function toggleInput(selectId, inputId) {
-    const selectElem = document.getElementById(selectId);
-    const inputElem = document.getElementById(inputId);
-    if (selectElem.value === 'other') {
-      inputElem.classList.remove('hidden');
-      inputElem.required = true;
-    } else {
-      inputElem.classList.add('hidden');
-      inputElem.required = false;
-    }
-  }
+}
 </script>
+
+

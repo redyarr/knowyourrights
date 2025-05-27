@@ -143,20 +143,19 @@ function submitFeedback() {
     const lawyerId = document.getElementById('lawyer-id').value;
     const ratingInput = document.querySelector('input[name="rating"]:checked');
     const review = document.getElementById('review').value;
-    
+
     if (!ratingInput) {
         showAlert('Please select a rating', 'warning');
         return;
     }
-    
+
     const rating = parseInt(ratingInput.value);
-    
     const data = {
         lawyerId,
         rating,
         review
     };
-    
+
     fetch('/feedback/submit', {
         method: 'POST',
         headers: {
@@ -171,7 +170,14 @@ function submitFeedback() {
         return response.json();
     })
     .then(data => {
-        showAlert(data.message, 'success');
+        // Show modal instead of alert
+        document.getElementById('feedback-success-message').textContent = data.message || 'Your feedback has been submitted successfully!';
+        var modal = new bootstrap.Modal(document.getElementById('feedbackSuccessModal'));
+        modal.show();
+        // Automatically hide modal after 3 seconds
+        setTimeout(() => {
+            modal.hide();
+        }, 3000);
         // Refresh feedback list
         fetchLawyerFeedback(lawyerId);
         // Reset form

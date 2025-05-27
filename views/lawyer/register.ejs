@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lawyer Registration</title>
+</head>
+<body>
+    <h1>Lawyer Registration</h1>
+    <form action="/lawyer/register" method="POST" enctype="multipart/form-data">
+        <div>
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" name="firstName" required>
+        </div>
+        <div>
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" name="lastName" required>
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+        <div>
+            <label for="lawFirm">Law Firm:</label>
+            <input type="text" id="lawFirm" name="lawFirm" required>
+        </div>
+        <div>
+            <label for="licenseNumber">License Number:</label>
+            <input type="text" id="licenseNumber" name="licenseNumber" required>
+        </div>
+        <div>
+            <label for="authority">Authority:</label>
+            <select id="authority" name="authority" required>
+                <option value="">Select Authority</option>
+                <option value="Training">Training</option>
+                <option value="Working">Working</option>
+                <option value="Legal Consultant">Legal Consultant</option>
+            </select>
+        </div>
+        <div>
+            <label for="summary">Summary:</label>
+            <textarea id="summary" name="summary"></textarea>
+        </div>
+        <div>
+            <label for="badgeId">Badge ID:</label>
+            <input type="text" id="badgeId" name="badgeId">
+        </div>
+        <div>
+            <label for="badgeIssueDate">Badge Issue Date:</label>
+            <input type="date" id="badgeIssueDate" name="badgeIssueDate">
+        </div>
+        <div>
+            <label for="badgeExpiryDate">Badge Expiry Date:</label>
+            <input type="date" id="badgeExpiryDate" name="badgeExpiryDate">
+        </div>
+        <div>
+            <label for="university">University:</label>
+            <input type="text" id="university" name="university" required>
+        </div>
+        <div>
+            <label for="degreeLevel">Degree Level:</label>
+            <select id="degreeLevel" name="degreeLevel" required>
+                <option value="">Select degree</option>
+                <option value="LLB" <%= lawyer.degreeLevel === 'LLB' ? 'selected' : '' %>>LLB</option>
+                <option value="LLM" <%= lawyer.degreeLevel === 'LLM' ? 'selected' : '' %>>LLM</option>
+                <option value="JD" <%= lawyer.degreeLevel === 'JD' ? 'selected' : '' %>>JD</option>
+                <option value="PhD in Law" <%= lawyer.degreeLevel === 'PhD in Law' ? 'selected' : '' %>>PhD in Law</option>
+            </select>
+        </div>
+        <div>
+            <label for="badgeImage">Badge Image:</label>
+            <input type="file" id="badgeImage" name="badgeImage" accept="image/*" required>
+        </div>
+        <button type="submit">Register</button>
+    </form>
+</body>
+</html>

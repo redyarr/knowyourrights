@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lawyer Details</title>
+</head>
+<body>
+    <h1>Lawyer Details</h1>
+
+    <% if (lawyer) { %>
+        <h2><%= lawyer.firstName %> <%= lawyer.lastName %></h2>
+        <p>Email: <%= lawyer.email %></p>
+        <p>Law Firm: <%= lawyer.lawFirm %></p>
+        <p>License Number: <%= lawyer.licenseNumber %></p>
+        <p>Authority: <%= lawyer.authority %></p>
+        <p>Summary: <%= lawyer.summary %></p>
+        <p>Badge ID: <%= lawyer.badgeId %></p>
+        <p>Badge Issue Date: <%= lawyer.badgeIssueDate %></p>
+        <p>Badge Expiry Date: <%= lawyer.badgeExpiryDate %></p>
+        <% if (lawyer.badgeImagePath) { %>
+            <p>Badge Image: <img src="/<%= lawyer.badgeImagePath %>" alt="Badge Image" style="max-width: 200px;"></p>
+        <% } %>
+        <p>Status: <%= lawyer.status %></p>
+
+        <% if (lawyer.status === 'pending') { %>
+            <h2>Actions</h2>
+            <form action="/admin/lawyers/approve/<%= lawyer.id %>" method="POST" style="display: inline;">
+                <button type="submit">Approve</button>
+            </form>
+            <form action="/admin/lawyers/decline/<%= lawyer.id %>?_method=POST" method="POST" style="display: inline;">
+                <label for="rejectionReason">Reason for Rejection:</label>
+                <textarea id="rejectionReason" name="rejectionReason" required></textarea>
+                <button type="submit">Decline</button>
+            </form>
+        <% } else if (lawyer.status === 'declined') { %>
+            <p>Rejection Reason: <%= lawyer.rejectionReason %></p>
+            <h2>Actions</h2>
+            <form action="/lawyer/resubmit/<%= lawyer.id %>" method="POST" style="display: inline;">
+                 <button type="submit">Allow Resubmission</button>
+            </form>
+        <% } %>
+
+    <% } else { %>
+        <p>Lawyer not found.</p>
+    <% } %>
+
+    <p><a href="/admin/lawyers/pending">Back to Pending Lawyers</a></p>
+</body>
+</html>

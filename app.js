@@ -20,6 +20,8 @@ const NotificationsRouter = require('./routes/notifications.js');
 const FeedbackRouter = require('./routes/feedback.js');
 const SearchRouter = require('./routes/search.js');
 const storeRouter = require('./util/seed.js');
+const lawyerAuthRouter = require('./routes/lawyerAuth.js');
+const adminLawyerRouter = require('./routes/adminLawyers.js');
 
 // Import session configuration
 const { sessionMiddleware, setLoggedInUser } = require('./middlewares/session');
@@ -56,7 +58,9 @@ app.use('/jobs', JobsRouter)
 app.use('/messaging', MessaginRouter)  // Handles all messaging routes including conversations
 app.use('/notifications', NotificationsRouter)  
 app.use('/feedback', FeedbackRouter); // lawyer feedback system
-app.use('/seed', storeRouter); 
+app.use('/seed', storeRouter);
+app.use('/lawyer', lawyerAuthRouter);
+app.use('/admin/lawyers', adminLawyerRouter);
 
 // { force: true }
 sequelize.sync( { force: false })

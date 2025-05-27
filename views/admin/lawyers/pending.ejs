@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Lawyers</title>
+</head>
+<body>
+    <h1>Pending Lawyers for Approval</h1>
+
+    <% if (lawyers && lawyers.length > 0) { %>
+        <ul>
+            <% lawyers.forEach(lawyer => { %>
+                <li>
+                    <h2><%= lawyer.firstName %> <%= lawyer.lastName %></h2>
+                    <p>Email: <%= lawyer.email %></p>
+                    <p>License Number: <%= lawyer.licenseNumber %></p>
+                    <p>Status: <%= lawyer.status %></p>
+                    <a href="/admin/lawyers/<%= lawyer.id %>">View Details</a>
+                </li>
+            <% }); %>
+        </ul>
+    <% } else { %>
+        <p>No pending lawyers found.</p>
+    <% } %>
+</body>
+</html>

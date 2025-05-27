@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resubmit Lawyer Application</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <h1>Resubmit Lawyer Application</h1>
+
+    <% if (error) { %>
+        <p style="color: red;"><%= error %></p>
+    <% } %>
+
+    <% if (lawyer) { %>
+        <form action="/lawyer/resubmit/<%= lawyer.id %>" method="POST" enctype="multipart/form-data">
+            <div>
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" name="firstName" value="<%= lawyer.firstName %>" required>
+            </div>
+            <div>
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" name="lastName" value="<%= lawyer.lastName %>" required>
+            </div>
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="<%= lawyer.email %>" required readonly>
+            </div>
+            <div>
+                <label for="password">Password (leave blank to keep current):</label>
+                <input type="password" id="password" name="password">
+            </div>
+            <div>
+                <label for="lawFirm">Law Firm:</label>
+                <input type="text" id="lawFirm" name="lawFirm" value="<%= lawyer.lawFirm %>" required>
+            </div>
+            <div>
+                <label for="licenseNumber">License Number:</label>
+                <input type="text" id="licenseNumber" name="licenseNumber" value="<%= lawyer.licenseNumber %>" required readonly>
+            </div>
+             <div>
+                <label for="authority">Authority:</label>
+                <select id="authority" name="authority" required>
+                    <option value="">Select Authority</option>
+                    <option value="Training" <%= lawyer.authority === 'Training' ? 'selected' : '' %>>Training</option>
+                    <option value="Working" <%= lawyer.authority === 'Working' ? 'selected' : '' %>>Working</option>
+                    <option value="Legal Consultant" <%= lawyer.authority === 'Legal Consultant' ? 'selected' : '' %>>Legal Consultant</option>
+                </select>
+            </div>
+            <div>
+                <label for="summary">Summary:</label>
+                <textarea id="summary" name="summary" required><%= lawyer.summary %></textarea>
+            </div>
+            <div>
+                <label for="badgeId">Badge ID:</label>
+                <input type="text" id="badgeId" name="badgeId" value="<%= lawyer.badgeId %>">
+            </div>
+            <div>
+                <label for="badgeIssueDate">Badge Issue Date:</label>
+                <input type="date" id="badgeIssueDate" name="badgeIssueDate" value="<%= lawyer.badgeIssueDate ? new Date(lawyer.badgeIssueDate).toISOString().split('T')[0] : '' %>">
+            </div>
+            <div>
+                <label for="badgeExpiryDate">Badge Expiry Date:</label>
+                <input type="date" id="badgeExpiryDate" name="badgeExpiryDate" value="<%= lawyer.badgeExpiryDate ? new Date(lawyer.badgeExpiryDate).toISOString().split('T')[0] : '' %>">
+            </div>
+            <div>
+                <label for="university">University:</label>
+                <input type="text" id="university" name="university" value="<%= lawyer.university || '' %>" required>
+            </div>
+            <div>
+                <label for="degreeLevel">Degree Level:</label>
+                <select id="degreeLevel" name="degreeLevel" required>
+                    <option value="">Select degree</option>
+                    <option value="LLB" <%= lawyer.degreeLevel === 'LLB' ? 'selected' : '' %>>LLB</option>
+                    <option value="LLM" <%= lawyer.degreeLevel === 'LLM' ? 'selected' : '' %>>LLM</option>
+                    <option value="JD" <%= lawyer.degreeLevel === 'JD' ? 'selected' : '' %>>JD</option>
+                    <option value="PhD in Law" <%= lawyer.degreeLevel === 'PhD in Law' ? 'selected' : '' %>>PhD in Law</option>
+                </select>
+            </div>
+            <div>
+                <label for="badgeImage">Badge Image (upload new or keep existing):</label>
+                <input type="file" id="badgeImage" name="badgeImage" accept="image/jpeg, image/png">
+                <% if (lawyer.badgeImagePath) { %>
+                    <p>Current badge: <a href="/<%= lawyer.badgeImagePath %>" target="_blank">View Current Badge</a></p>
+                <% } %>
+            </div>
+
+            <button type="submit">Resubmit Application</button>
+        </form>
+    <% } else { %>
+        <p>Lawyer data not available for resubmission.</p>
+    <% } %>
+
+    <p><a href="/">Back to Home</a></p>
+</body>
+</html>

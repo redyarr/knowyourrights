@@ -48,147 +48,115 @@ exports.register = async (req, res) => {
       licenseNumber,
       summary,       // from the form
       contactNumber,
-      // Education fields: dropdown selections and custom inputs
-      universitySelect, // dropdown for university
-      university,       // custom input if "other" selected
-      collegeSelect,    // dropdown for college
-      college,          // custom input if "other" selected
-      departmentSelect, // dropdown for department
-      department,       // custom input if "other" selected
-      degree
+      university,    // updated field
+      degreeLevel    // updated field
     } = req.body;
 
-    console.log("2. Received form data:", req.body);
+  console.log(
 
-    // Check if email already exists
-    const existingUser = await User.findOne({ where: { email } });
-    if (existingUser) {
-      throw new Error('Email already in use. Please use a different email address.');
-    }
-
-    // Check if contact number already exists (for lawyers)
-    if (role === 'lawyer' && contactNumber) {
-      const existingContact = await Contact.findOne({ where: { number: contactNumber } });
-      if (existingContact) {
-        throw new Error('Contact number already in use. Please use a different number.');
-      }
-    }
-
-    // Create the user
-    const user = await User.create({
+    "2. Received registration data:",
+    
+    {
       firstName,
       lastName,
       email,
       password,
+      role,
+      lawFirm,
+      licenseNumber,
+      summary,
+      contactNumber,
+      university,
+      degreeLevel
+    }
+
+  );
+    // Basic validation
+    if (!firstName || !lastName || !email || !password || !lawFirm || !licenseNumber || !university || !degreeLevel) {
+      return res.status(400).json({ message: 'Please provide all required fields.' });
+    }
+
+    // Check if user with this email already exists
+    const existingUser = await User.findOne({ where: { email: email } });
+    if (existingUser) {
+      return res.status(400).json({ message: 'User with this email already exists.' });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create new user
+    const user = await User.create({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
       role
     });
-    console.log("3. User created with ID:", user.id);
 
-    let lawyer = null;
-
-    // For lawyer registration, create lawyer profile, education record, and contact info
-    if (role === 'lawyer') {
-      console.log("4. Registering as a lawyer");
-
-      // Check if license number already exists
-      const existingLawyer = await Lawyer.findOne({ where: { licenseNumber } });
-      if (existingLawyer) {
-        // Delete the user we just created since we can't complete registration
-        await User.destroy({ where: { id: user.id } });
-        throw new Error('License number already in use. Please check and try again.');
-      }
-
-      lawyer = await Lawyer.create({
-        userId: user.id,
-        lawFirm,
-        licenseNumber,
-        summary: summary || 'Default professional summary' // Fixed comment
-      });
-      console.log("5. Lawyer profile created with ID:", lawyer.id);
-
-      // Determine which values to use for each education field:
-      const universityValue = (universitySelect === 'other') ? university : universitySelect;
-      const collegeValue = (collegeSelect === 'other') ? college : collegeSelect;
-      const departmentValue = (departmentSelect === 'other') ? department : departmentSelect;
-
-      // Look up an existing education record with these details
-      let education = await Education.findOne({
-        where: {
-          university: universityValue,
-          college: collegeValue,
-          department: departmentValue,
-          degree: degree
-        }
-      });
-
-      if (!education) {
-        // If not found, create a new Education record
-        education = await Education.create({
-          university: universityValue,
-          college: collegeValue,
-          department: departmentValue,
-          degree: degree
-        });
-        console.log("6. New Education record created with ID:", education.id);
-      } else {
-        console.log("6. Existing Education record found with ID:", education.id);
-      }
-
-      // Manually create the association between lawyer and education
-      await LawyerEducation.create({
-        lawyerId: lawyer.id,
-        educationId: education.id
-      });
-      console.log("7. Education associated with lawyer");
-
-      // Create the contact record
-      try {
-        await Contact.create({
-          userId: user.id,
-          number: contactNumber
-        });
-        console.log("8. Contact record created");
-      } catch (contactError) {
-        // If contact creation fails, clean up the created records
-        await LawyerEducation.destroy({ where: { lawyerId: lawyer.id } });
-        await Lawyer.destroy({ where: { id: lawyer.id } });
-        await User.destroy({ where: { id: user.id } });
-        throw new Error('Error creating contact: ' + contactError.message);
-      }
-    }
-
-    // Set session information for both regular users and lawyers
-    req.session.user_id = user.id;
-    req.session.user = {
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      role: user.role
-    };
-    console.log("9. Session set for user", req.session);
-
-    if (lawyer) {
-      req.session.lawyer = lawyer;
-      console.log("10. Lawyer-specific session info set");
-    }
-
-    res.redirect('/feed');
-    console.log("11. Registration process completed, redirecting to '/feed'");
-  } catch (error) {
-    console.error("Error during registration process:", error.message);
-
-    // Fetch education data to pass to the view
-    const educations = await Education.findAll();
-
-    res.render('auth/register', {
-      title: 'Join Legal Network',
-      error: error.message,
-      educations
+    // Create new lawyer
+    const lawyer = await Lawyer.create({
+      userId: user.id,
+      lawFirm,
+      licenseNumber,
+      summary
     });
+
+    // Provide default values for required Education fields
+
+    const degreeValue = degreeLevel;
+    const universityValue = university;
+
+    // Look up an existing education record with these details
+    let education = await Education.findOne({
+      where: {
+        university: universityValue,
+        degree: degreeValue
+      }
+    });
+
+    if (!education) {
+      // If not found, create a new Education record
+      education = await Education.create({
+        university: universityValue,
+        college: collegeValue,
+        department: departmentValue,
+        degree: degreeValue
+      });
+      console.log("6. New Education record created with ID:", education.id);
+    } else {
+      console.log("6. Existing Education record found with ID:", education.id);
+    }
+
+    // Manually create the association between lawyer and education
+    await LawyerEducation.create({
+      lawyerId: lawyer.id,
+      educationId: education.id
+    });
+    console.log("7. Education associated with lawyer");
+
+    // Create the contact record
+    try {
+      await Contact.create({
+        userId: user.id,
+        number: contactNumber
+      });
+      console.log("8. Contact record created");
+    } catch (contactError) {
+      // If contact creation fails, clean up the created records
+      await LawyerEducation.destroy({ where: { lawyerId: lawyer.id } });
+      await Lawyer.destroy({ where: { id: lawyer.id } });
+      await User.destroy({ where: { id: user.id } });
+      throw new Error('Error creating contact: ' + contactError.message);
+    }
+
+    res.status(201).json({ message: 'User registered successfully.', user });
+  }
+  catch (error) {
+    console.error("Error during registration:", error.message);
+    res.status(500).json({ message: 'Registration failed. Please try again.' });
   }
 };
-
 // Get login form
 exports.getLogin = (req, res) => {
       if (req.session.user) {
@@ -264,3 +232,6 @@ exports.signout = (req, res) => {
     res.status(500).send("An unexpected error occurred during signout.");
   }
 };
+
+
+// Export other functions if needed
