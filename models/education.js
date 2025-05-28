@@ -10,14 +10,6 @@ const Education = sequelize.define('Educations', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  college: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  department: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
   degree: {
     type: DataTypes.STRING,
     allowNull: false,

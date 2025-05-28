@@ -12,19 +12,23 @@ const Lawyer = sequelize.define('lawyers', {
     },
     lawFirm: {
         type: DataTypes.STRING,
+        allowNull: true
+    },
+    badgeNumber: {
+        type: DataTypes.STRING,
         allowNull: false
     },
-    licenseNumber: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true
+    badgeIssueDate: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    badgeIssuingAuthority: {
+        type: DataTypes.ENUM('training', 'approved', 'consultant'),
+        allowNull: false
     },
     summary:{
         type: DataTypes.TEXT,
         allowNull:true,
-    },
-    authority: {
-        type: DataTypes.ENUM('training', 'approved', 'consultant')
     }
 },{
         underscored: true,
