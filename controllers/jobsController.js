@@ -84,6 +84,7 @@ exports.getJobDetails = async (req, res) => {
 
         // Fetch applicants if user is the author
         let applicants = [];
+        // In the getJobDetails function around line 95
         if (isAuthor) {
             applicants = await JobApply.findAll({
                 where: { jobId },
@@ -92,7 +93,7 @@ exports.getJobDetails = async (req, res) => {
                     attributes: ['id', 'firstName', 'lastName'],
                     include: [{
                         model: Lawyer,
-                        attributes: ['id', 'lawFirm', 'licenseNumber', 'summary']
+                        attributes: ['id', 'lawFirm', 'badgeNumber', 'badgeIssuingAuthority', 'summary']
                     }]
                 }]
             });

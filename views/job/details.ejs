@@ -79,23 +79,24 @@
                 <% } %>
     </div>
 
-    <% if (isAuthor && applicants && applicants.length> 0) { %>
+    <% if (isAuthor && applicants && applicants.length > 0) { %>
         <div class="bg-white rounded-lg shadow-md p-6">
             <h2 class="text-xl font-bold text-blue-800 mb-4">Lawyer Applications</h2>
 
             <div class="space-y-4">
-                <% applicants.forEach(application=> { %>
-                    <div
-                        class="border rounded-lg p-4 <%= application.status === 'accepted' ? 'border-green-500 bg-green-50' : (application.status === 'rejected' ? 'border-red-300 bg-red-50' : 'border-gray-200') %>">
+                <% applicants.forEach(application => { %>
+                    <div class="border rounded-lg p-4 <%= application.status === 'accepted' ? 'border-green-500 bg-green-50' : (application.status === 'rejected' ? 'border-red-300 bg-red-50' : 'border-gray-200') %>">
                         <div class="flex justify-between items-start">
                             <div>
                                 <h3 class="font-semibold text-lg">
-                                    <%= application.user.firstName %>
-                                        <%= application.user.lastName %>
+                                    <%= application.user.firstName %> <%= application.user.lastName %>
                                 </h3>
                                 <p class="text-sm text-gray-600 mt-1">
-                                    <%= application.user.lawyer.lawFirm %> • License: <%=
-                                            application.user.lawyer.licenseNumber %>
+                                    <% if (application.user.lawyer.lawFirm) { %>
+                                        <%= application.user.lawyer.lawFirm %> • 
+                                    <% } %>
+                                    Badge: <%= application.user.lawyer.badgeNumber %> 
+                                    (<%= application.user.lawyer.badgeIssuingAuthority %>)
                                 </p>
                                 <div class="mt-2">
                                     <p class="text-gray-700">
@@ -103,8 +104,8 @@
                                     </p>
                                 </div>
                                 <div class="mt-2">
-                                    <p class="text-sm text-gray-500">Applied on <%= new
-                                            Date(application.createdAt).toLocaleDateString() %>
+                                    <p class="text-sm text-gray-500">
+                                        Applied on <%= new Date(application.createdAt).toLocaleDateString() %>
                                     </p>
                                 </div>
                             </div>
