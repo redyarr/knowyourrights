@@ -56,8 +56,8 @@ try {
     LawyerFeedback.belongsTo(User, { foreignKey: 'user_id' });
 
     // User and Post
-    User.hasMany(Post, { foreignKey: 'author_id' });
-    Post.belongsTo(User, { foreignKey: 'author_id' });
+    User.hasMany(Post, { foreignKey: 'authorId' });
+    Post.belongsTo(User, { foreignKey: 'authorId' });
 
     // User and Job
     User.hasMany(Job, { foreignKey: 'author_id' });

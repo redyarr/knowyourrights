@@ -56,7 +56,7 @@
                                     <img src="https://ui-avatars.com/api/?background=random" alt="Profile" class="rounded-full mr-4 shadow" style="width: 56px; height: 56px; object-fit: cover;">
                                     <div class="flex-1">
                                         <h6 class="font-bold text-lg text-gray-900 hover:text-blue-600 transition-colors">
-                                            <%= post.user ? (post.user.first_name || post.user.firstName || '') : '' %> <%= post.user ? (post.user.last_name || post.user.lastName || '') : '' %>
+                                            <%= post.user ? post.user.firstName : '' %> <%= post.user ? post.user.lastName : '' %>
                                             <% if (post.user && post.user.role==='lawyer' && post.user.lawyer) { %>
                                                 <span class="text-sm text-blue-600 font-medium">• Lawyer at <%= post.user.lawyer.lawFirm %></span>
                                             <% } %>
@@ -120,8 +120,15 @@
                                         <% const initialComments = post.comments.slice(0, 4); const hasMoreComments = post.comments.length > 4; %>
                                         <% initialComments.forEach(comment => { %>
                                             <div class="flex items-start space-x-3">
-                                                <img src="https://ui-avatars.com/api/?name=<%= comment.user ? comment.user.firstName + ' ' + comment.user.lastName : 'User' %>" alt="Commenter" class="rounded-full shadow" style="width: 32px; height: 32px; object-fit: cover;">
+                                                <a href="/in/<%= comment.user ? comment.user.id : '#' %>" class="hover:opacity-80 transition-opacity">
+                                                    <img src="https://ui-avatars.com/api/?name=<%= comment.user ? comment.user.firstName + ' ' + comment.user.lastName : 'User' %>" alt="Commenter" class="rounded-full shadow" style="width: 32px; height: 32px; object-fit: cover;">
+                                                </a>
                                                 <div>
+                                                    <div class="mb-1">
+                                                        <a href="/in/<%= comment.user ? comment.user.id : '#' %>" class="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+                                                            <%= comment.user ? comment.user.firstName + ' ' + comment.user.lastName : 'User' %>
+                                                        </a>
+                                                    </div>
                                                     <div class="bg-blue-50 rounded-lg px-3 py-2 relative">
                                                         <div class="pr-16">
                                                             <p class="text-sm text-gray-800 break-words whitespace-normal" style="word-wrap: break-word; max-width: 100%; overflow-wrap: break-word;"><%= comment.content.replace(/(.{50})/g, "$1\n") %></p>
@@ -150,8 +157,15 @@
                                             <div id="additionalComments-<%= post.id %>" class="hidden space-y-3">
                                                 <% post.comments.slice(4).forEach(comment => { %>
                                                     <div class="flex items-start space-x-3">
-                                                        <img src="https://ui-avatars.com/api/?name=<%= comment.user ? comment.user.firstName + ' ' + comment.user.lastName : 'User' %>" alt="Commenter" class="rounded-full shadow" style="width: 32px; height: 32px; object-fit: cover;">
+                                                        <a href="/in/<%= comment.user ? comment.user.id : '#' %>" class="hover:opacity-80 transition-opacity">
+                                                            <img src="https://ui-avatars.com/api/?name=<%= comment.user ? comment.user.firstName + ' ' + comment.user.lastName : 'User' %>" alt="Commenter" class="rounded-full shadow" style="width: 32px; height: 32px; object-fit: cover;">
+                                                        </a>
                                                         <div>
+                                                            <div class="mb-1">
+                                                                <a href="/in/<%= comment.user ? comment.user.id : '#' %>" class="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+                                                                    <%= comment.user ? comment.user.firstName + ' ' + comment.user.lastName : 'User' %>
+                                                                </a>
+                                                            </div>
                                                             <div class="bg-blue-50 rounded-lg px-3 py-2 relative">
                                                                 <div class="pr-16">
                                                                     <p class="text-sm text-gray-800 break-words whitespace-normal" style="word-wrap: break-word; max-width: 100%; overflow-wrap: break-word;"><%= comment.content.replace(/(.{50})/g, "$1\n") %></p>
