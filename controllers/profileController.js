@@ -21,7 +21,10 @@ exports.getProfile = async (req, res) => {
                 {
                     model: Lawyer,
                     as: 'lawyer',
-                    include: [{ model: Education, as: 'Educations' }]
+                    include: [
+                        { model: Education, as: 'Educations' },
+                        { model: require('../models/lawwyerDoc'), as: 'lawyer_docs' }
+                    ]
                 },
                 { model: Contact },
                 { model: Post },

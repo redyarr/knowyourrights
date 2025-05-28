@@ -1,6 +1,7 @@
 const session = require('express-session');
 const { User, Lawyer, Education, Contact, LawyerEducation } = require('../models');
 const bcrypt = require('bcrypt');
+const fs = require('fs');
 
 exports.get = (req, res) =>{
     if (req.session.user) {
@@ -38,6 +39,8 @@ exports.getRegister = async (req, res) => {
 exports.register = async (req, res) => {
   try {
     console.log("1. Starting registration process");
+    console.log("Request body:", req.body); // Log the entire request body to debug
+    
     const { 
       firstName, 
       lastName, 
@@ -45,18 +48,42 @@ exports.register = async (req, res) => {
       password, 
       role,
       lawFirm,
-      licenseNumber,
-      summary,       // from the form
+      badgeNumber,
+      badgeIssueDate,
+      badgeIssuingAuthority, // Now serves as the authority level
+      summary,
       contactNumber,
       // Education fields: dropdown selections and custom inputs
       universitySelect, // dropdown for university
       university,       // custom input if "other" selected
-      collegeSelect,    // dropdown for college
-      college,          // custom input if "other" selected
-      departmentSelect, // dropdown for department
-      department,       // custom input if "other" selected
       degree
     } = req.body;
+
+    // Validate required fields
+    if (!email) {
+      throw new Error('Email is required');
+    }
+
+    // Handle file upload if present
+    let badgeDocPath = null;
+    if (req.files && req.files.badgeUpload) {
+      const badgeFile = req.files.badgeUpload;
+      const uploadDir = 'public/uploads/badges/';
+      const fileName = `${Date.now()}-${badgeFile.name}`;
+      const fullPath = `${uploadDir}${fileName}`;
+      
+      // Ensure directory exists
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+      
+      // Move the file
+      await badgeFile.mv(fullPath);
+      // Store the path without 'public/' prefix for browser access
+      badgeDocPath = `/uploads/badges/${fileName}`;
+      console.log("Badge document uploaded to:", fullPath);
+      console.log("Badge document path stored as:", badgeDocPath);
+    }
 
     console.log("2. Received form data:", req.body);
 
@@ -90,33 +117,36 @@ exports.register = async (req, res) => {
     if (role === 'lawyer') {
       console.log("4. Registering as a lawyer");
 
-      // Check if license number already exists
-      const existingLawyer = await Lawyer.findOne({ where: { licenseNumber } });
-      if (existingLawyer) {
-        // Delete the user we just created since we can't complete registration
-        await User.destroy({ where: { id: user.id } });
-        throw new Error('License number already in use. Please check and try again.');
-      }
+      // No need to check for license number as it's been removed
 
+      // Create lawyer record with badge information
       lawyer = await Lawyer.create({
         userId: user.id,
-        lawFirm,
-        licenseNumber,
-        summary: summary || 'Default professional summary' // Fixed comment
+        lawFirm: lawFirm || null, // Make lawFirm optional
+        badgeNumber,
+        badgeIssueDate,
+        badgeIssuingAuthority, // This now serves as the authority level
+        summary: summary || 'Default professional summary'
       });
       console.log("5. Lawyer profile created with ID:", lawyer.id);
 
-      // Determine which values to use for each education field:
+      // If badge document was uploaded, save it to the lawyer_docs table
+      if (badgeDocPath) {
+        const lawyerDoc = require('../models/lawwyerDoc'); // Fixed: changed from 'lawwyerDoc' to 'lawwyerDoc'
+        await lawyerDoc.create({
+          lawyerId: lawyer.id,
+          idPath: badgeDocPath
+        });
+        console.log("Badge document associated with lawyer");
+      }
+
+      // Determine university value
       const universityValue = (universitySelect === 'other') ? university : universitySelect;
-      const collegeValue = (collegeSelect === 'other') ? college : collegeSelect;
-      const departmentValue = (departmentSelect === 'other') ? department : departmentSelect;
 
       // Look up an existing education record with these details
       let education = await Education.findOne({
         where: {
           university: universityValue,
-          college: collegeValue,
-          department: departmentValue,
           degree: degree
         }
       });
@@ -125,8 +155,6 @@ exports.register = async (req, res) => {
         // If not found, create a new Education record
         education = await Education.create({
           university: universityValue,
-          college: collegeValue,
-          department: departmentValue,
           degree: degree
         });
         console.log("6. New Education record created with ID:", education.id);

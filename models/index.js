@@ -44,8 +44,8 @@ try {
     Education.belongsToMany(Lawyer, { through: LawyerEducation, foreignKey: 'education_id' });
 
     // Lawyer and LawyerDoc
-    Lawyer.hasMany(lawyerDoc, { foreignKey: 'lawyer_id' });
-    lawyerDoc.belongsTo(Lawyer, { foreignKey: 'lawyer_id' });
+    Lawyer.hasMany(lawyerDoc, { foreignKey: 'lawyerId' });  // Changed to 'lawyerId'
+    lawyerDoc.belongsTo(Lawyer, { foreignKey: 'lawyerId' });
     
     // Lawyer and LawyerFeedback
     Lawyer.hasMany(LawyerFeedback, { foreignKey: 'lawyer_id' });

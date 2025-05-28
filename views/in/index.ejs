@@ -36,6 +36,34 @@
     <p class="text-gray-700 text-lg"><%= profile?.about || 'No description available.' %></p>
   </div>
 
+  <!-- Badge Information Section (For Lawyers) -->
+  <% if (profile?.role === 'lawyer' && profile?.lawyer) { %>
+    <div class="bg-white rounded-2xl shadow-lg mb-8 p-8">
+      <div class="flex items-center mb-4">
+        <i class="fas fa-certificate text-blue-500 text-xl mr-3"></i>
+        <h3 class="text-2xl font-bold text-gray-800">Professional Credentials</h3>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="border border-blue-100 p-5 rounded-xl bg-blue-50">
+          <h4 class="font-semibold text-lg text-blue-800">Badge Information</h4>
+          <p class="text-gray-600 mt-1"><strong>Badge Number:</strong> <%= profile?.lawyer?.badgeNumber %></p>
+          <p class="text-gray-600 mt-1"><strong>Issue Date:</strong> <%= profile?.lawyer?.badgeIssueDate ? new Date(profile?.lawyer?.badgeIssueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A' %></p>
+          <p class="text-gray-600 mt-1"><strong>Authority Level:</strong> <%= profile?.lawyer?.badgeIssuingAuthority ? profile?.lawyer?.badgeIssuingAuthority.charAt(0).toUpperCase() + profile?.lawyer?.badgeIssuingAuthority.slice(1) : 'N/A' %></p>
+        </div>
+        <% if (profile?.lawyer?.lawyer_docs && profile?.lawyer?.lawyer_docs.length > 0) { %>
+          <div class="border border-blue-100 p-5 rounded-xl bg-blue-50">
+            <h4 class="font-semibold text-lg text-blue-800">Badge Document</h4>
+            <div class="mt-3">
+              <a href="<%= profile?.lawyer?.lawyer_docs[0]?.idPath %>" target="_blank" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                <i class="fas fa-file-pdf mr-2"></i> View Badge Document
+              </a>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  <% } %>
+
   <!-- Education Section -->
   <% if (profile?.lawyer?.Educations?.length > 0) { %>
     <div class="bg-white rounded-2xl shadow-lg mb-8 p-8">

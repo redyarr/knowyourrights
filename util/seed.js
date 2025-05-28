@@ -99,18 +99,18 @@ async function seedDatabase() {
 
     // --- 4. Seed Lawyers (depends on Users, now 12 rows) ---
     const lawyers = [
-      { userId: 1, lawFirm: 'Law Firm A', licenseNumber: 'LN1001', summary: 'Experienced in civil law.', authority: 'approved' },
-      { userId: 2, lawFirm: 'Law Firm B', licenseNumber: 'LN1002', summary: 'Expert in corporate law.', authority: 'consultant' },
-      { userId: 3, lawFirm: 'Law Firm C', licenseNumber: 'LN1003', summary: 'Specializes in criminal defense.', authority: 'training' },
-      { userId: 4, lawFirm: 'Law Firm D', licenseNumber: 'LN1004', summary: 'Focuses on family law.', authority: 'approved' },
-      { userId: 5, lawFirm: 'Law Firm E', licenseNumber: 'LN1005', summary: 'Well-versed in intellectual property.', authority: 'consultant' },
-      { userId: 6, lawFirm: 'Law Firm F', licenseNumber: 'LN1006', summary: 'Handles immigration cases.', authority: 'training' },
-      { userId: 7, lawFirm: 'Law Firm G', licenseNumber: 'LN1007', summary: 'Expert in environmental law.', authority: 'approved' },
-      { userId: 8, lawFirm: 'Law Firm H', licenseNumber: 'LN1008', summary: 'Experienced in labor law.', authority: 'consultant' },
-      { userId: 9, lawFirm: 'Law Firm I', licenseNumber: 'LN1009', summary: 'Specialist in tax law.', authority: 'training' },
-      { userId: 10, lawFirm: 'Law Firm J', licenseNumber: 'LN1010', summary: 'Skilled in commercial litigation.', authority: 'approved' },
-      { userId: 11, lawFirm: 'Law Firm K', licenseNumber: 'LN1011', summary: 'Expert in intellectual property disputes.', authority: 'consultant' },
-      { userId: 12, lawFirm: 'Law Firm L', licenseNumber: 'LN1012', summary: 'Specializes in international law.', authority: 'training' }
+      { userId: 1, lawFirm: 'Law Firm A', badgeNumber: 'LN1001', badgeIssueDate: new Date('2020-01-15'), badgeIssuingAuthority: 'approved', summary: 'Experienced in civil law.' },
+      { userId: 2, lawFirm: 'Law Firm B', badgeNumber: 'LN1002', badgeIssueDate: new Date('2019-03-22'), badgeIssuingAuthority: 'consultant', summary: 'Expert in corporate law.' },
+      { userId: 3, lawFirm: 'Law Firm C', badgeNumber: 'LN1003', badgeIssueDate: new Date('2021-06-10'), badgeIssuingAuthority: 'training', summary: 'Specializes in criminal defense.' },
+      { userId: 4, lawFirm: 'Law Firm D', badgeNumber: 'LN1004', badgeIssueDate: new Date('2018-11-05'), badgeIssuingAuthority: 'approved', summary: 'Focuses on family law.' },
+      { userId: 5, lawFirm: 'Law Firm E', badgeNumber: 'LN1005', badgeIssueDate: new Date('2020-09-18'), badgeIssuingAuthority: 'consultant', summary: 'Well-versed in intellectual property.' },
+      { userId: 6, lawFirm: 'Law Firm F', badgeNumber: 'LN1006', badgeIssueDate: new Date('2022-02-14'), badgeIssuingAuthority: 'training', summary: 'Handles immigration cases.' },
+      { userId: 7, lawFirm: 'Law Firm G', badgeNumber: 'LN1007', badgeIssueDate: new Date('2019-07-30'), badgeIssuingAuthority: 'approved', summary: 'Expert in environmental law.' },
+      { userId: 8, lawFirm: 'Law Firm H', badgeNumber: 'LN1008', badgeIssueDate: new Date('2021-12-03'), badgeIssuingAuthority: 'consultant', summary: 'Experienced in labor law.' },
+      { userId: 9, lawFirm: 'Law Firm I', badgeNumber: 'LN1009', badgeIssueDate: new Date('2020-04-25'), badgeIssuingAuthority: 'training', summary: 'Specialist in tax law.' },
+      { userId: 10, lawFirm: 'Law Firm J', badgeNumber: 'LN1010', badgeIssueDate: new Date('2018-08-12'), badgeIssuingAuthority: 'approved', summary: 'Skilled in commercial litigation.' },
+      { userId: 11, lawFirm: 'Law Firm K', badgeNumber: 'LN1011', badgeIssueDate: new Date('2021-01-20'), badgeIssuingAuthority: 'consultant', summary: 'Expert in intellectual property disputes.' },
+      { userId: 12, lawFirm: 'Law Firm L', badgeNumber: 'LN1012', badgeIssueDate: new Date('2019-10-08'), badgeIssuingAuthority: 'training', summary: 'Specializes in international law.' }
     ];
     await Lawyer.bulkCreate(lawyers, { ignoreDuplicates: true });
     console.log("Lawyers inserted");

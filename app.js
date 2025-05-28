@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const methodOverride = require('method-override');
+const fileUpload = require('express-fileupload');
 require('dotenv').config();
 const {sequelize} = require('./models');
 
@@ -34,6 +35,22 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); // Add JSON body parser for API requests
 app.use(methodOverride('_method', { methods: ['POST', 'GET'] }));
 app.use(express.static(path.join(__dirname, 'public')));
+
+// File upload middleware - only use for routes that don't use multer
+app.use(function(req, res, next) {
+  // Skip fileUpload middleware for routes that use multer
+  if (req.path.includes('/create-post') || req.path.includes('/uploads')) {
+    return next();
+  }
+  
+  // Apply fileUpload middleware for other routes
+  fileUpload({
+    createParentPath: true,
+    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max file size
+    abortOnLimit: true,
+    responseOnLimit: 'File size is too large. Max size is 5MB.'
+  })(req, res, next);
+});
 
 // Use session middleware
 app.use(sessionMiddleware);
