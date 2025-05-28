@@ -152,8 +152,9 @@ try {
     Category.belongsToMany(Post, { through: PostCategory, foreignKey: 'category_id' });
 
     // User and ProfileImage
-    User.hasOne(ProfileImage, { foreignKey: 'user_id' });
-    ProfileImage.belongsTo(User, { foreignKey: 'user_id' });
+    // User and ProfileImage
+    User.hasOne(ProfileImage, { foreignKey: 'userId' });
+ProfileImage.belongsTo(User, { foreignKey: 'userId' });
 
     console.log("Associations defined successfully");
 } catch (error) {

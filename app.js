@@ -39,7 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // File upload middleware - only use for routes that don't use multer
 app.use(function(req, res, next) {
   // Skip fileUpload middleware for routes that use multer
-  if (req.path.includes('/create-post') || req.path.includes('/uploads')) {
+  if (req.url.includes('/create-post') || req.url.includes('/uploads') || req.url.includes('/upload-profile-image')) {
     return next();
   }
   

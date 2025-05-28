@@ -28,17 +28,7 @@ exports.getProfile = async (req, res) => {
                 },
                 { model: Contact },
                 { model: Post },
-                { model: ProfileImage },
-                {
-                    model: Connection,
-                    as: 'sentRequests',
-                    attributes: ['id', 'status', 'requester_id', 'receiver_id'],
-                },
-                {
-                    model: Connection,
-                    as: 'receivedRequests',
-                    attributes: ['id', 'status', 'requester_id', 'receiver_id'],
-                }
+                { model: ProfileImage }
             ]
         });
         
@@ -46,8 +36,15 @@ exports.getProfile = async (req, res) => {
             return res.status(404).render('error', { error: "User profile not found." });
         }
         
-        // Count connections
-        const connectionsCount = user.connections ? user.connections.length : 0;
+        // Count actual connections (accepted status only)
+        const connectionsCount = await Connection.count({
+            where: {
+                [Op.or]: [
+                    { requester_id: userId, status: 'accepted' },
+                    { receiver_id: userId, status: 'accepted' }
+                ]
+            }
+        });
         
         // Check if logged-in user has a connection with this profile
         let connectionStatus = null;
@@ -80,13 +77,41 @@ exports.getProfile = async (req, res) => {
 
 
 
+exports.getEditProfile = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        
+        const user = await User.findOne({
+            where: { id: userId },
+            attributes: { exclude: ['password', 'emailVerifiedAt'] },
+            include: [
+                {
+                    model: Lawyer,
+                    as: 'lawyer'
+                }
+            ]
+        });
+        
+        if (!user) {
+            return res.status(404).render('error', { error: "User not found." });
+        }
+        
+        res.render('profile/edit', { 
+            user,
+            title: 'Edit Profile'
+        });
+    } catch (error) {
+        res.status(500).render('error', { error: error.message });
+    }
+};
+
 exports.updateProfile = async (req, res) => {
     try {
-        const { firstName, lastName, summary, lawFirm, licenseNumber } = req.body;
+        const { firstName, lastName, summary, lawFirm, licenseNumber, country, city } = req.body;
         
         // Update user
         await User.update(
-            { firstName, lastName },
+            { firstName, lastName, country, city },
             { where: { id: req.session.user_id } }
         );
 
@@ -102,13 +127,20 @@ exports.updateProfile = async (req, res) => {
             );
         }
 
-        res.redirect('/profile');
+        // Update session user data
+        const updatedUser = await User.findOne({
+            where: { id: req.session.user_id },
+            attributes: { exclude: ['password', 'emailVerifiedAt'] }
+        });
+        req.session.user = updatedUser;
+
+        res.redirect('/in');
     } catch (error) {
         res.status(500).render('error', { error: error.message });
     }
 };
 
-// Multer storage configuration
+// Multer storage configuration for posts
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, path.join(__dirname, '../public/uploads/posts'));
@@ -119,6 +151,32 @@ const storage = multer.diskStorage({
     }
 });
 const upload = multer({ storage: storage });
+
+// Multer storage configuration for profile images
+const profileStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        const resolvedPath = path.join(__dirname, '../public/uploads/profiles');
+        console.log('Multer profile image upload destination:', resolvedPath);
+        cb(null, resolvedPath);
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'profile-' + uniqueSuffix + '-' + file.originalname);
+    }
+});
+const profileUpload = multer({ 
+    storage: profileStorage,
+    fileFilter: function (req, file, cb) {
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed!'), false);
+        }
+    },
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB limit
+    }
+});
 
 // Updated CreatePost to handle image upload
 exports.CreatePost = async (req, res) => {
@@ -165,3 +223,63 @@ exports.updatePost = async (req, res) => {
         res.status(500).render('error', { error: "An unexpected error occurred while updating the post." });
     }
 };
+
+// Upload profile image
+exports.uploadProfileImage = [profileUpload.single('profileImage'), async (req, res) => {
+    console.log('Profile image upload request received');
+    console.log('Session user_id:', req.session?.user_id);
+    console.log('File received:', req.file ? 'Yes' : 'No');
+    
+    try {
+        const userId = req.session.user_id;
+        
+        if (!userId) {
+            console.log('No user ID in session');
+            return res.status(401).json({ error: 'User not authenticated' });
+        }
+        
+        if (!req.file) {
+            console.log('No file provided in request');
+            return res.status(400).json({ error: 'No image file provided' });
+        }
+
+        console.log('File details:', {
+            filename: req.file.filename,
+            originalname: req.file.originalname,
+            size: req.file.size,
+            mimetype: req.file.mimetype
+        });
+
+        const imagePath = '/uploads/profiles/' + req.file.filename;
+        console.log('Image path to save:', imagePath);
+
+        // Check if user already has a profile image
+        const existingImage = await ProfileImage.findOne({ where: { userId } });
+        console.log('Existing image found:', existingImage ? 'Yes' : 'No');
+
+        if (existingImage) {
+            // Update existing profile image
+            await ProfileImage.update(
+                { imagePath },
+                { where: { userId } }
+            );
+            console.log('Updated existing profile image');
+        } else {
+            // Create new profile image record
+            await ProfileImage.create({
+                userId,
+                imagePath
+            });
+            console.log('Created new profile image record');
+        }
+
+        console.log('Profile image upload successful');
+        res.json({ success: true, imagePath });
+    } catch (error) {
+        console.error('Error uploading profile image:', error);
+        res.status(500).json({ error: 'Failed to upload profile image: ' + error.message });
+    }
+}];
+
+// Export multer middleware for use in routes
+exports.profileUpload = profileUpload;

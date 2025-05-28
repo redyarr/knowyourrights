@@ -21,10 +21,11 @@ const upload = multer({ storage: storage });
 
 // view profile routes
 router.get('/', ProfileController.findProfile);
+router.get('/edit', isAuthenticated, ProfileController.getEditProfile);
+router.post('/upload-profile-image', isAuthenticated, ProfileController.uploadProfileImage);
 router.post('/:id/create-post', upload.single('image'), ProfileController.CreatePost);
 router.post('/:id/edit-post', ProfileController.updatePost);
-
-router.post('/:id/edit', ProfileController.updateProfile)
+router.post('/:id/edit', ProfileController.updateProfile);
 router.get('/:id', ProfileController.getProfile);
 // post routes
 
