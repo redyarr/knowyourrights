@@ -1,4 +1,5 @@
-const { Job, JobApply, User, Lawyer } = require('../models');
+const { Job, JobApply, User, Lawyer, Notification, UserNotification, Message } = require('../models');
+const { Op } = require('sequelize');
 
 exports.getJobs = async (req, res) => {
     try {
@@ -185,11 +186,21 @@ exports.acceptLawyer = async (req, res) => {
             return res.status(403).render('error', { error: "You are not authorized to accept applications for this job" });
         }
 
-        // Find the application
-        const application = await JobApply.findByPk(applicationId);
+        // Find the application with user details
+        const application = await JobApply.findByPk(applicationId, {
+            include: [{
+                model: User,
+                attributes: ['id', 'firstName', 'lastName']
+            }]
+        });
         if (!application || application.jobId != jobId) {
             return res.status(404).render('error', { error: "Application not found" });
         }
+
+        // Get client details
+        const client = await User.findByPk(userId, {
+            attributes: ['firstName', 'lastName']
+        });
 
         // Update application status
         await application.update({ status: 'accepted' });
@@ -200,10 +211,31 @@ exports.acceptLawyer = async (req, res) => {
             {
                 where: {
                     jobId,
-                    id: { [sequelize.Op.ne]: applicationId }
+                    id: { [Op.ne]: applicationId }
                 }
             }
         );
+
+        // Create notification for the accepted lawyer
+        const notification = await Notification.create({
+            userId: application.userId,
+            title: 'Job Application Accepted!',
+            message: `Congratulations! Your application for "${job.summary}" has been accepted by ${client.firstName} ${client.lastName}. They have sent you a message to get started.`
+        });
+
+        await UserNotification.create({
+            userId: application.userId,
+            notification_id: notification.id,
+            isRead: false
+        });
+
+        // Create initial message from client to lawyer
+        await Message.create({
+            senderId: userId, // Client ID
+            receiverId: application.userId, // Lawyer ID
+            content: `Hello ${application.user.firstName}! I'm pleased to inform you that I've accepted your application for my job posting: "${job.summary}". I'm looking forward to working with you. Please let me know when you're available to discuss the details further.`,
+            isRead: false
+        });
 
         res.redirect(`/jobs/${jobId}`);
     } catch (error) {

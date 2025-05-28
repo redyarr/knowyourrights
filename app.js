@@ -1,13 +1,13 @@
 const express = require('express');
 const http = require('http')
-const {Server} = require('socket.io')
+const { Server } = require('socket.io')
 
 const bodyParser = require('body-parser');
 const path = require('path');
 const expressLayouts = require('express-ejs-layouts');
 const methodOverride = require('method-override');
 require('dotenv').config();
-const {sequelize} = require('./models');
+const { sequelize } = require('./models');
 
 // Import routes
 const AuthRouter = require('./routes/auth.js')
@@ -51,15 +51,15 @@ app.use('/', AuthRouter); // authenticate the user and redirect tp route '/feed'
 app.use('/feed', FeedRouter); // show all posts as feed
 app.use('/search', SearchRouter); // search for users
 app.use('/in', ProfileRouter); // redirect route '/in/:user_id'
-app.use('/mynetwork', MyNetwork);  
-app.use('/jobs', JobsRouter)  
+app.use('/mynetwork', MyNetwork);
+app.use('/jobs', JobsRouter)
 app.use('/messaging', MessaginRouter)  // Handles all messaging routes including conversations
-app.use('/notifications', NotificationsRouter)  
+app.use('/notifications', NotificationsRouter)
 app.use('/feedback', FeedbackRouter); // lawyer feedback system
-app.use('/seed', storeRouter); 
+app.use('/seed', storeRouter);
 
 // { force: true }
-sequelize.sync( { force: false })
+sequelize.sync({ force: false })
     .then(() => {
         server.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
