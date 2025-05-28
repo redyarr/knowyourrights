@@ -258,7 +258,7 @@ exports.commentOnPost = async (req, res) => {
         
         // Get user info for the new comment
         const user = await User.findByPk(userId, {
-            attributes: ['first_name', 'last_name']
+            attributes: ['id', 'firstName', 'lastName']
         });
         
         // Return JSON response with the new comment data
@@ -268,9 +268,12 @@ exports.commentOnPost = async (req, res) => {
                 id: comment.id,
                 content: comment.content,
                 createdAt: comment.createdAt,
+                userId: userId,
+                postId: postId,
                 user: {
-                    firstName: user.first_name,
-                    lastName: user.last_name
+                    id: user.id,
+                    firstName: user.firstName,
+                    lastName: user.lastName
                 }
             }
         });

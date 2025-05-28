@@ -153,14 +153,36 @@ document.addEventListener('DOMContentLoaded', function () {
         const commentDiv = document.createElement('div');
         commentDiv.className = 'flex items-start space-x-3';
         const userName = `${comment.user.firstName} ${comment.user.lastName}`;
+        const loggedInUserId = window.loggedInUserId || null;
+        const isOwner = loggedInUserId && comment.userId === loggedInUserId;
+        
         commentDiv.innerHTML = `
-            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}" 
-                alt="Commenter" class="rounded-full shadow" style="width: 32px; height: 32px; object-fit: cover;">
+            <a href="/in/${comment.user.id}" class="hover:opacity-80 transition-opacity">
+                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}" 
+                    alt="Commenter" class="rounded-full shadow" style="width: 32px; height: 32px; object-fit: cover;">
+            </a>
             <div>
+                <div class="mb-1">
+                    <a href="/in/${comment.user.id}" class="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+                        ${userName}
+                    </a>
+                </div>
                 <div class="bg-blue-50 rounded-lg px-3 py-2 relative">
                     <div class="pr-16">
                         <p class="text-sm text-gray-800 break-words whitespace-normal" style="word-wrap: break-word; max-width: 100%; overflow-wrap: break-word;">${comment.content.replace(/(.{50})/g, "$1\n")}</p>
                     </div>
+                    ${isOwner ? `
+                        <div class="absolute right-2 top-2">
+                            <span class="flex space-x-1 items-center">
+                                <button class="p-1 text-gray-500 hover:text-blue-500 transition-all duration-200 ease-in-out edit-comment-inline-btn" title="Edit Comment" data-comment-id="${comment.id}" data-content="${comment.content.replace(/&/g, '&amp;').replace(/"/g, '&quot;')}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-2.828 0L9 13zm0 0V21h8" /></svg>
+                                </button>
+                                <button class="p-1 text-gray-500 hover:text-red-500 transition-all duration-200 ease-in-out delete-comment-btn" title="Delete Comment" data-comment-id="${comment.id}" data-post-id="${comment.postId}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                </button>
+                            </span>
+                        </div>
+                    ` : ''}
                 </div>
                 <div class="mt-1 text-xs text-gray-500">
                     <span>${new Date(comment.createdAt).toLocaleDateString()}</span>
