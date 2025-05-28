@@ -1,43 +1,51 @@
 <div class="max-w-4xl mx-auto py-8">
     <div class="flex justify-between items-center mb-8">
         <h1 class="text-3xl font-bold text-blue-800">Job Opportunities</h1>
-        <% if (locals.user && user.role !== 'lawyer') { %>
-            <a href="/jobs/create" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+        <% if (locals.user && user.role !=='lawyer' ) { %>
+            <a href="/jobs/create"
+                class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
                 Post a Job
             </a>
-        <% } %>
+            <% } %>
     </div>
 
-    <% if (jobs && jobs.length > 0) { %>
+    <% if (jobs && jobs.length> 0) { %>
         <div class="max-w-4xl mx-auto">
             <ul class="space-y-4">
-                <% jobs.forEach(job => { %>
+                <% jobs.forEach(job=> { %>
                     <li class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition duration-300">
                         <div class="flex items-start justify-between">
                             <div class="flex-1">
                                 <div class="flex items-center space-x-4 mb-4">
                                     <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                                        <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                        <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                            </path>
                                         </svg>
                                     </div>
                                     <div>
-                                        <h2 class="text-xl font-semibold text-gray-800"><%=// job.authorId %></h2>
+                                        <h2 class="text-xl font-semibold text-gray-800">
+                                            <%= // job.authorId %>
+                                        </h2>
                                         <p class="text-sm text-gray-500">
-                                            Posted on <%= new Date(job.createdAt).toLocaleDateString('en-US', { 
-                                                year: 'numeric', 
-                                                month: 'long', 
-                                                day: 'numeric' 
-                                            }) %>
+                                            Posted on <%= new Date(job.createdAt).toLocaleDateString('en-US', {
+                                                year: 'numeric' , month: 'long' , day: 'numeric' }) %>
                                         </p>
                                         <p class="text-sm text-gray-500 mt-1">
                                             <span class="inline-flex items-center">
-                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                                    </path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                                 </svg>
                                                 <%= job.city %>, <%= job.country %>
                                             </span>
@@ -45,44 +53,61 @@
                                     </div>
                                 </div>
                                 <div class="prose max-w-none">
-                                    <p class="text-gray-700 leading-relaxed"><%= job.summary %></p>
+                                    <p class="text-gray-700 leading-relaxed">
+                                        <%= job.summary %>
+                                    </p>
                                 </div>
                                 <div class="mt-4 flex items-center space-x-4">
-                                    <a href="/jobs/<%= job.id %>" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300">
+                                    <a href="/jobs/<%= job.id %>"
+                                        class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-300">
                                         <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                            </path>
                                         </svg>
                                         View Details
                                     </a>
-                                    <button class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition duration-300">
+                                    <button
+                                        class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 transition duration-300">
                                         Share
                                     </button>
                                 </div>
                             </div>
                         </div>
                     </li>
-                <% }); %>
+                    <% }); %>
             </ul>
         </div>
-    <% } else { %>
-        <div class="max-w-4xl mx-auto text-center py-12">
-            <div class="rounded-lg bg-white p-8 shadow-sm">
-                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <p class="mt-4 text-lg text-gray-500">No jobs available at the moment.</p>
-                <% if (locals.user && user.role !== 'lawyer') { %>
-                    <div class="mt-6">
-                        <a href="/jobs/create" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            Post Your First Job
-                        </a>
-                    </div>
-                <% } %>
+        <% } else { %>
+            <div class="max-w-4xl mx-auto text-center py-12">
+                <div class="rounded-lg bg-white p-8 shadow-sm">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                        </path>
+                    </svg>
+                    <p class="mt-4 text-lg text-gray-500">No jobs available at the moment.</p>
+                    <% if (locals.user && user.role !=='lawyer' ) { %>
+                        <div class="mt-6">
+                            <a href="/jobs/create"
+                                class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4"></path>
+                                </svg>
+                                Post Your First Job
+                            </a>
+                        </div>
+                        <% } %>
+                </div>
             </div>
-        </div>
-    <% } %>
+            <% } %>
 </div>
+
+<% if (typeof req !=='undefined' && req.query && req.query.deleted==='true' ) { %>
+    <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+        Job deleted successfully.
+    </div>
+    <% } %>

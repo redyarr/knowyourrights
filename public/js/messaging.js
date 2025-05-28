@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   const messagingPopupHeader = document.getElementById('messagingPopupHeader');
   const messagingPopup = document.getElementById('messagingPopup');
   const messagingToggle = document.getElementById('messagingPopupToggle');
@@ -32,11 +32,11 @@ document.addEventListener('DOMContentLoaded', function() {
     messageSearch.addEventListener('input', (e) => {
       const searchTerm = e.target.value.toLowerCase();
       const messageItems = document.querySelectorAll('.message-item');
-      
+
       messageItems.forEach(item => {
         const name = item.querySelector('.message-name').textContent.toLowerCase();
         const preview = item.querySelector('.message-preview').textContent.toLowerCase();
-        
+
         if (name.includes(searchTerm) || preview.includes(searchTerm)) {
           item.style.display = 'flex';
         } else {
@@ -58,11 +58,11 @@ document.addEventListener('DOMContentLoaded', function() {
     conversationSearch.addEventListener('input', (e) => {
       const searchTerm = e.target.value.toLowerCase();
       const conversationItems = document.querySelectorAll('.conversation-item');
-      
+
       conversationItems.forEach(item => {
         const name = item.querySelector('.conversation-name')?.textContent.toLowerCase() || '';
         const preview = item.querySelector('.conversation-preview')?.textContent.toLowerCase() || '';
-        
+
         if (name.includes(searchTerm) || preview.includes(searchTerm)) {
           item.style.display = 'block';
         } else {
@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
           // Add event listeners to new message items
           document.querySelectorAll('.message-item').forEach(item => {
-            item.addEventListener('click', function() {
+            item.addEventListener('click', function () {
               const userId = this.dataset.userId;
               // TODO: Implement logic to open conversation with userId
               console.log('Open conversation with user ID:', userId);

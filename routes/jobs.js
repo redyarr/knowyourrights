@@ -17,4 +17,7 @@ router.get('/:id', JobsController.getJobDetails);
 router.post('/:id/apply', isAuthenticated, JobsController.applyForJob);
 router.post('/:jobId/accept/:applicationId', isAuthenticated, JobsController.acceptLawyer);
 
+// Job deletion route (protected by authentication)
+router.delete('/:id', isAuthenticated, JobsController.deleteJob);
+
 module.exports = router;

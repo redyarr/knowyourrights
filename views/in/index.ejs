@@ -1,28 +1,44 @@
 <div class="max-w-4xl mx-auto px-4 py-8">
   <!-- Profile Card -->
   <div class="relative bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl rounded-3xl overflow-hidden mb-8">
-    <div class="h-48 bg-cover bg-center" style="background-image: url('<%= profile && profile.backgroundImage ? profile.backgroundImage : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80' %>');"></div>
+    <div class="h-48 bg-cover bg-center"
+      style="background-image: url('<%= profile && profile.backgroundImage ? profile.backgroundImage : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80' %>');">
+    </div>
     <div class="absolute top-32 left-10 flex items-end">
-      <img src="<%= (profile.ProfileImage && profile.ProfileImage.imagePath) ? profile.ProfileImage.imagePath : 'https://randomuser.me/api/portraits/men/32.jpg' %>" alt="Profile" class="w-36 h-36 rounded-full border-4 border-white shadow-lg object-cover">
+      <img
+        src="<%= (profile.ProfileImage && profile.ProfileImage.imagePath) ? profile.ProfileImage.imagePath : 'https://randomuser.me/api/portraits/men/32.jpg' %>"
+        alt="Profile" class="w-36 h-36 rounded-full border-4 border-white shadow-lg object-cover">
     </div>
     <div class="absolute top-8 right-10 flex space-x-2">
-      <% if (locals.loggedInUserId && locals.loggedInUserId === profile?.id) { %>
-        <a href="/user/<%= profile.id %>/edit" class="flex items-center px-5 py-2 border border-blue-600 text-blue-600 bg-white rounded-full hover:bg-blue-50 shadow transition">
+      <% if (locals.loggedInUserId && locals.loggedInUserId===profile?.id) { %>
+        <a href="/user/<%= profile.id %>/edit"
+          class="flex items-center px-5 py-2 border border-blue-600 text-blue-600 bg-white rounded-full hover:bg-blue-50 shadow transition">
           <i class="fas fa-pencil-alt mr-2"></i> Edit Profile
         </a>
-      <% } else { %>
-        <form action="/mynetwork/connect/<%= profile.id %>" method="POST" class="inline">
-          <button type="submit" class="inline-block bg-blue-600 text-white px-5 py-2 rounded-full shadow hover:bg-blue-700 transition">Connect</button>
-        </form>
-      <% } %> 
+        <% } else { %>
+          <form action="/mynetwork/connect/<%= profile.id %>" method="POST" class="inline">
+            <button type="submit"
+              class="inline-block bg-blue-600 text-white px-5 py-2 rounded-full shadow hover:bg-blue-700 transition">Connect</button>
+          </form>
+          <% } %>
     </div>
     <div class="pt-24 pb-8 px-10">
-      <h2 class="text-3xl font-extrabold text-gray-900"><%= profile?.firstName %> <%= profile?.lastName %></h2>
-      <p class="text-blue-700 font-semibold text-lg mt-1"><%= profile?.role?.charAt(0).toUpperCase() + profile?.role?.slice(1) %></p>
-      <p class="text-gray-500 text-md mt-1"><i class="fas fa-map-marker-alt mr-1"></i> <%= profile?.location || 'New York, United States' %></p>
+      <h2 class="text-3xl font-extrabold text-gray-900">
+        <%= profile?.firstName %>
+          <%= profile?.lastName %>
+      </h2>
+      <p class="text-blue-700 font-semibold text-lg mt-1">
+        <%= profile?.role?.charAt(0).toUpperCase() + profile?.role?.slice(1) %>
+      </p>
+      <p class="text-gray-500 text-md mt-1"><i class="fas fa-map-marker-alt mr-1"></i>
+        <%= profile?.location || 'New York, United States' %>
+      </p>
       <div class="flex mt-4 space-x-6">
-        <span class="flex items-center text-blue-600 font-medium"><i class="fas fa-user-friends mr-2"></i> <%= profile?.connections?.length || '500+' %> connections</span>
-        <span class="flex items-center text-blue-600 font-medium"><i class="fas fa-envelope mr-2"></i> Contact info</span>
+        <span class="flex items-center text-blue-600 font-medium"><i class="fas fa-user-friends mr-2"></i>
+          <%= profile?.connections?.length || '500+' %> connections
+        </span>
+        <span class="flex items-center text-blue-600 font-medium"><i class="fas fa-envelope mr-2"></i> Contact
+          info</span>
       </div>
     </div>
   </div>
@@ -33,118 +49,136 @@
       <i class="fas fa-user text-blue-500 text-xl mr-3"></i>
       <h3 class="text-2xl font-bold text-gray-800">About</h3>
     </div>
-    <p class="text-gray-700 text-lg"><%= profile?.about || 'No description available.' %></p>
+    <p class="text-gray-700 text-lg">
+      <%= profile?.about || 'No description available.' %>
+    </p>
   </div>
 
   <!-- Education Section -->
-  <% if (profile?.lawyer?.Educations?.length > 0) { %>
+  <% if (profile?.lawyer?.Educations?.length> 0) { %>
     <div class="bg-white rounded-2xl shadow-lg mb-8 p-8">
       <div class="flex items-center mb-4">
         <i class="fas fa-graduation-cap text-blue-500 text-xl mr-3"></i>
         <h3 class="text-2xl font-bold text-gray-800">Education</h3>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <% profile?.lawyer?.Educations?.forEach(edu => { %>
+        <% profile?.lawyer?.Educations?.forEach(edu=> { %>
           <div class="border border-blue-100 p-5 rounded-xl bg-blue-50">
-            <h4 class="font-semibold text-lg text-blue-800"><%= edu?.institution || edu?.university || edu?.college %></h4>
-            <p class="text-gray-600 mt-1"><%= edu?.degree %><% if (edu?.fieldOfStudy) { %>, <%= edu?.fieldOfStudy %><% } %></p>
-            <p class="text-gray-500 text-sm mt-1"><%= edu?.startYear %> - <%= edu?.endYear || 'Present' %></p>
+            <h4 class="font-semibold text-lg text-blue-800">
+              <%= edu?.institution || edu?.university || edu?.college %>
+            </h4>
+            <p class="text-gray-600 mt-1">
+              <%= edu?.degree %>
+                <% if (edu?.fieldOfStudy) { %>, <%= edu?.fieldOfStudy %>
+                    <% } %>
+            </p>
+            <p class="text-gray-500 text-sm mt-1">
+              <%= edu?.startYear %> - <%= edu?.endYear || 'Present' %>
+            </p>
           </div>
-        <% }); %>
+          <% }); %>
       </div>
     </div>
-  <% } %>
+    <% } %>
 
-  <!-- Posts Section -->
-  <% if (profile?.posts?.length > 0) { %>
-    <div class="bg-white rounded-2xl shadow-lg mb-8 p-8">
-      <div class="flex items-center mb-4">
-        <i class="fas fa-newspaper text-blue-500 text-xl mr-3"></i>
-        <h3 class="text-2xl font-bold text-gray-800">Posts</h3>
-      </div>
-      <div class="space-y-6">
-        <% profile?.posts?.forEach(post => { %>
-          <div class="border border-blue-100 p-5 rounded-xl bg-blue-50">
-            <h4 class="font-semibold text-lg text-blue-800"><%= post?.title %></h4>
-            <p class="text-gray-700 mt-1"><%= post?.content %></p>
+      <!-- Posts Section -->
+      <% if (profile?.posts?.length> 0) { %>
+        <div class="bg-white rounded-2xl shadow-lg mb-8 p-8">
+          <div class="flex items-center mb-4">
+            <i class="fas fa-newspaper text-blue-500 text-xl mr-3"></i>
+            <h3 class="text-2xl font-bold text-gray-800">Posts</h3>
           </div>
-        <% }); %>
-      </div>
-    </div>
-  <% } %>
-
-  <!-- Logout Button -->
-  <% if (locals.loggedInUserId === profile?.id) { %>
-    <div class="mt-8 text-center">
-      <form action="/user/logout" method="get">
-        <button type="submit" class="px-6 py-2 border border-gray-400 rounded-full bg-gray-50 hover:bg-gray-100 shadow">Sign Out</button>
-      </form>
-    </div>
-  <% } %>
-  <!-- Lawyer Feedback Section -->
-  <% if (profile?.role === 'lawyer') { %>
-    <div class="bg-white rounded-2xl shadow-lg mb-8 p-8">
-      <div class="flex items-center mb-6">
-        <i class="fas fa-comments text-blue-500 text-xl mr-3"></i>
-        <h3 class="text-2xl font-bold text-gray-800">Client Feedback</h3>
-      </div>
-      <div id="feedback-list" class="space-y-0">
-        <!-- Feedback will be loaded here by JavaScript -->
-        <div id="feedback-spinner" class="flex justify-center items-center py-8">
-            <i class="fas fa-spinner fa-spin text-blue-500 text-3xl"></i> 
-            <p class="ml-3 text-gray-500 italic">Loading feedback...</p>
+          <div class="space-y-6">
+            <% profile?.posts?.forEach(post=> { %>
+              <div class="border border-blue-100 p-5 rounded-xl bg-blue-50">
+                <h4 class="font-semibold text-lg text-blue-800">
+                  <%= post?.title %>
+                </h4>
+                <p class="text-gray-700 mt-1">
+                  <%= post?.content %>
+                </p>
+              </div>
+              <% }); %>
+          </div>
         </div>
-      </div>
-      <div class="mt-8 bg-gray-50 p-6 rounded-lg shadow-inner">
-        <h4 class="text-xl font-bold text-gray-800 mb-3">Summary</h4>
-        <div class="flex justify-between items-center">
-            <p class="text-lg font-semibold text-gray-700">Average Rating: <span id="average-rating" class="text-blue-600 font-bold">N/A</span></p>
-            <p class="text-md text-gray-600">Total Reviews: <span id="total-reviews" class="font-semibold">0</span></p>
-        </div>
-      </div>
-    </div>
+        <% } %>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', async () => {
-        const lawyerId = '<%= profile.id %>'; // This is the User ID of the lawyer
-        const feedbackList = document.getElementById('feedback-list');
-        const averageRatingEl = document.getElementById('average-rating');
-        const totalReviewsEl = document.getElementById('total-reviews');
-        const feedbackSpinner = document.getElementById('feedback-spinner');
+          <!-- Logout Button -->
+          <% if (locals.loggedInUserId===profile?.id) { %>
+            <div class="mt-8 text-center">
+              <form action="/user/logout" method="get">
+                <button type="submit"
+                  class="px-6 py-2 border border-gray-400 rounded-full bg-gray-50 hover:bg-gray-100 shadow">Sign
+                  Out</button>
+              </form>
+            </div>
+            <% } %>
+              <!-- Lawyer Feedback Section -->
+              <% if (profile?.role==='lawyer' ) { %>
+                <div class="bg-white rounded-2xl shadow-lg mb-8 p-8">
+                  <div class="flex items-center mb-6">
+                    <i class="fas fa-comments text-blue-500 text-xl mr-3"></i>
+                    <h3 class="text-2xl font-bold text-gray-800">Client Feedback</h3>
+                  </div>
+                  <div id="feedback-list" class="space-y-0">
+                    <!-- Feedback will be loaded here by JavaScript -->
+                    <div id="feedback-spinner" class="flex justify-center items-center py-8">
+                      <i class="fas fa-spinner fa-spin text-blue-500 text-3xl"></i>
+                      <p class="ml-3 text-gray-500 italic">Loading feedback...</p>
+                    </div>
+                  </div>
+                  <div class="mt-8 bg-gray-50 p-6 rounded-lg shadow-inner">
+                    <h4 class="text-xl font-bold text-gray-800 mb-3">Summary</h4>
+                    <div class="flex justify-between items-center">
+                      <p class="text-lg font-semibold text-gray-700">Average Rating: <span id="average-rating"
+                          class="text-blue-600 font-bold">N/A</span></p>
+                      <p class="text-md text-gray-600">Total Reviews: <span id="total-reviews"
+                          class="font-semibold">0</span></p>
+                    </div>
+                  </div>
+                </div>
 
-        if (!lawyerId || !feedbackList || !feedbackSpinner) {
-            console.error('Required DOM elements for feedback not found.');
-            if(feedbackList) feedbackList.innerHTML = '<p class="text-red-500">Client-side error: Could not initialize feedback section.</p>';
-            if(feedbackSpinner) feedbackSpinner.style.display = 'none';
-            return;
-        }
+                <script>
+                  document.addEventListener('DOMContentLoaded', async () => {
+                    const lawyerId = '<%= profile.id %>'; // This is the User ID of the lawyer
+                    const feedbackList = document.getElementById('feedback-list');
+                    const averageRatingEl = document.getElementById('average-rating');
+                    const totalReviewsEl = document.getElementById('total-reviews');
+                    const feedbackSpinner = document.getElementById('feedback-spinner');
 
-        try {
-          const response = await fetch(`/feedback/lawyer/${lawyerId}`);
-          if(feedbackSpinner) feedbackSpinner.style.display = 'none'; // Hide spinner once response is received
+                    if (!lawyerId || !feedbackList || !feedbackSpinner) {
+                      console.error('Required DOM elements for feedback not found.');
+                      if (feedbackList) feedbackList.innerHTML = '<p class="text-red-500">Client-side error: Could not initialize feedback section.</p>';
+                      if (feedbackSpinner) feedbackSpinner.style.display = 'none';
+                      return;
+                    }
 
-          if (!response.ok) {
-            let errorText = '';
-            try {
-                errorText = await response.text(); // Attempt to get more error details
-            } catch (e) {
-                // If response.text() fails, use a generic message
-                errorText = 'Could not retrieve detailed error from server.';
-            }
-            feedbackList.innerHTML = `<p class="text-red-500 text-center py-4 font-semibold">Could not load feedback. Server responded with ${response.status}.</p><p class="text-gray-600 text-xs text-center">${errorText || ''}</p>`;
-            console.error('Failed to fetch feedback:', response.status, response.statusText, errorText);
-            return;
-          }
-          const data = await response.json();
-          
-          averageRatingEl.textContent = data.averageRating > 0 ? `${data.averageRating} / 5` : 'No ratings yet';
-          totalReviewsEl.textContent = data.totalReviews;
+                    try {
+                      const response = await fetch(`/feedback/lawyer/${lawyerId}`);
+                      if (feedbackSpinner) feedbackSpinner.style.display = 'none'; // Hide spinner once response is received
 
-          if (data.feedback && data.feedback.length > 0) {
-            feedbackList.innerHTML = ''; // Clear loading/error message
-            data.feedback.forEach(fb => {
-              const reviewerName = fb.User && fb.User.firstName && fb.User.lastName ? `${fb.User.firstName} ${fb.User.lastName}` : 'Anonymous User';
-              const feedbackElement = `
+                      if (!response.ok) {
+                        let errorText = '';
+                        try {
+                          errorText = await response.text(); // Attempt to get more error details
+                        } catch (e) {
+                          // If response.text() fails, use a generic message
+                          errorText = 'Could not retrieve detailed error from server.';
+                        }
+                        feedbackList.innerHTML = `<p class="text-red-500 text-center py-4 font-semibold">Could not load feedback. Server responded with ${response.status}.</p><p class="text-gray-600 text-xs text-center">${errorText || ''}</p>`;
+                        console.error('Failed to fetch feedback:', response.status, response.statusText, errorText);
+                        return;
+                      }
+                      const data = await response.json();
+
+                      averageRatingEl.textContent = data.averageRating > 0 ? `${data.averageRating} / 5` : 'No ratings yet';
+                      totalReviewsEl.textContent = data.totalReviews;
+
+                      if (data.feedback && data.feedback.length > 0) {
+                        feedbackList.innerHTML = ''; // Clear loading/error message
+                        data.feedback.forEach(fb => {
+                          const reviewerName = fb.User && fb.User.firstName && fb.User.lastName ? `${fb.User.firstName} ${fb.User.lastName}` : 'Anonymous User';
+                          const feedbackElement = `
                 <div class="border border-gray-200 p-6 rounded-xl bg-white shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out mb-4">
                   <div class="flex items-center justify-between mb-3">
                     <strong class="text-indigo-600 text-lg font-semibold">${reviewerName}</strong>
@@ -156,18 +190,19 @@
                   <p class="text-gray-700 text-md leading-relaxed">${fb.review || 'No comment provided.'}</p>
                 </div>
               `;
-              feedbackList.insertAdjacentHTML('beforeend', feedbackElement);
-            });
-          } else {
-            feedbackList.innerHTML = '<p class="text-gray-500 italic text-center py-6">This lawyer has not received any feedback yet.</p>';
-          }
-        } catch (error) {
-          if(feedbackSpinner) feedbackSpinner.style.display = 'none';
-          feedbackList.innerHTML = '<p class="text-red-600 font-semibold text-center py-4">An unexpected error occurred while loading feedback. Please check the browser console for more details.</p>';
-          console.error('Error fetching or processing feedback:', error);
-        }
-      });
-    </script>
-  <% } %>
-<!-- Font Awesome CDN for icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+                          feedbackList.insertAdjacentHTML('beforeend', feedbackElement);
+                        });
+                      } else {
+                        feedbackList.innerHTML = '<p class="text-gray-500 italic text-center py-6">This lawyer has not received any feedback yet.</p>';
+                      }
+                    } catch (error) {
+                      if (feedbackSpinner) feedbackSpinner.style.display = 'none';
+                      feedbackList.innerHTML = '<p class="text-red-600 font-semibold text-center py-4">An unexpected error occurred while loading feedback. Please check the browser console for more details.</p>';
+                      console.error('Error fetching or processing feedback:', error);
+                    }
+                  });
+                </script>
+                <% } %>
+                  <!-- Font Awesome CDN for icons -->
+                  <link rel="stylesheet"
+                    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />

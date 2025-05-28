@@ -243,3 +243,36 @@ exports.acceptLawyer = async (req, res) => {
         res.status(500).render('error', { error: "An unexpected error occurred while accepting the lawyer." });
     }
 };
+
+// Delete a job (only by the author)
+exports.deleteJob = async (req, res) => {
+    try {
+        const jobId = req.params.id;
+        const userId = req.session.user.id;
+
+        // Find the job
+        const job = await Job.findByPk(jobId);
+
+        if (!job) {
+            return res.status(404).json({ error: 'Job not found' });
+        }
+
+        // Check if the current user is the author of the job
+        if (job.authorId !== userId) {
+            return res.status(403).json({ error: 'You can only delete your own jobs' });
+        }
+
+        // Delete all related job applications first
+        await JobApply.destroy({
+            where: { jobId: jobId }
+        });
+
+        // Delete the job
+        await job.destroy();
+
+        res.redirect('/jobs?deleted=true');
+    } catch (error) {
+        console.error('Error deleting job:', error);
+        res.status(500).json({ error: 'An error occurred while deleting the job' });
+    }
+};

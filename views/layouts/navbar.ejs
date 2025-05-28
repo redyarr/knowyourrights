@@ -18,12 +18,12 @@
                 <stop offset="100%" style="stop-color:#1e3a8a;stop-opacity:1" />
               </linearGradient>
             </defs>
-            
+
             <!-- Classical law column/pillar -->
             <g>
               <!-- Column base -->
               <rect x="40" y="85" width="60" height="10" fill="#0c2340" />
-              
+
               <!-- Column shaft with classical fluting effect -->
               <rect x="45" y="30" width="50" height="55" fill="#1e3a8a" />
               <rect x="48" y="30" width="2" height="55" fill="#0c2340" opacity="0.3" />
@@ -32,36 +32,38 @@
               <rect x="69" y="30" width="2" height="55" fill="#0c2340" opacity="0.3" />
               <rect x="76" y="30" width="2" height="55" fill="#0c2340" opacity="0.3" />
               <rect x="83" y="30" width="2" height="55" fill="#0c2340" opacity="0.3" />
-              
+
               <!-- Column capital -->
               <path d="M40 30 L45 25 L95 25 L100 30 Z" fill="#0c2340" />
               <rect x="45" y="20" width="50" height="5" fill="#0c2340" />
               <path d="M42 20 L45 15 L95 15 L98 20 Z" fill="#0c2340" />
             </g>
-            
+
             <!-- Ornate scales of justice -->
             <g>
               <!-- Balance beam with decorative ends -->
               <rect x="35" y="40" width="70" height="4" rx="2" fill="url(#goldAccent)" />
               <circle cx="35" cy="40" r="3" fill="url(#goldAccent)" />
               <circle cx="105" cy="40" r="3" fill="url(#goldAccent)" />
-              
+
               <!-- Center hanging point -->
               <rect x="68" y="40" width="4" height="15" fill="url(#goldAccent)" />
-              
+
               <!-- Ornate chains -->
               <path d="M45 40 L45 55" stroke="#bf9b30" stroke-width="2" stroke-dasharray="2,2" />
               <path d="M95 40 L95 55" stroke="#bf9b30" stroke-width="2" stroke-dasharray="2,2" />
-              
+
               <!-- Scale pans -->
               <ellipse cx="45" cy="60" rx="12" ry="4" fill="url(#goldAccent)" />
               <ellipse cx="95" cy="60" rx="12" ry="4" fill="url(#goldAccent)" />
             </g>
-            
+
             <!-- Company name with prestigious typography -->
             <g>
-              <text x="130" y="65" font-family="'Times New Roman', serif" font-size="42" font-weight="700" fill="#0c2340" letter-spacing="2">LEGAL</text>
-              <text x="280" y="65" font-family="'Times New Roman', serif" font-size="42" font-weight="700" fill="url(#goldAccent)" letter-spacing="2">NET</text>
+              <text x="130" y="65" font-family="'Times New Roman', serif" font-size="42" font-weight="700"
+                fill="#0c2340" letter-spacing="2">LEGAL</text>
+              <text x="280" y="65" font-family="'Times New Roman', serif" font-size="42" font-weight="700"
+                fill="url(#goldAccent)" letter-spacing="2">NET</text>
             </g>
           </svg>
         </a>
@@ -69,14 +71,10 @@
           <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
             <i class="fas fa-search text-gray-400"></i>
           </span>
-          <input 
-            type="text" 
-            name="query" 
-            id="searchInput"
-            placeholder="Search users..." 
-            autocomplete="off"
+          <input type="text" name="query" id="searchInput" placeholder="Search users..." autocomplete="off"
             class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500">
-          <div id="searchResults" class="absolute mt-1 w-full bg-white shadow-lg rounded-md overflow-hidden hidden z-50"></div>
+          <div id="searchResults"
+            class="absolute mt-1 w-full bg-white shadow-lg rounded-md overflow-hidden hidden z-50"></div>
         </form>
       </div>
 
@@ -127,7 +125,8 @@
           <div class="flex items-center space-x-4">
             <% if (locals.loggedInUserId) { %>
               <div class="relative group">
-                <button id="profileButton" class="flex items-center text-gray-500 hover:text-gray-900 focus:outline-none">
+                <button id="profileButton"
+                  class="flex items-center text-gray-500 hover:text-gray-900 focus:outline-none">
                   <img src="https://ui-avatars.com/api/?background=random" alt="Profile" class="h-8 w-8 rounded-full">
                   <span class="ml-2 text-sm">Me <i class="fas fa-caret-down ml-1"></i></span>
                 </button>
@@ -139,14 +138,15 @@
                         class="h-16 w-16 rounded-full">
                       <div>
                         <h4 class="font-semibold text-gray-800">
-                          <% if (typeof user !== 'undefined' && user) { %>
-                            <%= user.firstName %> <%= user.lastName %>
-                          <% } else { %>
-                            Guest User
-                          <% } %>
+                          <% if (typeof user !=='undefined' && user) { %>
+                            <%= user.firstName %>
+                              <%= user.lastName %>
+                                <% } else { %>
+                                  Guest User
+                                  <% } %>
                         </h4>
                         <p class="text-sm text-gray-600">
-                          <%= locals.userRole === 'admin' ? 'admin' : locals.userRole === 'lawyer' ? 'Lawyer' : 'visitor' %>
+                          <%= locals.userRole==='admin' ? 'admin' : locals.userRole==='lawyer' ? 'Lawyer' : 'visitor' %>
                         </p>
                       </div>
                     </div>
@@ -158,7 +158,8 @@
                     <a href="/settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings &
                       Privacy</a>
                     <a href="/help" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Help Center</a>
-                    <form action="/signout" method="POST" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <form action="/signout" method="POST"
+                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       <button type="submit">Sign Out</button>
                     </form>
                   </div>
@@ -174,7 +175,7 @@
   </div>
 </nav>
 <script>
-  document.getElementById('profileButton').addEventListener('click', function() {
+  document.getElementById('profileButton').addEventListener('click', function () {
     var menu = document.getElementById('profileMenu');
     menu.classList.toggle('hidden');
   });

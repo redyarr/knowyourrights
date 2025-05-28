@@ -1,8 +1,8 @@
 // Feed page functionality for reactions and comments
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Toggle comments visibility
-    window.toggleComments = function(postId) {
+    window.toggleComments = function (postId) {
         const commentsList = document.getElementById(`commentsList-${postId}`);
         const showCommentsBtn = document.getElementById(`showCommentsBtn-${postId}`);
         if (commentsList) {
@@ -10,13 +10,13 @@ document.addEventListener('DOMContentLoaded', function() {
             commentsList.classList.toggle('hidden');
             if (showCommentsBtn) {
                 const commentCount = showCommentsBtn.textContent.match(/\d+/)[0];
-                showCommentsBtn.textContent = isHidden ? 
-                    `Hide Comments (${commentCount})` : 
+                showCommentsBtn.textContent = isHidden ?
+                    `Hide Comments (${commentCount})` :
                     `Show Comments (${commentCount})`;
             }
         }
     };
-    window.showMoreComments = function(postId) {
+    window.showMoreComments = function (postId) {
         const additionalComments = document.getElementById(`additionalComments-${postId}`);
         const showMoreBtn = document.getElementById(`showMoreComments-${postId}`);
         if (additionalComments) {
@@ -26,13 +26,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     };
-    window.toggleReactionPopup = function(postId) {
+    window.toggleReactionPopup = function (postId) {
         const popup = document.getElementById(`reactionPopup-${postId}`);
         if (popup) {
             popup.classList.toggle('hidden');
         }
     };
-    window.submitReaction = function(postId, reaction) {
+    window.submitReaction = function (postId, reaction) {
         const popup = document.getElementById(`reactionPopup-${postId}`);
         if (popup) {
             popup.classList.add('hidden');
@@ -44,23 +44,23 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify({ reaction: reaction }),
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const reactionButton = document.querySelector(`button[onclick="toggleReactionPopup(${postId})"]`);
-                if (reactionButton) {
-                    const reactionEmoji = getReactionEmoji(reaction);
-                    reactionButton.innerHTML = `<span class="text-xl">${reactionEmoji}</span>`;
-                    reactionButton.classList.add('text-blue-500');
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const reactionButton = document.querySelector(`button[onclick="toggleReactionPopup(${postId})"]`);
+                    if (reactionButton) {
+                        const reactionEmoji = getReactionEmoji(reaction);
+                        reactionButton.innerHTML = `<span class="text-xl">${reactionEmoji}</span>`;
+                        reactionButton.classList.add('text-blue-500');
+                    }
+                    location.reload();
+                } else {
+                    console.error('Error submitting reaction:', data.error);
                 }
-                location.reload();
-            } else {
-                console.error('Error submitting reaction:', data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     };
     function getReactionEmoji(reaction) {
         const reactionTypes = {
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         return reactionTypes[reaction] || '👍';
     }
-    window.toggleCommentForm = function(postId) {
+    window.toggleCommentForm = function (postId) {
         const commentForm = document.getElementById(`commentForm-${postId}`);
         if (commentForm) {
             commentForm.classList.toggle('hidden');
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     };
-    window.submitComment = function(form, postId) {
+    window.submitComment = function (form, postId) {
         const contentInput = form.querySelector('input[name="content"]');
         const content = contentInput.value.trim();
         if (!content) return;
@@ -94,60 +94,60 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify({ content: content }),
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                contentInput.value = '';
-                let commentsList = document.getElementById(`commentsList-${postId}`);
-                let showCommentsBtn = document.getElementById(`showCommentsBtn-${postId}`);
-                if (!commentsList) {
-                    const postContainer = document.getElementById(`post-${postId}`);
-                    if (postContainer) {
-                        commentsList = document.createElement('div');
-                        commentsList.id = `commentsList-${postId}`;
-                        commentsList.className = 'space-y-3';
-                        postContainer.querySelector('.px-4.py-2.border-t.border-gray-200.mt-3').prepend(commentsList);
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    contentInput.value = '';
+                    let commentsList = document.getElementById(`commentsList-${postId}`);
+                    let showCommentsBtn = document.getElementById(`showCommentsBtn-${postId}`);
+                    if (!commentsList) {
+                        const postContainer = document.getElementById(`post-${postId}`);
+                        if (postContainer) {
+                            commentsList = document.createElement('div');
+                            commentsList.id = `commentsList-${postId}`;
+                            commentsList.className = 'space-y-3';
+                            postContainer.querySelector('.px-4.py-2.border-t.border-gray-200.mt-3').prepend(commentsList);
+                        }
                     }
+                    if (!showCommentsBtn) {
+                        const postContainer = document.getElementById(`post-${postId}`);
+                        if (postContainer) {
+                            showCommentsBtn = document.createElement('button');
+                            showCommentsBtn.id = `showCommentsBtn-${postId}`;
+                            showCommentsBtn.className = 'text-sm text-blue-600 hover:text-blue-800 mb-3';
+                            showCommentsBtn.onclick = function () { toggleComments(postId); };
+                            showCommentsBtn.textContent = 'Hide Comments (1)';
+                            commentsList.before(showCommentsBtn);
+                        }
+                    }
+                    if (commentsList && commentsList.classList.contains('hidden')) {
+                        toggleComments(postId);
+                    }
+                    if (commentsList) {
+                        const newComment = createCommentElement(data.comment);
+                        if (commentsList.firstChild) {
+                            commentsList.insertBefore(newComment, commentsList.firstChild);
+                        } else {
+                            commentsList.appendChild(newComment);
+                        }
+                        const countElement = document.querySelector(`#post-${postId} .comment-count`);
+                        if (countElement) {
+                            const currentCount = parseInt(countElement.textContent.split(' ')[0] || '0');
+                            countElement.textContent = `${currentCount + 1} comments`;
+                        }
+                        if (showCommentsBtn && commentsList) {
+                            const commentCount = commentsList.childElementCount;
+                            showCommentsBtn.textContent = `Hide Comments (${commentCount})`;
+                        }
+                    }
+                    toggleCommentForm(postId);
+                } else {
+                    console.error('Error submitting comment:', data.error);
                 }
-                if (!showCommentsBtn) {
-                    const postContainer = document.getElementById(`post-${postId}`);
-                    if (postContainer) {
-                        showCommentsBtn = document.createElement('button');
-                        showCommentsBtn.id = `showCommentsBtn-${postId}`;
-                        showCommentsBtn.className = 'text-sm text-blue-600 hover:text-blue-800 mb-3';
-                        showCommentsBtn.onclick = function() { toggleComments(postId); };
-                        showCommentsBtn.textContent = 'Hide Comments (1)';
-                        commentsList.before(showCommentsBtn);
-                    }
-                }
-                if (commentsList && commentsList.classList.contains('hidden')) {
-                    toggleComments(postId);
-                }
-                if (commentsList) {
-                    const newComment = createCommentElement(data.comment);
-                    if (commentsList.firstChild) {
-                        commentsList.insertBefore(newComment, commentsList.firstChild);
-                    } else {
-                        commentsList.appendChild(newComment);
-                    }
-                    const countElement = document.querySelector(`#post-${postId} .comment-count`);
-                    if (countElement) {
-                        const currentCount = parseInt(countElement.textContent.split(' ')[0] || '0');
-                        countElement.textContent = `${currentCount + 1} comments`;
-                    }
-                    if (showCommentsBtn && commentsList) {
-                        const commentCount = commentsList.childElementCount;
-                        showCommentsBtn.textContent = `Hide Comments (${commentCount})`;
-                    }
-                }
-                toggleCommentForm(postId);
-            } else {
-                console.error('Error submitting comment:', data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     };
     function createCommentElement(comment) {
         const commentDiv = document.createElement('div');
@@ -169,18 +169,18 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         return commentDiv;
     }
-    window.showEditPostModal = function(postId, title, content) {
+    window.showEditPostModal = function (postId, title, content) {
         document.getElementById('editPostId').value = postId;
         document.getElementById('editTitle').value = title;
         document.getElementById('editContent').value = content;
         document.getElementById('editPostModal').classList.remove('hidden');
         document.body.classList.add('overflow-hidden');
     };
-    window.toggleEditPostModal = function() {
+    window.toggleEditPostModal = function () {
         document.getElementById('editPostModal').classList.toggle('hidden');
         document.body.classList.toggle('overflow-hidden');
     };
-    document.getElementById('editPostForm').onsubmit = function(e) {
+    document.getElementById('editPostForm').onsubmit = function (e) {
         e.preventDefault();
         const postId = document.getElementById('editPostId').value;
         const title = document.getElementById('editTitle').value;
@@ -190,21 +190,21 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ title, content })
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                const postDiv = document.getElementById(`post-${postId}`);
-                if (postDiv) {
-                    postDiv.querySelector('h5').textContent = title;
-                    postDiv.querySelector('p.text-gray-700').textContent = content.length > 150 ? content.substring(0, 150) + '...' : content;
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const postDiv = document.getElementById(`post-${postId}`);
+                    if (postDiv) {
+                        postDiv.querySelector('h5').textContent = title;
+                        postDiv.querySelector('p.text-gray-700').textContent = content.length > 150 ? content.substring(0, 150) + '...' : content;
+                    }
+                    toggleEditPostModal();
+                } else {
+                    alert(data.error || 'Failed to edit post.');
                 }
-                toggleEditPostModal();
-            } else {
-                alert(data.error || 'Failed to edit post.');
-            }
-        });
+            });
     };
-    document.getElementById('editCommentForm').onsubmit = function(e) {
+    document.getElementById('editCommentForm').onsubmit = function (e) {
         e.preventDefault();
         const commentId = document.getElementById('editCommentId').value;
         const content = document.getElementById('editCommentContent').value;
@@ -213,20 +213,20 @@ document.addEventListener('DOMContentLoaded', function() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ content })
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.success) {
-                document.querySelectorAll(`[data-comment-id="${commentId}"]`).forEach(btn => {
-                    const commentText = btn.closest('.bg-blue-50').querySelector('p.text-sm');
-                    if (commentText) commentText.textContent = content;
-                });
-                toggleEditCommentModal();
-            } else {
-                alert(data.error || 'Failed to edit comment.');
-            }
-        });
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelectorAll(`[data-comment-id="${commentId}"]`).forEach(btn => {
+                        const commentText = btn.closest('.bg-blue-50').querySelector('p.text-sm');
+                        if (commentText) commentText.textContent = content;
+                    });
+                    toggleEditCommentModal();
+                } else {
+                    alert(data.error || 'Failed to edit comment.');
+                }
+            });
     };
-    window.showEditPostModalFromButton = function(btn) {
+    window.showEditPostModalFromButton = function (btn) {
         const postId = btn.getAttribute('data-post-id');
         const title = btn.getAttribute('data-title');
         const content = btn.getAttribute('data-content');
@@ -234,100 +234,100 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     // Attach event listeners for edit post buttons
     document.querySelectorAll('.edit-post-btn').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             const postId = this.getAttribute('data-post-id');
             const title = this.getAttribute('data-title');
             const content = this.getAttribute('data-content');
             showEditPostModal(postId, title, content);
         });
     });
-    
+
     // Attach event listeners for inline comment editing
     document.querySelectorAll('.edit-comment-inline-btn').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             const commentId = this.getAttribute('data-comment-id');
             const content = this.getAttribute('data-content');
             const commentContainer = this.closest('.bg-blue-50');
             const commentText = commentContainer.querySelector('p.text-sm');
-            
+
             // Create inline editing form
             const originalContent = commentText.innerHTML;
             const textArea = document.createElement('textarea');
             textArea.className = 'w-full text-sm border border-blue-300 rounded p-2 focus:outline-none focus:ring-1 focus:ring-blue-500';
             textArea.value = content.replace(/\n/g, '');
             textArea.rows = 3;
-            
+
             // Create save and cancel buttons
             const buttonsDiv = document.createElement('div');
             buttonsDiv.className = 'flex justify-end space-x-2 mt-2';
-            
+
             const saveButton = document.createElement('button');
             saveButton.className = 'px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-all';
             saveButton.textContent = 'Save';
-            
+
             const cancelButton = document.createElement('button');
             cancelButton.className = 'px-3 py-1 bg-gray-300 text-gray-700 text-xs rounded hover:bg-gray-400 transition-all';
             cancelButton.textContent = 'Cancel';
-            
+
             buttonsDiv.appendChild(cancelButton);
             buttonsDiv.appendChild(saveButton);
-            
+
             // Replace comment text with editing form
             commentText.innerHTML = '';
             commentText.appendChild(textArea);
             commentText.appendChild(buttonsDiv);
-            
+
             // Hide edit and delete buttons while editing
             const actionButtons = this.closest('.absolute');
             if (actionButtons) actionButtons.style.display = 'none';
-            
+
             // Handle save button click
-            saveButton.addEventListener('click', function() {
+            saveButton.addEventListener('click', function () {
                 const newContent = textArea.value.trim();
                 if (!newContent) return;
-                
+
                 fetch(`/feed/comment/${commentId}/edit`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ content: newContent })
                 })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        // Update the comment text with line breaks
-                        commentText.innerHTML = newContent.replace(/(.{50})/g, "$1\n");
-                        // Update the data-content attribute for future edits
-                        button.setAttribute('data-content', newContent);
-                        // Show action buttons again
-                        if (actionButtons) actionButtons.style.display = '';
-                    } else {
-                        alert(data.error || 'Failed to edit comment.');
-                    }
-                });
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update the comment text with line breaks
+                            commentText.innerHTML = newContent.replace(/(.{50})/g, "$1\n");
+                            // Update the data-content attribute for future edits
+                            button.setAttribute('data-content', newContent);
+                            // Show action buttons again
+                            if (actionButtons) actionButtons.style.display = '';
+                        } else {
+                            alert(data.error || 'Failed to edit comment.');
+                        }
+                    });
             });
-            
+
             // Handle cancel button click
-            cancelButton.addEventListener('click', function() {
+            cancelButton.addEventListener('click', function () {
                 // Clear the edit form completely
                 commentText.innerHTML = '';
-                
+
                 // Add back the original content with proper formatting (line breaks every 50 chars)
                 commentText.innerHTML = content.replace(/(.{50})/g, "$1\n");
-                
+
                 // Restore proper styling
                 commentText.className = 'text-sm text-gray-800 break-words whitespace-normal';
                 commentText.style.cssText = 'word-wrap: break-word; max-width: 100%; overflow-wrap: break-word;';
-                
+
                 // Show action buttons again
                 if (actionButtons) actionButtons.style.display = '';
             });
-            
+
             // Focus the textarea
             textArea.focus();
         });
     });
 
-    window.showEditCommentModalFromButton = function(btn) {
+    window.showEditCommentModalFromButton = function (btn) {
         const commentId = btn.getAttribute('data-comment-id');
         const content = btn.getAttribute('data-content');
         document.getElementById('editCommentId').value = commentId;
@@ -337,13 +337,13 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     // Custom delete confirmation modal logic
     let pendingDelete = { type: null, id: null, postId: null };
-    window.showDeleteModal = function(type, id, postId) {
+    window.showDeleteModal = function (type, id, postId) {
         pendingDelete = { type, id, postId };
         const modal = document.getElementById('deleteConfirmModal');
         modal.classList.remove('hidden'); // Revert to Tailwind hidden class
         // document.body.classList.add('overflow-hidden'); // Removed to test conflict
     };
-    window.hideDeleteModal = function() {
+    window.hideDeleteModal = function () {
         pendingDelete = { type: null, id: null, postId: null };
         const modal = document.getElementById('deleteConfirmModal');
         modal.classList.add('hidden'); // Revert to Tailwind hidden class
@@ -352,58 +352,58 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Attach event listeners for delete buttons
     document.querySelectorAll('.delete-post-btn').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             const postId = this.getAttribute('data-post-id');
             showDeleteModal('post', postId);
         });
     });
 
     document.querySelectorAll('.delete-comment-btn').forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             const commentId = this.getAttribute('data-comment-id');
             const postId = this.getAttribute('data-post-id');
             showDeleteModal('comment', commentId, postId);
         });
     });
-    window.confirmDelete = function() {
+    window.confirmDelete = function () {
         if (pendingDelete.type === 'comment') {
             fetch(`/feed/comment/${pendingDelete.id}/delete`, { method: 'DELETE' })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    document.querySelectorAll(`[data-comment-id="${pendingDelete.id}"]`).forEach(btn => {
-                        const commentDiv = btn.closest('.flex.items-start');
-                        if (commentDiv) commentDiv.remove();
-                    });
-                    const commentsList = document.getElementById(`commentsList-${pendingDelete.postId}`);
-                    const showCommentsBtn = document.getElementById(`showCommentsBtn-${pendingDelete.postId}`);
-                    if (commentsList && showCommentsBtn) {
-                        const commentCount = commentsList.childElementCount;
-                        showCommentsBtn.textContent = `Hide Comments (${commentCount})`;
-                        const countElement = document.querySelector(`#post-${pendingDelete.postId} .comment-count`);
-                        if (countElement) countElement.textContent = `${commentCount} comments`;
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        document.querySelectorAll(`[data-comment-id="${pendingDelete.id}"]`).forEach(btn => {
+                            const commentDiv = btn.closest('.flex.items-start');
+                            if (commentDiv) commentDiv.remove();
+                        });
+                        const commentsList = document.getElementById(`commentsList-${pendingDelete.postId}`);
+                        const showCommentsBtn = document.getElementById(`showCommentsBtn-${pendingDelete.postId}`);
+                        if (commentsList && showCommentsBtn) {
+                            const commentCount = commentsList.childElementCount;
+                            showCommentsBtn.textContent = `Hide Comments (${commentCount})`;
+                            const countElement = document.querySelector(`#post-${pendingDelete.postId} .comment-count`);
+                            if (countElement) countElement.textContent = `${commentCount} comments`;
+                        }
+                    } else {
+                        alert(data.error || 'Failed to delete comment.');
                     }
-                } else {
-                    alert(data.error || 'Failed to delete comment.');
-                }
-                hideDeleteModal();
-            });
+                    hideDeleteModal();
+                });
         } else if (pendingDelete.type === 'post') {
             fetch(`/feed/post/${pendingDelete.id}/delete`, { method: 'DELETE' })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    const postDiv = document.getElementById(`post-${pendingDelete.id}`);
-                    if (postDiv) postDiv.remove();
-                } else {
-                    alert(data.error || 'Failed to delete post.');
-                }
-                hideDeleteModal();
-            });
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const postDiv = document.getElementById(`post-${pendingDelete.id}`);
+                        if (postDiv) postDiv.remove();
+                    } else {
+                        alert(data.error || 'Failed to delete post.');
+                    }
+                    hideDeleteModal();
+                });
         }
     };
     // Removed global deleteComment and deletePost functions as listeners are now attached dynamically
-    window.toggleEditCommentModal = function() {
+    window.toggleEditCommentModal = function () {
         document.getElementById('editCommentModal').classList.toggle('hidden');
         document.body.classList.toggle('overflow-hidden');
     };

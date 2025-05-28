@@ -10,23 +10,26 @@
                     class="w-32 h-32 rounded-full border-4 border-white object-cover">
             </div>
             <div class="mt-8">
-                <% if (loggedInUserId && loggedInUserId == profile.id) { %>
+                <% if (loggedInUserId && loggedInUserId==profile.id) { %>
                     <a href="/user/<%= profile.id %>/edit"
                         class="flex items-center px-4 py-2 border border-blue-600 text-blue-600 rounded-full hover:bg-blue-50">
                         <i class="fas fa-pencil-alt mr-1"></i> Edit Profile
                     </a>
-                <% } else if (loggedInUserId) { %>
-                    <div class="flex space-x-2">
-                        <% if (!connectionStatus) { %>
-                            <button onclick="connectWithUser(<%= profile.id %>)" class="bg-blue-600 text-white px-4 py-2 rounded-full">Connect</button>
-                        <% } else if (connectionStatus === 'pending') { %>
-                            <button class="bg-gray-400 text-white px-4 py-2 rounded-full">Pending</button>
-                        <% } else if (connectionStatus === 'accepted') { %>
-                            <button class="bg-green-600 text-white px-4 py-2 rounded-full">Connected</button>
+                    <% } else if (loggedInUserId) { %>
+                        <div class="flex space-x-2">
+                            <% if (!connectionStatus) { %>
+                                <button onclick="connectWithUser(<%= profile.id %>)"
+                                    class="bg-blue-600 text-white px-4 py-2 rounded-full">Connect</button>
+                                <% } else if (connectionStatus==='pending' ) { %>
+                                    <button class="bg-gray-400 text-white px-4 py-2 rounded-full">Pending</button>
+                                    <% } else if (connectionStatus==='accepted' ) { %>
+                                        <button
+                                            class="bg-green-600 text-white px-4 py-2 rounded-full">Connected</button>
+                                        <% } %>
+                                            <a href="/messaging/<%= profile.id %>"
+                                                class="border border-blue-600 text-blue-600 px-4 py-2 rounded-full text-center">Message</a>
+                        </div>
                         <% } %>
-                        <a href="/messaging/<%= profile.id %>" class="border border-blue-600 text-blue-600 px-4 py-2 rounded-full text-center">Message</a>
-                    </div>
-                <% } %>
             </div>
         </div>
         <!-- Profile Info -->
@@ -42,7 +45,9 @@
                 <p class="text-gray-500 text-sm">New York, United States</p>
             </div>
             <div class="flex mt-3 space-x-4">
-                <a href="#" class="text-blue-600 hover:underline text-sm"><%= connectionsCount || 0 %> connections</a>
+                <a href="#" class="text-blue-600 hover:underline text-sm">
+                    <%= connectionsCount || 0 %> connections
+                </a>
                 <a href="#" class="text-blue-600 hover:underline text-sm">Contact info</a>
             </div>
         </div>
@@ -67,7 +72,7 @@
         <div class="bg-white rounded-lg shadow mb-5">
             <div class="border-b px-6 py-3 flex justify-between items-center">
                 <h3 class="text-xl font-bold">Experience</h3>
-                <% if (loggedInUserId && loggedInUserId === profile.id) { %>
+                <% if (loggedInUserId && loggedInUserId===profile.id) { %>
                     <button class="px-3 py-1 border border-gray-400 text-gray-600 rounded">
                         <i class="fas fa-plus"></i>
                     </button>
@@ -106,7 +111,7 @@
                 <div class="bg-white rounded-lg shadow mb-5">
                     <div class="border-b px-6 py-3 flex justify-between items-center">
                         <h3 class="text-xl font-bold">Education</h3>
-                        <% if (loggedInUserId && loggedInUserId === profile.id) { %>
+                        <% if (loggedInUserId && loggedInUserId===profile.id) { %>
                             <button class="px-3 py-1 border border-gray-400 text-gray-600 rounded">
                                 <i class="fas fa-plus"></i>
                             </button>
@@ -185,19 +190,19 @@
                 'Content-Type': 'application/json'
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Connection request sent!');
-                // Reload the page to show updated status
-                window.location.reload();
-            } else {
-                alert(data.error || 'Failed to send connection request');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while sending the connection request');
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Connection request sent!');
+                    // Reload the page to show updated status
+                    window.location.reload();
+                } else {
+                    alert(data.error || 'Failed to send connection request');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while sending the connection request');
+            });
     }
 </script>
