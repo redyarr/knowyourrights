@@ -8,24 +8,26 @@ const Job = sequelize.define('jobs', {
     },
     authorId: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: false,
+        field: 'author_id'
     },
     summary: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    country:{
+    country: {
         type: DataTypes.STRING,
         allowNull: false
     },
-    city:{
+    city: {
         type: DataTypes.STRING,
         allowNull: false
     },
     createdAt: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: DataTypes.NOW
+        defaultValue: DataTypes.NOW,
+        field: 'created_at'
     }
 }, {
     timestamps: false,
