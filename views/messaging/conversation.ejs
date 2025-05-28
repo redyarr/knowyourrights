@@ -51,12 +51,14 @@
                 <% if (conversationPartner) { %>
                     <!-- Conversation Header -->
                     <div class="p-4 border-b flex items-center space-x-3">
-                        <img src="https://ui-avatars.com/api/?name=<%= conversationPartner.firstName %>+<%= conversationPartner.lastName %>" 
-                             alt="<%= conversationPartner.firstName %>" class="w-10 h-10 rounded-full">
-                        <div>
-                            <h3 class="font-semibold"><%= conversationPartner.firstName %> <%= conversationPartner.lastName %></h3>
-                            <p class="text-xs text-gray-500">Active now</p>
-                        </div>
+                        <a href="/in/<%= conversationPartner.id %>" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
+                            <img src="https://ui-avatars.com/api/?name=<%= conversationPartner.firstName %>+<%= conversationPartner.lastName %>" 
+                                 alt="<%= conversationPartner.firstName %>" class="w-10 h-10 rounded-full">
+                            <div>
+                                <h3 class="font-semibold text-blue-600 hover:text-blue-800"><%= conversationPartner.firstName %> <%= conversationPartner.lastName %></h3>
+                                <p class="text-xs text-gray-500">Active now</p>
+                            </div>
+                        </a>
                         <% if (conversationPartner && conversationPartner.role === 'lawyer') { %>
                         <button id="giveFeedbackBtn" class="ml-auto bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
                             Give Feedback
@@ -64,33 +66,32 @@
                         <% } %>
                     </div>
                     
-                    <!-- Messages Container with Half Screen Height -->
-                    <div class="relative flex-grow overflow-hidden" style="height: 50vh;">
-                        <!-- Scrollable Messages Area -->
-                        <div class="absolute inset-0 p-4 overflow-y-scroll" id="messageContainer">
-                            <% messages.forEach(message => { %>
-                                <div class="mb-4 <%= message.senderId == userId ? 'flex justify-end' : 'flex justify-start' %>">
-                                    <div class="<%= message.senderId == userId ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800' %> rounded-lg px-4 py-2 max-w-xs lg:max-w-md">
-                                        <p><%= message.content %></p>
-                                        <p class="text-xs <%= message.senderId == userId ? 'text-blue-100' : 'text-gray-500' %> text-right mt-1">
-                                            <%= new Date(message.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
-                                        </p>
-                                    </div>
-                                </div>
-                            <% }) %>
+
+                
+                <!-- Messages Container -->
+                <div class="flex-1 p-4 overflow-y-auto" id="messageContainer">
+                    <% messages.forEach(message => { %>
+                        <div class="mb-4 <%= message.senderId == userId ? 'flex justify-end' : 'flex justify-start' %>">
+                            <div class="<%= message.senderId == userId ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800' %> rounded-lg px-4 py-2 max-w-xs lg:max-w-md">
+                                <p><%= message.content %></p>
+                                <p class="text-xs <%= message.senderId == userId ? 'text-blue-100' : 'text-gray-500' %> text-right mt-1">
+                                    <%= new Date(message.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
+                                </p>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <!-- Message Input -->
-                    <div class="p-4 border-t mt-auto">
-                        <form action="/messaging/<%= conversationPartner.id %>/send" method="POST" class="flex space-x-2" id="messageForm">
-                            <input type="text" name="content" placeholder="Type a message" required id="messageInput"
-                                class="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                            <button type="submit" class="bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </form>
-                    </div>
+                    <% }) %>
+                </div>
+                
+                <!-- Message Input -->
+                <div class="p-4 border-t">
+                    <form action="/messaging/<%= conversationPartner.id %>/send" method="POST" class="flex space-x-2" id="messageForm">
+                        <input type="text" name="content" placeholder="Type a message" required id="messageInput"
+                            class="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                        <button type="submit" class="bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
                 <% } else { %>
                     <div class="flex-1 flex items-center justify-center">
                         <div class="text-center p-8">

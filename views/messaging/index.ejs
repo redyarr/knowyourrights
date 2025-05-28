@@ -1,4 +1,4 @@
-<div class="container mx-auto px-4 py-8">
+<div class="container mx-auto px-4 py-6">
     <div class="bg-white rounded-lg shadow">
         <!-- Messages header -->
         <div class="p-4 border-b flex justify-between items-center">
@@ -28,42 +28,37 @@
         <div class="divide-y max-h-[calc(100vh-300px)] overflow-y-auto custom-scrollbar">
             <% messages.forEach(message=> { %>
                 <a href="/messaging/<%= message.user.id %>" class="block">
-                    <div
-                        class="message-item p-4 hover:bg-gray-50 cursor-pointer flex items-center space-x-3 <%= message.unreadCount > 0 ? 'bg-blue-50' : '' %>">
+                    <div class="message-item p-4 hover:bg-gray-50 cursor-pointer flex items-center space-x-3 <%= message.unreadCount > 0 ? 'bg-blue-50' : '' %>">
                         <div class="relative">
                             <img src="https://ui-avatars.com/api/?name=<%= message.user.firstName %>+<%= message.user.lastName %>"
                                 alt="Contact" class="w-12 h-12 rounded-full">
                             <% if (message.unreadCount> 0) { %>
-                                <span
-                                    class="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                                <span class="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                                     <%= message.unreadCount %>
                                 </span>
-                                <% } %>
+                            <% } %>
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex justify-between items-baseline">
-                                <h4
-                                    class="font-semibold truncate message-name <%= message.unreadCount > 0 ? 'text-black' : 'text-gray-700' %>">
-                                    <%= message.user.firstName %>
-                                        <%= message.user.lastName %>
+                                <h4 class="font-semibold truncate message-name <%= message.unreadCount > 0 ? 'text-black' : 'text-gray-700' %>">
+                                    <%= message.user.firstName %> <%= message.user.lastName %>
                                 </h4>
                                 <span class="text-xs text-gray-500">
                                     <%= new Date(message.lastMessage.createdAt).toLocaleDateString() %>
                                 </span>
                             </div>
                             <div class="flex justify-between items-center">
-                                <p
-                                    class="text-sm truncate message-preview <%= message.unreadCount > 0 ? 'font-semibold text-black' : 'text-gray-600' %>">
+                                <p class="text-sm truncate message-preview <%= message.unreadCount > 0 ? 'font-semibold text-black' : 'text-gray-600' %>">
                                     <%= message.lastMessage.content %>
                                 </p>
                                 <% if (message.unreadCount> 0) { %>
                                     <span class="ml-2 w-2 h-2 bg-blue-600 rounded-full flex-shrink-0"></span>
-                                    <% } %>
+                                <% } %>
                             </div>
                         </div>
                     </div>
                 </a>
-                <% }) %>
+            <% }) %>
         </div>
     </div>
 </div>
@@ -79,9 +74,9 @@
             const preview = item.querySelector('.message-preview').textContent.toLowerCase();
 
             if (name.includes(searchTerm) || preview.includes(searchTerm)) {
-                item.parentElement.style.display = 'block';
+                item.closest('a').style.display = 'block';
             } else {
-                item.parentElement.style.display = 'none';
+                item.closest('a').style.display = 'none';
             }
         });
     });
