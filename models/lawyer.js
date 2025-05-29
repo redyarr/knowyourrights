@@ -33,6 +33,23 @@ const Lawyer = sequelize.define('lawyers', {
     legalAreas: {
         type: DataTypes.TEXT,
         allowNull: true
+    },
+    // Add these fields to match the database schema
+    verificationStatus: {
+        type: DataTypes.ENUM('pending', 'approved', 'rejected'),
+        defaultValue: 'pending'
+    },
+    verifiedBy: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
+    verificationDate: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
+    rejectionReason: {
+        type: DataTypes.TEXT,
+        allowNull: true
     }
 },{
         underscored: true,
