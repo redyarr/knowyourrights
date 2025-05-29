@@ -1,100 +1,391 @@
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lawyer Verification Review</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* ... (your existing styles) ... */
+        /* Inter Font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-<div class="max-w-5xl mx-auto p-6">
-  <div class="mb-6">
-    <a href="/admin/dashboard" class="inline-flex items-center text-blue-600 hover:underline">
-      <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
-    </a>
-    <h1 class="text-2xl font-bold mt-2">Lawyer Verification Review</h1>
-    <p class="text-gray-600">Review and manage lawyer verification applications</p>
-  </div>
+        /* Modal and Toast Notification transitions */
+        .modal, .toast-notification {
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease;
+        }
+         /* Custom styles for specific authority badges if needed, or handle with JS */
+        .authority-training { background-color: #FEF3C7; color: #92400E; } /* Tailwind yellow-200, yellow-800 */
+        .authority-approved { background-color: #D1FAE5; color: #065F46; } /* Tailwind green-200, green-800 */
+        .authority-consultant { background-color: #E5E7EB; color: #374151; } /* Tailwind gray-200, gray-700 */
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 antialiased">
 
-  <div class="bg-white shadow-md rounded-xl p-6 space-y-6">
-    <div class="flex items-center space-x-6">
-      <% if (lawyer.user.profilePicture) { %>
-        <img src="<%= lawyer.user.profilePicture %>" alt="<%= lawyer.user.firstName %> <%= lawyer.user.lastName %>" class="w-20 h-20 rounded-full object-cover">
-      <% } else { %>
-        <div class="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center text-xl font-bold">
-          <%= lawyer.user.firstName.charAt(0) %><%= lawyer.user.lastName.charAt(0) %>
+    <div class="admin-container container mx-auto p-4 md:p-8">
+        <div class="admin-header mb-8">
+            <a href="/admin/dashboard" class="back-btn inline-flex items-center text-blue-600 hover:text-blue-800 mb-4 group">
+                <i class="fas fa-arrow-left mr-2 transition-transform duration-150 ease-in-out group-hover:-translate-x-1"></i>
+                Back to Dashboard
+            </a>
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-700">Lawyer Verification Review</h1>
+            <p class="text-gray-500 mt-2 text-sm md:text-base">Review and manage this lawyer's verification application.</p>
         </div>
-      <% } %>
-      <div>
-        <h2 class="text-xl font-semibold"><%= lawyer.user.firstName %> <%= lawyer.user.lastName %></h2>
-        <p class="text-gray-600"><%= lawyer.user.email %></p>
-        <p class="text-sm text-gray-500">Joined: <%= new Date(lawyer.user.createdAt).toLocaleDateString() %></p>
-        <div class="mt-2 inline-block px-3 py-1 text-sm rounded-full bg-gray-200 text-gray-800 capitalize">
-          <%= lawyer.verificationStatus %>
-        </div>
-      </div>
+
+        <div id="lawyerProfileContainer" class="lawyer-profile bg-white shadow-lg rounded-lg overflow-hidden">
+            </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="bg-gray-50 p-4 rounded-lg">
-        <h3 class="font-medium text-lg mb-2">Professional Information</h3>
-        <div class="space-y-2 text-sm">
-          <div><span class="font-semibold">Law Firm:</span> <%= lawyer.lawFirm || 'Independent Practice' %></div>
-          <div><span class="font-semibold">Badge Number:</span> <%= lawyer.badgeNumber %></div>
-          <div><span class="font-semibold">Badge Issue Date:</span> <%= new Date(lawyer.badgeIssueDate).toLocaleDateString() %></div>
-          <div><span class="font-semibold">Issuing Authority:</span> <span class="inline-block bg-gray-200 rounded-full px-2 py-0.5"><%= lawyer.badgeIssuingAuthority %></span></div>
+    <div id="rejectModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50 invisible opacity-0">
+        <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform scale-95">
+            <div class="modal-header flex justify-between items-center pb-3 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-700">Reject Lawyer Verification</h3>
+                <button class="close-modal-btn text-gray-400 hover:text-gray-600 text-2xl" aria-label="Close modal">&times;</button>
+            </div>
+            <div class="modal-body py-4">
+                <p class="text-sm text-gray-600 mb-2">Please provide a reason for rejecting this lawyer's application:</p>
+                <textarea id="rejectionReason" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none" placeholder="Enter rejection reason..." rows="4"></textarea>
+            </div>
+            <div class="modal-footer flex justify-end gap-3 pt-3 border-t border-gray-200">
+                <button class="btn-secondary close-modal-btn px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors">Cancel</button>
+                <button id="confirmRejectButton" class="btn-danger px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-md transition-colors">
+                    <span id="rejectButtonText">Reject Application</span>
+                    <i id="rejectButtonSpinner" class="fas fa-spinner fa-spin hidden ml-1"></i>
+                </button>
+            </div>
         </div>
-      </div>
-
-      <div class="bg-gray-50 p-4 rounded-lg">
-        <h3 class="font-medium text-lg mb-2">Legal Specialization</h3>
-        <% if (lawyer.legalAreas) { %>
-          <div class="flex flex-wrap gap-2">
-            <% lawyer.legalAreas.split(',').forEach(area => { %>
-              <span class="inline-block bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-sm"><%= area.trim() %></span>
-            <% }); %>
-          </div>
-        <% } else { %>
-          <span class="text-gray-500">Not specified</span>
-        <% } %>
-      </div>
-
-      <% if (lawyer.summary) { %>
-        <div class="md:col-span-2 bg-gray-50 p-4 rounded-lg">
-          <h3 class="font-medium text-lg mb-2">Professional Summary</h3>
-          <p class="text-sm text-gray-700"><%= lawyer.summary %></p>
-        </div>
-      <% } %>
-
-      <% if (lawyer.verificationStatus === 'rejected' && lawyer.rejectionReason) { %>
-        <div class="md:col-span-2 bg-red-50 p-4 rounded-lg">
-          <h3 class="font-medium text-lg mb-2 text-red-700">Previous Rejection Reason</h3>
-          <p class="text-sm text-red-600"><%= lawyer.rejectionReason %></p>
-          <p class="text-xs text-red-500 mt-1">Rejected on: <%= new Date(lawyer.verificationDate).toLocaleDateString() %></p>
-        </div>
-      <% } %>
     </div>
 
-    <% if (lawyer.verificationStatus === 'pending') { %>
-      <div class="flex space-x-4">
-        <button onclick="approveLawyer(<%= lawyer.id %>)" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md flex items-center">
-          <i class="fas fa-check mr-2"></i>Approve Lawyer
-        </button>
-        <button onclick="showRejectModal(<%= lawyer.id %>)" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md flex items-center">
-          <i class="fas fa-times mr-2"></i>Reject Application
-        </button>
-      </div>
-    <% } %>
-  </div>
-</div>
+    <div id="notificationArea" class="fixed top-5 right-5 z-[100] space-y-3">
+    </div>
 
-<!-- Modal -->
-<div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden">
-  <div class="bg-white rounded-lg shadow-lg max-w-md w-full">
-    <div class="flex justify-between items-center px-4 py-2 border-b">
-      <h3 class="font-semibold">Reject Lawyer Application</h3>
-      <button onclick="closeRejectModal()" class="text-gray-600 hover:text-black">&times;</button>
-    </div>
-    <div class="px-4 py-3">
-      <p class="mb-2">Please provide a reason for rejecting this lawyer's application:</p>
-      <textarea id="rejectionReason" rows="4" class="w-full border border-gray-300 rounded-lg p-2" placeholder="Enter rejection reason..."></textarea>
-    </div>
-    <div class="flex justify-end space-x-2 px-4 py-3 border-t">
-      <button onclick="closeRejectModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-      <button onclick="confirmReject()" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">Reject Application</button>
-    </div>
-  </div>
-</div>
+<script>
+    // --- Initialize lawyer data from server (passed via EJS or similar template engine) ---
+    // The 'lawyer' variable below is populated by the template engine from the data passed in res.render()
+    // The <%- JSON.stringify(lawyer) %> ensures that the complex lawyer object (including nested user)
+    // is correctly converted to a JSON string and then parsed as a JavaScript object.
+    // This line assumes your template engine is EJS. Adjust syntax if using another engine.
+    const lawyer = <%- lawyer ? JSON.stringify(lawyer) : 'null' %>;
+
+    // --- DOM Elements ---
+    const lawyerProfileContainer = document.getElementById('lawyerProfileContainer');
+    const rejectModal = document.getElementById('rejectModal');
+    const rejectionReasonInput = document.getElementById('rejectionReason');
+    const rejectButtonText = document.getElementById('rejectButtonText');
+    const rejectButtonSpinner = document.getElementById('rejectButtonSpinner');
+    const confirmRejectButton = document.getElementById('confirmRejectButton');
+    const closeModalButtons = document.querySelectorAll('.close-modal-btn');
+
+    // --- Rendering Functions ---
+    function renderLawyerProfile() {
+        if (!lawyer) {
+            lawyerProfileContainer.innerHTML = '<p class="p-6 text-red-500">Lawyer data not found or could not be loaded.</p>';
+            return;
+        }
+
+        // The 'lawyer.user.profilePicture' might not be included in your server data.
+        // The existing code gracefully handles this by creating an avatar with initials.
+        const avatar = (lawyer.user && lawyer.user.profilePicture)
+            ? `<img class="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-white shadow-md" src="${lawyer.user.profilePicture}" alt="${lawyer.user.firstName} ${lawyer.user.lastName}" onerror="this.onerror=null;this.src='https://placehold.co/100x100/E2E8F0/A0AEC0?text=${lawyer.user.firstName ? lawyer.user.firstName.charAt(0) : ''}${lawyer.user.lastName ? lawyer.user.lastName.charAt(0) : ''}';">`
+            : `<div class="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-bold text-3xl md:text-4xl border-4 border-white shadow-md">
+                   ${(lawyer.user && lawyer.user.firstName) ? lawyer.user.firstName.charAt(0) : 'N'}${(lawyer.user && lawyer.user.lastName) ? lawyer.user.lastName.charAt(0) : 'A'}
+               </div>`;
+
+        let statusBadgeClass = '';
+        let statusText = lawyer.verificationStatus ? lawyer.verificationStatus.charAt(0).toUpperCase() + lawyer.verificationStatus.slice(1) : 'Unknown';
+        switch (lawyer.verificationStatus) {
+            case 'pending': statusBadgeClass = 'bg-yellow-100 text-yellow-800 border-yellow-400'; break;
+            case 'approved': statusBadgeClass = 'bg-green-100 text-green-800 border-green-400'; break;
+            case 'rejected': statusBadgeClass = 'bg-red-100 text-red-800 border-red-400'; break;
+            default: statusBadgeClass = 'bg-gray-100 text-gray-800 border-gray-400';
+        }
+
+        const legalAreasHTML = lawyer.legalAreas
+            ? lawyer.legalAreas.split(',').map(area => `<span class="area-tag bg-blue-500 text-white text-xs font-semibold px-2.5 py-1 rounded-full">${area.trim()}</span>`).join('')
+            : '<span class="text-gray-500 italic">Not specified</span>';
+
+        let authorityBadgeClass = 'bg-gray-100 text-gray-700'; // Default
+        const authorityLower = lawyer.badgeIssuingAuthority ? lawyer.badgeIssuingAuthority.toLowerCase() : '';
+        if (authorityLower.includes('training')) authorityBadgeClass = 'authority-training px-2 py-0.5 rounded-full text-xs';
+        else if (authorityLower.includes('approved') || authorityLower.includes('bar')) authorityBadgeClass = 'authority-approved px-2 py-0.5 rounded-full text-xs';
+        else if (authorityLower.includes('consultant')) authorityBadgeClass = 'authority-consultant px-2 py-0.5 rounded-full text-xs';
+
+        let profileHTML = `
+            <div class="profile-section p-6 md:p-8 bg-gray-50 border-b border-gray-200">
+                <div class="profile-header flex flex-col sm:flex-row items-center sm:items-start gap-4 md:gap-6">
+                    <div class="profile-avatar flex-shrink-0">
+                        ${avatar}
+                    </div>
+                    <div class="profile-info text-center sm:text-left flex-grow">
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-800">${lawyer.user ? `${lawyer.user.firstName} ${lawyer.user.lastName}` : 'N/A'}</h2>
+                        <p class="email text-blue-600 hover:underline text-sm md:text-base">${lawyer.user ? lawyer.user.email : 'N/A'}</p>
+                        <p class="join-date text-gray-500 text-xs md:text-sm">Joined: ${lawyer.user && lawyer.user.createdAt ? new Date(lawyer.user.createdAt).toLocaleDateString() : 'N/A'}</p>
+                        <div class="status-badge mt-2 inline-block px-3 py-1 text-xs font-semibold rounded-full border ${statusBadgeClass}">
+                            ${statusText}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="verification-details p-6 md:p-8">
+                <div class="details-grid grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="detail-card bg-white p-5 rounded-lg shadow border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Professional Information</h3>
+                        <div class="detail-item mb-2"><strong class="w-1/3 text-gray-600 text-sm">Law Firm:</strong> <span class="text-gray-800 text-sm">${lawyer.lawFirm || 'Independent Practice'}</span></div>
+                        <div class="detail-item mb-2"><strong class="w-1/3 text-gray-600 text-sm">Badge Number:</strong> <span class="text-gray-800 text-sm">${lawyer.badgeNumber || 'N/A'}</span></div>
+                        <div class="detail-item mb-2"><strong class="w-1/3 text-gray-600 text-sm">Badge Issue Date:</strong> <span class="text-gray-800 text-sm">${lawyer.badgeIssueDate ? new Date(lawyer.badgeIssueDate).toLocaleDateString() : 'N/A'}</span></div>
+                        <div class="detail-item"><strong class="w-1/3 text-gray-600 text-sm">Issuing Authority:</strong> <span class="${authorityBadgeClass}">${lawyer.badgeIssuingAuthority || 'N/A'}</span></div>
+                    </div>
+
+                    <div class="detail-card bg-white p-5 rounded-lg shadow border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Legal Specialization</h3>
+                        <div class="detail-item full-width">
+                            <label class="block font-semibold text-gray-600 text-sm mb-1">Areas of Practice:</label>
+                            <div class="legal-areas flex flex-wrap gap-2">
+                                ${legalAreasHTML}
+                            </div>
+                        </div>
+                    </div>`;
+
+        if (lawyer.summary) {
+            profileHTML += `
+                    <div class="detail-card md:col-span-2 bg-white p-5 rounded-lg shadow border border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-700 mb-3 border-b pb-2">Professional Summary</h3>
+                        <div class="summary-content text-sm text-gray-700 leading-relaxed">
+                            ${lawyer.summary}
+                        </div>
+                    </div>`;
+        }
+
+        if (lawyer.verificationStatus === 'rejected' && lawyer.rejectionReason) {
+            profileHTML += `
+                    <div class="detail-card md:col-span-2 bg-red-50 p-5 rounded-lg shadow border border-red-200">
+                        <h3 class="text-lg font-semibold text-red-700 mb-3 border-b border-red-200 pb-2">Previous Rejection Reason</h3>
+                        <div class="rejection-content text-sm text-red-700 bg-red-100 p-3 rounded-md">
+                            ${lawyer.rejectionReason}
+                        </div>
+                        ${lawyer.verificationDate ? `<p class="rejection-date text-xs text-red-600 mt-2">
+                            Rejected on: ${new Date(lawyer.verificationDate).toLocaleDateString()}
+                        </p>` : ''}
+                    </div>`;
+        }
+        profileHTML += `</div></div>`; // Close details-grid and verification-details
+
+        if (lawyer.verificationStatus === 'pending') {
+            profileHTML += `
+                <div class="verification-actions p-6 md:p-8 bg-gray-50 border-t border-gray-200">
+                    <div class="action-buttons flex flex-col sm:flex-row justify-center gap-3 md:gap-4">
+                        <button id="approveButton" class="btn-success w-full sm:w-auto px-6 py-3 text-sm font-medium text-white bg-green-500 hover:bg-green-600 rounded-md transition-colors flex items-center justify-center gap-2">
+                            <i class="fas fa-check"></i> 
+                            <span id="approveButtonText">Approve Lawyer</span>
+                            <i id="approveButtonSpinner" class="fas fa-spinner fa-spin hidden ml-1"></i>
+                        </button>
+                        <button id="showRejectModalButton" class="btn-danger w-full sm:w-auto px-6 py-3 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-md transition-colors flex items-center justify-center gap-2">
+                            <i class="fas fa-times"></i> Reject Application
+                        </button>
+                    </div>
+                </div>`;
+        }
+
+        lawyerProfileContainer.innerHTML = profileHTML;
+
+        if (lawyer.verificationStatus === 'pending') {
+            document.getElementById('approveButton')?.addEventListener('click', () => handleApproveLawyer(lawyer.id));
+            document.getElementById('showRejectModalButton')?.addEventListener('click', () => openRejectModal(lawyer.id));
+        }
+    }
+
+    // --- Modal Handling ---
+    // ... (rest of your JavaScript: openRejectModal, closeRejectModal, handleApproveLawyer, handleConfirmReject, showNotification) ...
+    // Ensure these functions correctly use the global `lawyer` object, which is now populated from server data.
+    function openRejectModal(lawyerId) {
+        rejectionReasonInput.value = '';
+        rejectModal.classList.remove('invisible', 'opacity-0');
+        rejectModal.classList.add('visible', 'opacity-100');
+        rejectModal.querySelector('.modal-content').classList.remove('scale-95');
+        rejectModal.querySelector('.modal-content').classList.add('scale-100');
+    }
+
+    function closeRejectModal() {
+        rejectModal.classList.remove('visible', 'opacity-100');
+        rejectModal.classList.add('invisible', 'opacity-0');
+        rejectModal.querySelector('.modal-content').classList.remove('scale-100');
+        rejectModal.querySelector('.modal-content').classList.add('scale-95');
+        rejectButtonText.textContent = 'Reject Application';
+        rejectButtonSpinner.classList.add('hidden');
+        confirmRejectButton.disabled = false;
+    }
+
+    closeModalButtons.forEach(button => button.addEventListener('click', closeRejectModal));
+    confirmRejectButton.addEventListener('click', handleConfirmReject);
+
+    window.addEventListener('click', (event) => {
+        if (event.target === rejectModal) {
+            closeRejectModal();
+        }
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.key === "Escape" && rejectModal.classList.contains('visible')) {
+            closeRejectModal();
+        }
+    });
+
+    // --- Action Handlers (Simulated API calls) ---
+    // These should ideally make actual fetch requests to your backend API to update the lawyer's status.
+    // For now, they update the local 'lawyer' object and re-render.
+    function handleApproveLawyer(lawyerId) {
+        const approveBtn = document.getElementById('approveButton');
+        const approveBtnText = document.getElementById('approveButtonText');
+        const approveBtnSpinner = document.getElementById('approveButtonSpinner');
+
+        if (!approveBtn || !approveBtnText || !approveBtnSpinner) return;
+
+        approveBtnText.textContent = 'Approving...';
+        approveBtnSpinner.classList.remove('hidden');
+        approveBtn.disabled = true;
+
+        // Simulate API Call: In a real app, replace with fetch() to your backend
+        console.log(`Attempting to approve lawyer ID: ${lawyerId}`);
+        setTimeout(() => { // Simulate network delay
+            // TODO: Replace with actual API call
+            // fetch(`/api/admin/lawyers/${lawyerId}/approve`, { method: 'POST' })
+            // .then(response => response.json())
+            // .then(data => {
+            //     if (data.success) {
+                    lawyer.verificationStatus = 'approved';
+                    lawyer.verificationDate = new Date().toISOString();
+                    showNotification('Lawyer approved successfully!', 'success');
+                    renderLawyerProfile();
+                    setTimeout(() => { window.location.href = '/admin/dashboard'; }, 1500);
+            //     } else {
+            //         showNotification(data.message || 'Failed to approve lawyer.', 'error');
+            //         approveBtnText.textContent = 'Approve Lawyer';
+            //         approveBtnSpinner.classList.add('hidden');
+            //         approveBtn.disabled = false;
+            //     }
+            // })
+            // .catch(error => {
+            //     showNotification('An error occurred.', 'error');
+            //     approveBtnText.textContent = 'Approve Lawyer';
+            //     approveBtnSpinner.classList.add('hidden');
+            //     approveBtn.disabled = false;
+            // });
+        }, 1000);
+    }
+
+    function handleConfirmReject() {
+        const reason = rejectionReasonInput.value.trim();
+        if (!reason) {
+            showNotification('Please provide a reason for rejection.', 'error');
+            rejectionReasonInput.focus();
+            return;
+        }
+
+        rejectButtonText.textContent = 'Rejecting...';
+        rejectButtonSpinner.classList.remove('hidden');
+        confirmRejectButton.disabled = true;
+
+        // Simulate API Call: In a real app, replace with fetch()
+        console.log(`Attempting to reject lawyer ID: ${lawyer.id} with reason: ${reason}`);
+        setTimeout(() => { // Simulate network delay
+            // TODO: Replace with actual API call
+            // fetch(`/api/admin/lawyers/${lawyer.id}/reject`, {
+            //    method: 'POST',
+            //    headers: { 'Content-Type': 'application/json' },
+            //    body: JSON.stringify({ rejectionReason: reason })
+            // })
+            // .then(response => response.json())
+            // .then(data => {
+            //    if (data.success) {
+                    lawyer.verificationStatus = 'rejected';
+                    lawyer.rejectionReason = reason;
+                    lawyer.verificationDate = new Date().toISOString();
+                    showNotification('Lawyer application rejected.', 'success');
+                    closeRejectModal();
+                    renderLawyerProfile();
+                    setTimeout(() => { window.location.href = '/admin/dashboard'; }, 1500);
+            //    } else {
+            //        showNotification(data.message || 'Failed to reject application.', 'error');
+            //        rejectButtonText.textContent = 'Reject Application';
+            //        rejectButtonSpinner.classList.add('hidden');
+            //        confirmRejectButton.disabled = false;
+            //    }
+            // })
+            // .catch(error => {
+            //     showNotification('An error occurred.', 'error');
+            //     rejectButtonText.textContent = 'Reject Application';
+            //     rejectButtonSpinner.classList.add('hidden');
+            //     confirmRejectButton.disabled = false;
+            // });
+        }, 1000);
+    }
+
+    // --- Custom Notification System ---
+    function showNotification(message, type = 'info') {
+        const notificationArea = document.getElementById('notificationArea');
+        const notification = document.createElement('div');
+        notification.className = `toast-notification flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-lg opacity-0 transform translate-x-full`;
+        
+        let iconClass = 'fa-info-circle';
+        let colorClasses = 'bg-blue-100 text-blue-500';
+
+        if (type === 'success') {
+            iconClass = 'fa-check-circle';
+            colorClasses = 'bg-green-100 text-green-500';
+        } else if (type === 'error') {
+            iconClass = 'fa-exclamation-circle';
+            colorClasses = 'bg-red-100 text-red-500';
+        } else if (type === 'warning') {
+            iconClass = 'fa-exclamation-triangle';
+            colorClasses = 'bg-yellow-100 text-yellow-500';
+        }
+
+        notification.innerHTML = `
+            <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg ${colorClasses}">
+                <i class="fas ${iconClass} w-5 h-5"></i>
+                <span class="sr-only">${type} icon</span>
+            </div>
+            <div class="ml-3 text-sm font-normal text-gray-700">${message}</div>
+            <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8" aria-label="Close">
+                <span class="sr-only">Close</span>
+                <i class="fas fa-times w-5 h-5"></i>
+            </button>
+        `;
+        
+        notification.querySelector('button').onclick = () => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => notification.remove(), 300);
+        };
+        notificationArea.appendChild(notification);
+
+        setTimeout(() => {
+            notification.style.opacity = '1';
+            notification.style.transform = 'translateX(0)';
+        }, 10);
+
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }
+        }, 4000);
+    }
+
+    // --- Initial Load ---
+    document.addEventListener('DOMContentLoaded', () => {
+        renderLawyerProfile();
+    });
+
+</script>
+
+</body>
+</html>

@@ -54,8 +54,12 @@ class AdminController {
      */
     static async viewLawyerDetails(req, res) {
         try {
+            console.log('Starting viewLawyerDetails...');
+            
             const { lawyerId } = req.params;
+            console.log('Received lawyerId:', lawyerId);
 
+            console.log('Attempting to find lawyer in database...');
             const lawyer = await Lawyer.findByPk(lawyerId, {
                 include: [{
                     model: User,
@@ -63,20 +67,28 @@ class AdminController {
                     attributes: ['id', 'firstName', 'lastName', 'email', 'createdAt']
                 }]
             });
+            console.log('Database query completed. Lawyer found:', !!lawyer);
+            console.log(lawyer);
+            
 
             if (!lawyer) {
+                console.log('Lawyer not found, returning 404 error');
                 return res.status(404).render('error', {
                     message: 'Lawyer not found',
                     error: { status: 404 }
                 });
             }
 
+            console.log('Rendering lawyer details page...');
             res.render('admin/lawyer-details', {
                 lawyer,
                 user: res.locals.user,
                 path: req.path
             });
+            console.log('Lawyer details page rendered successfully');
+            
         } catch (error) {
+            console.log('Error occurred in viewLawyerDetails:', error.message);
             console.error('Error loading lawyer details:', error);
             res.status(500).render('error', {
                 message: 'Error loading lawyer details',

@@ -1,319 +1,508 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lawyer Verification Management</title>
-  <link rel="stylesheet" href="/css/admin.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <style>
-    :root {
-      --primary-color: #007bff;
-      --success-color: #28a745;
-      --danger-color: #dc3545;
-      --warning-color: #ffc107;
-      --light-bg: #ffffff;
-      --gray-bg: #f8f9fa;
-      --gray-border: #dee2e6;
-      --text-color: #212529;
-      --muted-text: #6c757d;
-      --box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lawyer Verification Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Custom scrollbar for better aesthetics (optional) */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #c4c4c4;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
+        }
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--gray-bg);
-      color: var(--text-color);
-      margin: 0;
-      padding: 0;
-    }
+        /* Inter Font */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-    .admin-container {
-      max-width: 1200px;
-      margin: auto;
-      padding: 2rem;
-    }
-
-    .admin-header h1 {
-      font-size: 2rem;
-      margin: 0;
-    }
-    .admin-header p {
-      margin-top: 0.5rem;
-      color: var(--muted-text);
-    }
-
-    .filter-tabs {
-      display: flex;
-      gap: 1rem;
-      margin: 2rem 0 1rem;
-      flex-wrap: wrap;
-    }
-    .filter-tab {
-      text-decoration: none;
-      padding: 0.5rem 1rem;
-      border-radius: 5px;
-      background-color: var(--light-bg);
-      color: var(--text-color);
-      border: 1px solid var(--gray-border);
-    }
-    .filter-tab.active {
-      background-color: var(--primary-color);
-      color: #fff;
-    }
-
-    .table-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 1rem;
-    }
-    .table-header h2 {
-      font-size: 1.5rem;
-    }
-    .count-badge {
-      background-color: var(--primary-color);
-      color: #fff;
-      padding: 0.3rem 0.8rem;
-      border-radius: 999px;
-      font-size: 0.85rem;
-    }
-
-    table.table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: var(--light-bg);
-      box-shadow: var(--box-shadow);
-    }
-    table th, table td {
-      padding: 0.75rem;
-      border: 1px solid var(--gray-border);
-      text-align: left;
-    }
-
-    .lawyer-info {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .lawyer-avatar img, .avatar-placeholder {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-      background: #ccc;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: white;
-    }
-
-    .status {
-      padding: 0.3rem 0.6rem;
-      border-radius: 0.25rem;
-      font-size: 0.85rem;
-      text-transform: capitalize;
-    }
-    .status-approved { background: #d4edda; color: #155724; }
-    .status-pending { background: #fff3cd; color: #856404; }
-    .status-rejected { background: #f8d7da; color: #721c24; }
-
-    .actions .btn-view,
-    .actions .btn-approve,
-    .actions .btn-reject {
-      padding: 0.35rem 0.75rem;
-      border-radius: 4px;
-      font-size: 0.85rem;
-      border: 1px solid transparent;
-      text-decoration: none;
-      margin-right: 0.5rem;
-      cursor: pointer;
-    }
-    .btn-view { background: var(--primary-color); color: white; }
-    .btn-approve { background: var(--success-color); color: white; }
-    .btn-reject { background: var(--danger-color); color: white; }
-
-    .empty-state {
-      text-align: center;
-      background: var(--light-bg);
-      padding: 2rem;
-      margin-top: 2rem;
-      border-radius: 8px;
-      box-shadow: var(--box-shadow);
-    }
-    .empty-state i {
-      font-size: 2rem;
-      color: #ccc;
-    }
-
-    .pagination {
-      margin-top: 2rem;
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
-    .pagination a {
-      padding: 0.4rem 0.8rem;
-      background-color: var(--light-bg);
-      color: var(--text-color);
-      text-decoration: none;
-      border-radius: 4px;
-      border: 1px solid var(--gray-border);
-    }
-    .pagination .active {
-      background-color: var(--primary-color);
-      color: white;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.4);
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-box {
-      background: var(--light-bg);
-      padding: 1.5rem;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 500px;
-      box-shadow: var(--box-shadow);
-    }
-    .modal-header, .modal-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .modal-body textarea {
-      width: 100%;
-      margin-top: 1rem;
-      padding: 0.5rem;
-      font-size: 1rem;
-      border: 1px solid var(--gray-border);
-      border-radius: 4px;
-      resize: vertical;
-    }
-    .modal-footer button {
-      padding: 0.4rem 0.8rem;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .btn-danger {
-      background-color: var(--danger-color);
-      color: white;
-    }
-  </style>
+        /* Modal styles */
+        .modal {
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-content {
+            transition: transform 0.3s ease;
+        }
+        .toast-notification {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+    </style>
 </head>
-<body>
-    <main class="admin-container light-mode">
-        <header class="admin-header">
-          <h1>Lawyer Verification</h1>
-          <p>Review and manage verification applications</p>
-        </header>
-      
-        <nav class="filter-tabs">
-          <a href="/admin/lawyers" class="filter-tab <%= !currentStatus ? 'active' : '' %>">All</a>
-          <a href="/admin/lawyers?status=pending" class="filter-tab <%= currentStatus === 'pending' ? 'active' : '' %>">Pending</a>
-          <a href="/admin/lawyers?status=approved" class="filter-tab <%= currentStatus === 'approved' ? 'active' : '' %>">Approved</a>
-          <a href="/admin/lawyers?status=rejected" class="filter-tab <%= currentStatus === 'rejected' ? 'active' : '' %>">Rejected</a>
-        </nav>
-      
-        <section class="lawyers-table">
-          <header class="table-header">
-            <h2>Lawyers <%= currentStatus ? '- ' + currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1) : '' %> <span class="count-badge"><%= totalCount %></span></h2>
-          </header>
-      
-          <% if (lawyers.length === 0) { %>
-            <div class="empty-state">
-              <i class="fas fa-user"></i>
-              <h3>No lawyers found</h3>
-              <p>Try selecting a different status.</p>
-            </div>
-          <% } else { %>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Status</th>
-                  <th>Date</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% lawyers.forEach(lawyer => { %>
-                  <tr>
-                    <td>
-                      <div class="lawyer-info">
-                        <div class="lawyer-avatar">
-                          <% if (lawyer.user.profilePicture) { %>
-                            <img src="<%= lawyer.user.profilePicture %>" alt="Avatar">
-                          <% } else { %>
-                            <div class="avatar-placeholder" style="color: black;">
-                              <%= lawyer.user.firstName.charAt(0) + lawyer.user.lastName.charAt(0) %>
-                            </div>
-                          <% } %>
-                        </div>
-                        <div>
-                          <strong style="color: black;"><%= lawyer.user.firstName %> <%= lawyer.user.lastName %></strong>
-                        </div>
-                      </div>
-                    </td>
-                    <td style="color: black;"><%= lawyer.user.email %></td>
-                    <td><span class="status status-<%= lawyer.verificationStatus %>"><%= lawyer.verificationStatus.charAt(0).toUpperCase() + lawyer.verificationStatus.slice(1) %></span></td>
-                    <td><%= new Date(lawyer.createdAt).toLocaleDateString() %></td>
-                    <td>
-                      <div class="actions">
-                        <a href="/admin/lawyers/<%= lawyer.id %>" class="btn-view">View</a>
-                        <% if (lawyer.verificationStatus === 'pending') { %>
-                          <button class="btn-approve" data-id="<%= lawyer.id %>">Approve</button>
-                          <button class="btn-reject" data-id="<%= lawyer.id %>">Reject</button>
-                        <% } %>
-                      </div>
-                    </td>
-                  </tr>
-                <% }); %>
-              </tbody>
-            </table>
-      
-            <% if (totalPages > 1) { %>
-              <div class="pagination">
-                <% if (currentPage > 1) { %>
-                  <a href="?page=<%= currentPage - 1 %><%= currentStatus ? '&status=' + currentStatus : '' %>">&laquo; Prev</a>
-                <% } %>
-      
-                <% for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
-                  <a class="<%= i === currentPage ? 'active' : '' %>" href="?page=<%= i %><%= currentStatus ? '&status=' + currentStatus : '' %>"><%= i %></a>
-                <% } %>
-      
-                <% if (currentPage < totalPages) { %>
-                  <a href="?page=<%= currentPage + 1 %><%= currentStatus ? '&status=' + currentStatus : '' %>">Next &raquo;</a>
-                <% } %>
-              </div>
-            <% } %>
-          <% } %>
-        </section>
-      
-        <div id="rejectModal" class="modal">
-          <div class="modal-box">
-            <div class="modal-header">
-              <h3>Reject Verification</h3>
-              <span class="close" onclick="closeRejectModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-              <textarea id="rejectionReason" placeholder="Rejection reason..."></textarea>
-            </div>
-            <div class="modal-footer">
-              <button onclick="closeRejectModal()">Cancel</button>
-              <button id="confirmRejectBtn" class="btn-danger">Reject</button>
-            </div>
-          </div>
+<body class="bg-gray-50 text-gray-800 antialiased">
+
+    <div class="admin-container container mx-auto p-4 md:p-8">
+        <div class="admin-header mb-8 text-center md:text-left">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-700">Lawyer Verification Management</h1>
+            <p class="text-gray-500 mt-2 text-sm md:text-base">Manage and review lawyer verification applications.</p>
         </div>
-      </main>
+
+        <div class="filter-tabs mb-6 flex flex-wrap gap-2 items-center justify-center md:justify-start border-b border-gray-200 pb-3">
+            <button data-status="all" class="filter-tab px-4 py-2 text-sm font-medium rounded-md hover:bg-blue-500 hover:text-white transition-colors duration-150">All</button>
+            <button data-status="pending" class="filter-tab px-4 py-2 text-sm font-medium rounded-md hover:bg-blue-500 hover:text-white transition-colors duration-150">Pending</button>
+            <button data-status="approved" class="filter-tab px-4 py-2 text-sm font-medium rounded-md hover:bg-blue-500 hover:text-white transition-colors duration-150">Approved</button>
+            <button data-status="rejected" class="filter-tab px-4 py-2 text-sm font-medium rounded-md hover:bg-blue-500 hover:text-white transition-colors duration-150">Rejected</button>
+        </div>
+
+        <div class="lawyers-table bg-white shadow-lg rounded-lg p-4 md:p-6">
+            <div class="table-header mb-4 flex flex-col sm:flex-row justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-700">
+                    Lawyers <span id="currentStatusText" class="text-blue-600"></span>
+                    <span id="totalCountBadge" class="count-badge ml-2 bg-blue-100 text-blue-700 text-xs font-semibold px-2.5 py-0.5 rounded-full"></span>
+                </h2>
+                </div>
+
+            <div id="lawyersTableContainer" class="overflow-x-auto">
+                </div>
+
+            <div id="paginationContainer" class="mt-6 flex justify-center">
+                </div>
+        </div>
+    </div>
+
+    <div id="rejectModal" class="modal fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center p-4 z-50 invisible opacity-0">
+        <div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-md p-6 transform scale-95">
+            <div class="modal-header flex justify-between items-center pb-3 border-b border-gray-200">
+                <h3 class="text-lg font-semibold text-gray-700">Reject Lawyer Verification</h3>
+                <button class="close text-gray-400 hover:text-gray-600 text-2xl" onclick="closeRejectModal()">&times;</button>
+            </div>
+            <div class="modal-body py-4">
+                <p class="text-sm text-gray-600 mb-2">Please provide a reason for rejecting this lawyer's application:</p>
+                <textarea id="rejectionReason" class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none" placeholder="Enter rejection reason..." rows="4"></textarea>
+            </div>
+            <div class="modal-footer flex justify-end gap-3 pt-3 border-t border-gray-200">
+                <button class="btn-secondary px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md transition-colors" onclick="closeRejectModal()">Cancel</button>
+                <button class="btn-danger px-4 py-2 text-sm font-medium text-white bg-red-500 hover:bg-red-600 rounded-md transition-colors" onclick="confirmReject()">
+                    <span id="rejectButtonText">Reject Application</span>
+                    <i id="rejectButtonSpinner" class="fas fa-spinner fa-spin hidden ml-1"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="notificationArea" class="fixed top-5 right-5 z-[100] space-y-3">
+        </div>
+
+<script>
+    // --- Mock Data (Simulating EJS variables) ---
+    let allLawyers = [
+        { id: 1, user: { firstName: 'Alice', lastName: 'Smith', email: 'alice@example.com', profilePicture: 'https://placehold.co/40x40/E2E8F0/A0AEC0?text=AS' }, verificationStatus: 'pending', createdAt: '2023-01-15T10:00:00Z' },
+        { id: 2, user: { firstName: 'Bob', lastName: 'Johnson', email: 'bob@example.com', profilePicture: null }, verificationStatus: 'approved', createdAt: '2023-01-20T11:30:00Z' },
+        { id: 3, user: { firstName: 'Carol', lastName: 'Williams', email: 'carol@example.com', profilePicture: 'https://placehold.co/40x40/C6F6D5/38A169?text=CW' }, verificationStatus: 'pending', createdAt: '2023-02-01T09:15:00Z' },
+        { id: 4, user: { firstName: 'David', lastName: 'Brown', email: 'david@example.com', profilePicture: null }, verificationStatus: 'rejected', createdAt: '2023-02-05T14:00:00Z' },
+        { id: 5, user: { firstName: 'Eve', lastName: 'Davis', email: 'eve@example.com', profilePicture: 'https://placehold.co/40x40/BEE3F8/3182CE?text=ED' }, verificationStatus: 'approved', createdAt: '2023-02-10T16:45:00Z' },
+        { id: 6, user: { firstName: 'Frank', lastName: 'Miller', email: 'frank@example.com', profilePicture: null }, verificationStatus: 'pending', createdAt: '2023-03-01T08:00:00Z' },
+        { id: 7, user: { firstName: 'Grace', lastName: 'Wilson', email: 'grace@example.com', profilePicture: 'https://placehold.co/40x40/FEEBC8/D69E2E?text=GW' }, verificationStatus: 'pending', createdAt: '2023-03-05T12:20:00Z' },
+        { id: 8, user: { firstName: 'Henry', lastName: 'Moore', email: 'henry@example.com', profilePicture: null }, verificationStatus: 'rejected', createdAt: '2023-03-10T17:00:00Z' },
+        { id: 9, user: { firstName: 'Ivy', lastName: 'Taylor', email: 'ivy@example.com', profilePicture: 'https://placehold.co/40x40/FED7E2/D53F8C?text=IT' }, verificationStatus: 'approved', createdAt: '2023-03-15T10:30:00Z' },
+        { id: 10, user: { firstName: 'Jack', lastName: 'Anderson', email: 'jack@example.com', profilePicture: null }, verificationStatus: 'pending', createdAt: '2023-03-20T11:00:00Z' }
+    ];
+
+    let currentStatus = 'all'; // 'all', 'pending', 'approved', 'rejected'
+    let currentPage = 1;
+    const itemsPerPage = 5;
+    let currentLawyerId = null;
+
+    // --- DOM Elements ---
+    const lawyersTableContainer = document.getElementById('lawyersTableContainer');
+    const paginationContainer = document.getElementById('paginationContainer');
+    const totalCountBadge = document.getElementById('totalCountBadge');
+    const currentStatusText = document.getElementById('currentStatusText');
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    const rejectModal = document.getElementById('rejectModal');
+    const rejectionReasonInput = document.getElementById('rejectionReason');
+    const rejectButtonText = document.getElementById('rejectButtonText');
+    const rejectButtonSpinner = document.getElementById('rejectButtonSpinner');
+
+
+    // --- Rendering Functions ---
+    function renderLawyersTable() {
+        const filteredLawyers = currentStatus === 'all'
+            ? allLawyers
+            : allLawyers.filter(lawyer => lawyer.verificationStatus === currentStatus);
+
+        totalCountBadge.textContent = filteredLawyers.length;
+        currentStatusText.textContent = currentStatus === 'all' ? '' : `- ${currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1)}`;
+
+        const paginatedLawyers = filteredLawyers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+        if (paginatedLawyers.length === 0) {
+            lawyersTableContainer.innerHTML = `
+                <div class="empty-state text-center py-10">
+                    <i class="fas fa-users text-5xl text-gray-400 mb-4"></i>
+                    <h3 class="text-xl font-semibold text-gray-600">No lawyers found</h3>
+                    <p class="text-gray-500">There are no lawyers with the selected status.</p>
+                </div>`;
+            renderPagination(0, 0); // Clear pagination
+            return;
+        }
+
+        let tableHTML = `
+            <table class="min-w-full divide-y divide-gray-200 rounded-lg">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Lawyer</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">`;
+
+        paginatedLawyers.forEach(lawyer => {
+            const avatar = lawyer.user.profilePicture
+                ? `<img class="h-10 w-10 rounded-full object-cover" src="${lawyer.user.profilePicture}" alt="${lawyer.user.firstName}" onerror="this.onerror=null;this.src='https://placehold.co/40x40/E2E8F0/A0AEC0?text=${lawyer.user.firstName.charAt(0)}${lawyer.user.lastName.charAt(0)}';">`
+                : `<div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-semibold">
+                       ${lawyer.user.firstName.charAt(0)}${lawyer.user.lastName.charAt(0)}
+                   </div>`;
+
+            let statusBadgeClass = '';
+            switch (lawyer.verificationStatus) {
+                case 'pending': statusBadgeClass = 'bg-yellow-100 text-yellow-800'; break;
+                case 'approved': statusBadgeClass = 'bg-green-100 text-green-800'; break;
+                case 'rejected': statusBadgeClass = 'bg-red-100 text-red-800'; break;
+            }
+
+            tableHTML += `
+                <tr data-lawyer-id="${lawyer.id}"> <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                ${avatar}
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${lawyer.user.firstName} ${lawyer.user.lastName}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${lawyer.user.email}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusBadgeClass}">
+                            ${lawyer.verificationStatus.charAt(0).toUpperCase() + lawyer.verificationStatus.slice(1)}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(lawyer.createdAt).toLocaleDateString()}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div class="flex items-center space-x-2">
+                            <a href="#" data-action="view" data-id="${lawyer.id}" class="action-btn text-indigo-600 hover:text-indigo-900 transition-colors p-1 rounded-md hover:bg-indigo-50" title="View">
+                                <i class="fas fa-eye"></i>
+                            </a>`;
+            if (lawyer.verificationStatus === 'pending') {
+                tableHTML += `
+                            <button data-action="approve" data-id="${lawyer.id}" class="action-btn text-green-600 hover:text-green-900 transition-colors p-1 rounded-md hover:bg-green-50" title="Approve">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button data-action="reject" data-id="${lawyer.id}" class="action-btn text-red-600 hover:text-red-900 transition-colors p-1 rounded-md hover:bg-red-50" title="Reject">
+                                <i class="fas fa-times"></i>
+                            </button>`;
+            }
+            tableHTML += `</div></td></tr>`;
+        });
+
+        tableHTML += `</tbody></table>`;
+        lawyersTableContainer.innerHTML = tableHTML;
+
+        const totalPages = Math.ceil(filteredLawyers.length / itemsPerPage);
+        renderPagination(totalPages, filteredLawyers.length);
+    }
+
+    function renderPagination(totalPages, totalItems) {
+        if (totalItems === 0 || totalPages <= 1) {
+            paginationContainer.innerHTML = '';
+            return;
+        }
+
+        let paginationHTML = `<nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">`;
+
+        // Previous button
+        paginationHTML += `
+            <button ${currentPage > 1 ? `onclick="changePage(${currentPage - 1})"` : 'disabled'}
+                    class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}">
+                <span class="sr-only">Previous</span>
+                <i class="fas fa-chevron-left h-5 w-5"></i>
+            </button>`;
+
+        // Page numbers
+        const pagesToShow = [];
+        if (totalPages <= 5) { // Show all pages if 5 or less
+            for (let i = 1; i <= totalPages; i++) pagesToShow.push(i);
+        } else {
+            pagesToShow.push(1); // Always show first page
+            if (currentPage > 3) pagesToShow.push('...'); // Ellipsis if current page is far from start
+
+            // Add current page and its immediate neighbors if they are within bounds and not duplicates
+            for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+                if (!pagesToShow.includes(i)) {
+                     pagesToShow.push(i);
+                }
+            }
+            
+            // Ensure pages are sorted before adding the last page ellipsis
+            pagesToShow.sort((a,b) => a === '...' || b === '...' ? 0 : a-b);
+
+
+            if (currentPage < totalPages - 2 && !pagesToShow.includes(totalPages -1) ) pagesToShow.push('...'); // Ellipsis if current page is far from end
+            if(!pagesToShow.includes(totalPages)) pagesToShow.push(totalPages); // Always show last page
+        }
+        
+        // Remove duplicate ellipsis and ensure correct page numbers
+        const uniquePages = [...new Set(pagesToShow)];
+         // Filter out ellipses that are next to each other or at the very beginning/end if not logical
+        const finalPages = uniquePages.filter((page, index, arr) => {
+            if (page === '...') {
+                // Avoid consecutive ellipses
+                if (index > 0 && arr[index - 1] === '...') return false;
+                // Avoid ellipsis if it's just hiding one page number
+                if (index > 0 && index < arr.length -1 && arr[index+1] - arr[index-1] <= 2 && typeof arr[index+1] === 'number' && typeof arr[index-1] === 'number') return false;
+            }
+            return true;
+        });
+
+
+        finalPages.forEach(page => {
+            if (page === '...') {
+                paginationHTML += `<span class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">...</span>`;
+            } else {
+                paginationHTML += `
+                    <button onclick="changePage(${page})"
+                            class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium
+                                   ${page === currentPage ? 'z-10 bg-blue-50 border-blue-500 text-blue-600' : 'bg-white text-gray-700 hover:bg-gray-50'}">
+                        ${page}
+                    </button>`;
+            }
+        });
+
+
+        // Next button
+        paginationHTML += `
+            <button ${currentPage < totalPages ? `onclick="changePage(${currentPage + 1})"` : 'disabled'}
+                    class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}">
+                <span class="sr-only">Next</span>
+                <i class="fas fa-chevron-right h-5 w-5"></i>
+            </button>`;
+
+        paginationHTML += `</nav>`;
+        paginationContainer.innerHTML = paginationHTML;
+    }
+
+    // --- Event Handlers & Actions ---
+    filterTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            currentStatus = tab.dataset.status;
+            currentPage = 1;
+            updateActiveTab();
+            renderLawyersTable();
+        });
+    });
+
+    // Event delegation for table actions
+    lawyersTableContainer.addEventListener('click', function(event) {
+        const target = event.target.closest('.action-btn'); // Find the closest action button
+
+        if (!target) return; // Click was not on an action button or its child (icon)
+
+        const action = target.dataset.action;
+        const lawyerId = parseInt(target.dataset.id, 10);
+
+        if (action === 'view') {
+            event.preventDefault(); // Prevent default anchor behavior
+            viewLawyer(lawyerId);
+        } else if (action === 'approve') {
+            handleApproveLawyer(lawyerId, target);
+        } else if (action === 'reject') {
+            showRejectModal(lawyerId);
+        }
+    });
+
+
+    function updateActiveTab() {
+        filterTabs.forEach(t => {
+            if (t.dataset.status === currentStatus) {
+                t.classList.add('bg-blue-600', 'text-white');
+                t.classList.remove('text-gray-600', 'hover:bg-blue-500');
+            } else {
+                t.classList.remove('bg-blue-600', 'text-white');
+                t.classList.add('text-gray-600', 'hover:bg-blue-500');
+            }
+        });
+    }
+
+    function changePage(page) {
+        currentPage = page;
+        renderLawyersTable();
+        window.scrollTo({ top: lawyersTableContainer.offsetTop - 20, behavior: 'smooth' });
+    }
+
+    function viewLawyer(lawyerId) {
+        const lawyer = allLawyers.find(l => l.id === lawyerId);
+        if (!lawyer) {
+            showNotification(`Error: Lawyer with ID ${lawyerId} not found.`, 'error');
+            return;
+        }
+        console.log('Navigating to view lawyer:', lawyerId);
+        // Simulate navigation to a detail page as per the old href structure
+        window.location.href = `/admin/lawyers/${lawyerId}`;
+    }
+
+    function showRejectModal(lawyerId) {
+        currentLawyerId = lawyerId;
+        rejectionReasonInput.value = '';
+        rejectModal.classList.remove('invisible', 'opacity-0');
+        rejectModal.classList.add('visible', 'opacity-100');
+        rejectModal.querySelector('.modal-content').classList.remove('scale-95');
+        rejectModal.querySelector('.modal-content').classList.add('scale-100');
+    }
+
+    function closeRejectModal() {
+        rejectModal.classList.remove('visible', 'opacity-100');
+        rejectModal.classList.add('invisible', 'opacity-0');
+        rejectModal.querySelector('.modal-content').classList.remove('scale-100');
+        rejectModal.querySelector('.modal-content').classList.add('scale-95');
+        currentLawyerId = null;
+        // Reset button state
+        rejectButtonText.textContent = 'Reject Application';
+        rejectButtonSpinner.classList.add('hidden');
+        rejectModal.querySelector('.btn-danger').disabled = false;
+    }
+
+    function handleApproveLawyer(lawyerId, buttonElement) {
+        const originalButtonContent = buttonElement.innerHTML;
+        buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+        buttonElement.disabled = true;
+
+        // Simulate API call
+        setTimeout(() => {
+            const lawyerIndex = allLawyers.findIndex(l => l.id === lawyerId);
+            if (lawyerIndex > -1) {
+                allLawyers[lawyerIndex].verificationStatus = 'approved';
+                showNotification('Lawyer approved successfully!', 'success');
+                renderLawyersTable(); // Re-render to reflect changes
+            } else {
+                showNotification('Error approving lawyer: Not found.', 'error');
+            }
+        }, 1000);
+    }
+
+    function confirmReject() {
+        const reason = rejectionReasonInput.value.trim();
+        if (!reason) {
+            showNotification('Please provide a reason for rejection.', 'error');
+            rejectionReasonInput.focus();
+            return;
+        }
+
+        rejectButtonText.textContent = 'Rejecting...';
+        rejectButtonSpinner.classList.remove('hidden');
+        rejectModal.querySelector('.btn-danger').disabled = true;
+
+        // Simulate API call
+        setTimeout(() => {
+            const lawyerIndex = allLawyers.findIndex(l => l.id === currentLawyerId);
+            if (lawyerIndex > -1) {
+                allLawyers[lawyerIndex].verificationStatus = 'rejected';
+                allLawyers[lawyerIndex].rejectionReason = reason; // Store reason (optional)
+                showNotification('Lawyer application rejected.', 'success');
+                closeRejectModal();
+                renderLawyersTable(); // Re-render to reflect changes
+            } else {
+                showNotification('Error rejecting lawyer: Not found.', 'error');
+                 // Reset button state in modal
+                rejectButtonText.textContent = 'Reject Application';
+                rejectButtonSpinner.classList.add('hidden');
+                rejectModal.querySelector('.btn-danger').disabled = false;
+            }
+        }, 1000);
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        if (event.target === rejectModal) {
+            closeRejectModal();
+        }
+    }
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === "Escape" && !rejectModal.classList.contains('invisible')) {
+            closeRejectModal();
+        }
+    });
+
+
+    // --- Custom Notification System ---
+    function showNotification(message, type = 'info') {
+        const notificationArea = document.getElementById('notificationArea');
+        const existingNotifications = notificationArea.querySelectorAll('.toast-notification');
+        
+        // Limit number of notifications on screen
+        if (existingNotifications.length >= 5) {
+            existingNotifications[0].remove();
+        }
+
+        const notification = document.createElement('div');
+        notification.className = `toast-notification flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-lg opacity-0 transform translate-x-full`;
+        
+        let iconClass = 'fa-info-circle text-blue-500';
+        if (type === 'success') iconClass = 'fa-check-circle text-green-500';
+        if (type === 'error') iconClass = 'fa-exclamation-circle text-red-500';
+        if (type === 'warning') iconClass = 'fa-exclamation-triangle text-yellow-500';
+
+        notification.innerHTML = `
+            <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg bg-opacity-10
+                ${type === 'success' ? 'bg-green-100 text-green-500' : type === 'error' ? 'bg-red-100 text-red-500' : type === 'warning' ? 'bg-yellow-100 text-yellow-500' : 'bg-blue-100 text-blue-500'}">
+                <i class="fas ${iconClass} w-5 h-5"></i>
+                <span class="sr-only">${type} icon</span>
+            </div>
+            <div class="ml-3 text-sm font-normal">${message}</div>
+            <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8" aria-label="Close">
+                <span class="sr-only">Close</span>
+                <i class="fas fa-times w-5 h-5"></i>
+            </button>
+        `;
+        
+        notification.querySelector('button').onclick = () => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => notification.remove(), 300);
+        };
+
+        notificationArea.appendChild(notification);
+
+        // Trigger animation
+        setTimeout(() => {
+            notification.style.opacity = '1';
+            notification.style.transform = 'translateX(0)';
+        }, 10); // A small delay ensures transition is applied
+
+        // Auto remove after 4 seconds
+        setTimeout(() => {
+            if (notification.parentElement) { // Check if not already removed by user
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }
+        }, 4000);
+    }
+
+    // --- Initial Load ---
+    document.addEventListener('DOMContentLoaded', () => {
+        updateActiveTab();
+        renderLawyersTable();
+    });
+
+</script>
+
 </body>
 </html>

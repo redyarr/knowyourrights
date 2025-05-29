@@ -13,9 +13,16 @@ router.get('/', AdminController.dashboard);
 router.get('/dashboard', AdminController.dashboard);
 
 // Lawyer verification routes
+// Get all lawyers
 router.get('/lawyers', AdminController.getAllLawyers);
-router.get('/lawyers/:lawyerId', AdminController.viewLawyerDetails);
+
+// Approve a lawyer by ID
 router.post('/lawyers/:lawyerId/approve', AdminController.approveLawyer);
+
+// Reject a lawyer by ID  
 router.post('/lawyers/:lawyerId/reject', AdminController.rejectLawyer);
+
+// Get details for a specific lawyer
+router.get('/lawyers/:lawyerId', AdminController.viewLawyerDetails);
 
 module.exports = router;
