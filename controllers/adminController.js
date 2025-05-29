@@ -37,7 +37,8 @@ class AdminController {
             res.render('admin/dashboard', {
                 pendingLawyers,
                 recentlyVerified,
-                user: res.locals.user
+                user: res.locals.user,
+                path: req.path
             });
         } catch (error) {
             console.error('Error loading admin dashboard:', error);
@@ -72,7 +73,8 @@ class AdminController {
 
             res.render('admin/lawyer-details', {
                 lawyer,
-                user: res.locals.user
+                user: res.locals.user,
+                path: req.path
             });
         } catch (error) {
             console.error('Error loading lawyer details:', error);
@@ -240,7 +242,8 @@ class AdminController {
                 totalPages,
                 totalCount: lawyers.count,
                 currentStatus: status,
-                user: res.locals.user
+                user: res.locals.user,
+                path: req.path
             });
         } catch (error) {
             console.error('Error loading lawyers list:', error);
