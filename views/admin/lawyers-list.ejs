@@ -1,162 +1,138 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lawyer Verification - Admin Panel</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/admin.css">
-</head>
-<body>
+<%- include('../layouts/navbar', { path }) %>
+<link rel="stylesheet" href="/css/admin.css">
 
-<div class="container-fluid mt-4">
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Lawyer Verification Management</h2>
-                <div class="btn-group" role="group">
-                    <a href="/admin/lawyers" class="btn <%= !currentStatus ? 'btn-primary' : 'btn-outline-primary' %>">All</a>
-                    <a href="/admin/lawyers?status=pending" class="btn <%= currentStatus === 'pending' ? 'btn-warning' : 'btn-outline-warning' %>">Pending</a>
-                    <a href="/admin/lawyers?status=approved" class="btn <%= currentStatus === 'approved' ? 'btn-success' : 'btn-outline-success' %>">Approved</a>
-                    <a href="/admin/lawyers?status=rejected" class="btn <%= currentStatus === 'rejected' ? 'btn-danger' : 'btn-outline-danger' %>">Rejected</a>
-                </div>
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>Lawyer Verification Management</h1>
+        <p>Manage and review lawyer verification applications</p>
+    </div>
+
+    <div class="filter-tabs">
+        <a href="/admin/lawyers" class="filter-tab <%= !currentStatus ? 'active' : '' %>">All</a>
+        <a href="/admin/lawyers?status=pending" class="filter-tab <%= currentStatus === 'pending' ? 'active' : '' %>">Pending</a>
+        <a href="/admin/lawyers?status=approved" class="filter-tab <%= currentStatus === 'approved' ? 'active' : '' %>">Approved</a>
+        <a href="/admin/lawyers?status=rejected" class="filter-tab <%= currentStatus === 'rejected' ? 'active' : '' %>">Rejected</a>
+    </div>
+
+    <div class="lawyers-table">
+        <div class="table-header">
+            <h2>
+                Lawyers 
+                <% if (currentStatus) { %>
+                    - <%= currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1) %>
+                <% } %>
+                <span class="count-badge"><%= totalCount %></span>
+            </h2>
+        </div>
+        
+        <% if (lawyers.length === 0) { %>
+            <div class="empty-state">
+                <i class="fas fa-users"></i>
+                <h3>No lawyers found</h3>
+                <p>There are no lawyers with the selected status.</p>
             </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">
-                        Lawyers 
-                        <% if (currentStatus) { %>
-                            - <%= currentStatus.charAt(0).toUpperCase() + currentStatus.slice(1) %>
-                        <% } %>
-                        <span class="badge bg-secondary"><%= totalCount %></span>
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <% if (lawyers.length === 0) { %>
-                        <div class="text-center py-5">
-                            <i class="fas fa-users fa-3x text-muted mb-3"></i>
-                            <h5 class="text-muted">No lawyers found</h5>
-                            <p class="text-muted">There are no lawyers with the selected status.</p>
-                        </div>
-                    <% } else { %>
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Lawyer</th>
-                                        <th>Email</th>
-                                        <th>Status</th>
-                                        <th>Submitted</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% lawyers.forEach(lawyer => { %>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-items-center">
-                                                    <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 40px; height: 40px;">
-                                                        <i class="fas fa-user text-white"></i>
-                                                    </div>
-                                                    <div>
-                                                        <strong><%= lawyer.user.firstName %> <%= lawyer.user.lastName %></strong>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td><%= lawyer.user.email %></td>
-                                            <td>
-                                                <% if (lawyer.verificationStatus === 'pending') { %>
-                                                    <span class="badge bg-warning">Pending</span>
-                                                <% } else if (lawyer.verificationStatus === 'approved') { %>
-                                                    <span class="badge bg-success">Approved</span>
-                                                <% } else if (lawyer.verificationStatus === 'rejected') { %>
-                                                    <span class="badge bg-danger">Rejected</span>
-                                                <% } %>
-                                            </td>
-                                            <td>
-                                                <%= new Date(lawyer.createdAt).toLocaleDateString() %>
-                                            </td>
-                                            <td>
-                                                <div class="btn-group btn-group-sm">
-                                                    <a href="/admin/lawyers/<%= lawyer.id %>" class="btn btn-outline-primary">
-                                                        <i class="fas fa-eye"></i> View
-                                                    </a>
-                                                    <% if (lawyer.verificationStatus === 'pending') { %>
-                                                        <button class="btn btn-outline-success" onclick="approveLawyer(<%= lawyer.id %>)">
-                                                            <i class="fas fa-check"></i> Approve
-                                                        </button>
-                                                        <button class="btn btn-outline-danger" onclick="showRejectModal(<%= lawyer.id %>)">
-                                                            <i class="fas fa-times"></i> Reject
-                                                        </button>
-                                                    <% } %>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    <% }); %>
+        <% } else { %>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Lawyer</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Submitted</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% lawyers.forEach(lawyer => { %>
+                        <tr>
+                            <td>
+                                <div class="lawyer-info">
+                                    <div class="lawyer-avatar">
+                                        <% if (lawyer.user.profilePicture) { %>
+                                            <img src="<%= lawyer.user.profilePicture %>" alt="<%= lawyer.user.firstName %> <%= lawyer.user.lastName %>">
+                                        <% } else { %>
+                                            <div class="avatar-placeholder">
+                                                <%= lawyer.user.firstName.charAt(0) %><%= lawyer.user.lastName.charAt(0) %>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                    <div class="lawyer-details">
+                                        <h4><%= lawyer.user.firstName %> <%= lawyer.user.lastName %></h4>
+                                    </div>
+                                </div>
+                            </td>
+                            <td><%= lawyer.user.email %></td>
+                            <td>
+                                <span class="status-badge status-<%= lawyer.verificationStatus %>">
+                                    <%= lawyer.verificationStatus.charAt(0).toUpperCase() + lawyer.verificationStatus.slice(1) %>
+                                </span>
+                            </td>
+                            <td>
+                                <%= new Date(lawyer.createdAt).toLocaleDateString() %>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="/admin/lawyers/<%= lawyer.id %>" class="btn btn-outline-primary">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                    <% if (lawyer.verificationStatus === 'pending') { %>
+                                        <button class="btn btn-outline-success" onclick="approveLawyer(<%= lawyer.id %>)">
+                                            <i class="fas fa-check"></i> Approve
+                                        </button>
+                                        <button class="btn btn-outline-danger" onclick="showRejectModal(<%= lawyer.id %>)">
+                                            <i class="fas fa-times"></i> Reject
+                                        </button>
+                                    <% } %>
+                                </div>
+                            </td>
+                        </tr>
+                    <% }); %>
                                 </tbody>
                             </table>
-                        </div>
-
-                        <!-- Pagination -->
-                        <% if (totalPages > 1) { %>
-                            <nav aria-label="Lawyers pagination">
-                                <ul class="pagination justify-content-center mt-4">
-                                    <% if (currentPage > 1) { %>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page=<%= currentPage - 1 %><%= currentStatus ? '&status=' + currentStatus : '' %>">
-                                                Previous
-                                            </a>
-                                        </li>
-                                    <% } %>
-                                    
-                                    <% for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
-                                        <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                                            <a class="page-link" href="?page=<%= i %><%= currentStatus ? '&status=' + currentStatus : '' %>">
-                                                <%= i %>
-                                            </a>
-                                        </li>
-                                    <% } %>
-                                    
-                                    <% if (currentPage < totalPages) { %>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page=<%= currentPage + 1 %><%= currentStatus ? '&status=' + currentStatus : '' %>">
-                                                Next
-                                            </a>
-                                        </li>
-                                    <% } %>
-                                </ul>
-                            </nav>
+            </table>
+            
+            <!-- Pagination -->
+            <% if (totalPages > 1) { %>
+                <div class="pagination-container">
+                    <div class="pagination">
+                        <% if (currentPage > 1) { %>
+                            <a class="pagination-btn" href="?page=<%= currentPage - 1 %><%= currentStatus ? '&status=' + currentStatus : '' %>">
+                                <i class="fas fa-chevron-left"></i> Previous
+                            </a>
                         <% } %>
-                    <% } %>
+                        
+                        <% for (let i = Math.max(1, currentPage - 2); i <= Math.min(totalPages, currentPage + 2); i++) { %>
+                            <a class="pagination-btn <%= i === currentPage ? 'active' : '' %>" href="?page=<%= i %><%= currentStatus ? '&status=' + currentStatus : '' %>">
+                                <%= i %>
+                            </a>
+                        <% } %>
+                        
+                        <% if (currentPage < totalPages) { %>
+                            <a class="pagination-btn" href="?page=<%= currentPage + 1 %><%= currentStatus ? '&status=' + currentStatus : '' %>">
+                                Next <i class="fas fa-chevron-right"></i>
+                            </a>
+                        <% } %>
+                    </div>
                 </div>
-            </div>
-        </div>
+            <% } %>
+        <% } %>
     </div>
 </div>
 
-<!-- Reject Modal -->
-<div class="modal fade" id="rejectModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Reject Lawyer Verification</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <form id="rejectForm">
-                    <div class="mb-3">
-                        <label for="rejectionReason" class="form-label">Reason for rejection:</label>
-                        <textarea class="form-control" id="rejectionReason" rows="3" required 
-                                placeholder="Please provide a clear reason for rejection..."></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" onclick="confirmReject()">Reject Lawyer</button>
-            </div>
+<!-- Rejection Modal -->
+<div id="rejectModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Reject Lawyer Verification</h3>
+            <span class="close" onclick="closeRejectModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <p>Please provide a reason for rejecting this lawyer's application:</p>
+            <textarea id="rejectionReason" placeholder="Enter rejection reason..." rows="4"></textarea>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeRejectModal()">Cancel</button>
+            <button class="btn btn-danger" onclick="confirmReject()">Reject Application</button>
         </div>
     </div>
 </div>
@@ -166,11 +142,22 @@ let currentLawyerId = null;
 
 function showRejectModal(lawyerId) {
     currentLawyerId = lawyerId;
+    document.getElementById('rejectModal').style.display = 'block';
     document.getElementById('rejectionReason').value = '';
-    new bootstrap.Modal(document.getElementById('rejectModal')).show();
+}
+
+function closeRejectModal() {
+    document.getElementById('rejectModal').style.display = 'none';
+    currentLawyerId = null;
 }
 
 function approveLawyer(lawyerId) {
+    // Show loading state
+    const approveBtn = document.querySelector(`button[onclick="approveLawyer(${lawyerId})"]`);
+    const originalText = approveBtn.innerHTML;
+    approveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Approving...';
+    approveBtn.disabled = true;
+
     fetch(`/admin/lawyers/${lawyerId}/approve`, {
         method: 'POST',
         headers: {
@@ -180,23 +167,34 @@ function approveLawyer(lawyerId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            location.reload();
+            showNotification('Lawyer approved successfully!', 'success');
+            setTimeout(() => location.reload(), 1000);
         } else {
-            alert('Error: ' + data.message);
+            approveBtn.innerHTML = originalText;
+            approveBtn.disabled = false;
+            showNotification(data.message || 'Error approving lawyer', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('An error occurred while approving the lawyer.');
+        approveBtn.innerHTML = originalText;
+        approveBtn.disabled = false;
+        showNotification('An error occurred while approving the lawyer.', 'error');
     });
 }
 
 function confirmReject() {
     const reason = document.getElementById('rejectionReason').value.trim();
     if (!reason) {
-        alert('Please provide a reason for rejection.');
+        showNotification('Please provide a reason for rejection.', 'error');
         return;
     }
+
+    // Show loading state
+    const rejectBtn = document.querySelector('.modal-footer .btn-danger');
+    const originalText = rejectBtn.innerHTML;
+    rejectBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Rejecting...';
+    rejectBtn.disabled = true;
 
     fetch(`/admin/lawyers/${currentLawyerId}/reject`, {
         method: 'POST',
@@ -208,18 +206,66 @@ function confirmReject() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            bootstrap.Modal.getInstance(document.getElementById('rejectModal')).hide();
-            location.reload();
+            showNotification('Lawyer application rejected', 'success');
+            closeRejectModal();
+            setTimeout(() => location.reload(), 1000);
         } else {
-            alert('Error: ' + data.message);
+            rejectBtn.innerHTML = originalText;
+            rejectBtn.disabled = false;
+            showNotification(data.message || 'Error rejecting lawyer', 'error');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('An error occurred while rejecting the lawyer.');
+        rejectBtn.innerHTML = originalText;
+        rejectBtn.disabled = false;
+        showNotification('An error occurred while rejecting the lawyer.', 'error');
     });
 }
-</script>
 
-</body>
-</html>
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('rejectModal');
+    if (event.target === modal) {
+        closeRejectModal();
+    }
+}
+
+// Custom notification system
+function showNotification(message, type = 'info') {
+    // Remove existing notifications
+    const existingNotifications = document.querySelectorAll('.toast-notification');
+    existingNotifications.forEach(notification => notification.remove());
+
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `toast-notification toast-${type}`;
+    notification.innerHTML = `
+        <div class="toast-content">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+        <button class="toast-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+
+    // Add to page
+    document.body.appendChild(notification);
+
+    // Auto remove after 4 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => notification.remove(), 300);
+        }
+    }, 4000);
+
+    // Trigger animation
+    setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+}
+</script>

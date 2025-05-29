@@ -1,8 +1,8 @@
-<%- include('../layouts/navbar') %>
+<%- include('../layouts/navbar', { path }) %>
 <link rel="stylesheet" href="/css/admin.css">
 
-<div class="admin-dashboard">
-    <div class="dashboard-header">
+<div class="admin-container">
+    <div class="admin-header">
         <h1>Admin Dashboard</h1>
         <p>Manage lawyer verifications and system administration</p>
     </div>
@@ -26,12 +26,14 @@
         <div class="pending-verifications">
             <div class="section-header">
                 <h2>Pending Lawyer Verifications</h2>
-                <a href="/admin/lawyers?status=pending" class="btn btn-outline">View All</a>
+                <a href="/admin/lawyers?status=pending" class="btn-outline">View All</a>
             </div>
             
-            <% if (pendingLawyers.length === 0) { %>
+            <% if (pendingLawyers.length === 0) { %>>
                 <div class="empty-state">
-                    <p>No pending verifications at the moment.</p>
+                    <i class="fas fa-users"></i>
+                    <h3>No Pending Verifications</h3>
+                    <p>All lawyer applications have been processed.</p>
                 </div>
             <% } else { %>
                 <div class="lawyers-grid">
@@ -55,7 +57,9 @@
                                 </div>
                             </div>
                             <div class="lawyer-actions">
-                                <a href="/admin/lawyers/<%= lawyer.id %>" class="btn btn-primary btn-sm">Review</a>
+                                <a href="/admin/lawyers/<%= lawyer.id %>" class="btn btn-outline-primary">
+                                    <i class="fas fa-eye"></i> Review
+                                </a>
                             </div>
                         </div>
                     <% }); %>
@@ -66,31 +70,68 @@
         <div class="recent-verifications">
             <div class="section-header">
                 <h2>Recent Verifications</h2>
-                <a href="/admin/lawyers" class="btn btn-outline">View All</a>
+                <a href="/admin/lawyers" class="btn-outline">View All</a>
             </div>
             
             <% if (recentlyVerified.length === 0) { %>
                 <div class="empty-state">
-                    <p>No recent verifications.</p>
+                    <i class="fas fa-clock"></i>
+                    <h3>No Recent Activity</h3>
+                    <p>No recent verifications to display.</p>
                 </div>
             <% } else { %>
-                <div class="recent-list">
-                    <% recentlyVerified.forEach(lawyer => { %>
-                        <div class="recent-item <%= lawyer.verificationStatus %>">
-                            <div class="lawyer-info">
-                                <strong><%= lawyer.user.firstName %> <%= lawyer.user.lastName %></strong>
-                                <span class="email"><%= lawyer.user.email %></span>
-                            </div>
-                            <div class="verification-info">
-                                <span class="status status-<%= lawyer.verificationStatus %>">
-                                    <%= lawyer.verificationStatus.charAt(0).toUpperCase() + lawyer.verificationStatus.slice(1) %>
-                                </span>
-                                <span class="date">
-                                    <%= new Date(lawyer.verificationDate).toLocaleDateString() %>
-                                </span>
-                            </div>
-                        </div>
-                    <% }); %>
+                <div class="lawyers-table">
+                    <div class="table-header">
+                        <h2>Recent Activity</h2>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Lawyer</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% recentlyVerified.forEach(lawyer => { %>
+                                <tr>
+                                    <td>
+                                        <div class="lawyer-info">
+                                            <div class="lawyer-avatar">
+                                                <% if (lawyer.user.profilePicture) { %>
+                                                    <img src="<%= lawyer.user.profilePicture %>" alt="<%= lawyer.user.firstName %> <%= lawyer.user.lastName %>">
+                                                <% } else { %>
+                                                    <div class="avatar-placeholder">
+                                                        <%= lawyer.user.firstName.charAt(0) %><%= lawyer.user.lastName.charAt(0) %>
+                                                    </div>
+                                                <% } %>
+                                            </div>
+                                            <div class="lawyer-details">
+                                                <h4><%= lawyer.user.firstName %> <%= lawyer.user.lastName %></h4>
+                                                <p><%= lawyer.user.email %></p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-<%= lawyer.verificationStatus %>">
+                                            <%= lawyer.verificationStatus.charAt(0).toUpperCase() + lawyer.verificationStatus.slice(1) %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <%= new Date(lawyer.verificationDate).toLocaleDateString() %>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="/admin/lawyers/<%= lawyer.id %>" class="btn btn-outline-primary">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
                 </div>
             <% } %>
         </div>
@@ -98,376 +139,26 @@
 </div>
 
 <style>
-.admin-dashboard {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-}
-
-.dashboard-header {
-    text-align: center;
-    margin-bottom: 40px;
-    color: white;
-}
-
-.dashboard-header h1 {
-    color: white;
-    margin-bottom: 10px;
-    font-size: 2.5rem;
-    font-weight: 700;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-}
-
-.dashboard-header p {
-    color: rgba(255,255,255,0.9);
-    font-size: 1.1rem;
-}
-
-.dashboard-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 25px;
-    margin-bottom: 50px;
-}
-
-.stat-card {
-    background: white;
-    padding: 30px 25px;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    text-align: center;
-    border: none;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.stat-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-}
-
-.stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #f39c12, #e67e22);
-}
-
-.stat-card.pending::before {
-    background: linear-gradient(90deg, #f39c12, #e67e22);
-}
-
-.stat-card.approved::before {
-    background: linear-gradient(90deg, #27ae60, #2ecc71);
-}
-
-.stat-card.rejected::before {
-    background: linear-gradient(90deg, #e74c3c, #c0392b);
-}
-
-.stat-card h3 {
-    font-size: 2.5em;
-    margin: 0 0 10px 0;
-    color: #2c3e50;
-    font-weight: 700;
-}
-
-.stat-card p {
-    margin: 0;
-    color: #7f8c8d;
-    font-weight: 500;
-    font-size: 1.1rem;
-}
-
 .dashboard-content {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 40px;
+    gap: 32px;
+    margin-top: 24px;
 }
 
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
+.pending-verifications,
+.recent-verifications {
     background: white;
-    padding: 20px 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.section-header h2 {
-    color: #2c3e50;
-    margin: 0;
-    font-weight: 600;
-}
-
-.lawyers-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 25px;
-}
-
-.lawyer-card {
-    background: white;
-    border-radius: 15px;
-    padding: 25px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-    border: none;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
-
-.lawyer-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-}
-
-.lawyer-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, #f39c12, #e67e22);
-}
-
-.lawyer-info {
-    display: flex;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.lawyer-avatar {
-    margin-right: 20px;
-    position: relative;
-}
-
-.lawyer-avatar img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid #f8f9fa;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.avatar-placeholder {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 20px;
-    border: 3px solid #f8f9fa;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.lawyer-details h4 {
-    margin: 0 0 8px 0;
-    color: #2c3e50;
-    font-weight: 600;
-    font-size: 1.1rem;
-}
-
-.lawyer-details p {
-    margin: 4px 0;
-    color: #7f8c8d;
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-.email {
-    color: #667eea !important;
-    font-weight: 500;
-}
-
-.law-firm {
-    color: #f39c12 !important;
-    font-weight: 500;
-}
-
-.badge-number {
-    color: #27ae60 !important;
-    font-weight: 500;
-}
-
-.lawyer-actions {
-    text-align: right;
-    margin-top: 15px;
-}
-
-.recent-list {
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-    overflow: hidden;
-}
-
-.recent-item {
-    padding: 20px 25px;
-    border-bottom: 1px solid #f8f9fa;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background-color 0.3s ease;
-}
-
-.recent-item:hover {
-    background-color: #f8f9fa;
-}
-
-.recent-item:last-child {
-    border-bottom: none;
-}
-
-.recent-item .lawyer-info {
-    margin-bottom: 0;
-}
-
-.recent-item .lawyer-info strong {
-    display: block;
-    color: #2c3e50;
-    margin-bottom: 4px;
-    font-weight: 600;
-}
-
-.recent-item .email {
-    font-size: 13px;
-    color: #7f8c8d;
-}
-
-.verification-info {
-    text-align: right;
-}
-
-.status {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    display: inline-block;
-    margin-bottom: 6px;
-    letter-spacing: 0.5px;
-}
-
-.status-approved {
-    background: linear-gradient(135deg, #d5f4e6, #a8e6cf);
-    color: #27ae60;
-}
-
-.status-rejected {
-    background: linear-gradient(135deg, #fadbd8, #f5b7b1);
-    color: #e74c3c;
-}
-
-.date {
-    font-size: 12px;
-    color: #7f8c8d;
-    display: block;
-    font-weight: 500;
-}
-
-.empty-state {
-    text-align: center;
-    padding: 50px;
-    color: #7f8c8d;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
-    margin: 20px 0;
-}
-
-.empty-state p {
-    font-size: 1.1rem;
-    margin: 0;
-}
-
-.btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 8px;
-    text-decoration: none;
-    display: inline-block;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-}
-
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-}
-
-.btn-outline {
-    background: transparent;
-    color: #667eea;
-    border: 2px solid #667eea;
-}
-
-.btn-outline:hover {
-    background: #667eea;
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-}
-
-.btn-sm {
-    padding: 8px 16px;
-    font-size: 12px;
-}
-
-@media (max-width: 768px) {
-    .admin-dashboard {
-        padding: 15px;
-    }
-    
+@media (max-width: 1024px) {
     .dashboard-content {
         grid-template-columns: 1fr;
-        gap: 30px;
-    }
-    
-    .lawyers-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .section-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-        padding: 15px 20px;
-    }
-    
-    .dashboard-stats {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .stat-card {
-        padding: 25px 20px;
+        gap: 24px;
     }
 }
 </style>
