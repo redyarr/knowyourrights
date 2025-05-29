@@ -36,13 +36,42 @@
         <!-- Profile Info -->
         <div class="mt-20 px-6 pb-6">
             <div>
-                <h2 class="text-2xl font-bold">
-                    <%= profile.firstName %>
-                        <%= profile.lastName %>
-                </h2>
-                <p class="text-gray-600">
-                    <%= profile.role.charAt(0).toUpperCase() + profile.role.slice(1) %> at LegalNet
-                </p>
+                <% if (profile?.role === 'lawyer') { %>
+                    <% 
+                      let authorityColor = 'blue';
+                      let authorityBadge = 'Training';
+                      let authorityIcon = 'fas fa-graduation-cap';
+                      
+                      if (profile?.lawyer?.badgeIssuingAuthority === 'approved') {
+                        authorityColor = 'green';
+                        authorityBadge = 'Approved';
+                        authorityIcon = 'fas fa-shield-alt';
+                      } else if (profile?.lawyer?.badgeIssuingAuthority === 'consultant') {
+                        authorityColor = 'purple';
+                        authorityBadge = 'Consultant';
+                        authorityIcon = 'fas fa-crown';
+                      }
+                    %>
+                    <div class="flex items-center flex-wrap gap-3 mb-2">
+                        <h2 class="text-2xl font-bold">
+                            <%= profile.firstName %> <%= profile.lastName %>
+                        </h2>
+                        <div class="flex items-center bg-<%= authorityColor %>-100 text-<%= authorityColor %>-800 px-3 py-1 rounded-full border-2 border-<%= authorityColor %>-200">
+                            <i class="<%= authorityIcon %> text-sm mr-2"></i>
+                            <span class="text-sm font-bold"><%= authorityBadge %></span>
+                        </div>
+                    </div>
+                    <p class="text-<%= authorityColor %>-600">
+                        <%= profile.role.charAt(0).toUpperCase() + profile.role.slice(1) %> • <%= authorityBadge %> Level at LegalNet
+                    </p>
+                <% } else { %>
+                    <h2 class="text-2xl font-bold">
+                        <%= profile.firstName %> <%= profile.lastName %>
+                    </h2>
+                    <p class="text-gray-600">
+                        <%= profile.role.charAt(0).toUpperCase() + profile.role.slice(1) %> at LegalNet
+                    </p>
+                <% } %>
                 <p class="text-gray-500 text-sm">New York, United States</p>
             </div>
             <div class="flex mt-3 space-x-4">
@@ -54,19 +83,46 @@
         </div>
     </div>
 
-    <!-- About Card -->
-    <div class="bg-white rounded-lg shadow mb-5">
-        <div class="border-b px-6 py-3">
-            <h3 class="text-xl font-bold">About</h3>
+    <!-- About Card (Lawyers Only) -->
+    <% if (profile?.role === 'lawyer') { %>
+        <% 
+          let authorityColor = 'blue';
+          let authorityBadge = 'Training';
+          let ribbonGradient = 'from-blue-400 to-blue-600';
+          
+          if (profile?.lawyer?.badgeIssuingAuthority === 'approved') {
+            authorityColor = 'green';
+            authorityBadge = 'Approved';
+            ribbonGradient = 'from-green-400 to-green-600';
+          } else if (profile?.lawyer?.badgeIssuingAuthority === 'consultant') {
+            authorityColor = 'purple';
+            authorityBadge = 'Consultant';
+            ribbonGradient = 'from-purple-400 to-purple-600';
+          }
+        %>
+        <div class="bg-white rounded-lg shadow mb-5 relative overflow-hidden">
+            <!-- Authority Ribbon -->
+            <div class="absolute top-0 right-0 bg-gradient-to-r <%= ribbonGradient %> text-white px-4 py-2 transform rotate-12 translate-x-4 -translate-y-2 shadow-lg">
+                <span class="text-sm font-bold"><%= authorityBadge %></span>
+            </div>
+            
+            <div class="border-b px-6 py-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold">Professional Summary</h3>
+                    <span class="bg-<%= authorityColor %>-100 text-<%= authorityColor %>-800 px-3 py-1 rounded-full text-sm font-semibold">
+                        <%= authorityBadge %> Level
+                    </span>
+                </div>
+            </div>
+            <div class="px-6 py-4">
+                <div class="border-l-4 border-<%= authorityColor %>-500 pl-4">
+                    <p>
+                        <%= profile?.lawyer?.summary || 'Experienced legal professional with a passion for helping clients navigate complex legal matters.' %>
+                    </p>
+                </div>
+            </div>
         </div>
-        <div class="px-6 py-4">
-            <p>
-                <%= profile.about
-                    || "Experienced legal professional with a passion for helping clients navigate complex legal matters. Specializing in corporate law and contract negotiations."
-                    %>
-            </p>
-        </div>
-    </div>
+    <% } %>
 
     <!-- Experience Card -->
     <% if (profile.experiences && profile.experiences.length> 0) { %>
