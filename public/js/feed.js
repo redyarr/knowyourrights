@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                     toggleEditPostModal();
                 } else {
-                    alert(data.error || 'Failed to edit post.');
+                    notifications.error(data.error || 'Failed to edit post.');
                 }
             });
     };
@@ -244,7 +244,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                     toggleEditCommentModal();
                 } else {
-                    alert(data.error || 'Failed to edit comment.');
+                    notifications.error(data.error || 'Failed to edit comment.');
                 }
             });
     };
@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             // Show action buttons again
                             if (actionButtons) actionButtons.style.display = '';
                         } else {
-                            alert(data.error || 'Failed to edit comment.');
+                            notifications.error(data.error || 'Failed to edit comment.');
                         }
                     });
             });
@@ -406,7 +406,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             if (countElement) countElement.textContent = `${commentCount} comments`;
                         }
                     } else {
-                        alert(data.error || 'Failed to delete comment.');
+                        notifications.error(data.error || 'Failed to delete comment.');
                     }
                     hideDeleteModal();
                 });
@@ -418,7 +418,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         const postDiv = document.getElementById(`post-${pendingDelete.id}`);
                         if (postDiv) postDiv.remove();
                     } else {
-                        alert(data.error || 'Failed to delete post.');
+                        notifications.error(data.error || 'Failed to delete post.');
                     }
                     hideDeleteModal();
                 });

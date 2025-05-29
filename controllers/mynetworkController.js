@@ -38,7 +38,33 @@ exports.getNetwork = async (req, res) => {
         });
         console.log("step 4: Fetched connection requests:", connectionRequests);
 
-        console.log("step 5: Fetching accepted friends");
+        console.log("step 5: Fetching pending requests sent by the user");
+        const pendingRequests = await Connection.findAll({
+            where: {
+                requester_id: userId,
+                status: 'pending',
+            },
+            include: [
+                {
+                    model: User,
+                    as: 'receiver', // The user who received the request
+                    attributes: ['id', 'firstName', 'lastName', 'role'],
+                    include: [
+                        {
+                            model: ProfileImage,
+                            attributes: ['imagePath'],
+                        },
+                        {
+                            model: Lawyer,
+                            required: false
+                        }
+                    ],
+                },
+            ],
+        });
+        console.log("step 6: Fetched pending requests:", pendingRequests);
+
+        console.log("step 7: Fetching accepted friends");
         const friends = await Connection.findAll({
             where: {
                 [Op.or]: [
@@ -64,12 +90,13 @@ exports.getNetwork = async (req, res) => {
                 },
             ],
         });
-        console.log("step 6: Fetched friends:", friends);
+        console.log("step 8: Fetched friends:", friends);
         
         // Fetch lawyers who are not yet connected with the user
         const connectedUserIds = [
             ...friends.map(f => f.requester_id === userId ? f.receiver_id : f.requester_id),
-            ...connectionRequests.map(r => r.requester_id)
+            ...connectionRequests.map(r => r.requester_id),
+            ...pendingRequests.map(r => r.receiver_id)
         ];
         
         // Add current user to exclude list
@@ -92,15 +119,16 @@ exports.getNetwork = async (req, res) => {
             limit: 5
         });
 
-        console.log("step 7: Rendering mynetwork/index view");
+        console.log("step 9: Rendering mynetwork/index view");
         res.render('mynetwork/index', {
             title: 'My Network | Legal Network',
             connectionRequests: connectionRequests, // Pass connection requests
+            pendingRequests: pendingRequests, // Pass pending requests sent by user
             friends: friends, // Pass accepted friends
             suggestedLawyers: suggestedLawyers, // Pass suggested lawyers
             user: req.session.user,
         });
-        console.log("step 8: Rendered mynetwork/index successfully");
+        console.log("step 10: Rendered mynetwork/index successfully");
     } catch (error) {
         console.error("Error fetching network:", error);
         res.status(500).render('error', { error: "An unexpected error occurred while fetching your network." });
@@ -242,6 +270,75 @@ exports.declineConnectionRequest = async (req, res) => {
     } catch (error) {
         console.error('Error declining connection request:', error);
         return res.status(500).json({ success: false, message: 'An error occurred while declining the request' });
+    }
+};
+
+// Cancel a connection request (sent by the user)
+exports.cancelConnectionRequest = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const connectionId = req.params.connectionId;
+        
+        // Find the connection request sent by the user
+        const connection = await Connection.findOne({
+            where: {
+                id: connectionId,
+                requester_id: userId,
+                status: 'pending'
+            }
+        });
+        
+        if (!connection) {
+            return res.status(404).json({ success: false, message: 'Connection request not found' });
+        }
+        
+        // Delete the connection request
+        await connection.destroy();
+        
+        return res.status(200).json({ success: true, message: 'Connection request cancelled' });
+    } catch (error) {
+        console.error('Error cancelling connection request:', error);
+        return res.status(500).json({ success: false, message: 'An error occurred while cancelling the request' });
+    }
+};
+
+// Get connection status between current user and target user
+exports.getConnectionStatus = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const targetUserId = req.params.userId;
+        
+        if (!userId) {
+            return res.status(401).json({ success: false, message: 'User not authenticated' });
+        }
+        
+        // Find connection between users
+        const connection = await Connection.findOne({
+            where: {
+                [Op.or]: [
+                    { requester_id: userId, receiver_id: targetUserId },
+                    { requester_id: targetUserId, receiver_id: userId }
+                ]
+            }
+        });
+        
+        if (!connection) {
+            return res.status(200).json({ 
+                success: true, 
+                status: null, 
+                connectionId: null 
+            });
+        }
+        
+        return res.status(200).json({ 
+            success: true, 
+            status: connection.status,
+            connectionId: connection.id,
+            isRequester: connection.requester_id === userId
+        });
+    } catch (error) {
+        console.error('Error getting connection status:', error);
+        return res.status(500).json({ success: false, message: 'An error occurred while getting connection status' });
     }
 };
 

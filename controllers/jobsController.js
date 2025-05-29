@@ -1,10 +1,18 @@
-const { Job, JobApply, User, Lawyer, Notification, UserNotification, Message } = require('../models');
+const { Job, JobApply, User, Lawyer, Notification, UserNotification, Message, ProfileImage } = require('../models');
 const { Op } = require('sequelize');
 
 exports.getJobs = async (req, res) => {
     try {
-        // Fetch all available jobs
+        // Fetch all available jobs with author details
         const jobs = await Job.findAll({
+            include: [{
+                model: User,
+                attributes: ['id', 'firstName', 'lastName'],
+                include: [{
+                    model: ProfileImage,
+                    attributes: ['imagePath']
+                }]
+            }],
             order: [['createdAt', 'DESC']]
         });
 
@@ -71,7 +79,11 @@ exports.getJobDetails = async (req, res) => {
         const job = await Job.findByPk(jobId, {
             include: [{
                 model: User,
-                attributes: ['id', 'firstName', 'lastName']
+                attributes: ['id', 'firstName', 'lastName'],
+                include: [{
+                    model: ProfileImage,
+                    attributes: ['imagePath']
+                }]
             }]
         });
 

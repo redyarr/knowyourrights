@@ -38,6 +38,10 @@ const User = sequelize.define('users', {
     city: {
         type: DataTypes.STRING,
         allowNull: true
+    },
+    interests: {
+        type: DataTypes.TEXT,
+        allowNull: true
     }
 }, {
     timestamps: true,

@@ -12,6 +12,8 @@ router.get('/', isAuthenticated, MyNetworkController.getNetwork);
 router.post('/connect/:userId', isAuthenticated, MyNetworkController.sendConnectionRequest);
 router.post('/accept/:connectionId', isAuthenticated, MyNetworkController.acceptConnectionRequest);
 router.post('/decline/:connectionId', isAuthenticated, MyNetworkController.declineConnectionRequest);
+router.post('/cancel/:connectionId', isAuthenticated, MyNetworkController.cancelConnectionRequest);
+router.get('/connection-status/:userId', isAuthenticated, MyNetworkController.getConnectionStatus);
 
 // API routes for suggested connections
 router.get('/suggested-lawyers', isAuthenticated, MyNetworkController.getSuggestedLawyers);

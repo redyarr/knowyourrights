@@ -29,6 +29,10 @@ const Lawyer = sequelize.define('lawyers', {
     summary:{
         type: DataTypes.TEXT,
         allowNull:true,
+    },
+    legalAreas: {
+        type: DataTypes.TEXT,
+        allowNull: true
     }
 },{
         underscored: true,

@@ -60,14 +60,14 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('Connection request sent!');
-            } else {
-                alert(data.error || 'Failed to send connection request');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while sending the connection request');
+                            notifications.success('Connection request sent successfully!');
+                        } else {
+                            notifications.error(data.error || 'Failed to send connection request');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        notifications.error('An error occurred while sending the connection request');
         });
     }
 </script>

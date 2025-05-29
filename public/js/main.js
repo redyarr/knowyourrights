@@ -5,9 +5,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const deleteButtons = document.querySelectorAll('.btn-danger');
     deleteButtons.forEach(button => {
         button.addEventListener('click', function(e) {
-            if (!confirm('Are you sure you want to delete this item?')) {
-                e.preventDefault();
-            }
+            e.preventDefault();
+            notifications.confirm('Are you sure you want to delete this item?', () => {
+                // User confirmed, proceed with deletion
+                if (e.target.tagName === 'A') {
+                    window.location.href = e.target.href;
+                } else if (e.target.tagName === 'FORM') {
+                    e.target.submit();
+                }
+            });
+            return false;
         });
     });
     
@@ -29,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (!isValid) {
                 e.preventDefault();
-                alert('Please fill in all required fields.');
+                notifications.warning('Please fill in all required fields.');
             }
         });
     });

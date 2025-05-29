@@ -1,8 +1,25 @@
+<%- include('../layouts/header') %>
 <div class="row">
+    <% if (locals.userRole !== 'lawyer') { %>
+        <div class="col-md-8 mx-auto">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Access Denied</h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <h4>Lawyers Only</h4>
+                        <p>Only verified lawyers can create posts. If you're a lawyer, please ensure your account is properly verified.</p>
+                        <a href="/feed" class="btn btn-primary">Return to Feed</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } else { %>
     <div class="col-md-8 mx-auto">
         <div class="card">
             <div class="card-header">
-                <h2>Create Post</h2>
+                <h2>Share Legal Insights</h2>
             </div>
             <div class="card-body">
                 <% if (typeof error !=='undefined' ) { %>
@@ -39,4 +56,5 @@
             </div>
         </div>
     </div>
+    <% } %>
 </div>

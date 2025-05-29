@@ -18,12 +18,13 @@
                 <% if (loggedInUserId) { %>
                         <div class="flex space-x-2">
                             <% if (!connectionStatus) { %>
-                                <button onclick="connectWithUser(<%= profile.id %>)"
+                                <button type="button" id="connectBtn" data-user-id="<%= profile.id %>" data-action="connect"
                                     class="bg-blue-600 text-white px-4 py-2 rounded-full">Connect</button>
                                 <% } else if (connectionStatus==='pending' ) { %>
-                                    <button class="bg-gray-400 text-white px-4 py-2 rounded-full">Pending</button>
+                                    <button type="button" id="connectBtn" data-user-id="<%= profile.id %>" data-action="cancel"
+                                        class="bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-red-500 transition-colors">Cancel</button>
                                     <% } else if (connectionStatus==='accepted' ) { %>
-                                        <button
+                                        <button type="button" id="connectBtn"
                                             class="bg-green-600 text-white px-4 py-2 rounded-full">Connected</button>
                                         <% } %>
                                             <a href="/messaging/<%= profile.id %>"
@@ -183,7 +184,33 @@
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const connectBtn = document.getElementById('connectBtn');
+        
+        if (connectBtn) {
+            connectBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const userId = this.getAttribute('data-user-id');
+                const action = this.getAttribute('data-action');
+                
+                if (action === 'connect') {
+                    connectWithUser(userId);
+                } else if (action === 'cancel') {
+                    cancelConnectionRequest(userId);
+                }
+            });
+        }
+    });
+
     function connectWithUser(userId) {
+        const connectBtn = document.getElementById('connectBtn');
+        
+        // Disable button to prevent multiple clicks
+        connectBtn.disabled = true;
+        connectBtn.textContent = 'Connecting...';
+        
         fetch(`/mynetwork/connect/${userId}`, {
             method: 'POST',
             headers: {
@@ -193,16 +220,72 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Connection request sent!');
-                    // Reload the page to show updated status
-                    window.location.reload();
+                    notifications.success('Connection request sent successfully!');
+                    // Update button to show pending state
+                    connectBtn.textContent = 'Cancel';
+                    connectBtn.className = 'bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-red-500 transition-colors';
+                    connectBtn.setAttribute('data-action', 'cancel');
+                    connectBtn.disabled = false;
                 } else {
-                    alert(data.error || 'Failed to send connection request');
+                    notifications.error(data.error || 'Failed to send connection request');
+                    // Restore original button state
+                    connectBtn.textContent = 'Connect';
+                    connectBtn.disabled = false;
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred while sending the connection request');
+                notifications.error('An error occurred while sending the connection request');
+                // Restore original button state
+                connectBtn.textContent = 'Connect';
+                connectBtn.disabled = false;
+            });
+    }
+
+    function cancelConnectionRequest(userId) {
+        const connectBtn = document.getElementById('connectBtn');
+        
+        // Disable button to prevent multiple clicks
+        connectBtn.disabled = true;
+        connectBtn.textContent = 'Cancelling...';
+        
+        // Find the connection ID first
+        fetch(`/mynetwork/connection-status/${userId}`)
+            .then(response => response.json())
+            .then(statusData => {
+                if (statusData.connectionId) {
+                    return fetch(`/mynetwork/cancel/${statusData.connectionId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                } else {
+                    throw new Error('Connection not found');
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    notifications.success('Connection request cancelled successfully!');
+                    // Update button back to connect state
+                    connectBtn.textContent = 'Connect';
+                    connectBtn.className = 'bg-blue-600 text-white px-4 py-2 rounded-full';
+                    connectBtn.setAttribute('data-action', 'connect');
+                    connectBtn.disabled = false;
+                } else {
+                    notifications.error(data.error || 'Failed to cancel connection request');
+                    // Restore cancel button state
+                    connectBtn.textContent = 'Cancel';
+                    connectBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                notifications.error('An error occurred while cancelling the connection request');
+                // Restore cancel button state
+                connectBtn.textContent = 'Cancel';
+                connectBtn.disabled = false;
             });
     }
 </script>

@@ -67,11 +67,17 @@ document.addEventListener('DOMContentLoaded', function () {
             html += `
                 <a href="/in/${user.id}" class="block hover:bg-gray-50">
                     <div class="flex items-center p-3">
-                        <img src="${profileImage}" 
-                            alt="${user.firstName} ${user.lastName}" 
-                            class="rounded-full w-10 h-10 mr-3 object-cover">
-                        <div>
-                            <div class="font-medium text-gray-900">${user.firstName} ${user.lastName}</div>
+                        <div class="relative mr-3">
+                            <img src="${profileImage}" 
+                                alt="${user.firstName} ${user.lastName}" 
+                                class="rounded-full w-10 h-10 object-cover ${isLawyer ? 'ring-2 ring-blue-500' : ''}">
+                            ${isLawyer ? '<div class="absolute -bottom-0.5 -right-0.5 bg-blue-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs border border-white">⚖️</div>' : ''}
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center">
+                                <span class="font-medium text-gray-900">${user.firstName} ${user.lastName}</span>
+                                ${isLawyer ? '<span class="ml-2 bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-medium">LAWYER</span>' : ''}
+                            </div>
                             <div class="text-sm text-gray-500">
                                 ${isLawyer ? `Lawyer at ${user.lawyer.lawFirm}` : 'User'}
                             </div>

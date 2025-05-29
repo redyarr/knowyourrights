@@ -107,11 +107,11 @@ exports.getEditProfile = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
     try {
-        const { firstName, lastName, summary, lawFirm, licenseNumber, country, city } = req.body;
+        const { firstName, lastName, summary, lawFirm, licenseNumber, country, city, legalAreas, interests } = req.body;
         
         // Update user
         await User.update(
-            { firstName, lastName, country, city },
+            { firstName, lastName, country, city, interests },
             { where: { id: req.session.user_id } }
         );
 
@@ -121,7 +121,8 @@ exports.updateProfile = async (req, res) => {
                 { 
                     lawFirm,
                     licenseNumber,
-                    summery: summary
+                    summery: summary,
+                    legalAreas
                 },
                 { where: { userId: req.session.user_id } }
             );
@@ -181,6 +182,15 @@ const profileUpload = multer({
 // Updated CreatePost to handle image upload
 exports.CreatePost = async (req, res) => {
     try {
+        const userRole = req.session.user?.role;
+        
+        // Only allow lawyers to create posts
+        if (userRole !== 'lawyer') {
+            return res.status(403).render('error', { 
+                error: 'Access denied. Only lawyers can create posts.' 
+            });
+        }
+        
         const { title, content } = req.body;
         const authorId = req.params.id;
         // Validate the input

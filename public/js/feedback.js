@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const lawyerId = urlParams.get('id');
     
     if (!lawyerId) {
-        showAlert('Lawyer ID is required', 'danger');
+        notifications.error('Lawyer ID is required');
         setTimeout(() => {
             window.location.href = '/feed';
         }, 2000);
@@ -47,7 +47,7 @@ function fetchLawyerDetails(lawyerId) {
         })
         .catch(error => {
             console.error('Error fetching lawyer details:', error);
-            showAlert('Error loading lawyer details. Please try again later.', 'danger');
+            notifications.error('Error loading lawyer details. Please try again later.');
         });
 }
 
@@ -145,7 +145,7 @@ function submitFeedback() {
     const review = document.getElementById('review').value;
     
     if (!ratingInput) {
-        showAlert('Please select a rating', 'warning');
+        notifications.warning('Please select a rating');
         return;
     }
     
@@ -171,7 +171,7 @@ function submitFeedback() {
         return response.json();
     })
     .then(data => {
-        showAlert(data.message, 'success');
+        notifications.success(data.message);
         // Refresh feedback list
         fetchLawyerFeedback(lawyerId);
         // Reset form
@@ -179,32 +179,8 @@ function submitFeedback() {
     })
     .catch(error => {
         console.error('Error submitting feedback:', error);
-        showAlert('Error submitting feedback. Please try again.', 'danger');
+        notifications.error('Error submitting feedback. Please try again.');
     });
 }
 
-/**
- * Display an alert message
- * @param {string} message - The message to display
- * @param {string} type - The type of alert (success, danger, warning, info)
- */
-function showAlert(message, type = 'info') {
-    // Create alert element
-    const alertDiv = document.createElement('div');
-    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
-    alertDiv.role = 'alert';
-    alertDiv.innerHTML = `
-        ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    `;
-    
-    // Insert at the top of the container
-    const container = document.querySelector('.container');
-    container.insertBefore(alertDiv, container.firstChild);
-    
-    // Auto dismiss after 5 seconds
-    setTimeout(() => {
-        alertDiv.classList.remove('show');
-        setTimeout(() => alertDiv.remove(), 300);
-    }, 5000);
-}
+// showAlert function removed - now using global notification system

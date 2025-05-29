@@ -112,7 +112,7 @@
         const lawyerId = urlParams.get('id');
         
         if (!lawyerId) {
-            alert('Lawyer ID is required');
+            notifications.warning('Lawyer ID is required');
             window.location.href = '/feed';
             return;
         }
@@ -223,7 +223,7 @@
         const review = document.getElementById('review').value;
         
         if (!ratingInput) {
-            alert('Please select a rating');
+            notifications.warning('Please select a rating');
             return;
         }
         
@@ -244,7 +244,7 @@
         })
         .then(response => response.json())
         .then(data => {
-            alert(data.message);
+            notifications.success(data.message);
             // Refresh feedback list
             fetchLawyerFeedback(lawyerId);
             // Reset form
@@ -252,7 +252,7 @@
         })
         .catch(error => {
             console.error('Error submitting feedback:', error);
-            alert('Error submitting feedback. Please try again.');
+            notifications.error('Error submitting feedback. Please try again.');
         });
     }
 </script>

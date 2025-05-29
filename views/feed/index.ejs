@@ -38,11 +38,33 @@
 
             <!-- Main Content -->
             <div class="lg:col-span-6 space-y-8">
-                <% if (locals.loggedInUserId) { %>
+                <% if (locals.loggedInUserId && locals.userRole === 'lawyer') { %>
                     <div class="bg-white rounded-2xl shadow-lg mb-4">
                         <div class="p-6 flex items-center space-x-4">
                             <img src="https://media.licdn.com/dms/image/v2/D4D03AQF9FvdZ1W1_9g/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1712227644410?e=1746662400&v=beta&t=h_guvHTPpOuEEWiAAnuGwQLiaaMLVRgSJGwzP79vRlU" alt="Profile" class="rounded-full shadow border-2 border-white" style="width: 48px; height: 48px; object-fit: cover;">
-                            <button onclick="togglePostModal()" class="flex-1 border border-blue-200 rounded-full px-6 py-3 text-md text-gray-700 bg-blue-50 hover:bg-blue-100 shadow">Start a post</button>
+                            <button onclick="togglePostModal()" class="flex-1 border border-blue-200 rounded-full px-6 py-3 text-md text-gray-700 bg-blue-50 hover:bg-blue-100 shadow">Share Legal Insights</button>
+                        </div>
+                    </div>
+                <% } else if (locals.loggedInUserId && locals.userRole !== 'lawyer') { %>
+                    <div class="bg-white rounded-2xl shadow-lg mb-4">
+                        <div class="p-6">
+                            <div class="flex items-center space-x-4 mb-4">
+                                <img src="https://media.licdn.com/dms/image/v2/D4D03AQF9FvdZ1W1_9g/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1712227644410?e=1746662400&v=beta&t=h_guvHTPpOuEEWiAAnuGwQLiaaMLVRgSJGwzP79vRlU" alt="Profile" class="rounded-full shadow border-2 border-white" style="width: 48px; height: 48px; object-fit: cover;">
+                                <div class="flex-1">
+                                    <h3 class="text-lg font-semibold text-gray-800">Welcome to the Legal Community!</h3>
+                                    <p class="text-gray-600">Connect with lawyers, ask questions, and explore job opportunities.</p>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <a href="/jobs" class="flex items-center justify-center px-4 py-3 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition">
+                                    <i class="fas fa-briefcase text-green-600 mr-2"></i>
+                                    <span class="text-green-700 font-medium">Post Job Opportunity</span>
+                                </a>
+                                <a href="/mynetwork" class="flex items-center justify-center px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition">
+                                    <i class="fas fa-users text-blue-600 mr-2"></i>
+                                    <span class="text-blue-700 font-medium">Find Lawyers</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 <% } %>
@@ -207,33 +229,35 @@
                     <div class="bg-white rounded-2xl shadow-lg mb-8">
                         <div class="p-8">
                             <div class="bg-blue-100 text-blue-700 rounded-xl p-6 text-center text-lg font-medium">
-                                No posts found. <% if (locals.loggedInUserId) { %><a href="/blog/create" class="text-blue-600 underline">Create one</a><% } %>
+                                No posts found. <% if (locals.loggedInUserId && locals.userRole === 'lawyer') { %><a href="#" onclick="togglePostModal()" class="text-blue-600 underline">Share your legal insights</a><% } %>
                             </div>
                         </div>
                     </div>
                 <% } %>
-                <!-- Modal for Creating a Post -->
+                <!-- Modal for Creating a Post (Lawyers Only) -->
+                <% if (locals.userRole === 'lawyer') { %>
                 <div id="postModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
                     <div class="bg-white rounded-2xl shadow-2xl w-96 p-8 relative">
                         <button onclick="togglePostModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
-                        <h3 class="text-2xl font-bold mb-6 text-blue-700">Create a Post</h3>
+                        <h3 class="text-2xl font-bold mb-6 text-blue-700">Share Legal Insights</h3>
                         <form action="/in/<%= typeof user !== 'undefined' && user ? user.id : '' %>/create-post" method="POST" enctype="multipart/form-data">
                             <div class="mb-5">
-                                <label for="title" class="block text-md font-medium text-gray-700 mb-1">Title</label>
-                                <input type="text" name="title" id="title" required class="w-full border border-blue-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                                <label for="title" class="block text-md font-medium text-gray-700 mb-1">Article Title</label>
+                                <input type="text" name="title" id="title" required class="w-full border border-blue-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="e.g., Understanding Employment Rights">
                             </div>
                             <div class="mb-5">
-                                <label for="content" class="block text-md font-medium text-gray-700 mb-1">Content</label>
-                                <textarea name="content" id="content" rows="4" required class="w-full border border-blue-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"></textarea>
+                                <label for="content" class="block text-md font-medium text-gray-700 mb-1">Legal Content</label>
+                                <textarea name="content" id="content" rows="4" required class="w-full border border-blue-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="Share your legal expertise and insights..."></textarea>
                             </div>
                             <div class="mb-5">
-                                <label for="image" class="block text-md font-medium text-gray-700 mb-1">Image (optional)</label>
+                                <label for="image" class="block text-md font-medium text-gray-700 mb-1">Supporting Image (optional)</label>
                                 <input type="file" name="image" id="image" accept="image/*" class="w-full border border-blue-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
                             </div>
-                            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 focus:outline-none font-semibold">Post</button>
+                            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 focus:outline-none font-semibold">Share Insights</button>
                         </form>
                     </div>
                 </div>
+                <% } %>
                 <!-- Right Sidebar -->
                 <div class="lg:col-span-3 space-y-8">
                     <div class="bg-white rounded-2xl shadow-lg">
@@ -306,12 +330,12 @@
                 } else {
                     // Handle error
                     console.error('Failed to submit reaction:', data.message);
-                    alert('Failed to react: ' + data.message);
+                    notifications.error('Failed to react: ' + data.message);
                 }
             })
             .catch(error => {
                 console.error('Error submitting reaction:', error);
-                alert('Error reacting to post.');
+                notifications.error('Error reacting to post.');
             });
         }
 
@@ -414,14 +438,14 @@
                 } else {
                     button.textContent = 'Connect';
                     button.disabled = false;
-                    alert(data.message);
+                    notifications.success(data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 button.textContent = 'Connect';
                 button.disabled = false;
-                alert('An error occurred. Please try again.');
+                notifications.error('An error occurred. Please try again.');
             });
         }
     });

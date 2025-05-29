@@ -296,10 +296,10 @@
             data.lawyerId = document.getElementById('feedbackLawyerId').value;
             data.conversationId = document.getElementById('feedbackConversationId').value;
 
-            if (!data.rating) {
-                alert('Please select a rating.');
-                return;
-            }
+            if (!rating) {
+                    notifications.warning('Please select a rating.');
+                    return;
+                }
 
             try {
                 const response = await fetch('/feedback/submit', {
@@ -311,7 +311,7 @@
                 });
                 const result = await response.json();
                 if (response.ok) {
-                    alert(result.message || 'Feedback submitted successfully!');
+                    notifications.success(result.message || 'Feedback submitted successfully!');
                     if (feedbackModal) feedbackModal.style.display = 'none';
                     feedbackForm.reset();
                     stars.forEach(s => {
@@ -319,11 +319,11 @@
                         s.classList.add('far');
                     });
                 } else {
-                    alert(result.message || 'Failed to submit feedback.');
+                    notifications.error(result.message || 'Failed to submit feedback.');
                 }
             } catch (error) {
                 console.error('Error submitting feedback:', error);
-                alert('An error occurred. Please try again.');
+                notifications.error('An error occurred. Please try again.');
             }
         });
     }

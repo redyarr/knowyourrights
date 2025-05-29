@@ -27,15 +27,30 @@
                 <% users.forEach(user => { %>
                     <div class="user-item p-4 hover:bg-gray-50">
                         <div class="flex items-center space-x-3">
-                            <img src="https://ui-avatars.com/api/?name=<%= user.firstName %>+<%= user.lastName %>"
-                                alt="<%= user.firstName %>" class="w-12 h-12 rounded-full">
-                            <div class="flex-1">
-                                <h4 class="font-semibold user-name">
-                                    <%= user.firstName %> <%= user.lastName %>
-                                </h4>
+                            <div class="relative mr-3">
+                                 <img src="https://ui-avatars.com/api/?name=<%= user.firstName %>+<%= user.lastName %>"
+                                     alt="<%= user.firstName %>" class="w-12 h-12 rounded-full <%= user.role === 'lawyer' ? 'ring-2 ring-blue-500' : '' %>">
+                                 <% if (user.role === 'lawyer') { %>
+                                     <div class="absolute -bottom-0.5 -right-0.5 bg-blue-600 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs border border-white">⚖️</div>
+                                 <% } %>
+                             </div>
+                             <div class="flex-1">
+                                 <div class="flex items-center">
+                                     <h4 class="font-semibold user-name">
+                                         <%= user.firstName %> <%= user.lastName %>
+                                     </h4>
+                                     <% if (user.role === 'lawyer') { %>
+                                         <span class="ml-2 bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full text-xs font-medium">LAWYER</span>
+                                     <% } %>
+                                 </div>
                                 <p class="text-sm text-gray-600 user-email">
                                     <%= user.email %>
                                 </p>
+                                <% if (user.role === 'lawyer' && user.Lawyer && user.Lawyer.lawFirm) { %>
+                                    <p class="text-xs text-blue-600">
+                                        Lawyer at <%= user.Lawyer.lawFirm %>
+                                    </p>
+                                <% } %>
                             </div>
                             <a href="/messaging/<%= user.id %>" 
                                class="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition">

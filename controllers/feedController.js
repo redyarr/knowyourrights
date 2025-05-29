@@ -4,6 +4,15 @@ const { Post, User, Lawyer, Comment, React, PostPhoto, Photo } = require('../mod
 exports.createPost = async (req, res) => {
     try {
         const userId = req.session.user_id;
+        const userRole = req.session.user?.role;
+        
+        // Only allow lawyers to create posts
+        if (userRole !== 'lawyer') {
+            return res.status(403).json({ 
+                error: 'Access denied. Only lawyers can create posts.' 
+            });
+        }
+        
         const { title, content } = req.body;
         
         if (!title || !content) {
