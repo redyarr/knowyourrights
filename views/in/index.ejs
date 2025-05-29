@@ -31,42 +31,13 @@
           <% } %>
     </div>
     <div class="pt-24 pb-8 px-10">
-      <% if (profile?.role === 'lawyer') { %>
-        <% 
-          let authorityColor = 'blue';
-          let authorityBadge = 'Training';
-          let authorityIcon = 'fas fa-graduation-cap';
-          
-          if (profile?.lawyer?.badgeIssuingAuthority === 'approved') {
-            authorityColor = 'green';
-            authorityBadge = 'Approved';
-            authorityIcon = 'fas fa-shield-alt';
-          } else if (profile?.lawyer?.badgeIssuingAuthority === 'consultant') {
-            authorityColor = 'purple';
-            authorityBadge = 'Consultant';
-            authorityIcon = 'fas fa-crown';
-          }
-        %>
-        <div class="flex items-center flex-wrap gap-3">
-          <h2 class="text-3xl font-extrabold text-gray-900">
-            <%= profile?.firstName %> <%= profile?.lastName %>
-          </h2>
-          <div class="flex items-center bg-<%= authorityColor %>-100 text-<%= authorityColor %>-800 px-3 py-1 rounded-full border-2 border-<%= authorityColor %>-200">
-            <i class="<%= authorityIcon %> text-sm mr-2"></i>
-            <span class="text-sm font-bold"><%= authorityBadge %></span>
-          </div>
-        </div>
-        <p class="text-<%= authorityColor %>-700 font-semibold text-lg mt-1">
-          <%= profile?.role?.charAt(0).toUpperCase() + profile?.role?.slice(1) %> • <%= authorityBadge %> Level
-        </p>
-      <% } else { %>
-        <h2 class="text-3xl font-extrabold text-gray-900">
-          <%= profile?.firstName %> <%= profile?.lastName %>
-        </h2>
-        <p class="text-blue-700 font-semibold text-lg mt-1">
-          <%= profile?.role?.charAt(0).toUpperCase() + profile?.role?.slice(1) %>
-        </p>
-      <% } %>
+      <h2 class="text-3xl font-extrabold text-gray-900">
+        <%= profile?.firstName %>
+          <%= profile?.lastName %>
+      </h2>
+      <p class="text-blue-700 font-semibold text-lg mt-1">
+        <%= profile?.role?.charAt(0).toUpperCase() + profile?.role?.slice(1) %>
+      </p>
       <% if (profile?.city || profile?.country) { %>
         <p class="text-gray-600 font-medium text-base mt-2">
           <i class="fas fa-map-marker-alt mr-2"></i>
@@ -87,44 +58,16 @@
     </div>
   </div>
 
-  <!-- About Section (Lawyers Only) -->
-  <% if (profile?.role === 'lawyer') { %>
-    <% 
-      let authorityColor = 'blue';
-      let authorityBadge = 'Training';
-      let ribbonGradient = 'from-blue-400 to-blue-600';
-      
-      if (profile?.lawyer?.badgeIssuingAuthority === 'approved') {
-        authorityColor = 'green';
-        authorityBadge = 'Approved';
-        ribbonGradient = 'from-green-400 to-green-600';
-      } else if (profile?.lawyer?.badgeIssuingAuthority === 'consultant') {
-        authorityColor = 'purple';
-        authorityBadge = 'Consultant';
-        ribbonGradient = 'from-purple-400 to-purple-600';
-      }
-    %>
-    <div class="bg-white rounded-2xl shadow-lg mb-8 p-8 relative overflow-hidden">
-      <!-- Authority Ribbon -->
-      <div class="absolute top-0 right-0 bg-gradient-to-r <%= ribbonGradient %> text-white px-4 py-2 transform rotate-12 translate-x-4 -translate-y-2 shadow-lg">
-        <span class="text-sm font-bold"><%= authorityBadge %></span>
-      </div>
-      
-      <div class="flex items-center mb-4">
-        <i class="fas fa-user-tie text-<%= authorityColor %>-500 text-xl mr-3"></i>
-        <h3 class="text-2xl font-bold text-gray-800">Professional Summary</h3>
-        <span class="ml-auto bg-<%= authorityColor %>-100 text-<%= authorityColor %>-800 px-3 py-1 rounded-full text-sm font-semibold">
-          <%= authorityBadge %> Level
-        </span>
-      </div>
-      
-      <div class="border-l-4 border-<%= authorityColor %>-500 pl-4">
-        <p class="text-gray-700 text-lg">
-          <%= profile?.lawyer?.summary || 'Experienced legal professional dedicated to providing exceptional legal services.' %>
-        </p>
-      </div>
+  <!-- About Section -->
+  <div class="bg-white rounded-2xl shadow-lg mb-8 p-8">
+    <div class="flex items-center mb-4">
+      <i class="fas fa-user text-blue-500 text-xl mr-3"></i>
+      <h3 class="text-2xl font-bold text-gray-800">About</h3>
     </div>
-  <% } %>
+    <p class="text-gray-700 text-lg">
+      <%= profile?.about || 'No description available.' %>
+    </p>
+  </div>
 
   <!-- Profile Statistics -->
   <div class="bg-white rounded-2xl shadow-lg mb-8 p-8">
@@ -151,7 +94,7 @@
           <div class="text-sm text-gray-600 mt-1">Education</div>
         </div>
         <div class="text-center p-4 bg-orange-50 rounded-xl border border-orange-100">
-          <div class="text-2xl font-bold text-orange-600"><%= profile?.lawyer?.badgeIssueDate ? new Date().getFullYear() - new Date(profile.lawyer.badgeIssueDate).getFullYear() : 0 %></div>
+          <div class="text-2xl font-bold text-orange-600"><%= new Date().getFullYear() - new Date(profile?.createdAt || new Date()).getFullYear() %></div>
           <div class="text-sm text-gray-600 mt-1">Years Practicing</div>
         </div>
       <% } else { %>
@@ -476,12 +419,12 @@
               </div>
             </div>
           <% } %>
-          <% if (profile?.role === 'lawyer' ? (profile?.lawyer?.badgeIssueDate && new Date().getFullYear() - new Date(profile.lawyer.badgeIssueDate).getFullYear() >= 1) : (new Date().getFullYear() - new Date(profile?.createdAt || new Date()).getFullYear() >= 1)) { %>
+          <% if (new Date().getFullYear() - new Date(profile?.createdAt || new Date()).getFullYear() >= 1) { %>
             <div class="flex items-center p-4 bg-indigo-50 rounded-xl border border-indigo-200">
               <i class="fas fa-calendar-check text-indigo-500 text-2xl mr-3"></i>
               <div>
-                <div class="font-semibold text-gray-800"><%= profile?.role === 'lawyer' ? 'Experienced Professional' : 'Veteran Member' %></div>
-                <div class="text-sm text-gray-600"><%= profile?.role === 'lawyer' ? '1+ years practicing' : '1+ years active' %></div>
+                <div class="font-semibold text-gray-800">Veteran Member</div>
+                <div class="text-sm text-gray-600">1+ years active</div>
               </div>
             </div>
           <% } %>
@@ -679,13 +622,13 @@
       
       // Validate file type
       if (!file.type.startsWith('image/')) {
-        notifications.warning('Please select an image file.');
+        alert('Please select an image file.');
         return;
       }
       
       // Validate file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
-        notifications.warning('File size must be less than 5MB.');
+        alert('File size must be less than 5MB.');
         return;
       }
       
@@ -707,14 +650,14 @@
         if (result.success) {
           // Update the profile image
           profileImg.src = result.imagePath;
-          notifications.success('Profile image updated successfully!');
+          alert('Profile image updated successfully!');
         } else {
-          notifications.error('Failed to upload image: ' + (result.error || 'Unknown error'));
+          alert('Failed to upload image: ' + (result.error || 'Unknown error'));
           profileImg.src = originalSrc;
         }
       } catch (error) {
         console.error('Error uploading profile image:', error);
-        notifications.error('Failed to upload image. Please try again.');
+        alert('Failed to upload image. Please try again.');
       }
     }
   }

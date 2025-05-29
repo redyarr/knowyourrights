@@ -191,25 +191,20 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    notifications.success(data.message);
                     button.textContent = 'Request Sent';
                     button.classList.remove('bg-blue-600', 'hover:bg-blue-700');
                     button.classList.add('bg-gray-400');
-                    // Reload the page to show updated status
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1500);
                 } else {
                     button.textContent = 'Connect';
                     button.disabled = false;
-                    notifications.error('An error occurred. Please try again.');
+                    alert(data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 button.textContent = 'Connect';
                 button.disabled = false;
-                notifications.error('An error occurred. Please try again.');
+                alert('An error occurred. Please try again.');
             });
         }
 
@@ -236,14 +231,14 @@
                 } else {
                     button.textContent = 'Accept';
                     button.disabled = false;
-                    notifications.error(data.message);
+                    alert(data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 button.textContent = 'Accept';
                 button.disabled = false;
-                notifications.error('An error occurred. Please try again.');
+                alert('An error occurred. Please try again.');
             });
         }
 
@@ -267,14 +262,14 @@
                 } else {
                     button.textContent = 'Decline';
                     button.disabled = false;
-                    notifications.error(data.message);
+                    alert(data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 button.textContent = 'Decline';
                 button.disabled = false;
-                notifications.error('An error occurred. Please try again.');
+                alert('An error occurred. Please try again.');
             });
         }
 
@@ -298,14 +293,14 @@
                 } else {
                     button.textContent = 'Cancel Request';
                     button.disabled = false;
-                    notifications.error(data.message);
+                    alert(data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 button.textContent = 'Cancel Request';
                 button.disabled = false;
-                notifications.error('An error occurred. Please try again.');
+                alert('An error occurred. Please try again.');
             });
         }
     });

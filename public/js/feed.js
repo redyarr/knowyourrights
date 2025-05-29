@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                     toggleEditPostModal();
                 } else {
-                    notifications.error(data.error || 'Failed to edit post.');
+                    alert(data.error || 'Failed to edit post.');
                 }
             });
     };
@@ -244,7 +244,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
                     toggleEditCommentModal();
                 } else {
-                    notifications.error(data.error || 'Failed to edit comment.');
+                    alert(data.error || 'Failed to edit comment.');
                 }
             });
     };
@@ -323,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             // Show action buttons again
                             if (actionButtons) actionButtons.style.display = '';
                         } else {
-                            notifications.error(data.error || 'Failed to edit comment.');
+                            alert(data.error || 'Failed to edit comment.');
                         }
                     });
             });
@@ -406,7 +406,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             if (countElement) countElement.textContent = `${commentCount} comments`;
                         }
                     } else {
-                        notifications.error(data.error || 'Failed to delete comment.');
+                        alert(data.error || 'Failed to delete comment.');
                     }
                     hideDeleteModal();
                 });
@@ -418,7 +418,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         const postDiv = document.getElementById(`post-${pendingDelete.id}`);
                         if (postDiv) postDiv.remove();
                     } else {
-                        notifications.error(data.error || 'Failed to delete post.');
+                        alert(data.error || 'Failed to delete post.');
                     }
                     hideDeleteModal();
                 });

@@ -22,15 +22,15 @@
                 <% } %>
                 <div class="bg-white rounded-2xl shadow-lg">
                     <div class="border-b px-6 py-4">
-                        <h6 class="font-semibold text-blue-700 text-lg">Legal Resources</h6>
+                        <h6 class="font-semibold text-blue-700 text-lg">Recent Topics</h6>
                     </div>
                     <div class="p-6">
                         <ul class="space-y-3">
-                            <li><a href="/resources/family-law" class="text-blue-600 hover:underline text-md flex items-center"><i class="fas fa-home text-blue-500 mr-2"></i>Family Law Guide</a></li>
-                            <li><a href="/resources/employment" class="text-blue-600 hover:underline text-md flex items-center"><i class="fas fa-briefcase text-blue-500 mr-2"></i>Employment Rights</a></li>
-                            <li><a href="/resources/consumer" class="text-blue-600 hover:underline text-md flex items-center"><i class="fas fa-shield-alt text-blue-500 mr-2"></i>Consumer Protection</a></li>
-                            <li><a href="/jobs" class="text-blue-600 hover:underline text-md flex items-center"><i class="fas fa-search text-blue-500 mr-2"></i>Browse Job Opportunities</a></li>
-                            <li><a href="/mynetwork" class="text-blue-600 hover:underline text-md flex items-center"><i class="fas fa-users text-blue-500 mr-2"></i>Find Legal Professionals</a></li>
+                            <li><a href="#" class="text-blue-600 hover:underline text-md">Corporate Law</a></li>
+                            <li><a href="#" class="text-blue-600 hover:underline text-md">Family Law</a></li>
+                            <li><a href="#" class="text-blue-600 hover:underline text-md">Criminal Defense</a></li>
+                            <li><a href="#" class="text-blue-600 hover:underline text-md">Intellectual Property</a></li>
+                            <li><a href="#" class="text-blue-600 hover:underline text-md">Immigration Law</a></li>
                         </ul>
                     </div>
                 </div>
@@ -75,37 +75,14 @@
                             <!-- Post Header -->
                             <div class="flex items-center mb-4">
                                 <a href="/in/<%= post.user ? post.user.id : '#' %>" class="flex items-center hover:opacity-80 transition-opacity">
-                                    <img src="https://ui-avatars.com/api/?name=<%= post.user ? encodeURIComponent(post.user.firstName + ' ' + post.user.lastName) : 'User' %>&size=56&background=3b82f6&color=ffffff" alt="Profile" class="rounded-full mr-4 shadow" style="width: 56px; height: 56px; object-fit: cover;">
+                                    <img src="https://ui-avatars.com/api/?background=random" alt="Profile" class="rounded-full mr-4 shadow" style="width: 56px; height: 56px; object-fit: cover;">
                                     <div class="flex-1">
-                                        <div class="flex items-center flex-wrap gap-2">
-                                            <h6 class="font-bold text-lg text-gray-900 hover:text-blue-600 transition-colors">
-                                                <%= post.user ? post.user.firstName : '' %> <%= post.user ? post.user.lastName : '' %>
-                                            </h6>
-                                            <% if (post.user && post.user.role === 'lawyer') { %>
-                                                <% 
-                                                  let authorityColor = 'blue';
-                                                  let authorityBadge = 'Training';
-                                                  let authorityIcon = 'fas fa-graduation-cap';
-                                                  
-                                                  if (post.user.lawyer && post.user.lawyer.badgeIssuingAuthority === 'approved') {
-                                                    authorityColor = 'green';
-                                                    authorityBadge = 'Approved';
-                                                    authorityIcon = 'fas fa-shield-alt';
-                                                  } else if (post.user.lawyer && post.user.lawyer.badgeIssuingAuthority === 'consultant') {
-                                                    authorityColor = 'purple';
-                                                    authorityBadge = 'Consultant';
-                                                    authorityIcon = 'fas fa-crown';
-                                                  }
-                                                %>
-                                                <div class="flex items-center bg-<%= authorityColor %>-100 text-<%= authorityColor %>-800 px-2 py-1 rounded-full text-xs border border-<%= authorityColor %>-200">
-                                                    <i class="<%= authorityIcon %> text-xs mr-1"></i>
-                                                    <span class="font-semibold"><%= authorityBadge %></span>
-                                                </div>
+                                        <h6 class="font-bold text-lg text-gray-900 hover:text-blue-600 transition-colors">
+                                            <%= post.user ? post.user.firstName : '' %> <%= post.user ? post.user.lastName : '' %>
+                                            <% if (post.user && post.user.role==='lawyer' && post.user.lawyer) { %>
+                                                <span class="text-sm text-blue-600 font-medium">• Lawyer at <%= post.user.lawyer.lawFirm %></span>
                                             <% } %>
-                                        </div>
-                                        <% if (post.user && post.user.role === 'lawyer' && post.user.lawyer) { %>
-                                            <p class="text-sm text-gray-600 font-medium">Lawyer at <%= post.user.lawyer.lawFirm %></p>
-                                        <% } %>
+                                        </h6>
                                         <p class="text-xs text-gray-500"><%= new Date(post.createdAt).toLocaleDateString() %></p>
                                     </div>
                                 </a>
@@ -238,7 +215,7 @@
                                 <% } %>
                                 <% if (locals.loggedInUserId) { %>
                                     <div id="commentForm-<%= post.id %>" class="mt-3 flex items-center space-x-3 border-t pt-3 hidden">
-                                        <img src="https://ui-avatars.com/api/?name=<%= locals.user ? encodeURIComponent(locals.user.firstName + ' ' + locals.user.lastName) : 'You' %>&size=32&background=3b82f6&color=ffffff" alt="Your avatar" class="rounded-full shadow" style="width: 32px; height: 32px; object-fit: cover;">
+                                        <img src="https://ui-avatars.com/api/?background=random" alt="Your avatar" class="rounded-full shadow" style="width: 32px; height: 32px; object-fit: cover;">
                                         <form class="flex-1" onsubmit="event.preventDefault(); submitComment(this, <%= post.id %>);">
                                             <input type="text" name="content" placeholder="Add a comment" class="w-full border border-blue-200 rounded-full px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500">
                                         </form>
@@ -285,15 +262,14 @@
                 <div class="lg:col-span-3 space-y-8">
                     <div class="bg-white rounded-2xl shadow-lg">
                         <div class="border-b px-6 py-4">
-                            <h6 class="font-semibold text-blue-700 text-lg">Recent Job Opportunities</h6>
+                            <h6 class="font-semibold text-blue-700 text-lg">Trending Legal News</h6>
                         </div>
                         <div class="p-6">
-                            <ul class="space-y-4 text-md" id="recentJobs">
-                                <li class="text-center text-gray-500 py-2">Loading recent opportunities...</li>
+                            <ul class="space-y-4 text-md">
+                                <li><a href="#" class="text-blue-600 hover:underline block">Supreme Court Rules on Major Case</a><p class="text-gray-500">1,234 readers</p></li>
+                                <li><a href="#" class="text-blue-600 hover:underline block">New Legislation Impacts Corporate Law</a><p class="text-gray-500">987 readers</p></li>
+                                <li><a href="#" class="text-blue-600 hover:underline block">Legal Tech Innovations in 2025</a><p class="text-gray-500">756 readers</p></li>
                             </ul>
-                            <div class="mt-4 text-center">
-                                <a href="/jobs" class="text-blue-600 hover:underline text-sm font-medium">View all job opportunities →</a>
-                            </div>
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl shadow-lg">
@@ -354,12 +330,12 @@
                 } else {
                     // Handle error
                     console.error('Failed to submit reaction:', data.message);
-                    notifications.error('Failed to react: ' + data.message);
+                    alert('Failed to react: ' + data.message);
                 }
             })
             .catch(error => {
                 console.error('Error submitting reaction:', error);
-                notifications.error('Error reacting to post.');
+                alert('Error reacting to post.');
             });
         }
 
@@ -462,14 +438,14 @@
                 } else {
                     button.textContent = 'Connect';
                     button.disabled = false;
-                    notifications.success(data.message);
+                    alert(data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
                 button.textContent = 'Connect';
                 button.disabled = false;
-                notifications.error('An error occurred. Please try again.');
+                alert('An error occurred. Please try again.');
             });
         }
     });
@@ -521,92 +497,6 @@
 
 <script>
     window.loggedInUserId = <%= locals.loggedInUserId ? locals.loggedInUserId : 'null' %>;
-    
-    // Load recent job opportunities
-    document.addEventListener('DOMContentLoaded', function() {
-        loadRecentJobs();
-    });
-    
-    function loadRecentJobs() {
-        fetch('/jobs')
-            .then(response => response.text())
-            .then(html => {
-                // Parse the HTML to extract job data
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-                const jobElements = doc.querySelectorAll('.job-item, .bg-white');
-                
-                const recentJobsContainer = document.getElementById('recentJobs');
-                if (recentJobsContainer) {
-                    let jobsHtml = '';
-                    let jobCount = 0;
-                    
-                    // Try to extract job information from the page
-                    if (jobElements.length > 0) {
-                        for (let i = 0; i < Math.min(3, jobElements.length); i++) {
-                            const jobElement = jobElements[i];
-                            const titleElement = jobElement.querySelector('h3, h4, h5, .font-bold, .text-lg');
-                            const companyElement = jobElement.querySelector('.text-gray-600, .text-gray-500');
-                            
-                            if (titleElement) {
-                                const title = titleElement.textContent.trim();
-                                const company = companyElement ? companyElement.textContent.trim() : 'Legal Firm';
-                                
-                                if (title && title.length > 0 && !title.includes('Loading') && !title.includes('No jobs')) {
-                                    jobsHtml += `
-                                        <li class="border-b border-gray-100 pb-3 last:border-b-0">
-                                            <a href="/jobs" class="text-blue-600 hover:underline block font-medium">${title}</a>
-                                            <p class="text-gray-500 text-sm mt-1">${company}</p>
-                                        </li>
-                                    `;
-                                    jobCount++;
-                                }
-                            }
-                        }
-                    }
-                    
-                    // Fallback content if no jobs found
-                    if (jobCount === 0) {
-                        jobsHtml = `
-                            <li class="border-b border-gray-100 pb-3">
-                                <a href="/jobs/create" class="text-blue-600 hover:underline block font-medium">Post Your First Job</a>
-                                <p class="text-gray-500 text-sm mt-1">Help grow the legal community</p>
-                            </li>
-                            <li class="border-b border-gray-100 pb-3">
-                                <a href="/mynetwork" class="text-blue-600 hover:underline block font-medium">Connect with Lawyers</a>
-                                <p class="text-gray-500 text-sm mt-1">Expand your professional network</p>
-                            </li>
-                            <li>
-                                <a href="/resources/employment" class="text-blue-600 hover:underline block font-medium">Employment Law Guide</a>
-                                <p class="text-gray-500 text-sm mt-1">Know your rights at work</p>
-                            </li>
-                        `;
-                    }
-                    
-                    recentJobsContainer.innerHTML = jobsHtml;
-                }
-            })
-            .catch(error => {
-                console.error('Error loading recent jobs:', error);
-                const recentJobsContainer = document.getElementById('recentJobs');
-                if (recentJobsContainer) {
-                    recentJobsContainer.innerHTML = `
-                        <li class="border-b border-gray-100 pb-3">
-                            <a href="/jobs/create" class="text-blue-600 hover:underline block font-medium">Post a Job Opportunity</a>
-                            <p class="text-gray-500 text-sm mt-1">Share opportunities with the community</p>
-                        </li>
-                        <li class="border-b border-gray-100 pb-3">
-                            <a href="/mynetwork" class="text-blue-600 hover:underline block font-medium">Find Legal Professionals</a>
-                            <p class="text-gray-500 text-sm mt-1">Connect with lawyers and legal experts</p>
-                        </li>
-                        <li>
-                            <a href="/resources/family-law" class="text-blue-600 hover:underline block font-medium">Legal Resources</a>
-                            <p class="text-gray-500 text-sm mt-1">Access helpful legal guides</p>
-                        </li>
-                    `;
-                }
-            });
-    }
 </script>
 
 </div>

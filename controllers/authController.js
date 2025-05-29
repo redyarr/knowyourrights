@@ -5,8 +5,11 @@ const fs = require('fs');
 
 exports.get = (req, res) =>{
     if (req.session.user) {
-    return res.redirect('/feed');
-  }
+      if (req.session.user.role === 'admin') {
+        return res.redirect('/admin/lawyers');
+      }
+      return res.redirect('/feed');
+    }
   res.render("index", {
     title: 'Join Legal Network',
     error: null
@@ -16,6 +19,9 @@ exports.get = (req, res) =>{
 // Get register form
 exports.getRegister = async (req, res) => {
   if (req.session.user) {
+    if (req.session.user.role === 'admin') {
+      return res.redirect('/admin/lawyers');
+    }
     return res.redirect('/feed');
   }
   try {
@@ -126,7 +132,8 @@ exports.register = async (req, res) => {
         badgeNumber,
         badgeIssueDate,
         badgeIssuingAuthority, // This now serves as the authority level
-        summary: summary || 'Default professional summary'
+        summary: summary || 'Default professional summary',
+        verificationStatus: 'pending' // Set initial verification status
       });
       console.log("5. Lawyer profile created with ID:", lawyer.id);
 
@@ -201,8 +208,14 @@ exports.register = async (req, res) => {
       console.log("10. Lawyer-specific session info set");
     }
 
-    res.redirect('/feed');
-    console.log("11. Registration process completed, redirecting to '/feed'");
+    // Redirect based on user role
+    if (user.role === 'admin') {
+      console.log("11. Admin user registered, redirecting to '/admin/lawyers'");
+      res.redirect('/admin/lawyers');
+    } else {
+      console.log("11. Regular user registered, redirecting to '/feed'");
+      res.redirect('/feed');
+    }
   } catch (error) {
     console.error("Error during registration process:", error.message);
 
@@ -220,6 +233,9 @@ exports.register = async (req, res) => {
 // Get login form
 exports.getLogin = (req, res) => {
       if (req.session.user) {
+        if (req.session.user.role === 'admin') {
+          return res.redirect('/admin/lawyers');
+        }
         return res.redirect('/feed');
       }
   res.render('auth/login', {
@@ -263,8 +279,14 @@ exports.login = async (req, res) => {
       console.log("7. Lawyer session set:", req.session.lawyer);
     }
 
-    console.log("8. Redirecting to '/feed'");
-    res.redirect('/feed');
+    // Redirect based on user role
+    if (user.role === 'admin') {
+      console.log("8. Admin user, redirecting to '/admin/lawyers'");
+      res.redirect('/admin/lawyers');
+    } else {
+      console.log("8. Regular user, redirecting to '/feed'");
+      res.redirect('/feed');
+    }
   } catch (error) {
     console.error("Error during login process:", error.message);
     res.render('auth/login', {

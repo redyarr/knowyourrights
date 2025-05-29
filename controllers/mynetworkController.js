@@ -302,46 +302,6 @@ exports.cancelConnectionRequest = async (req, res) => {
     }
 };
 
-// Get connection status between current user and target user
-exports.getConnectionStatus = async (req, res) => {
-    try {
-        const userId = req.session.user_id;
-        const targetUserId = req.params.userId;
-        
-        if (!userId) {
-            return res.status(401).json({ success: false, message: 'User not authenticated' });
-        }
-        
-        // Find connection between users
-        const connection = await Connection.findOne({
-            where: {
-                [Op.or]: [
-                    { requester_id: userId, receiver_id: targetUserId },
-                    { requester_id: targetUserId, receiver_id: userId }
-                ]
-            }
-        });
-        
-        if (!connection) {
-            return res.status(200).json({ 
-                success: true, 
-                status: null, 
-                connectionId: null 
-            });
-        }
-        
-        return res.status(200).json({ 
-            success: true, 
-            status: connection.status,
-            connectionId: connection.id,
-            isRequester: connection.requester_id === userId
-        });
-    } catch (error) {
-        console.error('Error getting connection status:', error);
-        return res.status(500).json({ success: false, message: 'An error occurred while getting connection status' });
-    }
-};
-
 // Get suggested lawyers for the feed page
 exports.getSuggestedLawyers = async (req, res) => {
     try {

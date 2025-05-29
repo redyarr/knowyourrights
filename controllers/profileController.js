@@ -107,27 +107,7 @@ exports.getEditProfile = async (req, res) => {
 
 exports.updateProfile = async (req, res) => {
     try {
-        console.log('=== Profile Update Debug ===');
-        console.log('Request body:', req.body);
-        console.log('User role:', req.session.user.role);
-        
-        const { firstName, lastName, summary, lawFirm, licenseNumber, country, city, legalSpecialties, customLegalAreas, interests } = req.body;
-        
-        console.log('Extracted legalSpecialties:', legalSpecialties);
-        console.log('Extracted customLegalAreas:', customLegalAreas);
-        
-        // Combine selected specialties and custom areas
-        let combinedLegalAreas = '';
-        if (req.session.user.role === 'lawyer') {
-            const selectedSpecialties = Array.isArray(legalSpecialties) ? legalSpecialties : (legalSpecialties ? [legalSpecialties] : []);
-            const customAreas = customLegalAreas ? customLegalAreas.split(',').map(area => area.trim()).filter(area => area) : [];
-            const allAreas = [...selectedSpecialties, ...customAreas];
-            combinedLegalAreas = allAreas.join(', ');
-            
-            console.log('Selected specialties:', selectedSpecialties);
-            console.log('Custom areas:', customAreas);
-            console.log('Combined legal areas:', combinedLegalAreas);
-        }
+        const { firstName, lastName, summary, lawFirm, licenseNumber, country, city, legalAreas, interests } = req.body;
         
         // Update user
         await User.update(
@@ -137,17 +117,15 @@ exports.updateProfile = async (req, res) => {
 
         // Update lawyer profile if exists
         if (req.session.user.role === 'lawyer') {
-            const lawyerUpdateResult = await Lawyer.update(
+            await Lawyer.update(
                 { 
                     lawFirm,
                     licenseNumber,
                     summery: summary,
-                    legalAreas: combinedLegalAreas
+                    legalAreas
                 },
                 { where: { userId: req.session.user_id } }
             );
-            console.log('Lawyer update result:', lawyerUpdateResult);
-            console.log('Updated lawyer with legal areas:', combinedLegalAreas);
         }
 
         // Update session user data

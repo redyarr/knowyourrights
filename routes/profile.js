@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { isAuthenticated } = require('../middlewares/auth');
+const { isVerifiedLawyer } = require('../middlewares/lawyerVerification');
 
 // Import controllers
 const ProfileController = require('../controllers/profileController');
@@ -20,7 +21,8 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // view profile routes
-router.get('/', ProfileController.findProfile);
+router.get('/', isAuthenticated, isVerifiedLawyer, ProfileController.findProfile);
+router.get('/:userId', isAuthenticated, isVerifiedLawyer, ProfileController.findProfile);
 router.get('/edit', isAuthenticated, ProfileController.getEditProfile);
 router.post('/upload-profile-image', isAuthenticated, ProfileController.uploadProfileImage);
 router.post('/:id/create-post', upload.single('image'), ProfileController.CreatePost);
