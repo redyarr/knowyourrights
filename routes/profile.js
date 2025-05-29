@@ -22,12 +22,15 @@ const upload = multer({ storage: storage });
 
 // view profile routes
 router.get('/', isAuthenticated, isVerifiedLawyer, ProfileController.findProfile);
-router.get('/:userId', isAuthenticated, isVerifiedLawyer, ProfileController.findProfile);
 router.get('/edit', isAuthenticated, ProfileController.getEditProfile);
 router.post('/upload-profile-image', isAuthenticated, ProfileController.uploadProfileImage);
+
+// Post-related routes (must come before /:id to avoid conflicts)
 router.post('/:id/create-post', upload.single('image'), ProfileController.CreatePost);
 router.post('/:id/edit-post', ProfileController.updatePost);
 router.post('/:id/edit', ProfileController.updateProfile);
+
+// Profile viewing routes (must be last to avoid conflicts)
 router.get('/:id', ProfileController.getProfile);
 // post routes
 
