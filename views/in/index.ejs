@@ -1,169 +1,336 @@
-<div class="max-w-4xl mx-auto px-4 py-8">
-  <!-- Profile Card -->
-  <div class="relative bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl rounded-3xl overflow-hidden mb-8">
-    <div class="h-48 bg-cover bg-center"
-      style="background-image: url('<%= profile && profile.backgroundImage ? profile.backgroundImage : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80' %>');">
+<div class="max-w-6xl mx-auto px-6 py-12">
+  <!-- Hero Profile Section -->
+  <div class="relative bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 rounded-3xl overflow-hidden mb-12 shadow-2xl">
+    <!-- Premium Background Pattern -->
+    <div class="absolute inset-0 opacity-10">
+      <svg class="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="100" height="100" fill="url(#grid)" />
+      </svg>
     </div>
-    <div class="absolute top-32 left-10 flex items-end">
+    
+    <!-- Elegant Background Overlay -->
+    <div class="h-80 bg-cover bg-center relative"
+      style="background-image: url('<%= profile && profile.backgroundImage ? profile.backgroundImage : 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1600&q=80' %>');">      
+      <div class="absolute inset-0 bg-gradient-to-br from-slate-900/80 via-blue-900/70 to-indigo-900/80"></div>
+      
+      <!-- Premium Verification Badge -->
+      <% if (profile?.role === 'lawyer' && profile?.lawyer?.verificationStatus) { %>
+        <div class="absolute top-8 left-8 z-20">
+          <div class="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl px-6 py-4 shadow-2xl">
+            <div class="flex items-center space-x-4">
+              <div class="relative">
+                <% if (profile?.lawyer?.verificationStatus === 'approved') { %>
+                  <div class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-xl">
+                    <i class="fas fa-shield-check text-white text-2xl"></i>
+                  </div>
+                  <div class="absolute -top-2 -right-2 w-6 h-6 bg-emerald-400 rounded-full flex items-center justify-center">
+                    <i class="fas fa-check text-white text-xs"></i>
+                  </div>
+                <% } else if (profile?.lawyer?.verificationStatus === 'pending') { %>
+                  <div class="w-16 h-16 bg-gradient-to-br from-amber-400 to-amber-600 rounded-2xl flex items-center justify-center shadow-xl">
+                    <i class="fas fa-hourglass-half text-white text-2xl"></i>
+                  </div>
+                  <div class="absolute -top-2 -right-2 w-6 h-6 bg-amber-400 rounded-full animate-pulse"></div>
+                <% } else if (profile?.lawyer?.verificationStatus === 'rejected') { %>
+                  <div class="w-16 h-16 bg-gradient-to-br from-red-400 to-red-600 rounded-2xl flex items-center justify-center shadow-xl">
+                    <i class="fas fa-exclamation-triangle text-white text-2xl"></i>
+                  </div>
+                <% } else { %>
+                  <div class="w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-600 rounded-2xl flex items-center justify-center shadow-xl">
+                    <i class="fas fa-question-circle text-white text-2xl"></i>
+                  </div>
+                <% } %>
+              </div>
+              <div class="text-white">
+                <div class="text-lg font-bold tracking-wide">LEGAL AUTHORITY</div>
+                <div class="flex items-center space-x-2 mt-1">
+                  <span class="text-sm font-semibold
+                    <% if (profile?.lawyer?.verificationStatus === 'approved') { %>
+                      text-emerald-300
+                    <% } else if (profile?.lawyer?.verificationStatus === 'pending') { %>
+                      text-amber-300
+                    <% } else if (profile?.lawyer?.verificationStatus === 'rejected') { %>
+                      text-red-300
+                    <% } else { %>
+                      text-gray-300
+                    <% } %>">
+                    <% if (profile?.lawyer?.verificationStatus === 'approved') { %>
+                      ✓ VERIFIED ATTORNEY
+                    <% } else if (profile?.lawyer?.verificationStatus === 'pending') { %>
+                      ⏳ VERIFICATION IN PROGRESS
+                    <% } else if (profile?.lawyer?.verificationStatus === 'rejected') { %>
+                      ✗ VERIFICATION DECLINED
+                    <% } else { %>
+                      ❓ STATUS UNKNOWN
+                    <% } %>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% } %>
+    </div>
+    
+    <!-- Premium Profile Image -->
+    <div class="absolute top-60 left-12 z-10">
       <div class="relative">
-        <img id="profileImage"
-          src="<%= (profile.ProfileImage && profile.ProfileImage.imagePath) ? profile.ProfileImage.imagePath : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.firstName + ' ' + profile.lastName) + '&size=144&background=3b82f6&color=ffffff' %>"
-          alt="Profile" class="w-36 h-36 rounded-full border-4 border-white shadow-lg object-cover">
+        <!-- Elegant Frame -->
+        <div class="w-48 h-48 rounded-3xl bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-xl border border-white/30 p-2 shadow-2xl">
+          <div class="w-full h-full rounded-2xl overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+            <img id="profileImage"
+              src="<%= (profile.ProfileImage && profile.ProfileImage.imagePath) ? profile.ProfileImage.imagePath : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.firstName + ' ' + profile.lastName) + '&size=192&background=1e293b&color=ffffff&bold=true' %>"
+              alt="Profile" class="w-full h-full object-cover">
+          </div>
+        </div>
+        
+        <!-- Professional Status Ring -->
+        <div class="absolute -bottom-3 -right-3 w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full border-4 border-white shadow-xl flex items-center justify-center">
+          <div class="w-4 h-4 bg-emerald-300 rounded-full animate-pulse"></div>
+        </div>
+        
+        <!-- Premium Edit Overlay -->
         <% if (locals.loggedInUserId && locals.loggedInUserId === profile?.id) { %>
-          <div class="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity cursor-pointer" onclick="document.getElementById('profileImageInput').click()">
-            <i class="fas fa-camera text-white text-xl"></i>
+          <div class="absolute inset-0 bg-black/60 backdrop-blur-sm rounded-3xl flex items-center justify-center opacity-0 hover:opacity-100 transition-all duration-300 cursor-pointer group" onclick="document.getElementById('profileImageInput').click()">
+            <div class="text-center transform group-hover:scale-110 transition-transform">
+              <i class="fas fa-camera text-white text-3xl mb-2"></i>
+              <div class="text-white text-sm font-semibold">Update Photo</div>
+            </div>
           </div>
           <input type="file" id="profileImageInput" accept="image/*" style="display: none;" onchange="uploadProfileImage(this)">
         <% } %>
       </div>
     </div>
-    <div class="absolute top-8 right-10 flex space-x-2">
+    <!-- Premium Action Buttons -->
+    <div class="absolute top-8 right-8 flex space-x-4 z-20">
       <% if (locals.loggedInUserId && locals.loggedInUserId===profile?.id) { %>
         <a href="/in/edit"
-          class="flex items-center px-5 py-2 border border-blue-600 text-blue-600 bg-white rounded-full hover:bg-blue-50 shadow transition">
-          <i class="fas fa-pencil-alt mr-2"></i> Edit Profile
+          class="group flex items-center px-6 py-3 backdrop-blur-xl bg-white/10 border border-white/20 text-white rounded-2xl hover:bg-white/20 shadow-2xl transition-all duration-300 hover:scale-105">
+          <i class="fas fa-pencil-alt mr-3 group-hover:rotate-12 transition-transform"></i> 
+          <span class="font-semibold">Edit Profile</span>
         </a>
-        <% } else { %>
+      <% } else { %>
+        <div class="flex space-x-4">
+          <button class="group flex items-center px-6 py-3 backdrop-blur-xl bg-white/10 border border-white/20 text-white rounded-2xl hover:bg-white/20 shadow-2xl transition-all duration-300 hover:scale-105">
+            <i class="fas fa-comment mr-3 group-hover:scale-110 transition-transform"></i> 
+            <span class="font-semibold">Message</span>
+          </button>
           <form action="/mynetwork/connect/<%= profile.id %>" method="POST" class="inline">
             <button type="submit"
-              class="inline-block bg-blue-600 text-white px-5 py-2 rounded-full shadow hover:bg-blue-700 transition">Connect</button>
+              class="group flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl shadow-2xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 hover:scale-105">
+              <i class="fas fa-user-plus mr-3 group-hover:scale-110 transition-transform"></i> 
+              <span class="font-semibold">Connect</span>
+            </button>
           </form>
-          <% } %>
-    </div>
-    <div class="pt-24 pb-8 px-10">
-      <h2 class="text-3xl font-extrabold text-gray-900">
-        <%= profile?.firstName %>
-          <%= profile?.lastName %>
-      </h2>
-      <p class="text-blue-700 font-semibold text-lg mt-1">
-        <%= profile?.role?.charAt(0).toUpperCase() + profile?.role?.slice(1) %>
-      </p>
-      <% if (profile?.city || profile?.country) { %>
-        <p class="text-gray-600 font-medium text-base mt-2">
-          <i class="fas fa-map-marker-alt mr-2"></i>
-          <% if (profile?.city && profile?.country) { %>
-            <%= profile.city %>, <%= profile.country %>
-          <% } else if (profile?.city) { %>
-            <%= profile.city %>
-          <% } else if (profile?.country) { %>
-            <%= profile.country %>
-          <% } %>
-        </p>
+        </div>
       <% } %>
-      <div class="flex mt-4 space-x-6">
-        <span class="flex items-center text-blue-600 font-medium"><i class="fas fa-user-friends mr-2"></i>
-          <%= connectionsCount %> connections
-        </span>
+    </div>
+    <!-- Premium Profile Information -->
+    <div class="pt-40 pb-12 px-12">
+      <div class="ml-60">
+        <div class="flex items-center space-x-6 mb-4">
+          <h1 class="text-6xl font-bold text-white tracking-tight drop-shadow-xl">
+            <%= profile?.firstName %> <%= profile?.lastName %>
+          </h1>
+          <% if (profile?.role === 'lawyer' && profile?.lawyer?.verificationStatus === 'approved') { %>
+            <div class="flex items-center backdrop-blur-xl bg-emerald-500/40 border border-emerald-400/60 px-4 py-2 rounded-2xl">
+              <i class="fas fa-certificate text-emerald-100 text-lg mr-2"></i>
+              <span class="text-white font-bold tracking-wide drop-shadow-md">VERIFIED ATTORNEY</span>
+            </div>
+          <% } %>
+        </div>
+        
+        <div class="flex items-center space-x-4 mb-6">
+          <div class="backdrop-blur-xl bg-white/25 border border-white/50 px-6 py-3 rounded-2xl">
+            <p class="text-white font-bold text-xl tracking-wide drop-shadow-md">
+              <%= profile?.role?.charAt(0).toUpperCase() + profile?.role?.slice(1) %>
+            </p>
+          </div>
+          <% if (profile?.lawyer?.specialization) { %>
+            <div class="backdrop-blur-xl bg-blue-500/40 border border-blue-400/60 px-6 py-3 rounded-2xl">
+              <p class="text-white font-bold text-lg drop-shadow-md">
+                <%= profile.lawyer.specialization %>
+              </p>
+            </div>
+          <% } %>
+        </div>
+        
+        <% if (profile?.city || profile?.country) { %>
+          <div class="flex items-center text-white font-bold text-xl mb-8 drop-shadow-lg">
+            <i class="fas fa-map-marker-alt mr-3 text-blue-200 drop-shadow-md"></i>
+            <% if (profile?.city && profile?.country) { %>
+              <%= profile.city %>, <%= profile.country %>
+            <% } else if (profile?.city) { %>
+              <%= profile.city %>
+            <% } else if (profile?.country) { %>
+              <%= profile.country %>
+            <% } %>
+          </div>
+        <% } %>
+        
+        <!-- Premium Stats Display -->
+        <div class="flex items-center space-x-12 mt-8">
+          <div class="flex items-center text-white">
+            <div class="w-16 h-16 backdrop-blur-xl bg-white/25 border border-white/50 rounded-2xl flex items-center justify-center mr-4">
+              <i class="fas fa-user-friends text-blue-200 text-2xl drop-shadow-md"></i>
+            </div>
+            <div>
+              <div class="text-4xl font-bold drop-shadow-lg"><%= connectionsCount %></div>
+              <div class="text-white font-bold drop-shadow-md">Professional Network</div>
+            </div>
+          </div>
+          
+          <% if (profile?.role === 'lawyer') { %>
+            <div class="flex items-center text-white">
+              <div class="w-16 h-16 backdrop-blur-xl bg-white/25 border border-white/50 rounded-2xl flex items-center justify-center mr-4">
+                <i class="fas fa-gavel text-purple-200 text-2xl drop-shadow-md"></i>
+              </div>
+              <div>
+                <div class="text-4xl font-bold drop-shadow-lg"><%= new Date().getFullYear() - new Date(profile?.createdAt || new Date()).getFullYear() %></div>
+                <div class="text-white font-bold drop-shadow-md">Years of Practice</div>
+              </div>
+            </div>
+          <% } %>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- About Section -->
-  <div class="bg-white rounded-2xl shadow-lg mb-8 p-8">
-    <div class="flex items-center mb-4">
-      <i class="fas fa-user text-blue-500 text-xl mr-3"></i>
-      <h3 class="text-2xl font-bold text-gray-800">About</h3>
+  <!-- Premium About Section -->
+  <div class="backdrop-blur-xl bg-white/15 border border-white/30 rounded-3xl shadow-2xl mb-12 p-10">
+    <div class="flex items-center mb-8">
+      <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mr-6 shadow-xl">
+        <i class="fas fa-user text-white text-2xl"></i>
+      </div>
+      <h3 class="text-4xl font-bold text-white tracking-wide drop-shadow-lg">Professional Profile</h3>
     </div>
-    <p class="text-gray-700 text-lg">
-      <%= profile?.about || 'No description available.' %>
-    </p>
-  </div>
-
-  <!-- Profile Statistics -->
-  <div class="bg-white rounded-2xl shadow-lg mb-8 p-8">
-    <div class="flex items-center mb-6">
-      <i class="fas fa-chart-bar text-blue-500 text-xl mr-3"></i>
-      <% if (profile?.role === 'lawyer') { %>
-        <h3 class="text-2xl font-bold text-gray-800">Professional Overview</h3>
-      <% } else { %>
-        <h3 class="text-2xl font-bold text-gray-800">Community Activity</h3>
-      <% } %>
-    </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-      <% if (profile?.role === 'lawyer') { %>
-        <div class="text-center p-4 bg-blue-50 rounded-xl border border-blue-100">
-          <div class="text-2xl font-bold text-blue-600"><%= profile?.posts?.length || 0 %></div>
-          <div class="text-sm text-gray-600 mt-1">Legal Articles</div>
-        </div>
-        <div class="text-center p-4 bg-green-50 rounded-xl border border-green-100">
-          <div class="text-2xl font-bold text-green-600"><%= connectionsCount %></div>
-          <div class="text-sm text-gray-600 mt-1">Professional Network</div>
-        </div>
-        <div class="text-center p-4 bg-purple-50 rounded-xl border border-purple-100">
-          <div class="text-2xl font-bold text-purple-600"><%= profile?.lawyer?.Educations?.length || 0 %></div>
-          <div class="text-sm text-gray-600 mt-1">Education</div>
-        </div>
-        <div class="text-center p-4 bg-orange-50 rounded-xl border border-orange-100">
-          <div class="text-2xl font-bold text-orange-600"><%= new Date().getFullYear() - new Date(profile?.createdAt || new Date()).getFullYear() %></div>
-          <div class="text-sm text-gray-600 mt-1">Years Practicing</div>
-        </div>
-      <% } else { %>
-        <div class="text-center p-4 bg-blue-50 rounded-xl border border-blue-100">
-          <div class="text-2xl font-bold text-blue-600"><%= profile?.posts?.length || 0 %></div>
-          <div class="text-sm text-gray-600 mt-1">Posts & Questions</div>
-        </div>
-        <div class="text-center p-4 bg-green-50 rounded-xl border border-green-100">
-          <div class="text-2xl font-bold text-green-600"><%= connectionsCount %></div>
-          <div class="text-sm text-gray-600 mt-1">Helpful Connections</div>
-        </div>
-        <div class="text-center p-4 bg-purple-50 rounded-xl border border-purple-100">
-          <div class="text-2xl font-bold text-purple-600"><%= connectionsCount %></div>
-          <div class="text-sm text-gray-600 mt-1">Lawyer Connections</div>
-        </div>
-        <div class="text-center p-4 bg-orange-50 rounded-xl border border-orange-100">
-          <div class="text-2xl font-bold text-orange-600"><%= Math.floor((new Date() - new Date(profile?.createdAt || new Date())) / (1000 * 60 * 60 * 24)) %></div>
-          <div class="text-sm text-gray-600 mt-1">Days Active</div>
-        </div>
-      <% } %>
+    <div class="backdrop-blur-xl bg-white/20 border border-white/40 rounded-2xl p-8">
+      <p class="text-white text-lg leading-relaxed font-semibold drop-shadow-md">
+        <%= profile?.about || 'Distinguished legal professional committed to excellence in client service and legal advocacy.' %>
+      </p>
     </div>
   </div>
 
-  <!-- Interests & Areas Section -->
-  <div class="bg-white rounded-2xl shadow-lg mb-8 p-8">
-    <div class="flex items-center mb-6">
+  <!-- Premium Professional Metrics -->
+  <div class="backdrop-blur-xl bg-white/15 border border-white/30 rounded-3xl shadow-2xl mb-12 p-10">
+    <div class="flex items-center mb-10">
+      <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center mr-6 shadow-xl">
+        <i class="fas fa-chart-bar text-white text-2xl"></i>
+      </div>
       <% if (profile?.role === 'lawyer') { %>
-        <i class="fas fa-gavel text-blue-500 text-xl mr-3"></i>
-        <h3 class="text-2xl font-bold text-gray-800">Legal Expertise</h3>
+        <h3 class="text-4xl font-bold text-white tracking-wide drop-shadow-lg">Professional Excellence</h3>
       <% } else { %>
-        <i class="fas fa-heart text-blue-500 text-xl mr-3"></i>
-        <h3 class="text-2xl font-bold text-gray-800">Interests & Legal Areas</h3>
+        <h3 class="text-4xl font-bold text-white tracking-wide drop-shadow-lg">Community Leadership</h3>
       <% } %>
     </div>
-    <div class="flex flex-wrap gap-3">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+      <% if (profile?.role === 'lawyer') { %>
+        <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-blue-500/30 to-blue-600/40 border border-blue-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
+          <div class="text-5xl font-bold text-blue-100 mb-4 drop-shadow-lg"><%= profile?.posts?.length || 0 %></div>
+          <div class="text-lg font-bold text-white mb-2 drop-shadow-md">Legal Publications</div>
+          <i class="fas fa-file-alt text-blue-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
+        </div>
+        <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-emerald-500/30 to-emerald-600/40 border border-emerald-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
+          <div class="text-5xl font-bold text-emerald-100 mb-4 drop-shadow-lg"><%= connectionsCount %></div>
+          <div class="text-lg font-bold text-white mb-2 drop-shadow-md">Elite Network</div>
+          <i class="fas fa-users text-emerald-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
+        </div>
+        <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-purple-500/30 to-purple-600/40 border border-purple-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
+          <div class="text-5xl font-bold text-purple-100 mb-4 drop-shadow-lg"><%= profile?.lawyer?.Educations?.length || 0 %></div>
+          <div class="text-lg font-bold text-white mb-2 drop-shadow-md">Advanced Degrees</div>
+          <i class="fas fa-graduation-cap text-purple-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
+        </div>
+        <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-amber-500/30 to-amber-600/40 border border-amber-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
+          <div class="text-5xl font-bold text-amber-100 mb-4 drop-shadow-lg"><%= new Date().getFullYear() - new Date(profile?.createdAt || new Date()).getFullYear() %></div>
+          <div class="text-lg font-bold text-white mb-2 drop-shadow-md">Years of Excellence</div>
+          <i class="fas fa-calendar-alt text-amber-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
+        </div>
+      <% } else { %>
+        <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-blue-500/30 to-blue-600/40 border border-blue-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
+          <div class="text-5xl font-bold text-blue-100 mb-4 drop-shadow-lg"><%= profile?.posts?.length || 0 %></div>
+          <div class="text-lg font-bold text-white mb-2 drop-shadow-md">Forum Contributions</div>
+          <i class="fas fa-comments text-blue-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
+        </div>
+        <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-emerald-500/30 to-emerald-600/40 border border-emerald-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
+          <div class="text-5xl font-bold text-emerald-100 mb-4 drop-shadow-lg"><%= connectionsCount %></div>
+          <div class="text-lg font-bold text-white mb-2 drop-shadow-md">Active Network</div>
+          <i class="fas fa-users text-emerald-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
+        </div>
+        <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-purple-500/30 to-purple-600/40 border border-purple-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
+          <div class="text-5xl font-bold text-purple-100 mb-4 drop-shadow-lg"><%= connectionsCount %></div>
+          <div class="text-lg font-bold text-white mb-2 drop-shadow-md">Legal Connections</div>
+          <i class="fas fa-balance-scale text-purple-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
+        </div>
+        <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-amber-500/30 to-amber-600/40 border border-amber-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
+          <div class="text-5xl font-bold text-amber-100 mb-4 drop-shadow-lg"><%= Math.floor((new Date() - new Date(profile?.createdAt || new Date())) / (1000 * 60 * 60 * 24)) %></div>
+          <div class="text-lg font-bold text-white mb-2 drop-shadow-md">Days Active</div>
+          <i class="fas fa-calendar-check text-amber-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- Premium Expertise & Interests -->
+  <div class="backdrop-blur-xl bg-white/15 border border-white/30 rounded-3xl shadow-2xl mb-12 p-10">
+    <div class="flex items-center mb-10">
+      <% if (profile?.role === 'lawyer') { %>
+        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mr-6 shadow-xl">
+          <i class="fas fa-gavel text-white text-2xl"></i>
+        </div>
+        <h3 class="text-4xl font-bold text-white tracking-wide drop-shadow-lg">Legal Expertise</h3>
+      <% } else { %>
+        <div class="w-16 h-16 bg-gradient-to-br from-pink-500 to-rose-600 rounded-2xl flex items-center justify-center mr-6 shadow-xl">
+          <i class="fas fa-heart text-white text-2xl"></i>
+        </div>
+        <h3 class="text-4xl font-bold text-white tracking-wide drop-shadow-lg">Interests & Legal Areas</h3>
+      <% } %>
+    </div>
+    <div class="flex flex-wrap gap-4">
       <% if (profile?.role === 'lawyer') { %>
         <% if (profile?.lawyer?.legalAreas) { %>
           <% profile.lawyer.legalAreas.split(',').forEach(area => { %>
-            <span class="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-              <i class="fas fa-gavel mr-1"></i><%= area.trim() %>
+            <span class="group px-6 py-3 backdrop-blur-xl bg-gradient-to-r from-blue-500/40 to-indigo-600/50 border border-blue-400/60 text-white rounded-2xl font-bold text-lg hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-lg">
+              <i class="fas fa-gavel mr-2 group-hover:rotate-12 transition-transform"></i><%= area.trim() %>
             </span>
           <% }); %>
         <% } else { %>
-          <p class="text-gray-600 italic">No legal areas specified yet. <a href="/in/edit" class="text-blue-600 hover:underline">Add your expertise areas</a></p>
+          <div class="backdrop-blur-xl bg-white/20 border border-white/40 rounded-2xl p-6">
+            <p class="text-white text-lg font-semibold drop-shadow-md">No legal areas specified yet. <a href="/in/edit" class="text-blue-200 hover:text-blue-100 font-bold underline">Add your expertise areas</a></p>
+          </div>
         <% } %>
       <% } else { %>
         <% if (profile?.interests) { %>
           <% profile.interests.split(',').forEach(interest => { %>
-            <span class="px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-              <i class="fas fa-star mr-1"></i><%= interest.trim() %>
+            <span class="group px-6 py-3 backdrop-blur-xl bg-gradient-to-r from-pink-500/40 to-rose-600/50 border border-pink-400/60 text-white rounded-2xl font-bold text-lg hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-lg">
+              <i class="fas fa-star mr-2 group-hover:rotate-12 transition-transform"></i><%= interest.trim() %>
             </span>
           <% }); %>
         <% } else { %>
-          <p class="text-gray-600 italic">No interests specified yet. <a href="/in/edit" class="text-blue-600 hover:underline">Add your interests</a></p>
+          <div class="backdrop-blur-xl bg-white/20 border border-white/40 rounded-2xl p-6">
+            <p class="text-white text-lg font-semibold drop-shadow-md">No interests specified yet. <a href="/in/edit" class="text-pink-200 hover:text-pink-100 font-bold underline">Add your interests</a></p>
+          </div>
         <% } %>
       <% } %>
     </div>
     
     <!-- Additional Interests for Lawyers -->
     <% if (profile?.role === 'lawyer' && profile?.interests) { %>
-      <div class="mt-6">
-        <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-          <i class="fas fa-heart text-green-500 mr-2"></i>
-          Additional Interests
+      <div class="mt-10">
+        <h4 class="text-2xl font-bold text-white mb-6 flex items-center drop-shadow-lg">
+          <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center mr-4 shadow-xl">
+            <i class="fas fa-heart text-white"></i>
+          </div>
+          Personal Interests
         </h4>
-        <div class="flex flex-wrap gap-3">
+        <div class="flex flex-wrap gap-4">
           <% profile.interests.split(',').forEach(interest => { %>
-            <span class="px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-              <i class="fas fa-heart mr-1"></i><%= interest.trim() %>
+            <span class="group px-6 py-3 backdrop-blur-xl bg-gradient-to-r from-emerald-500/40 to-green-600/50 border border-emerald-400/60 text-white rounded-2xl font-bold text-lg hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-lg">
+              <i class="fas fa-heart mr-2 group-hover:scale-110 transition-transform"></i><%= interest.trim() %>
             </span>
           <% }); %>
         </div>
@@ -271,20 +438,95 @@
         <h3 class="text-2xl font-bold text-gray-800">Professional Credentials</h3>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="border border-blue-100 p-5 rounded-xl bg-blue-50">
-          <h4 class="font-semibold text-lg text-blue-800">Badge Information</h4>
-          <p class="text-gray-600 mt-1"><strong>Badge Number:</strong> <%= profile?.lawyer?.badgeNumber %></p>
-          <p class="text-gray-600 mt-1"><strong>Issue Date:</strong> <%= profile?.lawyer?.badgeIssueDate ? new Date(profile?.lawyer?.badgeIssueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A' %></p>
-          <p class="text-gray-600 mt-1"><strong>Authority Level:</strong> <%= profile?.lawyer?.badgeIssuingAuthority ? profile?.lawyer?.badgeIssuingAuthority.charAt(0).toUpperCase() + profile?.lawyer?.badgeIssuingAuthority.slice(1) : 'N/A' %></p>
+        <!-- Enhanced Badge Information Card -->
+        <div class="bg-blue-50 rounded-xl p-5 border border-blue-200">
+          <div class="flex items-center justify-between mb-4">
+            <h4 class="font-bold text-lg text-gray-800 flex items-center">
+              <i class="fas fa-id-badge text-blue-600 mr-2"></i>
+              Legal Authority Badge
+            </h4>
+            <% if (profile?.lawyer?.verificationStatus === 'approved') { %>
+              <div class="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
+                <i class="fas fa-check text-white text-xs"></i>
+              </div>
+            <% } %>
+          </div>
+          
+          <div class="space-y-3">
+            <div class="flex items-center justify-between py-2 px-3 bg-white rounded-lg border border-blue-100">
+              <span class="text-gray-600 font-medium">Badge Number</span>
+              <span class="font-bold text-gray-800 font-mono text-sm"><%= profile?.lawyer?.badgeNumber || 'N/A' %></span>
+            </div>
+            
+            <div class="flex items-center justify-between py-2 px-3 bg-white rounded-lg border border-blue-100">
+              <span class="text-gray-600 font-medium">Issue Date</span>
+              <span class="font-semibold text-gray-800 text-sm"><%= profile?.lawyer?.badgeIssueDate ? new Date(profile?.lawyer?.badgeIssueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A' %></span>
+            </div>
+            
+            <div class="mt-4">
+              <div class="text-gray-600 font-medium mb-2">Verification Status</div>
+              <div class="flex items-center justify-center py-3 px-4 rounded-lg
+                <% if (profile?.lawyer?.verificationStatus === 'approved') { %>
+                  bg-emerald-500 text-white
+                <% } else if (profile?.lawyer?.verificationStatus === 'pending') { %>
+                  bg-amber-500 text-white
+                <% } else if (profile?.lawyer?.verificationStatus === 'rejected') { %>
+                  bg-red-500 text-white
+                <% } else { %>
+                  bg-gray-500 text-white
+                <% } %>">
+                <% if (profile?.lawyer?.verificationStatus === 'approved') { %>
+                  <i class="fas fa-shield-check mr-2"></i>
+                  <div class="text-center">
+                    <div class="font-bold">VERIFIED LAWYER</div>
+                    <div class="text-emerald-100 text-xs">Authorized to practice law</div>
+                  </div>
+                <% } else if (profile?.lawyer?.verificationStatus === 'pending') { %>
+                  <i class="fas fa-hourglass-half mr-2"></i>
+                  <div class="text-center">
+                    <div class="font-bold">VERIFICATION PENDING</div>
+                    <div class="text-amber-100 text-xs">Under review by authorities</div>
+                  </div>
+                <% } else if (profile?.lawyer?.verificationStatus === 'rejected') { %>
+                  <i class="fas fa-exclamation-triangle mr-2"></i>
+                  <div class="text-center">
+                    <div class="font-bold">VERIFICATION FAILED</div>
+                    <div class="text-red-100 text-xs">Unable to verify credentials</div>
+                  </div>
+                <% } else { %>
+                  <i class="fas fa-question-circle mr-2"></i>
+                  <div class="text-center">
+                    <div class="font-bold">STATUS UNKNOWN</div>
+                    <div class="text-gray-100 text-xs">Verification status unavailable</div>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+          </div>
         </div>
         <% if (profile?.lawyer?.lawyer_docs && profile?.lawyer?.lawyer_docs.length > 0) { %>
-          <div class="border border-blue-100 p-5 rounded-xl bg-blue-50">
-            <h4 class="font-semibold text-lg text-blue-800">Badge Document</h4>
-            <div class="mt-3">
-              <a href="<%= profile?.lawyer?.lawyer_docs[0]?.idPath %>" target="_blank" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                <i class="fas fa-file-pdf mr-2"></i> View Badge Document
-              </a>
+          <!-- Enhanced Document Card -->
+          <div class="bg-purple-50 rounded-xl p-5 border border-purple-200">
+            <div class="flex items-center mb-4">
+              <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center mr-3">
+                <i class="fas fa-file-certificate text-white"></i>
+              </div>
+              <h4 class="font-bold text-lg text-gray-800">Legal Documents</h4>
             </div>
+            
+            <div class="bg-white rounded-lg p-3 border border-purple-100 mb-4">
+              <div class="flex items-center text-gray-600 mb-1">
+                <i class="fas fa-file-pdf text-red-500 mr-2"></i>
+                <span class="font-medium">Official Badge Certificate</span>
+              </div>
+              <div class="text-sm text-gray-500">Issued by Legal Authority</div>
+            </div>
+            
+            <a href="<%= profile?.lawyer?.lawyer_docs[0]?.idPath %>" target="_blank" 
+               class="flex items-center justify-center w-full py-3 px-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+              <i class="fas fa-external-link-alt mr-2"></i>
+              <span class="font-semibold">View Official Document</span>
+            </a>
           </div>
         <% } %>
       </div>
@@ -293,40 +535,65 @@
 
   <!-- Education Section (Lawyers Only) -->
   <% if (profile?.role === 'lawyer' && profile?.lawyer?.Educations?.length > 0) { %>
-    <div class="bg-white rounded-2xl shadow-lg mb-8 p-8">
-      <div class="flex items-center mb-4">
-        <i class="fas fa-graduation-cap text-blue-500 text-xl mr-3"></i>
+    <div class="bg-white rounded-2xl shadow-lg mb-8 p-6 border border-gray-200">
+      <div class="flex items-center mb-6">
+        <div class="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center mr-3">
+          <i class="fas fa-graduation-cap text-white"></i>
+        </div>
         <h3 class="text-2xl font-bold text-gray-800">Legal Education</h3>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <% profile?.lawyer?.Educations?.forEach(edu=> { %>
-          <div class="border border-blue-100 p-5 rounded-xl bg-blue-50">
-            <h4 class="font-semibold text-lg text-blue-800">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <% profile?.lawyer?.Educations?.forEach((edu, index) => { %>
+          <div class="bg-emerald-50 rounded-xl p-5 border border-emerald-200 hover:shadow-md transition">
+            <div class="flex items-start justify-between mb-3">
+              <div class="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
+                <%= index + 1 %>
+              </div>
+              <div class="text-emerald-600">
+                <i class="fas fa-university"></i>
+              </div>
+            </div>
+            
+            <h4 class="font-bold text-lg text-gray-800 mb-2 leading-tight">
               <%= edu?.institution || edu?.university || edu?.college %>
             </h4>
-            <p class="text-gray-600 mt-1">
-              <%= edu?.degree %>
-                <% if (edu?.fieldOfStudy) { %>, <%= edu?.fieldOfStudy %>
-                    <% } %>
-            </p>
-            <p class="text-gray-500 text-sm mt-1">
-              <%= edu?.startYear %> - <%= edu?.endYear || 'Present' %>
-            </p>
+            
+            <div class="bg-white rounded-lg p-3 mb-3 border border-emerald-100">
+              <p class="font-semibold text-gray-700">
+                <%= edu?.degree %>
+              </p>
+              <% if (edu?.fieldOfStudy) { %>
+                <p class="text-emerald-600 text-sm font-medium mt-1">
+                  <%= edu?.fieldOfStudy %>
+                </p>
+              <% } %>
+            </div>
+            
+            <div class="flex items-center text-gray-500 text-sm">
+              <i class="fas fa-calendar-alt mr-2"></i>
+              <span class="font-medium">
+                <%= edu?.startYear %> - <%= edu?.endYear || 'Present' %>
+              </span>
+            </div>
           </div>
-          <% }); %>
+        <% }); %>
       </div>
     </div>
-    <% } %>
+  <% } %>
 
       <!-- Recent Activity Section -->
-      <div class="bg-white rounded-2xl shadow-lg mb-8 p-8">
+      <div class="bg-white rounded-2xl shadow-lg mb-8 p-6 border border-gray-200">
         <div class="flex items-center mb-6">
-          <i class="fas fa-clock text-blue-500 text-xl mr-3"></i>
+          <div class="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center mr-3">
+            <i class="fas fa-clock text-white"></i>
+          </div>
           <h3 class="text-2xl font-bold text-gray-800">Recent Activity</h3>
         </div>
-        <div class="space-y-4">
-          <div class="flex items-center p-4 bg-blue-50 rounded-xl border-l-4 border-blue-500">
-            <i class="fas fa-user-plus text-blue-500 mr-3"></i>
+        <div class="space-y-3">
+          <div class="flex items-center p-4 bg-blue-50 rounded-lg border border-blue-200 hover:shadow-md transition">
+            <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+              <i class="fas fa-user-plus text-white"></i>
+            </div>
             <div>
               <div class="font-medium text-gray-800">Joined the platform</div>
               <div class="text-sm text-gray-600"><%= new Date(profile?.createdAt || new Date()).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %></div>

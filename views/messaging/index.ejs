@@ -62,17 +62,23 @@
                                                     icon: '🎓'
                                                 };
                                                 
-                                                if (message.user.lawyer.badgeIssuingAuthority === 'approved') {
+                                                if (message.user.lawyer.verificationStatus === 'approved') {
                                                     rankInfo = {
-                                                        badge: 'Approved',
+                                                        badge: 'Verified',
                                                         color: 'green',
                                                         icon: '✓'
                                                     };
-                                                } else if (message.user.lawyer.badgeIssuingAuthority === 'consultant') {
+                                                } else if (message.user.lawyer.verificationStatus === 'pending') {
                                                     rankInfo = {
-                                                        badge: 'Consultant',
-                                                        color: 'purple',
-                                                        icon: '⭐'
+                                                        badge: 'Pending',
+                                                        color: 'yellow',
+                                                        icon: '⏳'
+                                                    };
+                                                } else if (message.user.lawyer.verificationStatus === 'rejected') {
+                                                    rankInfo = {
+                                                        badge: 'Rejected',
+                                                        color: 'red',
+                                                        icon: '✗'
                                                     };
                                                 }
                                             %>

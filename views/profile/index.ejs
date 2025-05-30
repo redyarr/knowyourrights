@@ -61,30 +61,38 @@
             <div>
                 <% if (profile?.role === 'lawyer') { %>
                     <% 
-                      let authorityColor = 'blue';
-                      let authorityBadge = 'Training Lawyer';
-                      let authorityIcon = 'fas fa-user-graduate';
-                      let authorityBg = 'bg-blue-50';
-                      let authorityBorder = 'border-blue-200';
-                      let authorityText = 'text-blue-800';
-                      let authorityGradient = 'from-blue-500 to-blue-600';
+                      let authorityColor = 'yellow';
+                      let authorityBadge = 'Pending Verification';
+                      let authorityIcon = 'fas fa-clock';
+                      let authorityBg = 'bg-yellow-50';
+                      let authorityBorder = 'border-yellow-200';
+                      let authorityText = 'text-yellow-800';
+                      let authorityGradient = 'from-yellow-500 to-yellow-600';
                       
-                      if (profile?.lawyer?.badgeIssuingAuthority === 'approved') {
+                      if (profile?.lawyer?.verificationStatus === 'approved') {
                         authorityColor = 'emerald';
-                        authorityBadge = 'Approved Lawyer';
+                        authorityBadge = 'Verified Lawyer';
                         authorityIcon = 'fas fa-certificate';
                         authorityBg = 'bg-emerald-50';
                         authorityBorder = 'border-emerald-200';
                         authorityText = 'text-emerald-800';
                         authorityGradient = 'from-emerald-500 to-emerald-600';
-                      } else if (profile?.lawyer?.badgeIssuingAuthority === 'consultant') {
-                        authorityColor = 'purple';
-                        authorityBadge = 'Legal Consultant';
-                        authorityIcon = 'fas fa-award';
-                        authorityBg = 'bg-purple-50';
-                        authorityBorder = 'border-purple-200';
-                        authorityText = 'text-purple-800';
-                        authorityGradient = 'from-purple-500 to-purple-600';
+                      } else if (profile?.lawyer?.verificationStatus === 'rejected') {
+                        authorityColor = 'red';
+                        authorityBadge = 'Verification Rejected';
+                        authorityIcon = 'fas fa-times-circle';
+                        authorityBg = 'bg-red-50';
+                        authorityBorder = 'border-red-200';
+                        authorityText = 'text-red-800';
+                        authorityGradient = 'from-red-500 to-red-600';
+                      } else if (profile?.lawyer?.verificationStatus === 'pending') {
+                        authorityColor = 'yellow';
+                        authorityBadge = 'Pending Verification';
+                        authorityIcon = 'fas fa-clock';
+                        authorityBg = 'bg-yellow-50';
+                        authorityBorder = 'border-yellow-200';
+                        authorityText = 'text-yellow-800';
+                        authorityGradient = 'from-yellow-500 to-yellow-600';
                       }
                     %>
                     <div class="flex items-center flex-wrap gap-4 mb-3">
@@ -98,10 +106,46 @@
                             <span class="text-sm font-semibold tracking-wide"><%= authorityBadge %></span>
                         </div>
                     </div>
-                    <p class="text-gray-600 text-lg font-medium flex items-center">
-                        <i class="fas fa-balance-scale text-<%= authorityColor %>-500 mr-2"></i>
-                        Licensed Legal Professional • <%= authorityBadge.split(' ')[0] %> Level
-                    </p>
+                    <% if (profile?.lawyer?.verificationStatus === 'pending') { %>
+                        <p class="text-yellow-600 text-lg font-medium flex items-center">
+                            <i class="fas fa-clock text-yellow-500 mr-2"></i>
+                            Lawyer verification pending review
+                        </p>
+                        <div class="mt-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                            <p class="text-sm text-yellow-800">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                Your lawyer verification is currently under review. You'll be notified once it's processed.
+                            </p>
+                        </div>
+                    <% } else if (profile?.lawyer?.verificationStatus === 'rejected') { %>
+                        <p class="text-red-600 text-lg font-medium flex items-center">
+                            <i class="fas fa-times-circle text-red-500 mr-2"></i>
+                            Lawyer verification rejected
+                        </p>
+                        <div class="mt-3 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <p class="text-sm text-red-800">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                Your lawyer verification was rejected. 
+                                <% if (profile?.lawyer?.rejectionReason) { %>
+                                    Reason: <%= profile.lawyer.rejectionReason %>
+                                <% } %>
+                                Please update your information and resubmit.
+                            </p>
+                            <a href="/profile/edit" class="inline-block mt-2 text-red-600 hover:text-red-800 font-medium">
+                                Update Profile →
+                            </a>
+                        </div>
+                    <% } else if (profile?.lawyer?.verificationStatus === 'approved') { %>
+                        <p class="text-emerald-600 text-lg font-medium flex items-center">
+                            <i class="fas fa-certificate text-emerald-500 mr-2"></i>
+                            Verified Legal Professional
+                        </p>
+                    <% } else { %>
+                        <p class="text-gray-600 text-lg font-medium flex items-center">
+                            <i class="fas fa-user-graduate text-gray-500 mr-2"></i>
+                            Legal Professional
+                        </p>
+                    <% } %>
                 <% } else { %>
                     <h2 class="text-3xl font-bold text-gray-800">
                         <%= profile.firstName %> <%= profile.lastName %>
@@ -280,24 +324,33 @@
                       let rankGradient = 'from-blue-500 to-blue-600';
                       let rankDescription = 'Currently in training phase with supervised practice';
                       
-                      if (profile?.lawyer?.badgeIssuingAuthority === 'approved') {
+                      if (profile?.lawyer?.verificationStatus === 'approved') {
                         rankColor = 'emerald';
-                        rankBadge = 'Approved Lawyer';
+                        rankBadge = 'Verified Lawyer';
                         rankIcon = 'fas fa-certificate';
                         rankBg = 'bg-emerald-50';
                         rankBorder = 'border-emerald-200';
                         rankText = 'text-emerald-800';
                         rankGradient = 'from-emerald-500 to-emerald-600';
-                        rankDescription = 'Fully licensed and approved for independent practice';
-                      } else if (profile?.lawyer?.badgeIssuingAuthority === 'consultant') {
-                        rankColor = 'purple';
-                        rankBadge = 'Legal Consultant';
-                        rankIcon = 'fas fa-award';
-                        rankBg = 'bg-purple-50';
-                        rankBorder = 'border-purple-200';
-                        rankText = 'text-purple-800';
-                        rankGradient = 'from-purple-500 to-purple-600';
-                        rankDescription = 'Senior consultant with specialized expertise';
+                        rankDescription = 'Fully verified and approved for independent practice';
+                      } else if (profile?.lawyer?.verificationStatus === 'pending') {
+                        rankColor = 'yellow';
+                        rankBadge = 'Pending Verification';
+                        rankIcon = 'fas fa-clock';
+                        rankBg = 'bg-yellow-50';
+                        rankBorder = 'border-yellow-200';
+                        rankText = 'text-yellow-800';
+                        rankGradient = 'from-yellow-500 to-yellow-600';
+                        rankDescription = 'Verification currently under review by administrators';
+                      } else if (profile?.lawyer?.verificationStatus === 'rejected') {
+                        rankColor = 'red';
+                        rankBadge = 'Verification Rejected';
+                        rankIcon = 'fas fa-times-circle';
+                        rankBg = 'bg-red-50';
+                        rankBorder = 'border-red-200';
+                        rankText = 'text-red-800';
+                        rankGradient = 'from-red-500 to-red-600';
+                        rankDescription = 'Verification was rejected - please update credentials and resubmit';
                       }
                     %>
                     <div class="<%= rankBg %> rounded-xl p-6 mb-6 <%= rankBorder %> border-2">

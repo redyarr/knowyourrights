@@ -55,17 +55,23 @@
                                                         icon: '🎓'
                                                     };
                                                     
-                                                    if (conv.user.lawyer.badgeIssuingAuthority === 'approved') {
+                                                    if (conv.user.lawyer.verificationStatus === 'approved') {
                                                         rankInfo = {
-                                                            badge: 'Approved',
+                                                            badge: 'Verified',
                                                             color: 'green',
                                                             icon: '✓'
                                                         };
-                                                    } else if (conv.user.lawyer.badgeIssuingAuthority === 'consultant') {
+                                                    } else if (conv.user.lawyer.verificationStatus === 'pending') {
                                                         rankInfo = {
-                                                            badge: 'Consultant',
-                                                            color: 'purple',
-                                                            icon: '⭐'
+                                                            badge: 'Pending',
+                                                            color: 'yellow',
+                                                            icon: '⏳'
+                                                        };
+                                                    } else if (conv.user.lawyer.verificationStatus === 'rejected') {
+                                                        rankInfo = {
+                                                            badge: 'Rejected',
+                                                            color: 'red',
+                                                            icon: '✗'
                                                         };
                                                     }
                                                 %>
@@ -117,17 +123,23 @@
                                                         icon: '🎓'
                                                     };
                                                     
-                                                    if (conversationPartner.lawyer.badgeIssuingAuthority === 'approved') {
+                                                    if (conversationPartner.lawyer.verificationStatus === 'approved') {
                                                         rankInfo = {
-                                                            badge: 'Approved',
+                                                            badge: 'Verified',
                                                             color: 'green',
                                                             icon: '✓'
                                                         };
-                                                    } else if (conversationPartner.lawyer.badgeIssuingAuthority === 'consultant') {
+                                                    } else if (conversationPartner.lawyer.verificationStatus === 'pending') {
                                                         rankInfo = {
-                                                            badge: 'Consultant',
-                                                            color: 'purple',
-                                                            icon: '⭐'
+                                                            badge: 'Pending',
+                                                            color: 'yellow',
+                                                            icon: '⏳'
+                                                        };
+                                                    } else if (conversationPartner.lawyer.verificationStatus === 'rejected') {
+                                                        rankInfo = {
+                                                            badge: 'Rejected',
+                                                            color: 'red',
+                                                            icon: '✗'
                                                         };
                                                     }
                                                 %>

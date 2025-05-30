@@ -237,29 +237,35 @@
                                                 </span>
                                                 <% 
                                                     // Get lawyer rank information
-                                                    let rankInfo = {
-                                                        badge: 'Training',
-                                                        color: 'yellow',
-                                                        icon: '🎓'
-                                                    };
+                                                    let rankBadge = 'Training Lawyer';
+                                                    let rankIcon = 'fas fa-graduation-cap';
+                                                    let rankBg = 'bg-blue-100';
+                                                    let rankText = 'text-blue-800';
+                                                    let rankBorder = 'border-blue-200';
                                                     
-                                                    if (post.user.lawyer.badgeIssuingAuthority === 'approved') {
-                                                        rankInfo = {
-                                                            badge: 'Approved',
-                                                            color: 'green',
-                                                            icon: '✓'
-                                                        };
-                                                    } else if (post.user.lawyer.badgeIssuingAuthority === 'consultant') {
-                                                        rankInfo = {
-                                                            badge: 'Consultant',
-                                                            color: 'purple',
-                                                            icon: '⭐'
-                                                        };
+                                                    if (post.user.lawyer.verificationStatus === 'approved') {
+                                                        rankBadge = 'Verified Lawyer';
+                                                        rankIcon = 'fas fa-certificate';
+                                                        rankBg = 'bg-emerald-100';
+                                                        rankText = 'text-emerald-800';
+                                                        rankBorder = 'border-emerald-200';
+                                                    } else if (post.user.lawyer.verificationStatus === 'pending') {
+                                                        rankBadge = 'Pending Verification';
+                                                        rankIcon = 'fas fa-clock';
+                                                        rankBg = 'bg-yellow-100';
+                                                        rankText = 'text-yellow-800';
+                                                        rankBorder = 'border-yellow-200';
+                                                    } else if (post.user.lawyer.verificationStatus === 'rejected') {
+                                                        rankBadge = 'Verification Rejected';
+                                                        rankIcon = 'fas fa-times-circle';
+                                                        rankBg = 'bg-red-100';
+                                                        rankText = 'text-red-800';
+                                                        rankBorder = 'border-red-200';
                                                     }
                                                 %>
-                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-<%= rankInfo.color %>-100 text-<%= rankInfo.color %>-800 border border-<%= rankInfo.color %>-200">
-                                                    <span class="mr-1"><%= rankInfo.icon %></span>
-                                                    <%= rankInfo.badge %>
+                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium <%= rankBg %> <%= rankText %> border <%= rankBorder %>">
+                                                    <i class="<%= rankIcon %> text-xs mr-2"></i>
+                                                    <%= rankBadge %>
                                                 </span>
                                             <% } else { %>
                                                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
