@@ -52,14 +52,28 @@ document.addEventListener('DOMContentLoaded', function () {
                         const reactionEmoji = getReactionEmoji(reaction);
                         reactionButton.innerHTML = `<span class="text-xl">${reactionEmoji}</span>`;
                         reactionButton.classList.add('text-blue-500');
+                        
+                        // Add visual feedback
+                        reactionButton.style.transform = 'scale(1.2)';
+                        setTimeout(() => {
+                            reactionButton.style.transform = 'scale(1)';
+                        }, 200);
                     }
-                    location.reload();
+                    
+                    // Update reaction display with counts and icons
+                    if (typeof updateReactionDisplay === 'function' && data.reactions) {
+                        updateReactionDisplay(postId, data.reactions, data.userReaction);
+                    }
+                    
+                    showNotification('Reaction added!', 'success');
                 } else {
                     console.error('Error submitting reaction:', data.error);
+                    showNotification('Error: ' + data.error, 'error');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
+                showNotification('An error occurred while submitting your reaction.', 'error');
             });
     };
     function getReactionEmoji(reaction) {
@@ -76,17 +90,41 @@ document.addEventListener('DOMContentLoaded', function () {
     window.toggleCommentForm = function (postId) {
         const commentForm = document.getElementById(`commentForm-${postId}`);
         if (commentForm) {
-            commentForm.classList.toggle('hidden');
-            if (!commentForm.classList.contains('hidden')) {
-                const input = commentForm.querySelector('input[name="content"]');
-                if (input) input.focus();
+            const input = commentForm.querySelector('input[name="content"]');
+            
+            if (commentForm.classList.contains('hidden')) {
+                commentForm.classList.remove('hidden');
+                commentForm.style.opacity = '0';
+                commentForm.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    commentForm.style.transition = 'all 0.3s ease';
+                    commentForm.style.opacity = '1';
+                    commentForm.style.transform = 'translateY(0)';
+                    if (input) input.focus();
+                }, 10);
+            } else {
+                commentForm.style.opacity = '0';
+                commentForm.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    commentForm.classList.add('hidden');
+                }, 300);
             }
         }
     };
     window.submitComment = function (form, postId) {
         const contentInput = form.querySelector('input[name="content"]');
         const content = contentInput.value.trim();
-        if (!content) return;
+        
+        if (!content) {
+            showNotification('Please enter a comment.', 'warning');
+            return;
+        }
+        
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalContent = submitButton.innerHTML;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i>';
+        submitButton.disabled = true;
+        
         fetch(`/feed/post/${postId}/comment`, {
             method: 'POST',
             headers: {
@@ -141,12 +179,19 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     }
                     toggleCommentForm(postId);
+                    showNotification('Comment added successfully!', 'success');
                 } else {
                     console.error('Error submitting comment:', data.error);
+                    showNotification('Error: ' + data.error, 'error');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
+                showNotification('An error occurred while submitting your comment.', 'error');
+            })
+            .finally(() => {
+                submitButton.innerHTML = originalContent;
+                submitButton.disabled = false;
             });
     };
     function createCommentElement(comment) {
@@ -429,4 +474,34 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('editCommentModal').classList.toggle('hidden');
         document.body.classList.toggle('overflow-hidden');
     };
+    
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full`;
+        
+        const colors = {
+            success: 'bg-green-500 text-white',
+            error: 'bg-red-500 text-white',
+            warning: 'bg-yellow-500 text-white',
+            info: 'bg-blue-500 text-white'
+        };
+        
+        notification.className += ` ${colors[type] || colors.info}`;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+        
+        setTimeout(() => {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
+    }
 });

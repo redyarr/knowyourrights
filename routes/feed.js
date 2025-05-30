@@ -13,7 +13,7 @@ const upload = multer({ dest: 'public/uploads/posts/' });
 router.post('/create-post', isAuthenticated, isVerifiedLawyer, upload.single('image'), FeedController.createPost);
 
 // Feed routes
-router.get('/', isAuthenticated, isVerifiedLawyer, FeedController.getAllPosts);
+router.get('/', isAuthenticated, isVerifiedLawyer, FeedController.getFeedPosts);
 
 // Post reaction and comment routes
 router.post('/post/:id/react', isAuthenticated, FeedController.reactToPost);
@@ -26,5 +26,10 @@ router.delete('/post/:id/delete', isAuthenticated, isVerifiedLawyer, FeedControl
 // Edit and delete comment routes
 router.put('/comment/:id/edit', isAuthenticated, FeedController.editComment);
 router.delete('/comment/:id/delete', isAuthenticated, FeedController.deleteComment);
+
+// Share routes
+router.post('/posts/:id/share', isAuthenticated, FeedController.sharePost);
+router.get('/users/:userId/shared-posts', isAuthenticated, FeedController.getSharedPosts);
+router.get('/shared-posts', isAuthenticated, FeedController.getSharedPosts);
 
 module.exports = router;
