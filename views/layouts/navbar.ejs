@@ -1,4 +1,4 @@
-<nav class="bg-white border-b border-gray-200 fixed w-full top-0 z-50">
+<nav class="glass-nav bg-white/95 backdrop-blur-lg shadow-lg border-b border-white/20 fixed top-0 left-0 right-0 z-50">
   <div class="max-w-7xl mx-auto px-4">
     <div class="flex justify-between h-16 items-center">
 
@@ -67,49 +67,49 @@
             </g>
           </svg>
         </a>
-        <form action="/search" method="GET" class="flex items-center space-x-2 bg-gray-100 rounded-full px-4 py-2 w-full max-w-md">
-          <select name="searchType" id="searchType" class="px-3 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 text-sm">
+        <form action="/search" method="GET" class="flex items-center space-x-2 glass-card bg-white/50 backdrop-blur-sm rounded-full px-4 py-2 w-full max-w-md border border-white/30 shadow-lg">
+          <select name="searchType" id="searchType" class="px-3 py-2 rounded-full bg-white/70 backdrop-blur-sm border border-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 text-sm transition-all duration-300">
             <option value="all">All</option>
             <option value="lawyers">Lawyers</option>
             <option value="users">Users</option>
           </select>
           <div class="relative flex-1">
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
-              <i class="fas fa-search text-gray-400"></i>
+              <i class="fas fa-search text-gray-500"></i>
             </span>
             <input type="text" name="query" id="searchInput" placeholder="Search lawyers and users..." autocomplete="off"
-              class="w-full pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500">
+              class="w-full pl-10 pr-4 py-2 rounded-full bg-white/70 backdrop-blur-sm border border-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300">
             <div id="searchResults"
-              class="absolute mt-1 w-full bg-white shadow-lg rounded-md overflow-hidden hidden z-50"></div>
+              class="absolute mt-1 w-full glass-card bg-white/95 backdrop-blur-lg shadow-xl rounded-lg overflow-hidden hidden z-50 border border-white/20"></div>
           </div>
         </form>
       </div>
 
       <!-- Center nav -->
       <% if (locals.loggedInUserId) { %>
-        <div class="hidden md:flex space-x-8">
+        <div class="hidden md:flex space-x-2">
           <a href="/"
-            class="flex flex-col items-center text-gray-500 hover:text-gray-900 text-sm <%= (path === '/' || path === '/blog') ? 'font-bold text-blue-700' : '' %>">
-            <i class="fas fa-home text-xl"></i>
+            class="nav-item flex flex-col items-center px-4 py-2 rounded-xl text-gray-600 hover:text-blue-600 text-sm transition-all duration-300 hover:bg-blue-50/80 hover:backdrop-blur-sm <%= (path === '/' || path === '/blog') ? 'font-bold text-blue-700 bg-blue-100/80 backdrop-blur-sm' : '' %>">
+            <i class="fas fa-home text-xl mb-1"></i>
             <span>Home</span>
           </a>
           <a href="/mynetwork"
-            class="flex flex-col items-center text-gray-500 hover:text-gray-900 text-sm <%= path.includes('/user/network') ? 'font-bold text-blue-700' : '' %>">
-            <i class="fas fa-user-friends text-xl"></i>
+            class="nav-item flex flex-col items-center px-4 py-2 rounded-xl text-gray-600 hover:text-blue-600 text-sm transition-all duration-300 hover:bg-blue-50/80 hover:backdrop-blur-sm <%= path.includes('/user/network') ? 'font-bold text-blue-700 bg-blue-100/80 backdrop-blur-sm' : '' %>">
+            <i class="fas fa-user-friends text-xl mb-1"></i>
             <span>My Network</span>
           </a>
           <a href="/jobs"
-            class="flex flex-col items-center text-gray-500 hover:text-gray-900 text-sm <%= path.includes('/jobs') ? 'font-bold text-blue-700' : '' %>">
-            <i class="fas fa-briefcase text-xl"></i>
+            class="nav-item flex flex-col items-center px-4 py-2 rounded-xl text-gray-600 hover:text-blue-600 text-sm transition-all duration-300 hover:bg-blue-50/80 hover:backdrop-blur-sm <%= path.includes('/jobs') ? 'font-bold text-blue-700 bg-blue-100/80 backdrop-blur-sm' : '' %>">
+            <i class="fas fa-briefcase text-xl mb-1"></i>
             <span>Jobs</span>
           </a>
           <a href="/messaging"
-            class="relative flex flex-col items-center text-gray-500 hover:text-gray-900 text-sm <%= path.includes('/messages') ? 'font-bold text-blue-700' : '' %>">
-            <i class="fas fa-comment-dots text-xl"></i>
+            class="nav-item relative flex flex-col items-center px-4 py-2 rounded-xl text-gray-600 hover:text-blue-600 text-sm transition-all duration-300 hover:bg-blue-50/80 hover:backdrop-blur-sm <%= path.includes('/messages') ? 'font-bold text-blue-700 bg-blue-100/80 backdrop-blur-sm' : '' %>">
+            <i class="fas fa-comment-dots text-xl mb-1"></i>
             <span>Messaging</span>
             <% if (locals.unreadMessageCount> 0) { %>
               <span
-                class="absolute top-0 right-0 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                class="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
                 <%= locals.unreadMessageCount %>
               </span>
               <% } %>
@@ -133,18 +133,18 @@
             <% if (locals.loggedInUserId) { %>
               <div class="relative group">
                 <button id="profileButton"
-                  class="flex items-center text-gray-500 hover:text-gray-900 focus:outline-none">
-                  <img src="https://ui-avatars.com/api/?name=<%= locals.user ? encodeURIComponent(locals.user.firstName + ' ' + locals.user.lastName) : 'User' %>&size=32&background=3b82f6&color=ffffff" alt="Profile" class="h-8 w-8 rounded-full">
-                  <span class="ml-2 text-sm">Me <i class="fas fa-caret-down ml-1"></i></span>
+                  class="flex items-center px-3 py-2 rounded-xl text-gray-600 hover:text-blue-600 hover:bg-blue-50/80 hover:backdrop-blur-sm focus:outline-none transition-all duration-300">
+                  <img src="https://ui-avatars.com/api/?name=<%= locals.user ? encodeURIComponent(locals.user.firstName + ' ' + locals.user.lastName) : 'User' %>&size=32&background=3b82f6&color=ffffff" alt="Profile" class="h-8 w-8 rounded-full ring-2 ring-white shadow-md">
+                  <span class="ml-2 text-sm font-medium">Me <i class="fas fa-caret-down ml-1 transition-transform duration-200"></i></span>
                 </button>
                 <div id="profileMenu"
-                  class="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg hidden z-50">
-                  <div class="p-4 border-b">
+                  class="absolute right-0 mt-2 w-64 glass-card bg-white/95 backdrop-blur-lg border border-white/20 rounded-xl shadow-xl hidden z-50">
+                  <div class="p-4 border-b border-white/20">
                     <div class="flex items-center space-x-3">
                       <img src="https://ui-avatars.com/api/?name=<%= locals.user ? encodeURIComponent(locals.user.firstName + ' ' + locals.user.lastName) : 'User' %>&size=64&background=3b82f6&color=ffffff" alt="Profile"
-                        class="h-16 w-16 rounded-full">
+                        class="h-16 w-16 rounded-full ring-4 ring-white shadow-lg">
                       <div>
-                        <h4 class="font-semibold text-gray-800">
+                        <h4 class="font-bold text-gray-800">
                           <% if (typeof user !=='undefined' && user) { %>
                             <%= user.firstName %>
                               <%= user.lastName %>
@@ -152,38 +152,80 @@
                                   Guest User
                                   <% } %>
                         </h4>
-                        <p class="text-sm text-gray-600">
-                          <%= locals.userRole==='admin' ? 'admin' : locals.userRole==='lawyer' ? 'Lawyer' : 'visitor' %>
+                        <p class="text-sm text-gray-600 font-medium">
+                          <%= locals.userRole==='admin' ? 'Administrator' : locals.userRole==='lawyer' ? 'Lawyer' : 'Member' %>
                         </p>
                       </div>
                     </div>
                     <a href="/in"
-                      class="block mt-2 px-4 py-2 text-sm text-blue-600 text-center hover:bg-blue-50 rounded-md">View
+                      class="block mt-3 px-4 py-2 text-sm text-white bg-gradient-to-r from-blue-600 to-indigo-600 text-center hover:from-blue-700 hover:to-indigo-700 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">View
                       Profile</a>
                   </div>
                   <div class="py-2">
-                    <a href="/in/edit" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      <i class="fas fa-pencil-alt mr-2"></i>Edit Profile
+                    <a href="/in/edit" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 transition-all duration-200 rounded-lg mx-2">
+                      <i class="fas fa-pencil-alt mr-3 text-blue-500"></i>Edit Profile
                     </a>
-                    <a href="/settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings &
-                      Privacy</a>
-                    <a href="/help" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Help Center</a>
-                    <form action="/signout" method="POST"
-                      class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      <button type="submit">Sign Out</button>
+                    <a href="/settings" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 transition-all duration-200 rounded-lg mx-2">
+                      <i class="fas fa-cog mr-3 text-gray-500"></i>Settings & Privacy
+                    </a>
+                    <a href="/help" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 transition-all duration-200 rounded-lg mx-2">
+                      <i class="fas fa-question-circle mr-3 text-green-500"></i>Help Center
+                    </a>
+                    <form action="/signout" method="POST" class="mx-2">
+                      <button type="submit" class="flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-red-50/80 hover:text-red-600 transition-all duration-200 rounded-lg">
+                        <i class="fas fa-sign-out-alt mr-3 text-red-500"></i>Sign Out
+                      </button>
                     </form>
                   </div>
                 </div>
               </div>
               <% } else { %>
-                <a href="/login" class="text-gray-700 hover:text-gray-900 px-3 py-2">Sign in</a>
+                <a href="/login" class="px-4 py-2 rounded-xl text-gray-700 hover:text-blue-600 hover:bg-blue-50/80 hover:backdrop-blur-sm transition-all duration-300 font-medium">Sign in</a>
                 <a href="/register"
-                  class="ml-4 px-4 py-2 rounded-full text-blue-700 hover:bg-blue-50 border border-blue-700">Join now</a>
+                  class="ml-2 px-6 py-2 rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 border border-blue-600 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 font-medium">Join now</a>
                 <% } %>
           </div>
     </div>
   </div>
 </nav>
+<style>
+  .glass-nav {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  
+  .nav-item {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .nav-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 0.75rem;
+  }
+  
+  .nav-item:hover::before {
+    opacity: 1;
+  }
+  
+  .glass-card {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  
+  #profileButton:hover .fa-caret-down {
+    transform: rotate(180deg);
+  }
+</style>
+
 <script>
   document.getElementById('profileButton').addEventListener('click', function () {
     var menu = document.getElementById('profileMenu');

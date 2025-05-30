@@ -2,14 +2,21 @@
   
   <div class="max-w-7xl mx-auto px-4 py-8">
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">Search Results for "<%= query %>"</h1>
-      <p class="text-gray-600">
-        <% const totalResults = lawyers.length + users.length; %>
-        <%= totalResults %> results found
-        <% if (searchType !== 'all') { %>
-          in <%= searchType %>
-        <% } %>
-      </p>
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900 mb-2">Search Results for "<%= query %>"</h1>
+          <p class="text-gray-600">
+            <% const totalResults = lawyers.length + users.length; %>
+            <%= totalResults %> results found
+            <% if (searchType !== 'all') { %>
+              in <%= searchType %>
+            <% } %>
+          </p>
+        </div>
+        <a href="/search" class="glass-button bg-gray-600/90 backdrop-blur-sm text-white p-3 rounded-xl shadow-lg hover:bg-gray-700/90 transition-all duration-300 transform hover:-translate-y-1 border border-white/20" title="Back to Search">
+          <i class="fas fa-arrow-left"></i>
+        </a>
+      </div>
     </div>
 
     <% if (lawyers.length === 0 && users.length === 0) { %>
