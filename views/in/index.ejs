@@ -134,26 +134,26 @@
     <div class="pt-40 pb-12 px-12">
       <div class="ml-60">
         <div class="flex items-center space-x-6 mb-4">
-          <h1 class="text-6xl font-bold text-white tracking-tight drop-shadow-xl">
+          <h1 class="text-6xl font-bold text-black tracking-tight drop-shadow-xl">
             <%= profile?.firstName %> <%= profile?.lastName %>
           </h1>
           <% if (profile?.role === 'lawyer' && profile?.lawyer?.verificationStatus === 'approved') { %>
             <div class="flex items-center backdrop-blur-xl bg-emerald-500/40 border border-emerald-400/60 px-4 py-2 rounded-2xl">
               <i class="fas fa-certificate text-emerald-100 text-lg mr-2"></i>
-              <span class="text-white font-bold tracking-wide drop-shadow-md">VERIFIED ATTORNEY</span>
+              <span class="text-black font-bold tracking-wide drop-shadow-md">VERIFIED ATTORNEY</span>
             </div>
           <% } %>
         </div>
         
         <div class="flex items-center space-x-4 mb-6">
           <div class="backdrop-blur-xl bg-white/25 border border-white/50 px-6 py-3 rounded-2xl">
-            <p class="text-white font-bold text-xl tracking-wide drop-shadow-md">
+            <p class="text-black font-bold text-xl tracking-wide drop-shadow-md">
               <%= profile?.role?.charAt(0).toUpperCase() + profile?.role?.slice(1) %>
             </p>
           </div>
           <% if (profile?.lawyer?.specialization) { %>
             <div class="backdrop-blur-xl bg-blue-500/40 border border-blue-400/60 px-6 py-3 rounded-2xl">
-              <p class="text-white font-bold text-lg drop-shadow-md">
+              <p class="text-black font-bold text-lg drop-shadow-md">
                 <%= profile.lawyer.specialization %>
               </p>
             </div>
@@ -161,7 +161,7 @@
         </div>
         
         <% if (profile?.city || profile?.country) { %>
-          <div class="flex items-center text-white font-bold text-xl mb-8 drop-shadow-lg">
+          <div class="flex items-center text-black font-bold text-xl mb-8 drop-shadow-lg">
             <i class="fas fa-map-marker-alt mr-3 text-blue-200 drop-shadow-md"></i>
             <% if (profile?.city && profile?.country) { %>
               <%= profile.city %>, <%= profile.country %>
@@ -181,7 +181,7 @@
             </div>
             <div>
               <div class="text-4xl font-bold drop-shadow-lg"><%= connectionsCount %></div>
-              <div class="text-white font-bold drop-shadow-md">Professional Network</div>
+              <div class="text-black font-bold drop-shadow-md">Professional Network</div>
             </div>
           </div>
           
@@ -192,7 +192,7 @@
               </div>
               <div>
                 <div class="text-4xl font-bold drop-shadow-lg"><%= new Date().getFullYear() - new Date(profile?.createdAt || new Date()).getFullYear() %></div>
-                <div class="text-white font-bold drop-shadow-md">Years of Practice</div>
+                <div class="text-black font-bold drop-shadow-md">Years of Practice</div>
               </div>
             </div>
           <% } %>
@@ -207,10 +207,10 @@
       <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mr-6 shadow-xl">
         <i class="fas fa-user text-white text-2xl"></i>
       </div>
-      <h3 class="text-4xl font-bold text-white tracking-wide drop-shadow-lg">Professional Profile</h3>
+      <h3 class="text-4xl font-bold text-black tracking-wide drop-shadow-lg">Professional Profile</h3>
     </div>
     <div class="backdrop-blur-xl bg-white/20 border border-white/40 rounded-2xl p-8">
-      <p class="text-white text-lg leading-relaxed font-semibold drop-shadow-md">
+      <p class="text-black text-lg leading-relaxed font-semibold drop-shadow-md">
         <%= profile?.about || 'Distinguished legal professional committed to excellence in client service and legal advocacy.' %>
       </p>
     </div>
@@ -223,52 +223,52 @@
         <i class="fas fa-chart-bar text-white text-2xl"></i>
       </div>
       <% if (profile?.role === 'lawyer') { %>
-        <h3 class="text-4xl font-bold text-white tracking-wide drop-shadow-lg">Professional Excellence</h3>
+        <h3 class="text-4xl font-bold text-black tracking-wide drop-shadow-lg">Professional Excellence</h3>
       <% } else { %>
-        <h3 class="text-4xl font-bold text-white tracking-wide drop-shadow-lg">Community Leadership</h3>
+        <h3 class="text-4xl font-bold text-black tracking-wide drop-shadow-lg">Community Leadership</h3>
       <% } %>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
       <% if (profile?.role === 'lawyer') { %>
         <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-blue-500/30 to-blue-600/40 border border-blue-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
           <div class="text-5xl font-bold text-blue-100 mb-4 drop-shadow-lg"><%= profile?.posts?.length || 0 %></div>
-          <div class="text-lg font-bold text-white mb-2 drop-shadow-md">Legal Publications</div>
+          <div class="text-lg font-bold text-black mb-2 drop-shadow-md">Legal Publications</div>
           <i class="fas fa-file-alt text-blue-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
         </div>
         <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-emerald-500/30 to-emerald-600/40 border border-emerald-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
           <div class="text-5xl font-bold text-emerald-100 mb-4 drop-shadow-lg"><%= connectionsCount %></div>
-          <div class="text-lg font-bold text-white mb-2 drop-shadow-md">Elite Network</div>
+          <div class="text-lg font-bold text-black mb-2 drop-shadow-md">Elite Network</div>
           <i class="fas fa-users text-emerald-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
         </div>
         <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-purple-500/30 to-purple-600/40 border border-purple-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
           <div class="text-5xl font-bold text-purple-100 mb-4 drop-shadow-lg"><%= profile?.lawyer?.Educations?.length || 0 %></div>
-          <div class="text-lg font-bold text-white mb-2 drop-shadow-md">Advanced Degrees</div>
+          <div class="text-lg font-bold text-black mb-2 drop-shadow-md">Advanced Degrees</div>
           <i class="fas fa-graduation-cap text-purple-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
         </div>
         <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-amber-500/30 to-amber-600/40 border border-amber-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
           <div class="text-5xl font-bold text-amber-100 mb-4 drop-shadow-lg"><%= new Date().getFullYear() - new Date(profile?.createdAt || new Date()).getFullYear() %></div>
-          <div class="text-lg font-bold text-white mb-2 drop-shadow-md">Years of Excellence</div>
+          <div class="text-lg font-bold text-black mb-2 drop-shadow-md">Years of Excellence</div>
           <i class="fas fa-calendar-alt text-amber-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
         </div>
       <% } else { %>
         <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-blue-500/30 to-blue-600/40 border border-blue-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
           <div class="text-5xl font-bold text-blue-100 mb-4 drop-shadow-lg"><%= profile?.posts?.length || 0 %></div>
-          <div class="text-lg font-bold text-white mb-2 drop-shadow-md">Forum Contributions</div>
+          <div class="text-lg font-bold text-black mb-2 drop-shadow-md">Forum Contributions</div>
           <i class="fas fa-comments text-blue-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
         </div>
         <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-emerald-500/30 to-emerald-600/40 border border-emerald-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
           <div class="text-5xl font-bold text-emerald-100 mb-4 drop-shadow-lg"><%= connectionsCount %></div>
-          <div class="text-lg font-bold text-white mb-2 drop-shadow-md">Active Network</div>
+          <div class="text-lg font-bold text-black mb-2 drop-shadow-md">Active Network</div>
           <i class="fas fa-users text-emerald-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
         </div>
         <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-purple-500/30 to-purple-600/40 border border-purple-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
           <div class="text-5xl font-bold text-purple-100 mb-4 drop-shadow-lg"><%= connectionsCount %></div>
-          <div class="text-lg font-bold text-white mb-2 drop-shadow-md">Legal Connections</div>
+          <div class="text-lg font-bold text-black mb-2 drop-shadow-md">Legal Connections</div>
           <i class="fas fa-balance-scale text-purple-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
         </div>
         <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-amber-500/30 to-amber-600/40 border border-amber-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
           <div class="text-5xl font-bold text-amber-100 mb-4 drop-shadow-lg"><%= Math.floor((new Date() - new Date(profile?.createdAt || new Date())) / (1000 * 60 * 60 * 24)) %></div>
-          <div class="text-lg font-bold text-white mb-2 drop-shadow-md">Days Active</div>
+          <div class="text-lg font-bold text-black mb-2 drop-shadow-md">Days Active</div>
           <i class="fas fa-calendar-check text-amber-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
         </div>
       <% } %>
@@ -282,37 +282,37 @@
         <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mr-6 shadow-xl">
           <i class="fas fa-gavel text-white text-2xl"></i>
         </div>
-        <h3 class="text-4xl font-bold text-white tracking-wide drop-shadow-lg">Legal Expertise</h3>
+        <h3 class="text-4xl font-bold text-black tracking-wide drop-shadow-lg">Legal Expertise</h3>
       <% } else { %>
         <div class="w-16 h-16 bg-gradient-to-br from-pink-500 to-rose-600 rounded-2xl flex items-center justify-center mr-6 shadow-xl">
           <i class="fas fa-heart text-white text-2xl"></i>
         </div>
-        <h3 class="text-4xl font-bold text-white tracking-wide drop-shadow-lg">Interests & Legal Areas</h3>
+        <h3 class="text-4xl font-bold text-black tracking-wide drop-shadow-lg">Interests & Legal Areas</h3>
       <% } %>
     </div>
     <div class="flex flex-wrap gap-4">
       <% if (profile?.role === 'lawyer') { %>
         <% if (profile?.lawyer?.legalAreas) { %>
           <% profile.lawyer.legalAreas.split(',').forEach(area => { %>
-            <span class="group px-6 py-3 backdrop-blur-xl bg-gradient-to-r from-blue-500/40 to-indigo-600/50 border border-blue-400/60 text-white rounded-2xl font-bold text-lg hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-lg">
+            <span class="group px-6 py-3 backdrop-blur-xl bg-gradient-to-r from-blue-500/40 to-indigo-600/50 border border-blue-400/60 text-black rounded-2xl font-bold text-lg hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-lg">
               <i class="fas fa-gavel mr-2 group-hover:rotate-12 transition-transform"></i><%= area.trim() %>
             </span>
           <% }); %>
         <% } else { %>
           <div class="backdrop-blur-xl bg-white/20 border border-white/40 rounded-2xl p-6">
-            <p class="text-white text-lg font-semibold drop-shadow-md">No legal areas specified yet. <a href="/in/edit" class="text-blue-200 hover:text-blue-100 font-bold underline">Add your expertise areas</a></p>
+            <p class="text-black text-lg font-semibold drop-shadow-md">No legal areas specified yet. <a href="/in/edit" class="text-blue-600 hover:text-blue-800 font-bold underline">Add your expertise areas</a></p>
           </div>
         <% } %>
       <% } else { %>
         <% if (profile?.interests) { %>
           <% profile.interests.split(',').forEach(interest => { %>
-            <span class="group px-6 py-3 backdrop-blur-xl bg-gradient-to-r from-pink-500/40 to-rose-600/50 border border-pink-400/60 text-white rounded-2xl font-bold text-lg hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-lg">
+            <span class="group px-6 py-3 backdrop-blur-xl bg-gradient-to-r from-pink-500/40 to-rose-600/50 border border-pink-400/60 text-black rounded-2xl font-bold text-lg hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-lg">
               <i class="fas fa-star mr-2 group-hover:rotate-12 transition-transform"></i><%= interest.trim() %>
             </span>
           <% }); %>
         <% } else { %>
           <div class="backdrop-blur-xl bg-white/20 border border-white/40 rounded-2xl p-6">
-            <p class="text-white text-lg font-semibold drop-shadow-md">No interests specified yet. <a href="/in/edit" class="text-pink-200 hover:text-pink-100 font-bold underline">Add your interests</a></p>
+            <p class="text-black text-lg font-semibold drop-shadow-md">No interests specified yet. <a href="/in/edit" class="text-pink-600 hover:text-pink-800 font-bold underline">Add your interests</a></p>
           </div>
         <% } %>
       <% } %>
