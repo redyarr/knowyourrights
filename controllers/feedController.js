@@ -42,7 +42,7 @@ exports.getAllPosts = async (req, res) => {
                     attributes: ['id', 'firstName', 'lastName', 'role'],
                     include: [{
                         model: Lawyer,
-                        attributes: ['legalAreas', 'summary', 'lawFirm']
+                        attributes: ['legalAreas', 'summary', 'lawFirm', 'badgeIssuingAuthority']
                     }]
                 },
                 {
@@ -67,8 +67,10 @@ exports.getAllPosts = async (req, res) => {
             const reactionStats = {
                 like: reactions.filter(r => r.reaction === 'like').length,
                 love: reactions.filter(r => r.reaction === 'love').length,
-                insightful: reactions.filter(r => r.reaction === 'insightful').length,
-                support: reactions.filter(r => r.reaction === 'support').length
+                haha: reactions.filter(r => r.reaction === 'haha').length,
+                wow: reactions.filter(r => r.reaction === 'wow').length,
+                sad: reactions.filter(r => r.reaction === 'sad').length,
+                angry: reactions.filter(r => r.reaction === 'angry').length
             };
 
             // Find user's reaction if logged in
@@ -99,7 +101,7 @@ exports.getFeedPosts = async (req, res) => {
                     attributes: ['id', 'firstName', 'lastName', 'role'],
                     include: [{
                         model: Lawyer,
-                        attributes: ['legalAreas', 'summary', 'lawFirm']
+                        attributes: ['legalAreas', 'summary', 'lawFirm', 'badgeIssuingAuthority']
                     }]
                 },
                 {
@@ -124,8 +126,10 @@ exports.getFeedPosts = async (req, res) => {
             const reactionStats = {
                 like: reactions.filter(r => r.reaction === 'like').length,
                 love: reactions.filter(r => r.reaction === 'love').length,
-                insightful: reactions.filter(r => r.reaction === 'insightful').length,
-                support: reactions.filter(r => r.reaction === 'support').length
+                haha: reactions.filter(r => r.reaction === 'haha').length,
+                wow: reactions.filter(r => r.reaction === 'wow').length,
+                sad: reactions.filter(r => r.reaction === 'sad').length,
+                angry: reactions.filter(r => r.reaction === 'angry').length
             };
 
             // Find user's reaction if logged in
@@ -154,14 +158,14 @@ exports.getFeedPosts = async (req, res) => {
 exports.reactToPost = async (req, res) => {
     try {
         const postId = req.params.id;
-        const { type } = req.body;
+        const { reaction } = req.body;
         const userId = req.session.user_id;
 
         if (!userId) {
             return res.status(401).json({ success: false, error: "Please log in to react to posts." });
         }
 
-        if (!['like', 'love', 'insightful', 'support'].includes(type)) {
+        if (!['like', 'love', 'haha', 'wow', 'sad', 'angry'].includes(reaction)) {
             return res.status(400).json({ success: false, error: "Invalid reaction type." });
         }
 
@@ -169,17 +173,17 @@ exports.reactToPost = async (req, res) => {
         const existingReaction = await React.findOne({ where: { userId, postId } });
 
         if (existingReaction) {
-            if (existingReaction.reaction === type) {
+            if (existingReaction.reaction === reaction) {
                 // Remove reaction if same type
                 await existingReaction.destroy();
             } else {
                 // Update reaction type
-                existingReaction.reaction = type;
+                existingReaction.reaction = reaction;
                 await existingReaction.save();
             }
         } else {
             // Create new reaction
-            await React.create({ userId, postId, reaction: type });
+            await React.create({ userId, postId, reaction: reaction });
         }
 
         // Get updated reactions for this post
@@ -187,15 +191,18 @@ exports.reactToPost = async (req, res) => {
         const reactionStats = {
             like: reactions.filter(r => r.reaction === 'like').length,
             love: reactions.filter(r => r.reaction === 'love').length,
-            insightful: reactions.filter(r => r.reaction === 'insightful').length,
-            support: reactions.filter(r => r.reaction === 'support').length
+            haha: reactions.filter(r => r.reaction === 'haha').length,
+            wow: reactions.filter(r => r.reaction === 'wow').length,
+            sad: reactions.filter(r => r.reaction === 'sad').length,
+            angry: reactions.filter(r => r.reaction === 'angry').length
         };
 
         const userReaction = reactions.find(r => r.userId === userId);
 
         return res.json({
             success: true,
-            reactions: reactionStats,
+            reactions: reactions,
+            reactionStats: reactionStats,
             userReaction: userReaction ? userReaction.reaction : null
         });
     } catch (error) {

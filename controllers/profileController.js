@@ -21,9 +21,10 @@ exports.getProfile = async (req, res) => {
                 {
                     model: Lawyer,
                     as: 'lawyer',
+                    attributes: ['legalAreas', 'summary', 'lawFirm', 'badgeIssuingAuthority'],
                     include: [
                         { model: Education, as: 'Educations' },
-                        { model: require('../models/lawwyerDoc'), as: 'lawyer_docs' }
+                        { model: require('../models/lawwyerDoc'), as:'lawyer_docs' }
                     ]
                 },
                 { model: Contact },

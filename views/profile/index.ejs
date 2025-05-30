@@ -22,333 +22,540 @@
                 <% } %>
             </div>
             <div class="mt-8">
-                <% if (loggedInUserId) { %>
-                        <div class="flex space-x-3">
-                            <% if (!connectionStatus) { %>
-                                <button type="button" id="connectBtn" data-user-id="<%= profile.id %>" data-action="connect"
-                                    class="glass-button bg-blue-600/90 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-blue-700/90 transition-all duration-300 transform hover:-translate-y-1 border border-white/20">Connect</button>
-                                <% } else if (connectionStatus==='pending' ) { %>
-                                    <button type="button" id="connectBtn" data-user-id="<%= profile.id %>" data-action="cancel"
-                                        class="glass-button bg-gray-400/90 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-red-500/90 transition-all duration-300 transform hover:-translate-y-1 border border-white/20">Cancel</button>
-                                    <% } else if (connectionStatus==='accepted' ) { %>
-                                        <button type="button" id="connectBtn"
-                                            class="glass-button bg-green-600/90 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold shadow-lg border border-white/20">Connected</button>
-                                        <% } %>
-                                            <a href="/messaging/<%= profile.id %>"
-                                                class="glass-button bg-white/90 backdrop-blur-sm border-2 border-blue-600/50 text-blue-600 px-6 py-3 rounded-xl font-semibold text-center shadow-lg hover:bg-blue-50/90 transition-all duration-300 transform hover:-translate-y-1">Message</a>
-                        </div>
+                <% if (loggedInUserId && loggedInUserId != profile.id) { %>
+                    <div class="flex space-x-3">
+                        <% if (!connectionStatus) { %>
+                            <button type="button" id="connectBtn" data-user-id="<%= profile.id %>" data-action="connect"
+                                class="glass-button bg-blue-600/90 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-blue-700/90 transition-all duration-300 transform hover:-translate-y-1 border border-white/20">
+                                <i class="fas fa-user-plus mr-2"></i>Connect
+                            </button>
+                        <% } else if (connectionStatus === 'pending') { %>
+                            <button type="button" id="connectBtn" data-user-id="<%= profile.id %>" data-action="cancel"
+                                class="glass-button bg-gray-400/90 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-red-500/90 transition-all duration-300 transform hover:-translate-y-1 border border-white/20">
+                                <i class="fas fa-clock mr-2"></i>Pending
+                            </button>
+                        <% } else if (connectionStatus === 'accepted') { %>
+                            <button type="button" id="connectBtn"
+                                class="glass-button bg-green-600/90 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold shadow-lg border border-white/20">
+                                <i class="fas fa-check mr-2"></i>Connected
+                            </button>
                         <% } %>
+                        <a href="/messaging/<%= profile.id %>"
+                            class="glass-button bg-white/90 backdrop-blur-sm border-2 border-blue-600/50 text-blue-600 px-6 py-3 rounded-xl font-semibold text-center shadow-lg hover:bg-blue-50/90 transition-all duration-300 transform hover:-translate-y-1">
+                            <i class="fas fa-envelope mr-2"></i>Message
+                        </a>
+                    </div>
+                <% } else if (loggedInUserId == profile.id) { %>
+                    <div class="flex space-x-3">
+                        <a href="/profile/edit"
+                            class="glass-button bg-blue-600/90 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-blue-700/90 transition-all duration-300 transform hover:-translate-y-1 border border-white/20">
+                            <i class="fas fa-edit mr-2"></i>Edit Profile
+                        </a>
+                    </div>
+                <% } %>
             </div>
         </div>
+        
         <!-- Profile Info -->
         <div class="mt-20 px-6 pb-6">
             <div>
                 <% if (profile?.role === 'lawyer') { %>
                     <% 
                       let authorityColor = 'blue';
-                      let authorityBadge = 'Training';
-                      let authorityIcon = 'fas fa-graduation-cap';
+                      let authorityBadge = 'Training Lawyer';
+                      let authorityIcon = 'fas fa-user-graduate';
+                      let authorityBg = 'bg-blue-50';
+                      let authorityBorder = 'border-blue-200';
+                      let authorityText = 'text-blue-800';
+                      let authorityGradient = 'from-blue-500 to-blue-600';
                       
                       if (profile?.lawyer?.badgeIssuingAuthority === 'approved') {
-                        authorityColor = 'green';
-                        authorityBadge = 'Approved';
-                        authorityIcon = 'fas fa-shield-alt';
+                        authorityColor = 'emerald';
+                        authorityBadge = 'Approved Lawyer';
+                        authorityIcon = 'fas fa-certificate';
+                        authorityBg = 'bg-emerald-50';
+                        authorityBorder = 'border-emerald-200';
+                        authorityText = 'text-emerald-800';
+                        authorityGradient = 'from-emerald-500 to-emerald-600';
                       } else if (profile?.lawyer?.badgeIssuingAuthority === 'consultant') {
                         authorityColor = 'purple';
-                        authorityBadge = 'Consultant';
-                        authorityIcon = 'fas fa-crown';
+                        authorityBadge = 'Legal Consultant';
+                        authorityIcon = 'fas fa-award';
+                        authorityBg = 'bg-purple-50';
+                        authorityBorder = 'border-purple-200';
+                        authorityText = 'text-purple-800';
+                        authorityGradient = 'from-purple-500 to-purple-600';
                       }
                     %>
-                    <div class="flex items-center flex-wrap gap-3 mb-2">
-                        <h2 class="text-2xl font-bold">
+                    <div class="flex items-center flex-wrap gap-4 mb-3">
+                        <h2 class="text-3xl font-bold text-gray-800">
                             <%= profile.firstName %> <%= profile.lastName %>
                         </h2>
-                        <div class="flex items-center bg-<%= authorityColor %>-100 text-<%= authorityColor %>-800 px-3 py-1 rounded-full border-2 border-<%= authorityColor %>-200">
-                            <i class="<%= authorityIcon %> text-sm mr-2"></i>
-                            <span class="text-sm font-bold"><%= authorityBadge %></span>
+                        <div class="flex items-center <%= authorityBg %> <%= authorityText %> px-4 py-2 rounded-xl <%= authorityBorder %> border-2 shadow-sm hover:shadow-md transition-all duration-200">
+                            <div class="w-6 h-6 rounded-full bg-gradient-to-r <%= authorityGradient %> flex items-center justify-center mr-3">
+                                <i class="<%= authorityIcon %> text-white text-xs"></i>
+                            </div>
+                            <span class="text-sm font-semibold tracking-wide"><%= authorityBadge %></span>
                         </div>
                     </div>
-                    <p class="text-<%= authorityColor %>-600">
-                        <%= profile.role.charAt(0).toUpperCase() + profile.role.slice(1) %> • <%= authorityBadge %> Level at LegalNet
+                    <p class="text-gray-600 text-lg font-medium flex items-center">
+                        <i class="fas fa-balance-scale text-<%= authorityColor %>-500 mr-2"></i>
+                        Licensed Legal Professional • <%= authorityBadge.split(' ')[0] %> Level
                     </p>
                 <% } else { %>
-                    <h2 class="text-2xl font-bold">
+                    <h2 class="text-3xl font-bold text-gray-800">
                         <%= profile.firstName %> <%= profile.lastName %>
                     </h2>
-                    <p class="text-gray-600">
+                    <p class="text-gray-600 text-lg">
                         <%= profile.role.charAt(0).toUpperCase() + profile.role.slice(1) %> at LegalNet
                     </p>
                 <% } %>
-                <p class="text-gray-500 text-sm">New York, United States</p>
+                <p class="text-gray-500 text-sm flex items-center mt-2">
+                    <i class="fas fa-map-marker-alt mr-2"></i>New York, United States
+                </p>
             </div>
-            <div class="flex mt-3 space-x-4">
-                <a href="#" class="text-blue-600 hover:underline text-sm">
-                    <%= connectionsCount || 0 %> connections
-                </a>
-                <a href="#" class="text-blue-600 hover:underline text-sm">Contact info</a>
+            
+            <!-- Stats Row -->
+            <div class="grid grid-cols-3 gap-4 mt-6">
+                <div class="stats-card">
+                    <div class="text-2xl font-bold"><%= connectionsCount || 0 %></div>
+                    <div class="text-sm opacity-90">Connections</div>
+                </div>
+                <div class="stats-card">
+                    <div class="text-2xl font-bold"><%= profile.Posts ? profile.Posts.length : 0 %></div>
+                    <div class="text-sm opacity-90">Posts</div>
+                </div>
+                <div class="stats-card">
+                    <div class="text-2xl font-bold">4.8</div>
+                    <div class="text-sm opacity-90">Rating</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- About Card (Lawyers Only) -->
-    <% if (profile?.role === 'lawyer') { %>
-        <% 
-          let authorityColor = 'blue';
-          let authorityBadge = 'Training';
-          let ribbonGradient = 'from-blue-400 to-blue-600';
-          
-          if (profile?.lawyer?.badgeIssuingAuthority === 'approved') {
-            authorityColor = 'green';
-            authorityBadge = 'Approved';
-            ribbonGradient = 'from-green-400 to-green-600';
-          } else if (profile?.lawyer?.badgeIssuingAuthority === 'consultant') {
-            authorityColor = 'purple';
-            authorityBadge = 'Consultant';
-            ribbonGradient = 'from-purple-400 to-purple-600';
-          }
-        %>
-        <div class="bg-white rounded-lg shadow mb-5 relative overflow-hidden">
-            <!-- Authority Ribbon -->
-            <div class="absolute top-0 right-0 bg-gradient-to-r <%= ribbonGradient %> text-white px-4 py-2 transform rotate-12 translate-x-4 -translate-y-2 shadow-lg">
-                <span class="text-sm font-bold"><%= authorityBadge %></span>
-            </div>
-            
-            <div class="border-b px-6 py-3">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-bold">Professional Summary</h3>
-                    <span class="bg-<%= authorityColor %>-100 text-<%= authorityColor %>-800 px-3 py-1 rounded-full text-sm font-semibold">
-                        <%= authorityBadge %> Level
-                    </span>
-                </div>
-            </div>
-            <div class="px-6 py-4">
-                <div class="border-l-4 border-<%= authorityColor %>-500 pl-4">
-                    <p>
-                        <%= profile?.lawyer?.summary || 'Experienced legal professional with a passion for helping clients navigate complex legal matters.' %>
-                    </p>
-                </div>
-            </div>
+    <!-- Profile Navigation -->
+    <div class="profile-nav flex space-x-0 mb-6">
+        <div class="profile-nav-item active" data-tab="about">
+            <i class="fas fa-user mr-2"></i>About
         </div>
-    <% } %>
-
-    <!-- Experience Card -->
-    <% if (profile.experiences && profile.experiences.length> 0) { %>
-        <div class="bg-white rounded-lg shadow mb-5">
-            <div class="border-b px-6 py-3 flex justify-between items-center">
-                <h3 class="text-xl font-bold">Experience</h3>
-                <% if (loggedInUserId && loggedInUserId===profile.id) { %>
-                    <button class="px-3 py-1 border border-gray-400 text-gray-600 rounded">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    <% } %>
-            </div>
-            <div class="px-6 py-4 space-y-4">
-                <% profile.experiences.forEach(exp=> { %>
-                    <div class="flex space-x-4">
-                        <div>
-                            <img src="<%= exp.companyLogo || 'https://via.placeholder.com/60' %>" alt="Company Logo"
-                                class="rounded" style="width: 60px; height: 60px; object-fit: cover;">
-                        </div>
-                        <div>
-                            <h4 class="font-bold">
-                                <%= exp.title %>
-                            </h4>
-                            <p class="text-gray-600">
-                                <%= exp.company %>
-                            </p>
-                            <p class="text-gray-500 text-sm">
-                                <%= exp.startDate %> - <%= exp.endDate || 'Present' %> · <%= exp.duration %>
-                            </p>
-                            <p class="text-gray-700">
-                                <%= exp.description %>
-                            </p>
-                        </div>
-                    </div>
-                    <% }); %>
-            </div>
+        <div class="profile-nav-item" data-tab="activity">
+            <i class="fas fa-chart-line mr-2"></i>Activity
+        </div>
+        <div class="profile-nav-item" data-tab="posts">
+            <i class="fas fa-newspaper mr-2"></i>Posts
+        </div>
+        <% if (profile?.role === 'lawyer') { %>
+        <div class="profile-nav-item" data-tab="credentials">
+            <i class="fas fa-certificate mr-2"></i>Credentials
         </div>
         <% } %>
+    </div>
 
-            <!-- Education Card (for lawyers) -->
-            <% if (profile.role==='lawyer' && profile.lawyer && profile.lawyer.educations &&
-                profile.lawyer.educations.length> 0) { %>
-                <div class="bg-white rounded-lg shadow mb-5">
-                    <div class="border-b px-6 py-3 flex justify-between items-center">
-                        <h3 class="text-xl font-bold">Education</h3>
-                        <% if (loggedInUserId && loggedInUserId===profile.id) { %>
-                            <button class="px-3 py-1 border border-gray-400 text-gray-600 rounded">
-                                <i class="fas fa-plus"></i>
-                            </button>
-                            <% } %>
-                    </div>
-                    <div class="px-6 py-4 space-y-4">
-                        <% profile.lawyer.educations.forEach(education=> { %>
-                            <div class="flex space-x-4">
-                                <div>
-                                    <img src="<%= education.universityLogo || 'https://via.placeholder.com/60' %>"
-                                        alt="University Logo" class="rounded"
-                                        style="width: 60px; height: 60px; object-fit: cover;">
-                                </div>
-                                <div>
-                                    <h4 class="font-bold">
-                                        <%= education.degree %>
-                                    </h4>
-                                    <p class="text-gray-600">
-                                        <%= education.university %>
-                                    </p>
-                                    <p class="text-gray-500 text-sm">
-                                        <%= education.startYear %> - <%= education.endYear || 'Present' %>
-                                    </p>
-                                    <p class="text-gray-700">
-                                        <%= education.college %>
-                                    </p>
-                                </div>
-                            </div>
-                            <% }); %>
-                    </div>
-                </div>
-                <% } %>
-
-                    <!-- Skills Card -->
-                    <% if (profile.skills && profile.skills.length> 0) { %>
-                        <div class="bg-white rounded-lg shadow mb-5">
-                            <div class="border-b px-6 py-3 flex justify-between items-center">
-                                <h3 class="text-xl font-bold">Skills</h3>
-                                <% if (loggedInUserId && loggedInUserId===profile.id) { %>
-                                    <button class="px-3 py-1 border border-gray-400 text-gray-600 rounded">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                    <% } %>
-                            </div>
-                            <div class="px-6 py-4 space-y-4">
-                                <% profile.skills.forEach(skill=> { %>
-                                    <div>
-                                        <h4 class="font-bold">
-                                            <%= skill.name %>
-                                        </h4>
-                                        <p class="text-gray-500 text-sm">Endorsed by <%= skill.endorsements %>
-                                                colleagues</p>
-                                    </div>
+    <!-- Tab Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Main Content -->
+        <div class="lg:col-span-2">
+            <!-- About Tab -->
+            <div id="about-tab" class="tab-content">
+                <% if (profile?.role === 'lawyer' && profile.lawyer) { %>
+                    <!-- About Card for Lawyers -->
+                    <div class="glass-card rounded-2xl p-6 mb-6">
+                        <h3 class="text-xl font-bold mb-4 flex items-center">
+                            <i class="fas fa-info-circle mr-2 text-blue-600"></i>About
+                        </h3>
+                        <p class="text-gray-700 leading-relaxed mb-4">
+                            <%= profile.lawyer.summary || 'Professional lawyer with extensive experience in various legal domains.' %>
+                        </p>
+                        
+                        <!-- Legal Areas -->
+                        <div class="mb-4">
+                            <h4 class="font-semibold text-gray-800 mb-2">Legal Specializations</h4>
+                            <div class="flex flex-wrap">
+                                <% if (profile.lawyer.legalAreas) { %>
+                                    <% profile.lawyer.legalAreas.split(',').forEach(area => { %>
+                                        <span class="skill-tag"><%= area.trim() %></span>
                                     <% }); %>
+                                <% } else { %>
+                                    <span class="skill-tag">General Practice</span>
+                                    <span class="skill-tag">Legal Consultation</span>
+                                <% } %>
                             </div>
                         </div>
-                        <% } %>
+                        
+                        <!-- Law Firm -->
+                        <div class="flex items-center text-gray-600">
+                            <i class="fas fa-building mr-2"></i>
+                            <span><%= profile.lawyer.lawFirm || 'Independent Practice' %></span>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <!-- About Card for Non-Lawyers -->
+                    <div class="glass-card rounded-2xl p-6 mb-6">
+                        <h3 class="text-xl font-bold mb-4 flex items-center">
+                            <i class="fas fa-info-circle mr-2 text-blue-600"></i>About
+                        </h3>
+                        <p class="text-gray-700 leading-relaxed">
+                            Welcome to my profile! I'm a <%= profile.role %> on LegalNet, connecting with legal professionals and seeking legal guidance.
+                        </p>
+                    </div>
+                <% } %>
+            </div>
 
-                            <!-- Logout Button (only for own profile) -->
-                            <% if (loggedInUserId && loggedInUserId===profile.id) { %>
-                                <div class="mt-5">
-                                    <form action="/auth/logout" method="POST">
-                                        <button type="submit"
-                                            class="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700">Log
-                                            Out</button>
-                                    </form>
+            <!-- Activity Tab -->
+            <div id="activity-tab" class="tab-content hidden">
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-chart-line mr-2 text-blue-600"></i>Recent Activity
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="activity-item">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">Posted a new article</p>
+                                    <p class="text-sm text-gray-500">2 hours ago</p>
                                 </div>
-                                <% } %>
+                                <i class="fas fa-newspaper text-blue-600"></i>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">Connected with 3 new professionals</p>
+                                    <p class="text-sm text-gray-500">1 day ago</p>
+                                </div>
+                                <i class="fas fa-users text-green-600"></i>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="font-medium">Updated profile information</p>
+                                    <p class="text-sm text-gray-500">3 days ago</p>
+                                </div>
+                                <i class="fas fa-edit text-purple-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Posts Tab -->
+            <div id="posts-tab" class="tab-content hidden">
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-newspaper mr-2 text-blue-600"></i>Recent Posts
+                    </h3>
+                    <% if (profile.Posts && profile.Posts.length > 0) { %>
+                        <div class="space-y-4">
+                            <% profile.Posts.slice(0, 3).forEach(post => { %>
+                                <div class="border-l-4 border-blue-500 pl-4 py-2">
+                                    <h4 class="font-semibold text-gray-800"><%= post.title %></h4>
+                                    <p class="text-gray-600 text-sm mt-1"><%= post.content.substring(0, 100) %>...</p>
+                                    <p class="text-xs text-gray-400 mt-2"><%= new Date(post.createdAt).toLocaleDateString() %></p>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } else { %>
+                        <p class="text-gray-500 text-center py-8">No posts yet.</p>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Credentials Tab (Lawyers only) -->
+            <% if (profile?.role === 'lawyer') { %>
+            <div id="credentials-tab" class="tab-content hidden">
+                <div class="glass-card rounded-2xl p-6">
+                    <h3 class="text-xl font-bold mb-4 flex items-center">
+                        <i class="fas fa-certificate mr-2 text-blue-600"></i>Credentials & Education
+                    </h3>
+                    
+                    <!-- Professional Rank -->
+                    <% 
+                      let rankColor = 'blue';
+                      let rankBadge = 'Training Lawyer';
+                      let rankIcon = 'fas fa-user-graduate';
+                      let rankBg = 'bg-blue-50';
+                      let rankBorder = 'border-blue-200';
+                      let rankText = 'text-blue-800';
+                      let rankGradient = 'from-blue-500 to-blue-600';
+                      let rankDescription = 'Currently in training phase with supervised practice';
+                      
+                      if (profile?.lawyer?.badgeIssuingAuthority === 'approved') {
+                        rankColor = 'emerald';
+                        rankBadge = 'Approved Lawyer';
+                        rankIcon = 'fas fa-certificate';
+                        rankBg = 'bg-emerald-50';
+                        rankBorder = 'border-emerald-200';
+                        rankText = 'text-emerald-800';
+                        rankGradient = 'from-emerald-500 to-emerald-600';
+                        rankDescription = 'Fully licensed and approved for independent practice';
+                      } else if (profile?.lawyer?.badgeIssuingAuthority === 'consultant') {
+                        rankColor = 'purple';
+                        rankBadge = 'Legal Consultant';
+                        rankIcon = 'fas fa-award';
+                        rankBg = 'bg-purple-50';
+                        rankBorder = 'border-purple-200';
+                        rankText = 'text-purple-800';
+                        rankGradient = 'from-purple-500 to-purple-600';
+                        rankDescription = 'Senior consultant with specialized expertise';
+                      }
+                    %>
+                    <div class="<%= rankBg %> rounded-xl p-6 mb-6 <%= rankBorder %> border-2">
+                        <div class="flex items-center mb-3">
+                            <div class="w-12 h-12 rounded-full bg-gradient-to-r <%= rankGradient %> flex items-center justify-center mr-4">
+                                <i class="<%= rankIcon %> text-white text-lg"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold <%= rankText %> text-lg"><%= rankBadge %></h4>
+                                <p class="text-sm <%= rankText %> opacity-80">Professional Status</p>
+                            </div>
+                        </div>
+                        <p class="text-sm <%= rankText %> opacity-90 leading-relaxed"><%= rankDescription %></p>
+                    </div>
+                    
+                    <!-- Badge Information -->
+                    <% if (profile.lawyer.badgeNumber) { %>
+                        <div class="bg-gray-50 rounded-lg p-4 mb-4 border border-gray-200">
+                            <h4 class="font-semibold text-gray-800 mb-2 flex items-center">
+                                <i class="fas fa-id-badge mr-2 text-gray-600"></i>
+                                Professional License
+                            </h4>
+                            <p class="text-sm text-gray-700">Badge Number: <span class="font-mono bg-gray-100 px-2 py-1 rounded"><%= profile.lawyer.badgeNumber %></span></p>
+                            <% if (profile.lawyer.badgeIssueDate) { %>
+                                <p class="text-sm text-gray-700 mt-1">Issued: <%= new Date(profile.lawyer.badgeIssueDate).toLocaleDateString() %></p>
+                            <% } %>
+                        </div>
+                    <% } %>
+                    
+                    <!-- Education -->
+                    <% if (profile.lawyer.Educations && profile.lawyer.Educations.length > 0) { %>
+                        <div class="space-y-3">
+                            <h4 class="font-semibold text-gray-800">Education</h4>
+                            <% profile.lawyer.Educations.forEach(edu => { %>
+                                <div class="border-l-4 border-green-500 pl-4">
+                                    <p class="font-medium"><%= edu.degree %></p>
+                                    <p class="text-gray-600"><%= edu.institution %></p>
+                                    <% if (edu.year) { %>
+                                        <p class="text-sm text-gray-500"><%= edu.year %></p>
+                                    <% } %>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+            <% } %>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="lg:col-span-1">
+            <!-- Contact Information -->
+            <div class="glass-card rounded-2xl p-6 mb-6">
+                <h3 class="text-lg font-bold mb-4 flex items-center">
+                    <i class="fas fa-address-card mr-2 text-blue-600"></i>Contact Info
+                </h3>
+                <div class="space-y-3">
+                    <div class="flex items-center">
+                        <i class="fas fa-envelope text-gray-400 w-5"></i>
+                        <span class="ml-3 text-sm"><%= profile.email %></span>
+                    </div>
+                    <% if (profile.Contact) { %>
+                        <% if (profile.Contact.phone) { %>
+                            <div class="flex items-center">
+                                <i class="fas fa-phone text-gray-400 w-5"></i>
+                                <span class="ml-3 text-sm"><%= profile.Contact.phone %></span>
+                            </div>
+                        <% } %>
+                        <% if (profile.Contact.website) { %>
+                            <div class="flex items-center">
+                                <i class="fas fa-globe text-gray-400 w-5"></i>
+                                <a href="<%= profile.Contact.website %>" class="ml-3 text-sm text-blue-600 hover:underline" target="_blank"><%= profile.Contact.website %></a>
+                            </div>
+                        <% } %>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="glass-card rounded-2xl p-6">
+                <h3 class="text-lg font-bold mb-4 flex items-center">
+                    <i class="fas fa-bolt mr-2 text-blue-600"></i>Quick Actions
+                </h3>
+                <div class="space-y-3">
+                    <a href="/feed" class="block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">
+                        <i class="fas fa-home mr-2"></i>View Feed
+                    </a>
+                    <a href="/mynetwork" class="block w-full text-center bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition">
+                        <i class="fas fa-users mr-2"></i>My Network
+                    </a>
+                    <a href="/search" class="block w-full text-center bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition">
+                        <i class="fas fa-search mr-2"></i>Find People
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const connectBtn = document.getElementById('connectBtn');
-        
-        if (connectBtn) {
-            connectBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                const userId = this.getAttribute('data-user-id');
-                const action = this.getAttribute('data-action');
-                
-                if (action === 'connect') {
-                    connectWithUser(userId);
-                } else if (action === 'cancel') {
-                    cancelConnectionRequest(userId);
-                }
-            });
-        }
-    });
+<!-- Floating Action Button -->
+<% if (loggedInUserId == profile.id) { %>
+<a href="/feed" class="floating-action" title="Create Post">
+    <i class="fas fa-plus text-xl"></i>
+</a>
+<% } %>
 
-    function connectWithUser(userId) {
-        const connectBtn = document.getElementById('connectBtn');
+<style>
+    .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .glass-button {
+        backdrop-filter: blur(10px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .glass-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+    
+    .skill-tag {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: inline-block;
+        margin: 0.25rem;
+        transition: all 0.3s ease;
+    }
+    
+    .skill-tag:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .activity-item {
+        border-left: 3px solid #3b82f6;
+        padding-left: 1rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .activity-item:hover {
+        border-left-color: #1d4ed8;
+        background: rgba(59, 130, 246, 0.05);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-left: -1rem;
+    }
+    
+    .stats-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+    }
+    
+    .profile-nav {
+        border-bottom: 2px solid #e5e7eb;
+        margin-bottom: 2rem;
+    }
+    
+    .profile-nav-item {
+        padding: 1rem 1.5rem;
+        border-bottom: 3px solid transparent;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .profile-nav-item.active {
+        border-bottom-color: #3b82f6;
+        color: #3b82f6;
+        font-weight: 600;
+    }
+    
+    .profile-nav-item:hover {
+        background: rgba(59, 130, 246, 0.05);
+        color: #3b82f6;
+    }
+    
+    .floating-action {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+        z-index: 1000;
+    }
+    
+    .floating-action:hover {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+    }
+</style>
+
+// Tab switching functionality
+document.querySelectorAll('.profile-nav-item').forEach(item => {
+    item.addEventListener('click', function() {
+        // Remove active class from all nav items
+        document.querySelectorAll('.profile-nav-item').forEach(nav => nav.classList.remove('active'));
+        // Add active class to clicked item
+        this.classList.add('active');
         
-        // Disable button to prevent multiple clicks
-        connectBtn.disabled = true;
-        connectBtn.textContent = 'Connecting...';
+        // Hide all tab content
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+        // Show selected tab content
+        const tabId = this.dataset.tab + '-tab';
+        document.getElementById(tabId).classList.remove('hidden');
+    });
+});
+
+// Connection button functionality
+if (document.getElementById('connectBtn')) {
+    document.getElementById('connectBtn').addEventListener('click', function() {
+        const userId = this.dataset.userId;
+        const action = this.dataset.action;
         
-        fetch(`/mynetwork/connect/${userId}`, {
+        fetch('/mynetwork/connect', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId, action })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.message || 'An error occurred');
             }
         })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    notifications.success('Connection request sent successfully!');
-                    // Update button to show pending state
-                    connectBtn.textContent = 'Cancel';
-                    connectBtn.className = 'bg-gray-400 text-white px-4 py-2 rounded-full hover:bg-red-500 transition-colors';
-                    connectBtn.setAttribute('data-action', 'cancel');
-                    connectBtn.disabled = false;
-                } else {
-                    notifications.error(data.error || 'Failed to send connection request');
-                    // Restore original button state
-                    connectBtn.textContent = 'Connect';
-                    connectBtn.disabled = false;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                notifications.error('An error occurred while sending the connection request');
-                // Restore original button state
-                connectBtn.textContent = 'Connect';
-                connectBtn.disabled = false;
-            });
-    }
-
-    function cancelConnectionRequest(userId) {
-        const connectBtn = document.getElementById('connectBtn');
-        
-        // Disable button to prevent multiple clicks
-        connectBtn.disabled = true;
-        connectBtn.textContent = 'Cancelling...';
-        
-        // Find the connection ID first
-        fetch(`/mynetwork/connection-status/${userId}`)
-            .then(response => response.json())
-            .then(statusData => {
-                if (statusData.connectionId) {
-                    return fetch(`/mynetwork/cancel/${statusData.connectionId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        }
-                    });
-                } else {
-                    throw new Error('Connection not found');
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    notifications.success('Connection request cancelled successfully!');
-                    // Update button back to connect state
-                    connectBtn.textContent = 'Connect';
-                    connectBtn.className = 'bg-blue-600 text-white px-4 py-2 rounded-full';
-                    connectBtn.setAttribute('data-action', 'connect');
-                    connectBtn.disabled = false;
-                } else {
-                    notifications.error(data.error || 'Failed to cancel connection request');
-                    // Restore cancel button state
-                    connectBtn.textContent = 'Cancel';
-                    connectBtn.disabled = false;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                notifications.error('An error occurred while cancelling the connection request');
-                // Restore cancel button state
-                connectBtn.textContent = 'Cancel';
-                connectBtn.disabled = false;
-            });
-    }
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred');
+        });
+    });
+}
 </script>
+
+<%- include('../layouts/footer') %>

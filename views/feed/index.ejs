@@ -235,6 +235,32 @@
                                                     <i class="fas fa-gavel text-xs mr-1"></i>
                                                     Verified Lawyer
                                                 </span>
+                                                <% 
+                                                    // Get lawyer rank information
+                                                    let rankInfo = {
+                                                        badge: 'Training',
+                                                        color: 'yellow',
+                                                        icon: '🎓'
+                                                    };
+                                                    
+                                                    if (post.user.lawyer.badgeIssuingAuthority === 'approved') {
+                                                        rankInfo = {
+                                                            badge: 'Approved',
+                                                            color: 'green',
+                                                            icon: '✓'
+                                                        };
+                                                    } else if (post.user.lawyer.badgeIssuingAuthority === 'consultant') {
+                                                        rankInfo = {
+                                                            badge: 'Consultant',
+                                                            color: 'purple',
+                                                            icon: '⭐'
+                                                        };
+                                                    }
+                                                %>
+                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-<%= rankInfo.color %>-100 text-<%= rankInfo.color %>-800 border border-<%= rankInfo.color %>-200">
+                                                    <span class="mr-1"><%= rankInfo.icon %></span>
+                                                    <%= rankInfo.badge %>
+                                                </span>
                                             <% } else { %>
                                                 <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
                                                     <i class="fas fa-user text-xs mr-1"></i>
@@ -724,6 +750,29 @@
             const reactionStats = document.getElementById(`reactionStats-${postId}`);
             const reactionIcons = document.getElementById(`reactionIcons-${postId}`);
             const reactionCount = reactionStats ? reactionStats.querySelector('.reaction-count') : null;
+            const likeButton = document.querySelector(`#post-${postId} .like-button`);
+            
+            // Update like button based on user's reaction
+            if (likeButton) {
+                const icon = likeButton.querySelector('i');
+                const span = likeButton.querySelector('span');
+                if (icon && span) {
+                    if (userReaction) {
+                        // User has reacted - show their reaction
+                        const reactionEmoji = getReactionEmoji(userReaction);
+                        span.innerHTML = `${reactionEmoji} ${userReaction.charAt(0).toUpperCase() + userReaction.slice(1)}`;
+                        icon.className = 'fas fa-thumbs-up text-lg group-hover:animate-bounce';
+                        likeButton.classList.add('text-blue-600', 'bg-blue-50');
+                        likeButton.classList.remove('text-gray-600');
+                    } else {
+                        // User has not reacted - show default state
+                        span.textContent = 'Like';
+                        icon.className = 'far fa-thumbs-up text-lg group-hover:animate-bounce';
+                        likeButton.classList.remove('text-blue-600', 'bg-blue-50');
+                        likeButton.classList.add('text-gray-600');
+                    }
+                }
+            }
             
             if (reactions && reactions.length > 0) {
                 if (reactionStats) {
@@ -798,6 +847,16 @@
                         reactionStats.style.transform = 'scale(1)';
                         reactionStats.style.opacity = '1';
                     }, 300);
+                }
+                
+                // Reset like button to default state when no reactions
+                if (likeButton && !userReaction) {
+                    const span = likeButton.querySelector('span');
+                    if (span) {
+                        span.innerHTML = `<i class="far fa-thumbs-up text-lg group-hover:animate-bounce"></i> Like`;
+                        likeButton.classList.remove('text-blue-600', 'bg-blue-50');
+                        likeButton.classList.add('text-gray-600');
+                    }
                 }
             }
         }

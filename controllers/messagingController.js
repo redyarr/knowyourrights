@@ -1,4 +1,4 @@
-const { User, Connection, Message } = require('../models');
+const { User, Connection, Message, Lawyer } = require('../models');
 const { Op } = require('sequelize');
 
 // Search for users
@@ -97,7 +97,11 @@ exports.getMessages = async (req, res) => {
         console.log('8. Fetching user details...');
         const conversations = await User.findAll({
             where: { id: { [Op.in]: conversationUserIds } },
-            attributes: ['id', 'firstName', 'lastName', 'email']
+            attributes: ['id', 'firstName', 'lastName', 'email', 'role'],
+            include: [{
+                model: Lawyer,
+                attributes: ['legalAreas', 'summary', 'lawFirm', 'badgeIssuingAuthority']
+            }]
         });
         console.log('9. User details retrieved:', JSON.stringify(conversations, null, 2));
         
@@ -181,7 +185,11 @@ exports.getConversation = async (req, res) => {
         
         // Get conversation partner details
         const conversationPartner = await User.findByPk(conversationId, {
-            attributes: ['id', 'firstName', 'lastName', 'email', 'role'] // Added 'role'
+            attributes: ['id', 'firstName', 'lastName', 'email', 'role'], // Added 'role'
+            include: [{
+                model: Lawyer,
+                attributes: ['legalAreas', 'summary', 'lawFirm', 'badgeIssuingAuthority']
+            }]
         });
         
         if (!conversationPartner) {
@@ -233,7 +241,11 @@ exports.getConversation = async (req, res) => {
         
         const conversations = await User.findAll({
             where: { id: { [Op.in]: conversationUserIds } },
-            attributes: ['id', 'firstName', 'lastName', 'email']
+            attributes: ['id', 'firstName', 'lastName', 'email', 'role'],
+            include: [{
+                model: Lawyer,
+                attributes: ['legalAreas', 'summary', 'lawFirm', 'badgeIssuingAuthority']
+            }]
         });
         
         const conversationsWithLastMessage = await Promise.all(

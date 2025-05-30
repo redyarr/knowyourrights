@@ -1,4 +1,4 @@
-<nav class="glass-nav bg-white/95 backdrop-blur-lg shadow-lg border-b border-white/20 fixed top-0 left-0 right-0 z-50">
+<nav class="glass-nav bg-white/95 backdrop-blur-xl border-b border-gray-200/80 shadow-xl sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-4">
     <div class="flex justify-between h-16 items-center">
 
@@ -67,20 +67,54 @@
             </g>
           </svg>
         </a>
-        <form action="/search" method="GET" class="flex items-center space-x-2 glass-card bg-white/50 backdrop-blur-sm rounded-full px-4 py-2 w-full max-w-md border border-white/30 shadow-lg">
-          <select name="searchType" id="searchType" class="px-3 py-2 rounded-full bg-white/70 backdrop-blur-sm border border-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 text-sm transition-all duration-300">
-            <option value="all">All</option>
-            <option value="lawyers">Lawyers</option>
-            <option value="users">Users</option>
-          </select>
-          <div class="relative flex-1">
-            <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
-              <i class="fas fa-search text-gray-500"></i>
-            </span>
-            <input type="text" name="query" id="searchInput" placeholder="Search lawyers and users..." autocomplete="off"
-              class="w-full pl-10 pr-4 py-2 rounded-full bg-white/70 backdrop-blur-sm border border-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300">
+        <form action="/search" method="GET" class="relative ml-8">
+          <div class="relative group">
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
+              <i class="fas fa-search text-gray-500 group-focus-within:text-blue-600 transition-colors duration-300 text-lg"></i>
+            </div>
+            <input type="text" name="query" id="searchInput" placeholder="Search lawyers, users, and content..." autocomplete="off"
+              class="w-96 pl-14 pr-16 py-4 rounded-2xl bg-white border-2 border-gray-200 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 shadow-lg hover:shadow-xl focus:shadow-2xl text-gray-800 placeholder-gray-400 font-medium">
+            <div class="absolute inset-y-0 right-0 pr-4 flex items-center z-10">
+              <div class="flex items-center space-x-1">
+                <kbd class="hidden sm:inline-block px-2.5 py-1.5 text-xs font-bold text-gray-600 bg-gray-100 border border-gray-300 rounded-md shadow-sm">⌘</kbd>
+                <kbd class="hidden sm:inline-block px-2.5 py-1.5 text-xs font-bold text-gray-600 bg-gray-100 border border-gray-300 rounded-md shadow-sm">K</kbd>
+              </div>
+            </div>
             <div id="searchResults"
-              class="absolute mt-1 w-full glass-card bg-white/95 backdrop-blur-lg shadow-xl rounded-lg overflow-hidden hidden z-50 border border-white/20"></div>
+              class="absolute mt-3 w-full bg-white shadow-2xl rounded-2xl overflow-hidden hidden z-50 border border-gray-200 max-h-96 overflow-y-auto">
+              <div class="p-6">
+                <div class="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Quick Actions</div>
+                <div class="space-y-1">
+                  <div class="flex items-center space-x-4 p-3 hover:bg-blue-50 rounded-xl cursor-pointer transition-all duration-200 group">
+                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors duration-200">
+                      <i class="fas fa-user-tie text-blue-600"></i>
+                    </div>
+                    <div>
+                      <div class="font-medium text-gray-800">Find lawyers by specialty</div>
+                      <div class="text-sm text-gray-500">Browse verified legal professionals</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-4 p-3 hover:bg-green-50 rounded-xl cursor-pointer transition-all duration-200 group">
+                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors duration-200">
+                      <i class="fas fa-users text-green-600"></i>
+                    </div>
+                    <div>
+                      <div class="font-medium text-gray-800">Connect with professionals</div>
+                      <div class="text-sm text-gray-500">Expand your legal network</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-4 p-3 hover:bg-purple-50 rounded-xl cursor-pointer transition-all duration-200 group">
+                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors duration-200">
+                      <i class="fas fa-file-alt text-purple-600"></i>
+                    </div>
+                    <div>
+                      <div class="font-medium text-gray-800">Browse legal resources</div>
+                      <div class="text-sm text-gray-500">Access legal documents and guides</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </form>
       </div>
@@ -232,19 +266,47 @@
     menu.classList.toggle('hidden');
   });
 
-  // Handle search type selection
-  document.getElementById('searchType').addEventListener('change', function() {
-    const searchForm = document.getElementById('searchForm');
-    const searchInput = document.getElementById('searchInput');
+  // Enhanced search functionality
+  const searchInput = document.getElementById('searchInput');
+  const searchResults = document.getElementById('searchResults');
+  
+  // Show search suggestions on focus
+  searchInput.addEventListener('focus', function() {
+    searchResults.classList.remove('hidden');
+  });
+  
+  // Hide search results when clicking outside
+  document.addEventListener('click', function(event) {
+    if (!event.target.closest('form')) {
+      searchResults.classList.add('hidden');
+    }
+  });
+  
+  // Keyboard shortcut (Cmd/Ctrl + K)
+  document.addEventListener('keydown', function(event) {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+      event.preventDefault();
+      searchInput.focus();
+    }
     
-    if (this.value === 'lawyers') {
-      searchForm.action = '/search/lawyers';
-      searchInput.placeholder = 'Search lawyers by specialty...';
-      searchInput.name = 'specialty';
-    } else {
-      searchForm.action = '/search';
-      searchInput.placeholder = 'Search users...';
-      searchInput.name = 'query';
+    // Hide search results on Escape
+    if (event.key === 'Escape') {
+      searchResults.classList.add('hidden');
+      searchInput.blur();
+    }
+  });
+  
+  // Real-time search suggestions (optional - can be enhanced with AJAX)
+  let searchTimeout;
+  searchInput.addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    const query = this.value.trim();
+    
+    if (query.length > 0) {
+      searchTimeout = setTimeout(() => {
+        // Here you can add AJAX call to get real-time suggestions
+        console.log('Searching for:', query);
+      }, 300);
     }
   });
 </script>
