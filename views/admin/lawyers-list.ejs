@@ -6,30 +6,12 @@
     <title>Lawyer Verification Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/css/modern-enhancements.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/nav.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <link rel="stylesheet" href="/css/main.css">
     <style>
-        /* Custom scrollbar for better aesthetics (optional) */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #c4c4c4;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #a1a1a1;
-        }
-
-        /* Inter Font */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
         /* Modal styles */
         .modal {
             transition: opacity 0.3s ease, visibility 0.3s ease;
@@ -42,12 +24,25 @@
         }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 antialiased">
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 text-gray-800 antialiased">
+    <!-- Background decorative elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-400/30 to-purple-400/30 rounded-full blur-3xl opacity-70"></div>
+        <div class="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-indigo-400/30 to-pink-400/30 rounded-full blur-3xl opacity-70"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-purple-400/20 to-blue-400/20 rounded-full blur-3xl opacity-60"></div>
+    </div>
 
-    <div class="admin-container container mx-auto p-4 md:p-8">
-        <div class="admin-header mb-8 text-center md:text-left">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-700">Lawyer Verification Management</h1>
-            <p class="text-gray-500 mt-2 text-sm md:text-base">Manage and review lawyer verification applications.</p>
+    <div class="admin-container container mx-auto p-4 md:p-8 relative z-10">
+        <div class="glass-card p-8 mb-8">
+            <div class="flex items-center">
+                <div class="w-16 h-16 bg-gradient-to-r from-indigo-600 to-purple-700 rounded-xl flex items-center justify-center mr-6 shadow-lg">
+                    <i class="fas fa-gavel text-white text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Lawyer Verification Management</h1>
+                    <p class="text-gray-600 mt-2 text-lg">Manage and review lawyer verification applications</p>
+                </div>
+            </div>
         </div>
 
         <div class="filter-tabs mb-6 flex flex-wrap gap-2 items-center justify-center md:justify-start border-b border-gray-200 pb-3">

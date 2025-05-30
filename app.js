@@ -9,6 +9,7 @@ const methodOverride = require('method-override');
 const fileUpload = require('express-fileupload');
 require('dotenv').config();
 const { sequelize } = require('./models');
+const passport = require('./config/passport');
 
 // Import routes
 const AuthRouter = require('./routes/auth.js')
@@ -57,6 +58,10 @@ app.use(function(req, res, next) {
 // Use session middleware
 app.use(sessionMiddleware);
 app.use(setLoggedInUser);
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 // View engine
 app.set('view engine', 'ejs');

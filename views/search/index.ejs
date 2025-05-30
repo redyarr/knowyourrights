@@ -1,49 +1,67 @@
-<%- include('../layouts/main', { title: 'Search Results' }) %>
-
-<div class="max-w-7xl mx-auto px-4 py-8 mt-16">
-    <h1 class="text-2xl font-bold mb-6">Search Results for "<%= query %>"</h1>
-    
-    <% if (users.length === 0) { %>
-        <div class="bg-white rounded-lg shadow p-6 text-center">
-            <p class="text-gray-500">No users found matching your search.</p>
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 mt-16">
+    <div class="max-w-7xl mx-auto px-4">
+        <!-- Enhanced Header -->
+        <div class="glass-card bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-8 mb-8 border border-white/20">
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                    <i class="fas fa-search text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Search Results</h1>
+                    <p class="text-gray-600 mt-1">Found results for "<%= query %>"</p>
+                </div>
+            </div>
         </div>
-    <% } else { %>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <% users.forEach(user => { %>
-                <div class="bg-white rounded-lg shadow overflow-hidden">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <% if (user.profileImage && user.profileImage.imagePath) { %>
-                                <img src="<%= user.profileImage.imagePath %>" 
-                                    alt="<%= user.firstName %> <%= user.lastName %>" 
-                                    class="w-16 h-16 rounded-full mr-4 object-cover">
-                            <% } else { %>
-                                <img src="https://ui-avatars.com/api/?name=<%= user.firstName %>+<%= user.lastName %>" 
-                                    alt="<%= user.firstName %> <%= user.lastName %>" 
-                                    class="w-16 h-16 rounded-full mr-4">
-                            <% } %>
-                            <div>
-                                <h2 class="text-xl font-semibold"><%= user.firstName %> <%= user.lastName %></h2>
-                                <p class="text-gray-600">
-                                    <% if (user.role === 'lawyer' && user.lawyer) { %>
-                                        Lawyer at <%= user.lawyer.lawFirm %>
-                                    <% } else { %>
-                                        User
-                                    <% } %>
-                                </p>
+        
+        <% if (users.length === 0) { %>
+            <div class="glass-card bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl p-12 text-center border border-white/20">
+                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-search text-gray-400 text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">No Results Found</h3>
+                <p class="text-gray-500">No users found matching your search criteria. Try different keywords.</p>
+            </div>
+        <% } else { %>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <% users.forEach(user => { %>
+                    <div class="glass-card bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl overflow-hidden border border-white/20 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                        <div class="p-6">
+                            <div class="flex items-center mb-4">
+                                <% if (user.profileImage && user.profileImage.imagePath) { %>
+                                    <img src="<%= user.profileImage.imagePath %>" 
+                                        alt="<%= user.firstName %> <%= user.lastName %>" 
+                                        class="w-16 h-16 rounded-full mr-4 object-cover shadow-lg ring-2 ring-white/50">
+                                <% } else { %>
+                                    <img src="https://ui-avatars.com/api/?name=<%= user.firstName %>+<%= user.lastName %>" 
+                                        alt="<%= user.firstName %> <%= user.lastName %>" 
+                                        class="w-16 h-16 rounded-full mr-4 shadow-lg ring-2 ring-white/50">
+                                <% } %>
+                                <div class="flex-1">
+                                    <h2 class="text-xl font-bold text-gray-800"><%= user.firstName %> <%= user.lastName %></h2>
+                                    <p class="text-gray-600 font-medium">
+                                        <% if (user.role === 'lawyer' && user.lawyer) { %>
+                                            <i class="fas fa-balance-scale text-blue-500 mr-1"></i>
+                                            Lawyer at <%= user.lawyer.lawFirm %>
+                                        <% } else { %>
+                                            <i class="fas fa-user text-gray-500 mr-1"></i>
+                                            User
+                                        <% } %>
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-3">
+                                <a href="/in/<%= user.id %>" class="flex-1 glass-button bg-blue-600/90 backdrop-blur-sm text-white py-2 px-4 rounded-xl font-semibold text-center shadow-lg hover:bg-blue-700/90 transition-all duration-300 transform hover:-translate-y-1 border border-white/20">
+                                    <i class="fas fa-eye mr-2"></i>View Profile
+                                </a>
+                                <% if (user.id !== loggedInUserId) { %>
+                                    <button onclick="connectWithUser(<%= user.id %>)" class="glass-button bg-green-600/90 backdrop-blur-sm text-white py-2 px-4 rounded-xl font-semibold shadow-lg hover:bg-green-700/90 transition-all duration-300 transform hover:-translate-y-1 border border-white/20">
+                                        <i class="fas fa-user-plus mr-1"></i>Connect
+                                    </button>
+                                <% } %>
                             </div>
                         </div>
-                        
-                        <div class="mt-4 flex justify-between">
-                            <a href="/in/<%= user.id %>" class="text-blue-600 hover:text-blue-800">View Profile</a>
-                            <% if (user.id !== loggedInUserId) { %>
-                                <button onclick="connectWithUser(<%= user.id %>)" class="text-blue-600 hover:text-blue-800">
-                                    Connect
-                                </button>
-                            <% } %>
-                        </div>
                     </div>
-                </div>
             <% }); %>
         </div>
     <% } %>

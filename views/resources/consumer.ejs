@@ -1,53 +1,66 @@
-<div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-4xl mx-auto px-4">
-        <!-- Header -->
-        <div class="bg-white rounded-lg shadow-md p-8 mb-8">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <!-- Background decorative elements -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+        <div class="absolute top-20 left-10 w-72 h-72 bg-gradient-to-r from-blue-400/30 to-purple-400/30 rounded-full blur-3xl opacity-70 animate-pulse"></div>
+        <div class="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-indigo-400/30 to-pink-400/30 rounded-full blur-3xl opacity-70 animate-pulse" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-purple-400/20 to-blue-400/20 rounded-full blur-3xl opacity-60 animate-pulse" style="animation-delay: 4s;"></div>
+    </div>
+    
+    <div class="max-w-4xl mx-auto px-4 relative z-10 py-8">
+        <!-- Enhanced Header -->
+        <div class="glass-card p-8 mb-8">
             <div class="flex items-center mb-4">
-                <i class="fas fa-shield-alt text-purple-500 text-3xl mr-4"></i>
+                <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl flex items-center justify-center mr-6 shadow-lg">
+                    <i class="fas fa-shield-alt text-white text-2xl"></i>
+                </div>
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Consumer Protection Guide</h1>
-                    <p class="text-gray-600 mt-2">Protect yourself from fraud, understand contracts, and know your consumer rights</p>
+                    <h1 class="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">Consumer Protection Guide</h1>
+                    <p class="text-gray-600 mt-2 text-lg">Protect yourself from fraud, understand contracts, and know your consumer rights</p>
                 </div>
             </div>
         </div>
 
-        <!-- Content Sections -->
+        <!-- Enhanced Content Sections -->
         <div class="space-y-8">
             <!-- Fraud Protection -->
-            <div class="bg-white rounded-lg shadow-md p-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                    <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i>
+            <div class="glass-card p-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div class="w-12 h-12 bg-gradient-to-r from-red-500 to-orange-500 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                        <i class="fas fa-exclamation-triangle text-white text-xl"></i>
+                    </div>
                     Fraud Protection & Scams
                 </h2>
-                <div class="space-y-4">
-                    <div class="border-l-4 border-red-500 pl-4">
-                        <h3 class="font-semibold text-lg text-gray-800">Identity Theft</h3>
-                        <p class="text-gray-600">How to protect your personal information and what to do if your identity is stolen.</p>
+                <div class="space-y-6">
+                    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-6 border-l-4 border-red-500 shadow-lg hover:shadow-xl transition-all duration-300">
+                        <h3 class="font-bold text-xl text-gray-800 mb-2">Identity Theft</h3>
+                        <p class="text-gray-600 leading-relaxed">How to protect your personal information and what to do if your identity is stolen.</p>
                     </div>
-                    <div class="border-l-4 border-red-500 pl-4">
-                        <h3 class="font-semibold text-lg text-gray-800">Online Scams</h3>
-                        <p class="text-gray-600">Recognizing phishing emails, fake websites, and online shopping scams.</p>
+                    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-6 border-l-4 border-red-500 shadow-lg hover:shadow-xl transition-all duration-300">
+                        <h3 class="font-bold text-xl text-gray-800 mb-2">Online Scams</h3>
+                        <p class="text-gray-600 leading-relaxed">Recognizing phishing emails, fake websites, and online shopping scams.</p>
                     </div>
-                    <div class="border-l-4 border-red-500 pl-4">
-                        <h3 class="font-semibold text-lg text-gray-800">Phone & Mail Scams</h3>
-                        <p class="text-gray-600">Protecting yourself from telemarketing fraud, robocalls, and mail scams.</p>
+                    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-6 border-l-4 border-red-500 shadow-lg hover:shadow-xl transition-all duration-300">
+                        <h3 class="font-bold text-xl text-gray-800 mb-2">Phone & Mail Scams</h3>
+                        <p class="text-gray-600 leading-relaxed">Protecting yourself from telemarketing fraud, robocalls, and mail scams.</p>
                     </div>
                 </div>
             </div>
 
             <!-- Contract Rights -->
-            <div class="bg-white rounded-lg shadow-md p-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                    <i class="fas fa-file-contract text-blue-500 mr-3"></i>
+            <div class="glass-card p-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6 flex items-center">
+                    <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                        <i class="fas fa-file-contract text-white text-xl"></i>
+                    </div>
                     Contract Rights & Understanding
                 </h2>
-                <div class="space-y-4">
-                    <div class="border-l-4 border-blue-500 pl-4">
-                        <h3 class="font-semibold text-lg text-gray-800">Reading Contracts</h3>
-                        <p class="text-gray-600">Key terms to look for, understanding fine print, and what makes a contract legally binding.</p>
+                <div class="space-y-6">
+                    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-6 border-l-4 border-blue-500 shadow-lg hover:shadow-xl transition-all duration-300">
+                        <h3 class="font-bold text-xl text-gray-800 mb-2">Reading Contracts</h3>
+                        <p class="text-gray-600 leading-relaxed">Key terms to look for, understanding fine print, and what makes a contract legally binding.</p>
                     </div>
-                    <div class="border-l-4 border-blue-500 pl-4">
-                        <h3 class="font-semibold text-lg text-gray-800">Cancellation Rights</h3>
+                    <div class="bg-white/50 backdrop-blur-sm rounded-xl p-6 border-l-4 border-blue-500 shadow-lg hover:shadow-xl transition-all duration-300">
+                        <h3 class="font-bold text-xl text-gray-800 mb-2">Cancellation Rights</h3>
                         <p class="text-gray-600">Your right to cancel certain contracts, cooling-off periods, and cancellation procedures.</p>
                     </div>
                     <div class="border-l-4 border-blue-500 pl-4">
@@ -161,6 +174,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <%- include('../layouts/footer') %>

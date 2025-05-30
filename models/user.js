@@ -25,7 +25,12 @@ const User = sequelize.define('users', {
     },
     password: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true // Allow null for Google OAuth users
+    },
+    googleId: {
+        type: DataTypes.STRING,
+        allowNull: true,
+        unique: true
     },
     role: {
         type: DataTypes.ENUM('visitor', 'lawyer', 'admin'),
@@ -48,8 +53,11 @@ const User = sequelize.define('users', {
     underscored: true,
     hooks: {
         beforeCreate: async (user) => {
-            const salt = await bcrypt.genSalt(10);
-            user.password = await bcrypt.hash(user.password, salt);
+            // Only hash password if it exists (not for Google OAuth users)
+            if (user.password) {
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(user.password, salt);
+            }
             return user;
         },
         beforeUpdate: async (user) => {

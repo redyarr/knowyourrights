@@ -16,4 +16,8 @@ router.get('/search', isAuthenticated, isVerifiedLawyer, MessagingController.sea
 router.get('/:conversationId', isAuthenticated, isVerifiedLawyer, MessagingController.getConversation);
 router.post('/:conversationId/send', isAuthenticated, isVerifiedLawyer, MessagingController.sendMessage);
 
+// AJAX routes for real-time messaging
+router.get('/:conversationId/check-new', isAuthenticated, isVerifiedLawyer, MessagingController.checkNewMessages);
+router.post('/:conversationId/send-ajax', isAuthenticated, isVerifiedLawyer, MessagingController.sendMessageAjax);
+
 module.exports = router;

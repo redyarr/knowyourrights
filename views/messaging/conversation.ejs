@@ -1,44 +1,52 @@
-<div class="max-w-4xl mx-auto">
-    <div class="bg-white rounded-lg shadow">
-        <div class="grid grid-cols-12 h-[calc(100vh-200px)]">
-            <!-- Conversations Sidebar -->
-            <div class="col-span-4 border-r">
-                <div class="p-4 border-b">
-                    <h2 class="text-xl font-bold">Messages</h2>
-                </div>
-                <div class="p-2">
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
-                            <i class="fas fa-search text-gray-400"></i>
-                        </span>
-                        <input type="text" id="messageSearch" placeholder="Search messages"
-                            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-1 focus:ring-blue-500">
+<div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4">
+        <div class="glass-card bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+            <div class="grid grid-cols-12 h-[calc(100vh-200px)]">
+                <!-- Conversations Sidebar -->
+                <div class="col-span-4 border-r border-white/20 bg-white/50 backdrop-blur-sm">
+                    <div class="p-6 border-b border-white/20 bg-gradient-to-r from-blue-600/10 to-indigo-600/10">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center mr-3 shadow-lg">
+                                <i class="fas fa-comments text-white"></i>
+                            </div>
+                            <h2 class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Messages</h2>
+                        </div>
                     </div>
-                </div>
+                    <div class="p-4">
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center">
+                                <i class="fas fa-search text-gray-400"></i>
+                            </span>
+                            <input type="text" id="messageSearch" placeholder="Search conversations..."
+                                class="w-full pl-12 pr-4 py-3 bg-white/50 backdrop-blur-sm border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 shadow-inner">
+                        </div>
+                    </div>
                 <div class="overflow-y-auto h-[50vh] custom-scrollbar">
                     <% conversations.forEach(conv => { %>
-                        <a href="/messaging/<%= conv.user.id %>" 
-                           class="block p-3 hover:bg-gray-50 <%= activeConversation == conv.user.id ? 'bg-blue-50' : '' %>">
-                            <div class="flex items-center space-x-3">
-                                <img src="https://ui-avatars.com/api/?name=<%= conv.user.firstName %>+<%= conv.user.lastName %>" 
-                                     alt="<%= conv.user.firstName %>" class="w-12 h-12 rounded-full">
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex justify-between items-baseline">
-                                        <h4 class="font-semibold truncate <%= conv.unreadCount > 0 ? 'text-black' : 'text-gray-700' %>">
-                                            <%= conv.user.firstName %> <%= conv.user.lastName %>
-                                        </h4>
-                                        <span class="text-xs text-gray-500">
-                                            <%= new Date(conv.lastMessage.createdAt).toLocaleDateString() %>
-                                        </span>
-                                    </div>
-                                    <p class="text-sm truncate <%= conv.unreadCount > 0 ? 'font-semibold text-black' : 'text-gray-600' %>">
-                                        <%= conv.lastMessage.content %>
-                                    </p>
+                        <a href="/messaging/<%= conv.user.id %>" class="block">
+                            <div class="message-item p-4 hover:bg-white/30 cursor-pointer flex items-center space-x-4 transition-all duration-300 <%= activeConversation == conv.user.id ? 'bg-blue-50/50 border-l-4 border-blue-500' : '' %> <%= conv.unreadCount > 0 ? 'bg-blue-50/50 border-l-4 border-blue-500' : '' %>">
+                                <div class="relative">
+                                    <img src="https://ui-avatars.com/api/?name=<%= conv.user.firstName %>+<%= conv.user.lastName %>" 
+                                         alt="<%= conv.user.firstName %>" class="w-12 h-12 rounded-full shadow-lg ring-2 ring-white/50">
                                     <% if (conv.unreadCount > 0) { %>
-                                        <span class="inline-block bg-blue-600 text-white text-xs rounded-full px-2 py-0.5 mt-1">
+                                        <span class="absolute -top-1 -right-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold shadow-lg">
                                             <%= conv.unreadCount %>
                                         </span>
                                     <% } %>
+                                    <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex justify-between items-baseline mb-1">
+                                        <h4 class="font-semibold truncate <%= conv.unreadCount > 0 ? 'text-gray-900' : 'text-gray-700' %>">
+                                            <%= conv.user.firstName %> <%= conv.user.lastName %>
+                                        </h4>
+                                        <span class="text-xs text-gray-500 font-medium">
+                                            <%= new Date(conv.lastMessage.createdAt).toLocaleDateString() %>
+                                        </span>
+                                    </div>
+                                    <p class="text-sm truncate <%= conv.unreadCount > 0 ? 'font-semibold text-gray-900' : 'text-gray-600' %> leading-relaxed">
+                                        <%= conv.lastMessage.content %>
+                                    </p>
                                 </div>
                             </div>
                         </a>
@@ -46,63 +54,91 @@
                 </div>
             </div>
             
-            <!-- Conversation Content -->
-            <div class="col-span-8 flex flex-col h-full">
-                <% if (conversationPartner) { %>
-                    <!-- Conversation Header -->
-                    <div class="p-4 border-b flex items-center space-x-3">
-                        <a href="/in/<%= conversationPartner.id %>" class="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-                            <img src="https://ui-avatars.com/api/?name=<%= conversationPartner.firstName %>+<%= conversationPartner.lastName %>" 
-                                 alt="<%= conversationPartner.firstName %>" class="w-10 h-10 rounded-full">
-                            <div>
-                                <h3 class="font-semibold text-blue-600 hover:text-blue-800"><%= conversationPartner.firstName %> <%= conversationPartner.lastName %></h3>
-                                <p class="text-xs text-gray-500">Active now</p>
+                <!-- Conversation Content -->
+                <div class="col-span-8 flex flex-col h-full bg-white/30 backdrop-blur-sm">
+                    <% if (conversationPartner) { %>
+                        <!-- Enhanced Conversation Header -->
+                        <div class="p-6 border-b border-white/20 bg-gradient-to-r from-blue-600/10 to-indigo-600/10">
+                            <div class="flex items-center justify-between">
+                                <a href="/in/<%= conversationPartner.id %>" class="flex items-center space-x-4 hover:opacity-80 transition-all duration-300">
+                                    <div class="relative">
+                                        <img src="https://ui-avatars.com/api/?name=<%= conversationPartner.firstName %>+<%= conversationPartner.lastName %>" 
+                                             alt="<%= conversationPartner.firstName %>" class="w-12 h-12 rounded-full shadow-lg ring-2 ring-white/50">
+                                        <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-bold text-lg bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent"><%= conversationPartner.firstName %> <%= conversationPartner.lastName %></h3>
+                                        <p class="text-sm text-green-600 font-medium flex items-center">
+                                            <div class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                                            Active now
+                                        </p>
+                                    </div>
+                                </a>
+                                <% if (conversationPartner && conversationPartner.role === 'lawyer') { %>
+                                <button id="giveFeedbackBtn" class="glass-button bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-white/20">
+                                    <i class="fas fa-star mr-2"></i>
+                                    Give Feedback
+                                </button>
+                                <% } %>
                             </div>
-                        </a>
-                        <% if (conversationPartner && conversationPartner.role === 'lawyer') { %>
-                        <button id="giveFeedbackBtn" class="ml-auto bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
-                            Give Feedback
-                        </button>
-                        <% } %>
-                    </div>
+                        </div>
                     
 
                 
-                <!-- Messages Container -->
-                <div class="flex-1 p-4 overflow-y-auto" id="messageContainer">
-                    <% messages.forEach(message => { %>
-                        <div class="mb-4 <%= message.senderId == userId ? 'flex justify-end' : 'flex justify-start' %>">
-                            <div class="<%= message.senderId == userId ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800' %> rounded-lg px-4 py-2 max-w-xs lg:max-w-md">
-                                <p><%= message.content %></p>
-                                <p class="text-xs <%= message.senderId == userId ? 'text-blue-100' : 'text-gray-500' %> text-right mt-1">
-                                    <%= new Date(message.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
-                                </p>
-                            </div>
+                        <!-- Enhanced Messages Container -->
+                        <div class="flex-1 p-6 overflow-y-auto custom-scrollbar" id="messageContainer" style="background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);">
+                            <% messages.forEach(message => { %>
+                                <div class="mb-6 <%= message.senderId == userId ? 'flex justify-end' : 'flex justify-start' %>">
+                                    <div class="<%= message.senderId == userId ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg' : 'bg-white/80 backdrop-blur-lg text-gray-800 shadow-lg border border-white/20' %> rounded-2xl px-6 py-4 max-w-xs lg:max-w-md relative">
+                                        <% if (message.senderId != userId) { %>
+                                            <div class="absolute -left-2 top-4 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-white/80"></div>
+                                        <% } else { %>
+                                            <div class="absolute -right-2 top-4 w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-l-8 border-l-blue-600"></div>
+                                        <% } %>
+                                        <p class="leading-relaxed"><%= message.content %></p>
+                                        <p class="text-xs <%= message.senderId == userId ? 'text-blue-100' : 'text-gray-500' %> text-right mt-2 font-medium">
+                                            <%= new Date(message.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
+                                        </p>
+                                    </div>
+                                </div>
+                            <% }) %>
                         </div>
-                    <% }) %>
-                </div>
                 
-                <!-- Message Input -->
-                <div class="p-4 border-t">
-                    <form action="/messaging/<%= conversationPartner.id %>/send" method="POST" class="flex space-x-2" id="messageForm">
-                        <input type="text" name="content" placeholder="Type a message" required id="messageInput"
-                            class="flex-1 border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
-                        <button type="submit" class="bg-blue-500 text-white rounded-full p-2 hover:bg-blue-600">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </form>
-                </div>
-                <% } else { %>
-                    <div class="flex-1 flex items-center justify-center">
-                        <div class="text-center p-8">
-                            <div class="text-5xl text-gray-300 mb-4">
-                                <i class="far fa-comments"></i>
-                            </div>
-                            <h3 class="text-xl font-semibold text-gray-700 mb-2">Your Messages</h3>
-                            <p class="text-gray-500">Select a conversation or start a new one</p>
+                        <!-- Enhanced Message Input -->
+                        <div class="p-6 border-t border-white/20 bg-white/50 backdrop-blur-sm">
+                            <form action="/messaging/<%= conversationPartner.id %>/send" method="POST" class="flex space-x-4" id="messageForm">
+                                <div class="flex-1 relative">
+                                    <input type="text" name="content" placeholder="Type your message..." required id="messageInput"
+                                        class="w-full px-6 py-4 bg-white/80 backdrop-blur-sm border border-white/30 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 shadow-inner text-gray-800 placeholder-gray-500">
+                                    <div class="absolute right-4 top-1/2 transform -translate-y-1/2 flex space-x-2">
+                                        <button type="button" class="text-gray-400 hover:text-blue-500 transition-colors duration-200" title="Add emoji">
+                                            <i class="fas fa-smile"></i>
+                                        </button>
+                                        <button type="button" class="text-gray-400 hover:text-blue-500 transition-colors duration-200" title="Attach file">
+                                            <i class="fas fa-paperclip"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="submit" class="glass-button bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-2xl px-6 py-4 shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-white/20">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </form>
                         </div>
-                    </div>
-                <% } %>
+                    <% } else { %>
+                        <div class="flex-1 flex items-center justify-center bg-white/30 backdrop-blur-sm">
+                            <div class="text-center p-12">
+                                <div class="w-24 h-24 bg-gradient-to-r from-blue-600/20 to-indigo-600/20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                                    <i class="fas fa-comments text-4xl text-blue-600"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-3">Your Messages</h3>
+                                <p class="text-gray-600 text-lg mb-6">Select a conversation or start a new one</p>
+                                <a href="/messaging/search" class="glass-button bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1 border border-white/20">
+                                    <i class="fas fa-user-plus mr-2"></i>
+                                    Find Users to Message
+                                </a>
+                            </div>
+                        </div>
+                    <% } %>
             </div>
         </div>
     </div>
@@ -160,6 +196,211 @@
             console.log('Message input focused');
         }
     }
+    
+    // Function to add a message to the UI without page refresh
+    function addMessageToUI(content, isSent, timestamp) {
+        const messageContainer = document.getElementById('messageContainer');
+        if (!messageContainer) return;
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `flex ${isSent ? 'justify-end' : 'justify-start'} mb-4`;
+        
+        const timeString = new Date(timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        messageDiv.innerHTML = `
+            <div class="max-w-xs lg:max-w-md px-6 py-4 rounded-2xl shadow-lg backdrop-blur-sm border border-white/30 transition-all duration-300 hover:shadow-xl ${
+                isSent 
+                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white ml-auto' 
+                    : 'bg-white/80 text-gray-800 mr-auto'
+            }">
+                <p class="text-sm leading-relaxed">${escapeHtml(content)}</p>
+                <p class="text-xs mt-2 opacity-70">${timeString}</p>
+            </div>
+        `;
+        
+        messageContainer.appendChild(messageDiv);
+    }
+    
+    // Function to escape HTML to prevent XSS
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // Function to update conversation preview in sidebar
+    function updateConversationPreview(lastMessage) {
+        const currentUrl = window.location.pathname;
+        const userId = currentUrl.split('/messaging/')[1];
+        if (!userId) return;
+        
+        const conversationLink = document.querySelector(`a[href="/messaging/${userId}"]`);
+        if (conversationLink) {
+            const previewElement = conversationLink.querySelector('.message-preview');
+            if (previewElement) {
+                previewElement.textContent = lastMessage;
+                previewElement.classList.add('font-semibold', 'text-gray-800');
+            }
+            
+            // Update timestamp
+            const timestampElement = conversationLink.querySelector('.text-xs.text-gray-500');
+            if (timestampElement) {
+                timestampElement.textContent = new Date().toLocaleDateString();
+            }
+        }
+    }
+    
+    // Polling function to check for new messages
+    let lastMessageId = null;
+    let pollingInterval = null;
+    
+    function startMessagePolling() {
+        const currentUrl = window.location.pathname;
+        const userId = currentUrl.split('/messaging/')[1];
+        if (!userId) return;
+        
+        // Get the last message ID from the current conversation
+        const messages = document.querySelectorAll('#messageContainer > div');
+        if (messages.length > 0) {
+            // For now, we'll use timestamp as a simple way to track new messages
+            lastMessageId = Date.now();
+        }
+        
+        pollingInterval = setInterval(async () => {
+            try {
+                const conversationId = userId;
+                const response = await fetch(`/messaging/${conversationId}/check-new?since=${lastMessageId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.newMessages && data.newMessages.length > 0) {
+                         // Hide typing indicator if showing
+                         hideTypingIndicator();
+                         
+                         data.newMessages.forEach(message => {
+                             addMessageToUI(message.content, false, message.createdAt);
+                             lastMessageId = Math.max(lastMessageId, new Date(message.createdAt).getTime());
+                         });
+                         scrollToBottom();
+                         
+                         // Update conversation preview with the latest message
+                         const latestMessage = data.newMessages[data.newMessages.length - 1];
+                         updateConversationPreview(latestMessage.content);
+                         
+                         // Show notification for new messages (only if page is not focused)
+                         if (document.hidden) {
+                             showMessageStatus(`${data.newMessages.length} new message${data.newMessages.length > 1 ? 's' : ''}`, 'info');
+                         }
+                         
+                         // Play notification sound (optional)
+                         playNotificationSound();
+                     }
+                }
+            } catch (error) {
+                console.error('Error checking for new messages:', error);
+            }
+        }, 3000); // Check every 3 seconds
+    }
+    
+    function stopMessagePolling() {
+         if (pollingInterval) {
+             clearInterval(pollingInterval);
+             pollingInterval = null;
+         }
+     }
+     
+     // Function to show message status feedback
+     function showMessageStatus(message, type = 'info') {
+         const statusDiv = document.createElement('div');
+         statusDiv.className = `fixed top-4 right-4 px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300 ${
+             type === 'success' ? 'bg-green-500 text-white' :
+             type === 'error' ? 'bg-red-500 text-white' :
+             'bg-blue-500 text-white'
+         }`;
+         statusDiv.textContent = message;
+         
+         document.body.appendChild(statusDiv);
+         
+         // Animate in
+         setTimeout(() => {
+             statusDiv.style.transform = 'translateX(0)';
+             statusDiv.style.opacity = '1';
+         }, 100);
+         
+         // Remove after 3 seconds
+         setTimeout(() => {
+             statusDiv.style.transform = 'translateX(100%)';
+             statusDiv.style.opacity = '0';
+             setTimeout(() => {
+                 if (statusDiv.parentNode) {
+                     statusDiv.parentNode.removeChild(statusDiv);
+                 }
+             }, 300);
+         }, 3000);
+     }
+     
+     // Function to show typing indicator
+     function showTypingIndicator() {
+         const messageContainer = document.getElementById('messageContainer');
+         if (!messageContainer) return;
+         
+         // Remove existing typing indicator
+         const existingIndicator = document.getElementById('typingIndicator');
+         if (existingIndicator) {
+             existingIndicator.remove();
+         }
+         
+         const typingDiv = document.createElement('div');
+         typingDiv.id = 'typingIndicator';
+         typingDiv.className = 'flex justify-start mb-4';
+         typingDiv.innerHTML = `
+             <div class="max-w-xs lg:max-w-md px-6 py-4 rounded-2xl shadow-lg backdrop-blur-sm border border-white/30 bg-white/80 text-gray-800 mr-auto">
+                 <div class="flex items-center space-x-1">
+                     <div class="flex space-x-1">
+                         <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                         <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                         <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                     </div>
+                     <span class="text-xs text-gray-500 ml-2">typing...</span>
+                 </div>
+             </div>
+         `;
+         
+         messageContainer.appendChild(typingDiv);
+         scrollToBottom();
+     }
+     
+     function hideTypingIndicator() {
+          const typingIndicator = document.getElementById('typingIndicator');
+          if (typingIndicator) {
+              typingIndicator.remove();
+          }
+      }
+      
+      // Function to play notification sound
+      function playNotificationSound() {
+          try {
+              // Create a subtle notification sound using Web Audio API
+              const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+              const oscillator = audioContext.createOscillator();
+              const gainNode = audioContext.createGain();
+              
+              oscillator.connect(gainNode);
+              gainNode.connect(audioContext.destination);
+              
+              oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+              oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+              
+              gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+              gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01);
+              gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+              
+              oscillator.start(audioContext.currentTime);
+              oscillator.stop(audioContext.currentTime + 0.2);
+          } catch (error) {
+              // Fallback: no sound if Web Audio API is not supported
+              console.log('Notification sound not available');
+          }
+      }
 
     // Scroll on page load with multiple attempts and focus input
     document.addEventListener('DOMContentLoaded', function() {
@@ -173,6 +414,32 @@
         
         // Focus the message input after a short delay
         setTimeout(focusMessageInput, 300);
+        
+        // Start polling for new messages if we're in a conversation
+        const currentUrl = window.location.pathname;
+        if (currentUrl.includes('/messaging/') && currentUrl.split('/messaging/')[1]) {
+            setTimeout(startMessagePolling, 1000); // Start polling after 1 second
+        }
+        
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Enter key to send message (without Shift)
+            if (e.key === 'Enter' && !e.shiftKey) {
+                const messageInput = document.getElementById('messageInput');
+                if (messageInput && document.activeElement === messageInput) {
+                    e.preventDefault();
+                    const messageForm = document.getElementById('messageForm');
+                    if (messageForm) {
+                        messageForm.dispatchEvent(new Event('submit'));
+                    }
+                }
+            }
+            
+            // Escape key to focus message input
+            if (e.key === 'Escape') {
+                focusMessageInput();
+            }
+        });
         
         // Handle message search functionality
         const messageSearch = document.getElementById('messageSearch');
@@ -199,14 +466,65 @@
             });
         }
         
-        // Set up form submission handler
+        // Enhanced AJAX form submission handler
         const messageForm = document.getElementById('messageForm');
         if (messageForm) {
-            messageForm.addEventListener('submit', function() {
-                // Store a flag in localStorage to indicate a message was just sent
-                localStorage.setItem('messageSent', 'true');
-                localStorage.setItem('messageTimestamp', Date.now().toString());
-                console.log('Message form submitted, flag set');
+            messageForm.addEventListener('submit', async function(e) {
+                e.preventDefault(); // Prevent default form submission
+                
+                const messageInput = document.getElementById('messageInput');
+                const submitButton = messageForm.querySelector('button[type="submit"]');
+                const messageContent = messageInput.value.trim();
+                
+                if (!messageContent) return;
+                
+                // Disable form during submission
+                messageInput.disabled = true;
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                
+                try {
+                    // Construct AJAX URL properly
+                    const conversationId = '<%= conversationPartner.id %>';
+                    const ajaxUrl = `/messaging/${conversationId}/send-ajax`;
+                    const response = await fetch(ajaxUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ content: messageContent })
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (result.success) {
+                            // Clear input and add message to UI immediately
+                            messageInput.value = '';
+                            addMessageToUI(messageContent, true, new Date());
+                            scrollToBottom();
+                            
+                            // Update conversation list preview
+                        updateConversationPreview(messageContent);
+                        
+                        // Show success feedback
+                        showMessageStatus('Message sent!', 'success');
+                        } else {
+                            throw new Error(result.error || 'Failed to send message');
+                        }
+                    } else {
+                        const errorResult = await response.json();
+                        throw new Error(errorResult.error || 'Failed to send message');
+                    }
+                } catch (error) {
+                     console.error('Error sending message:', error);
+                     showMessageStatus('Failed to send message. Please try again.', 'error');
+                 } finally {
+                    // Re-enable form
+                    messageInput.disabled = false;
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                    messageInput.focus();
+                }
             });
         }
     });
@@ -218,6 +536,30 @@
         setTimeout(scrollToBottom, 200);
         // Focus the message input
         focusMessageInput();
+    });
+    
+    // Handle page visibility changes to pause/resume polling
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            // Page is hidden, stop polling to save resources
+            stopMessagePolling();
+        } else {
+            // Page is visible again, resume polling
+            const currentUrl = window.location.pathname;
+            if (currentUrl.includes('/messaging/') && currentUrl.split('/messaging/')[1]) {
+                startMessagePolling();
+            }
+        }
+    });
+    
+    // Clean up polling when leaving the page
+    window.addEventListener('beforeunload', function() {
+        stopMessagePolling();
+    });
+    
+    // Handle navigation away from messaging
+    window.addEventListener('popstate', function() {
+        stopMessagePolling();
     });
     
     // Check if we just sent a message and need to scroll

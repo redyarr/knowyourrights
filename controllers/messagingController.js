@@ -338,3 +338,86 @@ exports.sendMessage = async (req, res) => {
         res.status(500).send('Server error');
     }
 };
+
+// Check for new messages (AJAX endpoint)
+exports.checkNewMessages = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const conversationId = req.params.conversationId;
+        const since = req.query.since ? new Date(parseInt(req.query.since)) : new Date(Date.now() - 60000); // Default to last minute
+        
+        // Get new messages since the specified timestamp
+        const newMessages = await Message.findAll({
+            where: {
+                senderId: conversationId,
+                receiverId: userId,
+                createdAt: {
+                    [Op.gt]: since
+                }
+            },
+            order: [['createdAt', 'ASC']]
+        });
+        
+        // Mark new messages as read
+        if (newMessages.length > 0) {
+            await Message.update(
+                { isRead: true },
+                {
+                    where: {
+                        senderId: conversationId,
+                        receiverId: userId,
+                        createdAt: {
+                            [Op.gt]: since
+                        }
+                    }
+                }
+            );
+        }
+        
+        res.json({
+            success: true,
+            newMessages: newMessages.map(msg => ({
+                id: msg.id,
+                content: msg.content,
+                createdAt: msg.createdAt,
+                senderId: msg.senderId
+            }))
+        });
+    } catch (error) {
+        console.error('Error checking for new messages:', error);
+        res.status(500).json({ success: false, error: 'Server error' });
+    }
+};
+
+// Enhanced sendMessage for AJAX requests
+exports.sendMessageAjax = async (req, res) => {
+    try {
+        const senderId = req.session.user_id;
+        const receiverId = req.params.conversationId;
+        const { content } = req.body;
+        
+        if (!content || content.trim() === '') {
+            return res.status(400).json({ success: false, error: 'Message content cannot be empty' });
+        }
+        
+        // Create message
+        const newMessage = await Message.create({
+            senderId,
+            receiverId,
+            content
+        });
+        
+        res.json({
+            success: true,
+            message: {
+                id: newMessage.id,
+                content: newMessage.content,
+                createdAt: newMessage.createdAt,
+                senderId: newMessage.senderId
+            }
+        });
+    } catch (error) {
+        console.error('Error sending message via AJAX:', error);
+        res.status(500).json({ success: false, error: 'Server error' });
+    }
+};
