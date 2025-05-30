@@ -1,33 +1,70 @@
-<div class="min-h-screen flex items-center justify-center bg-gray-100">
-    <div class="bg-white shadow-xl rounded-lg p-10 max-w-lg w-full">
-        <h1 class="text-4xl font-bold text-center mb-8 text-gray-900">Welcome to Know Your Rights</h1>
-        <p class="text-gray-600 text-center mb-8">Choose an option below to get started:</p>
-        <div class="flex flex-col space-y-5">
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-indigo-50 relative overflow-hidden">
+    <!-- Background decorative elements -->
+    <div class="absolute top-0 left-0 w-full h-full">
+        <div class="absolute top-20 left-10 w-32 h-32 bg-blue-100 rounded-full opacity-20 animate-pulse"></div>
+        <div class="absolute bottom-20 right-10 w-24 h-24 bg-indigo-100 rounded-full opacity-30 animate-pulse" style="animation-delay: 1s;"></div>
+        <div class="absolute top-1/2 left-1/4 w-16 h-16 bg-purple-100 rounded-full opacity-25 animate-pulse" style="animation-delay: 2s;"></div>
+    </div>
+    
+    <div class="bg-white shadow-2xl rounded-2xl p-12 max-w-xl w-full mx-4 relative z-10 border border-gray-100">
+        <!-- Logo/Icon -->
+        <div class="text-center mb-6">
+            <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl mb-4 shadow-lg">
+                <i class="fas fa-balance-scale text-white text-2xl"></i>
+            </div>
+        </div>
+        
+        <h1 class="text-5xl font-bold text-center mb-4 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Know Your Rights</h1>
+        <p class="text-gray-500 text-center mb-2 text-lg font-medium">Legal Network Platform</p>
+        <p class="text-gray-600 text-center mb-8 leading-relaxed">Connect with qualified lawyers, access legal resources, and understand your rights in a professional legal community.</p>
+        
+        <div class="flex flex-col space-y-4">
             <% if (!locals.loggedInUserId) { %>
-            <a href="/login" class="flex items-center justify-center bg-blue-500 text-white py-3 rounded-full shadow-md hover:bg-blue-600 transition">
-                <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-                Log In
+            <a href="/login" class="group flex items-center justify-center bg-gradient-to-r from-blue-500 to-blue-600 text-white py-4 px-6 rounded-xl shadow-lg hover:shadow-xl hover:from-blue-600 hover:to-blue-700 transition-all duration-300 transform hover:-translate-y-1">
+                <i class="fas fa-sign-in-alt text-lg mr-3 group-hover:scale-110 transition-transform"></i>
+                <span class="font-semibold text-lg">Log In</span>
             </a>
-            <a href="/register" class="flex items-center justify-center bg-green-500 text-white py-3 rounded-full shadow-md hover:bg-green-600 transition">
-                <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-                Register
+            <a href="/register" class="group flex items-center justify-center bg-gradient-to-r from-green-500 to-emerald-600 text-white py-4 px-6 rounded-xl shadow-lg hover:shadow-xl hover:from-green-600 hover:to-emerald-700 transition-all duration-300 transform hover:-translate-y-1">
+                <i class="fas fa-user-plus text-lg mr-3 group-hover:scale-110 transition-transform"></i>
+                <span class="font-semibold text-lg">Register</span>
             </a>
-            <a href="/auth/google" class="flex items-center justify-center bg-red-500 text-white py-3 rounded-full shadow-md hover:bg-red-600 transition">
-                <svg class="w-6 h-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12a8.1 8.1 0 01-.9 3.8l-7.1-7.1a8.1 8.1 0 0111.8 3.3zM4 12a8.1 8.1 0 0114.1-5.3l-7.1 7.1A8.1 8.1 0 014 12z" />
-                </svg>
-                Log In with Google
+            <a href="/auth/google" class="group flex items-center justify-center bg-gradient-to-r from-red-500 to-red-600 text-white py-4 px-6 rounded-xl shadow-lg hover:shadow-xl hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:-translate-y-1">
+                <i class="fab fa-google text-lg mr-3 group-hover:scale-110 transition-transform"></i>
+                <span class="font-semibold text-lg">Log In with Google</span>
             </a>
+            
+            <!-- Quick access section for non-logged users -->
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <p class="text-center text-gray-600 mb-4 font-medium">Explore without signing up:</p>
+                <div class="grid grid-cols-2 gap-3">
+                    <a href="/resources/consumer" class="flex flex-col items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition group">
+                        <i class="fas fa-shield-alt text-purple-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-sm font-medium text-purple-700">Legal Guides</span>
+                    </a>
+                    <a href="/search" class="flex flex-col items-center p-4 bg-indigo-50 rounded-lg hover:bg-indigo-100 transition group">
+                        <i class="fas fa-search text-indigo-600 text-xl mb-2 group-hover:scale-110 transition-transform"></i>
+                        <span class="text-sm font-medium text-indigo-700">Find Lawyers</span>
+                    </a>
+                </div>
+            </div>
             <% } else { %>
-            <div class="text-center">
-                <p class="text-lg text-gray-700 mb-4">You are logged in!</p>
-                <a href="/feed" class="inline-block bg-blue-600 text-white px-6 py-3 rounded-full font-medium hover:bg-blue-700 transition">Go to Feed</a>
+            <div class="text-center py-4">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                    <i class="fas fa-check text-green-600 text-2xl"></i>
+                </div>
+                <p class="text-xl font-semibold text-gray-800 mb-2">Welcome back!</p>
+                <p class="text-gray-600 mb-6">You are successfully logged in.</p>
+                <a href="/feed" class="inline-flex items-center bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 transform hover:-translate-y-1 shadow-lg hover:shadow-xl">
+                    <i class="fas fa-home mr-3"></i>
+                    Go to Feed
+                </a>
             </div>
             <% } %>
+        </div>
+        
+        <!-- Footer info -->
+        <div class="mt-8 pt-6 border-t border-gray-100 text-center">
+            <p class="text-xs text-gray-500">Secure • Professional • Trusted Legal Network</p>
         </div>
     </div>
 </div>
