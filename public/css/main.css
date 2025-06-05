@@ -43,3 +43,126 @@
     background: #888;
     border-radius: 3px;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+    /* General mobile adjustments */
+    .max-w-7xl {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    /* Grid adjustments for mobile */
+    .grid-cols-1.lg\:grid-cols-12 {
+        grid-template-columns: 1fr;
+    }
+    
+    .lg\:col-span-3,
+    .lg\:col-span-6,
+    .lg\:col-span-3 {
+        grid-column: span 1;
+    }
+    
+    /* Hide sidebars on mobile */
+    .lg\:col-span-3 {
+        display: none;
+    }
+    
+    /* Make main content full width on mobile */
+    .lg\:col-span-6 {
+        grid-column: span 1;
+    }
+    
+    /* Card adjustments */
+    .rounded-2xl,
+    .rounded-3xl {
+        border-radius: 1rem;
+    }
+    
+    /* Text size adjustments */
+    .text-xl {
+        font-size: 1.125rem;
+    }
+    
+    .text-2xl {
+        font-size: 1.25rem;
+    }
+    
+    /* Padding adjustments */
+    .p-8 {
+        padding: 1.5rem;
+    }
+    
+    .p-6 {
+        padding: 1rem;
+    }
+    
+    /* Button adjustments */
+    .px-6 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    /* Image adjustments */
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    /* Form adjustments */
+    .w-96 {
+        width: 100%;
+    }
+    
+    /* Modal adjustments */
+    .fixed.inset-0 > div {
+        margin: 1rem;
+        max-width: calc(100vw - 2rem);
+    }
+    
+    /* Messaging popup adjustments */
+    .messaging-popup {
+        width: 100%;
+        right: 0;
+        left: 0;
+    }
+    
+    /* Table responsiveness */
+    .table-responsive {
+        overflow-x: auto;
+    }
+    
+    table {
+        min-width: 600px;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Extra small mobile devices */
+    .text-lg {
+        font-size: 1rem;
+    }
+    
+    .p-4 {
+        padding: 0.75rem;
+    }
+    
+    .space-x-4 > * + * {
+        margin-left: 0.5rem;
+    }
+    
+    .space-y-4 > * + * {
+        margin-top: 0.5rem;
+    }
+    
+    /* Smaller buttons on very small screens */
+    .py-3 {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    
+    /* Adjust font sizes for readability */
+    .text-sm {
+        font-size: 0.75rem;
+    }
+}

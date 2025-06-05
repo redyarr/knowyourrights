@@ -1,6 +1,14 @@
 <nav class="glass-nav bg-white/95 backdrop-blur-xl border-b border-gray-200/80 shadow-xl sticky top-0 z-50">
   <div class="max-w-7xl mx-auto px-4">
     <div class="flex justify-between h-16 items-center">
+      <!-- Mobile menu button -->
+      <div class="md:hidden">
+        <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-900 focus:outline-none focus:text-gray-900 p-2">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
 
       <!-- Left nav -->
       <div class="flex items-center">
@@ -67,7 +75,7 @@
             </g>
           </svg>
         </a>
-        <form action="/search" method="GET" class="relative ml-8">
+        <form action="/search" method="GET" class="relative ml-8 hidden lg:block">
           <div class="relative group">
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
               <i class="fas fa-search text-gray-500 group-focus-within:text-blue-600 transition-colors duration-300 text-lg"></i>
@@ -220,6 +228,104 @@
                 <% } %>
           </div>
     </div>
+    
+    <!-- Mobile menu overlay -->
+    <div id="mobile-menu" class="md:hidden hidden fixed inset-0 z-50 bg-black bg-opacity-50">
+      <div class="fixed inset-y-0 left-0 w-80 bg-white shadow-xl transform transition-transform duration-300 ease-in-out">
+        <div class="flex items-center justify-between p-4 border-b">
+          <h2 class="text-lg font-semibold text-gray-900">Menu</h2>
+          <button id="mobile-menu-close" class="text-gray-600 hover:text-gray-900">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Mobile search -->
+        <div class="p-4 border-b">
+          <form action="/search" method="GET">
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i class="fas fa-search text-gray-400"></i>
+              </div>
+              <input type="text" name="query" placeholder="Search..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+          </form>
+        </div>
+        
+        <!-- Mobile navigation -->
+        <div class="flex-1 overflow-y-auto">
+          <% if (locals.loggedInUserId) { %>
+            <div class="p-4 border-b">
+              <div class="flex items-center space-x-3">
+                <img src="https://ui-avatars.com/api/?name=<%= locals.user ? encodeURIComponent(locals.user.firstName + ' ' + locals.user.lastName) : 'User' %>&size=40&background=3b82f6&color=ffffff" alt="Profile" class="h-10 w-10 rounded-full">
+                <div>
+                  <p class="font-medium text-gray-900">
+                    <% if (typeof user !== 'undefined' && user) { %>
+                      <%= user.firstName %> <%= user.lastName %>
+                    <% } else { %>
+                      Guest User
+                    <% } %>
+                  </p>
+                  <p class="text-sm text-gray-500">
+                    <%= locals.userRole === 'admin' ? 'Administrator' : locals.userRole === 'lawyer' ? 'Lawyer' : 'Member' %>
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <nav class="py-4">
+              <a href="/" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 <%= (path === '/' || path === '/blog') ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : '' %>">
+                <i class="fas fa-home mr-3"></i>
+                Home
+              </a>
+              <a href="/mynetwork" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 <%= path.includes('/user/network') ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : '' %>">
+                <i class="fas fa-user-friends mr-3"></i>
+                My Network
+              </a>
+              <a href="/jobs" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 <%= path.includes('/jobs') ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : '' %>">
+                <i class="fas fa-briefcase mr-3"></i>
+                Jobs
+              </a>
+              <a href="/messaging" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 <%= path.includes('/messages') ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : '' %>">
+                <i class="fas fa-comment-dots mr-3"></i>
+                Messaging
+                <% if (locals.unreadMessageCount > 0) { %>
+                  <span class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full"><%= locals.unreadMessageCount %></span>
+                <% } %>
+              </a>
+              <a href="/in" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100">
+                <i class="fas fa-user mr-3"></i>
+                View Profile
+              </a>
+              <a href="/in/edit" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100">
+                <i class="fas fa-pencil-alt mr-3"></i>
+                Edit Profile
+              </a>
+              <a href="/settings" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100">
+                <i class="fas fa-cog mr-3"></i>
+                Settings & Privacy
+              </a>
+              <a href="/help" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100">
+                <i class="fas fa-question-circle mr-3"></i>
+                Help Center
+              </a>
+              <form action="/signout" method="POST" class="px-4 py-3">
+                <button type="submit" class="flex items-center w-full text-left text-gray-700 hover:bg-gray-100 py-2">
+                  <i class="fas fa-sign-out-alt mr-3 text-red-500"></i>
+                  Sign Out
+                </button>
+              </form>
+            </nav>
+          <% } else { %>
+            <div class="p-4">
+              <a href="/login" class="block w-full text-center px-4 py-2 mb-3 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">Sign in</a>
+              <a href="/register" class="block w-full text-center px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700">Join now</a>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
   </div>
 </nav>
 <style>
@@ -261,10 +367,43 @@
 </style>
 
 <script>
-  document.getElementById('profileButton').addEventListener('click', function () {
-    var menu = document.getElementById('profileMenu');
-    menu.classList.toggle('hidden');
-  });
+  // Profile menu toggle
+  const profileButton = document.getElementById('profileButton');
+  if (profileButton) {
+    profileButton.addEventListener('click', function () {
+      var menu = document.getElementById('profileMenu');
+      menu.classList.toggle('hidden');
+    });
+  }
+  
+  // Mobile menu functionality
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const mobileMenuClose = document.getElementById('mobile-menu-close');
+  
+  if (mobileMenuButton && mobileMenu) {
+    mobileMenuButton.addEventListener('click', function() {
+      mobileMenu.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    });
+  }
+  
+  if (mobileMenuClose && mobileMenu) {
+    mobileMenuClose.addEventListener('click', function() {
+      mobileMenu.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    });
+  }
+  
+  // Close mobile menu when clicking outside
+  if (mobileMenu) {
+    mobileMenu.addEventListener('click', function(e) {
+      if (e.target === mobileMenu) {
+        mobileMenu.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+      }
+    });
+  }
 
   // Enhanced search functionality
   const searchInput = document.getElementById('searchInput');

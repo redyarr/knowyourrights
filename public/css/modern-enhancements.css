@@ -329,6 +329,103 @@ html {
     margin: 1rem;
     border-radius: 16px;
   }
+  
+  /* Profile page responsiveness */
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .profile-stats {
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  /* Messaging responsiveness */
+  .messaging-container {
+    flex-direction: column;
+  }
+  
+  .conversation-list {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  /* Job listings responsiveness */
+  .job-card {
+    padding: 1rem;
+  }
+  
+  .job-details {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  /* Search results responsiveness */
+  .search-filters {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .search-result-card {
+    padding: 1rem;
+  }
+  
+  /* Network page responsiveness */
+  .connection-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .connection-actions {
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  /* Admin panel responsiveness */
+  .admin-sidebar {
+    display: none;
+  }
+  
+  .admin-content {
+    width: 100%;
+  }
+  
+  .admin-table {
+    font-size: 0.875rem;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: 0.5rem;
+  }
+  
+  /* Modal responsiveness */
+  .modal-content {
+    margin: 1rem;
+    max-width: calc(100vw - 2rem);
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+  }
+  
+  /* Form responsiveness */
+  .form-row {
+    flex-direction: column;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+  }
+  
+  /* Button group responsiveness */
+  .btn-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .btn-group .btn {
+    width: 100%;
+  }
 }
 
 /* Dark mode support preparation */

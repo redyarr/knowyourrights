@@ -90,6 +90,94 @@
       opacity: 1;
     }
   }
+  
+  /* Mobile responsive styles for feed */
+  @media (max-width: 768px) {
+    .grid.grid-cols-1.lg\:grid-cols-12 {
+      display: block;
+    }
+    
+    .lg\:col-span-3 {
+      display: none;
+    }
+    
+    .lg\:col-span-6 {
+      width: 100%;
+    }
+    
+    .max-w-7xl {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+    
+    .rounded-3xl {
+      border-radius: 1rem;
+    }
+    
+    .p-8 {
+      padding: 1rem;
+    }
+    
+    .p-6 {
+      padding: 0.75rem;
+    }
+    
+    .space-y-8 > * + * {
+      margin-top: 1rem;
+    }
+    
+    .mb-10 {
+      margin-bottom: 1rem;
+    }
+    
+    /* Post content adjustments */
+    .text-2xl {
+      font-size: 1.25rem;
+    }
+    
+    .text-xl {
+      font-size: 1.125rem;
+    }
+    
+    /* Image adjustments */
+    .w-full.h-auto {
+      max-height: 300px;
+      object-fit: cover;
+    }
+    
+    /* Button adjustments */
+    .flex.items-center.space-x-4 {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    
+    /* Modal adjustments for mobile */
+    .fixed.inset-0 .bg-white {
+      margin: 1rem;
+      max-height: calc(100vh - 2rem);
+      overflow-y: auto;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .py-8 {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+    
+    .gap-8 {
+      gap: 1rem;
+    }
+    
+    .text-lg {
+      font-size: 1rem;
+    }
+    
+    .px-4 {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+  }
 </style>
     <div class="max-w-7xl mx-auto px-4 py-8">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -191,29 +279,77 @@
                             <button onclick="togglePostModal()" class="flex-1 border border-blue-200 rounded-full px-6 py-3 text-md text-gray-700 bg-blue-50 hover:bg-blue-100 shadow">Share Legal Insights</button>
                         </div>
                     </div>
-                <% } else if (locals.loggedInUserId && locals.userRole !== 'lawyer') { %>
-                    <div class="bg-white rounded-2xl shadow-lg mb-4">
+                <% } %>
+                
+                <% if (locals.loggedInUserId && locals.userRole !== 'lawyer') { %>
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl shadow-lg mb-6 border border-blue-100">
                         <div class="p-8">
-                            <div class="flex items-center space-x-4 mb-4">
-                                <img src="https://media.licdn.com/dms/image/v2/D4D03AQF9FvdZ1W1_9g/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1712227644410?e=1746662400&v=beta&t=h_guvHTPpOuEEWiAAnuGwQLiaaMLVRgSJGwzP79vRlU" alt="Profile" class="rounded-full shadow border-2 border-white" style="width: 48px; height: 48px; object-fit: cover;">
+                            <div class="flex items-center space-x-4 mb-6">
+                                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                                    <i class="fas fa-balance-scale text-white text-2xl"></i>
+                                </div>
                                 <div class="flex-1">
-                                    <h3 class="text-lg font-semibold text-gray-800">Welcome to the Legal Community!</h3>
-                                    <p class="text-gray-600">Connect with lawyers, ask questions, and explore job opportunities.</p>
+                                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Welcome to the Legal Community!</h3>
+                                    <p class="text-gray-600 text-lg">Connect with verified lawyers, explore legal resources, and find opportunities in the legal field.</p>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                <a href="/jobs" class="flex items-center justify-center px-4 py-3 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition">
-                                    <i class="fas fa-briefcase text-green-600 mr-2"></i>
-                                    <span class="text-green-700 font-medium">Post Job Opportunity</span>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                                <a href="/search" class="group flex items-center p-4 bg-white rounded-xl hover:bg-blue-50 transition-all duration-300 shadow-sm hover:shadow-md border border-gray-100">
+                                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-blue-200 transition-colors">
+                                        <i class="fas fa-search text-blue-600 text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-800 font-semibold group-hover:text-blue-600 transition-colors block">Find Lawyers</span>
+                                        <p class="text-sm text-gray-500">Search for legal experts</p>
+                                    </div>
                                 </a>
-                                <a href="/mynetwork" class="flex items-center justify-center px-4 py-3 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition">
-                                    <i class="fas fa-users text-blue-600 mr-2"></i>
-                                    <span class="text-blue-700 font-medium">Find Lawyers</span>
+                                
+                                <a href="/mynetwork" class="group flex items-center p-4 bg-white rounded-xl hover:bg-green-50 transition-all duration-300 shadow-sm hover:shadow-md border border-gray-100">
+                                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-green-200 transition-colors">
+                                        <i class="fas fa-users text-green-600 text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-800 font-semibold group-hover:text-green-600 transition-colors block">Network</span>
+                                        <p class="text-sm text-gray-500">Build connections</p>
+                                    </div>
                                 </a>
+                                
+                                <a href="/jobs" class="group flex items-center p-4 bg-white rounded-xl hover:bg-purple-50 transition-all duration-300 shadow-sm hover:shadow-md border border-gray-100">
+                                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-purple-200 transition-colors">
+                                        <i class="fas fa-briefcase text-purple-600 text-lg"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-800 font-semibold group-hover:text-purple-600 transition-colors block">Job Opportunities</span>
+                                        <p class="text-sm text-gray-500">Explore careers</p>
+                                    </div>
+                                </a>
+                            </div>
+                            
+                            <div class="bg-white rounded-xl p-6 border border-gray-100">
+                                <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                                    Quick Tips
+                                </h4>
+                                <ul class="space-y-2 text-gray-600">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mr-2 mt-1 text-sm"></i>
+                                        <span>Follow verified lawyers to see their legal insights and advice</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mr-2 mt-1 text-sm"></i>
+                                        <span>Use the search feature to find lawyers specializing in your area of need</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-green-500 mr-2 mt-1 text-sm"></i>
+                                        <span>Explore legal resources in the sidebar for helpful guides and information</span>
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
                 <% } %>
+                
                 <% if (posts && posts.length > 0) { %>
                     <% posts.forEach(post => { let groupedReactions = {}; if (post.reacts && post.reacts.length > 0) { post.reacts.forEach(r => { groupedReactions[r.reaction] = (groupedReactions[r.reaction] || 0) + 1; }); } %>
                     <div id="post-<%= post.id %>" class="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl mb-10 border border-white/20 hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 overflow-visible">

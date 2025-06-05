@@ -1,6 +1,10 @@
 // Feed page functionality for reactions and comments
 
 document.addEventListener('DOMContentLoaded', function () {
+    // Show message for non-lawyers trying to post
+    window.showLawyerOnlyMessage = function() {
+        alert('Only verified lawyers can create posts. If you are a lawyer, please complete your verification process.');
+    };
     // Toggle comments visibility
     window.toggleComments = function (postId) {
         const commentsList = document.getElementById(`commentsList-${postId}`);
