@@ -458,8 +458,151 @@
 <% } %>
 
 <style>
+/* Enhanced responsive styles for profile page */
+@media (max-width: 768px) {
+    /* Profile header mobile adjustments */
     .glass-card {
-        background: rgba(255, 255, 255, 0.95);
+        margin: 0.5rem;
+        border-radius: 1rem;
+    }
+    
+    .h-52 {
+        height: 8rem !important;
+    }
+    
+    .absolute.top-0.left-0.right-0 {
+        position: relative !important;
+        padding: 1rem;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .mt-28 {
+        margin-top: 1rem !important;
+    }
+    
+    .mt-20 {
+        margin-top: 1rem !important;
+    }
+    
+    .w-36.h-36 {
+        width: 6rem !important;
+        height: 6rem !important;
+    }
+    
+    .flex.space-x-3 {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+        margin-top: 1rem;
+    }
+    
+    .flex.space-x-3 > * {
+        margin-right: 0 !important;
+        margin-bottom: 0.5rem;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .glass-button {
+        width: 100% !important;
+        justify-content: center;
+    }
+    
+    /* Profile content mobile */
+    .grid.grid-cols-1.lg\:grid-cols-3 {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+    }
+    
+    .lg\:col-span-2 {
+        grid-column: span 1;
+    }
+    
+    /* Profile stats mobile */
+    .flex.justify-between {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .flex.justify-between > div {
+        margin-bottom: 1rem;
+    }
+    
+    /* Education and experience cards */
+    .space-y-6 > * {
+        margin-top: 1rem;
+    }
+    
+    /* Skills tags */
+    .flex.flex-wrap {
+        justify-content: center;
+    }
+    
+    .inline-flex {
+        margin: 0.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .h-52 {
+        height: 6rem !important;
+    }
+    
+    .w-36.h-36 {
+        width: 4rem !important;
+        height: 4rem !important;
+    }
+    
+    .text-3xl {
+        font-size: 1.5rem;
+    }
+    
+    .text-2xl {
+        font-size: 1.25rem;
+    }
+    
+    .px-6 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    
+    .py-6 {
+        padding-top: 1rem !important;
+        padding-bottom: 1rem !important;
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .grid.grid-cols-1.lg\:grid-cols-3 {
+        grid-template-columns: 1fr 2fr !important;
+        gap: 1.5rem;
+    }
+    
+    .w-36.h-36 {
+        width: 8rem !important;
+        height: 8rem !important;
+    }
+    
+    .flex.space-x-3 {
+        flex-direction: row;
+        justify-content: center;
+    }
+    
+    .flex.space-x-3 > * {
+        width: auto;
+        margin-right: 0.75rem;
+        margin-bottom: 0;
+    }
+}
+</style>
+
+<style>
+     .glass-card {
+         background: rgba(255, 255, 255, 0.95);
         backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.2);
     }

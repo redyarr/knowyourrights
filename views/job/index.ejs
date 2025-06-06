@@ -136,4 +136,172 @@
         Job deleted successfully.
     </div>
     <% } %>
-</div>
+
+<style>
+/* Enhanced responsive styles for jobs page */
+@media (max-width: 768px) {
+    /* Background elements mobile */
+    .fixed.inset-0 {
+        display: none; /* Hide decorative backgrounds on mobile for performance */
+    }
+    
+    .container {
+        padding: 0.5rem;
+    }
+    
+    .glass-card {
+        margin: 0.5rem 0;
+        padding: 1rem !important;
+        border-radius: 1rem;
+    }
+    
+    /* Header mobile */
+    .flex.justify-between.items-center {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .flex.items-center {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .w-16.h-16 {
+        width: 3rem !important;
+        height: 3rem !important;
+        margin-right: 0 !important;
+        margin-bottom: 1rem;
+    }
+    
+    .text-4xl {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+    
+    .glass-button {
+        width: 100%;
+        justify-content: center;
+        margin-top: 1rem;
+    }
+    
+    /* Job cards mobile */
+    .max-w-4xl {
+        max-width: 100%;
+    }
+    
+    .space-y-6 {
+        gap: 1rem;
+    }
+    
+    .flex.items-start.justify-between {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .flex.items-center.space-x-6 {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .flex.items-center.space-x-6 > * {
+        margin-right: 0 !important;
+    }
+    
+    .text-2xl {
+        font-size: 1.25rem;
+        text-align: center;
+    }
+    
+    .prose {
+        max-width: 100%;
+        text-align: left;
+    }
+    
+    .flex.items-center.space-x-4 {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+    
+    .flex.items-center.space-x-4 > * {
+        margin-right: 0 !important;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .inline-flex {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0.25rem;
+    }
+    
+    .glass-card {
+        padding: 0.75rem !important;
+        margin: 0.25rem 0;
+    }
+    
+    .text-4xl {
+        font-size: 1.25rem;
+    }
+    
+    .text-2xl {
+        font-size: 1.125rem;
+    }
+    
+    .w-16.h-16 {
+        width: 2.5rem !important;
+        height: 2.5rem !important;
+    }
+    
+    .px-8 {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+    }
+    
+    .py-4 {
+        padding-top: 0.75rem !important;
+        padding-bottom: 0.75rem !important;
+    }
+    
+    .glass-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .max-w-4xl {
+        max-width: 90%;
+    }
+    
+    .flex.justify-between.items-center {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .flex.items-center.space-x-6 {
+        flex-direction: row;
+        align-items: center;
+        gap: 1.5rem;
+    }
+    
+    .w-16.h-16 {
+        width: 4rem !important;
+        height: 4rem !important;
+    }
+}
+</style>

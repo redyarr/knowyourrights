@@ -89,3 +89,150 @@
         });
     }
 </script>
+
+<style>
+/* Enhanced responsive styles for search page */
+@media (max-width: 768px) {
+    .container {
+        padding: 0.5rem;
+    }
+    
+    .glass-card {
+        margin: 0.5rem 0;
+        padding: 1rem !important;
+        border-radius: 1rem;
+    }
+    
+    /* Header mobile */
+    .text-4xl {
+        font-size: 1.5rem;
+        text-align: center;
+    }
+    
+    .text-gray-600 {
+        font-size: 0.875rem;
+        text-align: center;
+    }
+    
+    /* Grid layout mobile */
+    .grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+    }
+    
+    .max-w-6xl {
+        max-width: 100%;
+    }
+    
+    /* Profile cards mobile */
+    .bg-white.rounded-xl {
+        padding: 1rem !important;
+        margin-bottom: 1rem;
+    }
+    
+    .flex.items-center.space-x-4 {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .flex.items-center.space-x-4 > * {
+        margin-right: 0 !important;
+    }
+    
+    .w-16.h-16 {
+        width: 4rem !important;
+        height: 4rem !important;
+        margin-bottom: 0.5rem;
+    }
+    
+    .text-xl {
+        font-size: 1.125rem;
+        text-align: center;
+    }
+    
+    .text-gray-600 {
+        font-size: 0.875rem;
+        text-align: center;
+    }
+    
+    .text-blue-600 {
+        font-size: 0.75rem;
+        text-align: center;
+    }
+    
+    /* Buttons mobile */
+    .flex.space-x-2 {
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+        margin-top: 1rem;
+    }
+    
+    .flex.space-x-2 > * {
+        margin-right: 0 !important;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .glass-button {
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0.25rem;
+    }
+    
+    .glass-card {
+        padding: 0.75rem !important;
+        margin: 0.25rem 0;
+    }
+    
+    .text-4xl {
+        font-size: 1.25rem;
+    }
+    
+    .text-xl {
+        font-size: 1rem;
+    }
+    
+    .w-16.h-16 {
+        width: 3rem !important;
+        height: 3rem !important;
+    }
+    
+    .bg-white.rounded-xl {
+        padding: 0.75rem !important;
+    }
+    
+    .glass-button {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.75rem;
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    .max-w-6xl {
+        max-width: 90%;
+    }
+    
+    .grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1.5rem;
+    }
+    
+    .w-16.h-16 {
+        width: 4rem !important;
+        height: 4rem !important;
+    }
+}
+</style>

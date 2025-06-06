@@ -1,10 +1,10 @@
-<nav class="glass-nav bg-white/95 backdrop-blur-xl border-b border-gray-200/80 shadow-xl sticky top-0 z-50">
+<nav class="glass-nav bg-white/95 backdrop-blur-xl border-b border-gray-200/80 shadow-xl sticky top-0 z-[100]">
   <div class="max-w-7xl mx-auto px-4">
     <div class="flex justify-between h-16 items-center">
       <!-- Mobile menu button -->
       <div class="md:hidden">
-        <button id="mobile-menu-button" class="text-gray-600 hover:text-gray-900 focus:outline-none focus:text-gray-900 p-2">
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <button id="mobile-menu-button" class="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
@@ -77,16 +77,13 @@
         </a>
         <form action="/search" method="GET" class="relative ml-8 hidden lg:block">
           <div class="relative group">
-            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
-              <i class="fas fa-search text-gray-500 group-focus-within:text-blue-600 transition-colors duration-300 text-lg"></i>
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
+              <i class="fas fa-search text-gray-400 text-sm"></i>
             </div>
-            <input type="text" name="query" id="searchInput" placeholder="Search lawyers, users, and content..." autocomplete="off"
-              class="w-96 pl-14 pr-16 py-4 rounded-2xl bg-white border-2 border-gray-200 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 shadow-lg hover:shadow-xl focus:shadow-2xl text-gray-800 placeholder-gray-400 font-medium">
-            <div class="absolute inset-y-0 right-0 pr-4 flex items-center z-10">
-              <div class="flex items-center space-x-1">
-                <kbd class="hidden sm:inline-block px-2.5 py-1.5 text-xs font-bold text-gray-600 bg-gray-100 border border-gray-300 rounded-md shadow-sm">⌘</kbd>
-                <kbd class="hidden sm:inline-block px-2.5 py-1.5 text-xs font-bold text-gray-600 bg-gray-100 border border-gray-300 rounded-md shadow-sm">K</kbd>
-              </div>
+            <input type="text" name="query" id="searchInput" placeholder="Search lawyers, topics..." autocomplete="off"
+              class="w-80 pl-10 pr-16 py-2.5 rounded-xl bg-gray-50/80 backdrop-blur-sm border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white shadow-sm hover:shadow-md transition-all duration-300 text-gray-700 placeholder-gray-500 text-sm">
+            <div class="absolute inset-y-0 right-0 pr-3 flex items-center z-10">
+              <span class="text-xs text-gray-400 bg-white px-1.5 py-0.5 rounded border text-[10px]">⌘K</span>
             </div>
             <div id="searchResults"
               class="absolute mt-3 w-full bg-white shadow-2xl rounded-2xl overflow-hidden hidden z-50 border border-gray-200 max-h-96 overflow-y-auto">
@@ -129,29 +126,29 @@
 
       <!-- Center nav -->
       <% if (locals.loggedInUserId) { %>
-        <div class="hidden md:flex space-x-2">
+        <div class="hidden md:flex space-x-1">
           <a href="/"
-            class="nav-item flex flex-col items-center px-4 py-2 rounded-xl text-gray-600 hover:text-blue-600 text-sm transition-all duration-300 hover:bg-blue-50/80 hover:backdrop-blur-sm <%= (path === '/' || path === '/blog') ? 'font-bold text-blue-700 bg-blue-100/80 backdrop-blur-sm' : '' %>">
-            <i class="fas fa-home text-xl mb-1"></i>
+            class="nav-item flex flex-col items-center px-3 py-2 rounded-lg text-gray-600 hover:text-blue-600 text-xs transition-all duration-300 hover:bg-blue-50 <%= (path === '/' || path === '/blog') ? 'font-semibold text-blue-700 bg-blue-50' : '' %>">
+            <i class="fas fa-home text-lg mb-1"></i>
             <span>Home</span>
           </a>
           <a href="/mynetwork"
-            class="nav-item flex flex-col items-center px-4 py-2 rounded-xl text-gray-600 hover:text-blue-600 text-sm transition-all duration-300 hover:bg-blue-50/80 hover:backdrop-blur-sm <%= path.includes('/user/network') ? 'font-bold text-blue-700 bg-blue-100/80 backdrop-blur-sm' : '' %>">
-            <i class="fas fa-user-friends text-xl mb-1"></i>
-            <span>My Network</span>
+            class="nav-item flex flex-col items-center px-3 py-2 rounded-lg text-gray-600 hover:text-blue-600 text-xs transition-all duration-300 hover:bg-blue-50 <%= path.includes('/user/network') ? 'font-semibold text-blue-700 bg-blue-50' : '' %>">
+            <i class="fas fa-user-friends text-lg mb-1"></i>
+            <span>Network</span>
           </a>
           <a href="/jobs"
-            class="nav-item flex flex-col items-center px-4 py-2 rounded-xl text-gray-600 hover:text-blue-600 text-sm transition-all duration-300 hover:bg-blue-50/80 hover:backdrop-blur-sm <%= path.includes('/jobs') ? 'font-bold text-blue-700 bg-blue-100/80 backdrop-blur-sm' : '' %>">
-            <i class="fas fa-briefcase text-xl mb-1"></i>
+            class="nav-item flex flex-col items-center px-3 py-2 rounded-lg text-gray-600 hover:text-blue-600 text-xs transition-all duration-300 hover:bg-blue-50 <%= path.includes('/jobs') ? 'font-semibold text-blue-700 bg-blue-50' : '' %>">
+            <i class="fas fa-briefcase text-lg mb-1"></i>
             <span>Jobs</span>
           </a>
           <a href="/messaging"
-            class="nav-item relative flex flex-col items-center px-4 py-2 rounded-xl text-gray-600 hover:text-blue-600 text-sm transition-all duration-300 hover:bg-blue-50/80 hover:backdrop-blur-sm <%= path.includes('/messages') ? 'font-bold text-blue-700 bg-blue-100/80 backdrop-blur-sm' : '' %>">
-            <i class="fas fa-comment-dots text-xl mb-1"></i>
-            <span>Messaging</span>
+            class="nav-item relative flex flex-col items-center px-3 py-2 rounded-lg text-gray-600 hover:text-blue-600 text-xs transition-all duration-300 hover:bg-blue-50 <%= path.includes('/messages') ? 'font-semibold text-blue-700 bg-blue-50' : '' %>">
+            <i class="fas fa-comment-dots text-lg mb-1"></i>
+            <span>Messages</span>
             <% if (locals.unreadMessageCount> 0) { %>
               <span
-                class="absolute -top-1 -right-1 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center shadow-sm border border-white">
                 <%= locals.unreadMessageCount %>
               </span>
               <% } %>
@@ -171,16 +168,16 @@
         <% } %>
 
           <!-- Right nav -->
-          <div class="flex items-center space-x-4">
+          <div class="flex items-center space-x-3">
             <% if (locals.loggedInUserId) { %>
               <div class="relative group">
                 <button id="profileButton"
-                  class="flex items-center px-3 py-2 rounded-xl text-gray-600 hover:text-blue-600 hover:bg-blue-50/80 hover:backdrop-blur-sm focus:outline-none transition-all duration-300">
-                  <img src="https://ui-avatars.com/api/?name=<%= locals.user ? encodeURIComponent(locals.user.firstName + ' ' + locals.user.lastName) : 'User' %>&size=32&background=3b82f6&color=ffffff" alt="Profile" class="h-8 w-8 rounded-full ring-2 ring-white shadow-md">
-                  <span class="ml-2 text-sm font-medium">Me <i class="fas fa-caret-down ml-1 transition-transform duration-200"></i></span>
+                  class="flex items-center px-3 py-2 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
+                  <img src="https://ui-avatars.com/api/?name=<%= locals.user ? encodeURIComponent(locals.user.firstName + ' ' + locals.user.lastName) : 'User' %>&size=28&background=3b82f6&color=ffffff" alt="Profile" class="h-7 w-7 rounded-full ring-1 ring-gray-200 shadow-sm">
+                  <span class="ml-2 text-sm font-medium hidden sm:block">Me <i class="fas fa-caret-down ml-1 transition-transform duration-200 text-xs"></i></span>
                 </button>
                 <div id="profileMenu"
-                  class="absolute right-0 mt-2 w-64 glass-card bg-white/95 backdrop-blur-lg border border-white/20 rounded-xl shadow-xl hidden z-50">
+                  class="absolute right-0 mt-2 w-64 glass-card bg-white/95 backdrop-blur-lg border border-white/20 rounded-xl shadow-xl hidden z-[200]">
                   <div class="p-4 border-b border-white/20">
                     <div class="flex items-center space-x-3">
                       <img src="https://ui-avatars.com/api/?name=<%= locals.user ? encodeURIComponent(locals.user.firstName + ' ' + locals.user.lastName) : 'User' %>&size=64&background=3b82f6&color=ffffff" alt="Profile"
@@ -222,33 +219,33 @@
                 </div>
               </div>
               <% } else { %>
-                <a href="/login" class="px-4 py-2 rounded-xl text-gray-700 hover:text-blue-600 hover:bg-blue-50/80 hover:backdrop-blur-sm transition-all duration-300 font-medium">Sign in</a>
+                <a href="/login" class="px-3 py-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-200 font-medium text-sm">Sign in</a>
                 <a href="/register"
-                  class="ml-2 px-6 py-2 rounded-xl text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 border border-blue-600 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-0.5 font-medium">Join now</a>
+                  class="px-4 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-700 shadow-sm hover:shadow-md transition-all duration-200 font-medium text-sm">Join now</a>
                 <% } %>
           </div>
     </div>
     
     <!-- Mobile menu overlay -->
-    <div id="mobile-menu" class="md:hidden hidden fixed inset-0 z-50 bg-black bg-opacity-50">
-      <div class="fixed inset-y-0 left-0 w-80 bg-white shadow-xl transform transition-transform duration-300 ease-in-out">
-        <div class="flex items-center justify-between p-4 border-b">
+    <div id="mobile-menu" class="md:hidden hidden fixed inset-0 z-[9999] bg-black bg-opacity-30">
+      <div class="fixed inset-y-0 left-0 w-72 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-[10000]">
+        <div class="flex items-center justify-between p-4 border-b border-gray-200">
           <h2 class="text-lg font-semibold text-gray-900">Menu</h2>
-          <button id="mobile-menu-close" class="text-gray-600 hover:text-gray-900">
-            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <button id="mobile-menu-close" class="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200">
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
         
         <!-- Mobile search -->
-        <div class="p-4 border-b">
+        <div class="p-4 border-b border-gray-200">
           <form action="/search" method="GET">
             <div class="relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <i class="fas fa-search text-gray-400"></i>
+                <i class="fas fa-search text-gray-400 text-sm"></i>
               </div>
-              <input type="text" name="query" placeholder="Search..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <input type="text" name="query" placeholder="Search lawyers, topics..." class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50 focus:bg-white transition-all duration-200 text-sm">
             </div>
           </form>
         </div>
@@ -274,53 +271,55 @@
               </div>
             </div>
             
-            <nav class="py-4">
-              <a href="/" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 <%= (path === '/' || path === '/blog') ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : '' %>">
-                <i class="fas fa-home mr-3"></i>
-                Home
+            <nav class="py-2">
+              <a href="/" class="flex items-center px-4 py-3 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200 <%= (path === '/' || path === '/blog') ? 'bg-blue-50 text-blue-600' : '' %>">
+                <i class="fas fa-home mr-3 text-gray-500 <%= (path === '/' || path === '/blog') ? 'text-blue-600' : '' %>"></i>
+                <span class="font-medium">Home</span>
               </a>
-              <a href="/mynetwork" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 <%= path.includes('/user/network') ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : '' %>">
-                <i class="fas fa-user-friends mr-3"></i>
-                My Network
+              <a href="/mynetwork" class="flex items-center px-4 py-3 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200 <%= path.includes('/user/network') ? 'bg-blue-50 text-blue-600' : '' %>">
+                <i class="fas fa-user-friends mr-3 text-gray-500 <%= path.includes('/user/network') ? 'text-blue-600' : '' %>"></i>
+                <span class="font-medium">My Network</span>
               </a>
-              <a href="/jobs" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 <%= path.includes('/jobs') ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : '' %>">
-                <i class="fas fa-briefcase mr-3"></i>
-                Jobs
+              <a href="/jobs" class="flex items-center px-4 py-3 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200 <%= path.includes('/jobs') ? 'bg-blue-50 text-blue-600' : '' %>">
+                <i class="fas fa-briefcase mr-3 text-gray-500 <%= path.includes('/jobs') ? 'text-blue-600' : '' %>"></i>
+                <span class="font-medium">Jobs</span>
               </a>
-              <a href="/messaging" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 <%= path.includes('/messages') ? 'bg-blue-50 text-blue-600 border-r-2 border-blue-600' : '' %>">
-                <i class="fas fa-comment-dots mr-3"></i>
-                Messaging
+              <a href="/messaging" class="flex items-center px-4 py-3 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200 <%= path.includes('/messages') ? 'bg-blue-50 text-blue-600' : '' %>">
+                <i class="fas fa-comment-dots mr-3 text-gray-500 <%= path.includes('/messages') ? 'text-blue-600' : '' %>"></i>
+                <span class="font-medium">Messaging</span>
                 <% if (locals.unreadMessageCount > 0) { %>
                   <span class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full"><%= locals.unreadMessageCount %></span>
                 <% } %>
               </a>
-              <a href="/in" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100">
-                <i class="fas fa-user mr-3"></i>
-                View Profile
+              <div class="border-t border-gray-200 my-2"></div>
+              <a href="/in" class="flex items-center px-4 py-3 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+                <i class="fas fa-user mr-3 text-gray-500"></i>
+                <span class="font-medium">View Profile</span>
               </a>
-              <a href="/in/edit" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100">
-                <i class="fas fa-pencil-alt mr-3"></i>
-                Edit Profile
+              <a href="/in/edit" class="flex items-center px-4 py-3 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+                <i class="fas fa-pencil-alt mr-3 text-gray-500"></i>
+                <span class="font-medium">Edit Profile</span>
               </a>
-              <a href="/settings" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100">
-                <i class="fas fa-cog mr-3"></i>
-                Settings & Privacy
+              <a href="/settings" class="flex items-center px-4 py-3 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+                <i class="fas fa-cog mr-3 text-gray-500"></i>
+                <span class="font-medium">Settings & Privacy</span>
               </a>
-              <a href="/help" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100">
-                <i class="fas fa-question-circle mr-3"></i>
-                Help Center
+              <a href="/help" class="flex items-center px-4 py-3 mx-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors duration-200">
+                <i class="fas fa-question-circle mr-3 text-gray-500"></i>
+                <span class="font-medium">Help Center</span>
               </a>
-              <form action="/signout" method="POST" class="px-4 py-3">
-                <button type="submit" class="flex items-center w-full text-left text-gray-700 hover:bg-gray-100 py-2">
+              <div class="border-t border-gray-200 my-2"></div>
+              <form action="/signout" method="POST" class="mx-2">
+                <button type="submit" class="flex items-center w-full px-4 py-3 rounded-lg text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors duration-200">
                   <i class="fas fa-sign-out-alt mr-3 text-red-500"></i>
-                  Sign Out
+                  <span class="font-medium">Sign Out</span>
                 </button>
               </form>
             </nav>
           <% } else { %>
             <div class="p-4">
-              <a href="/login" class="block w-full text-center px-4 py-2 mb-3 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50">Sign in</a>
-              <a href="/register" class="block w-full text-center px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700">Join now</a>
+              <a href="/login" class="block w-full text-center px-4 py-3 mb-3 text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 font-medium">Sign in</a>
+              <a href="/register" class="block w-full text-center px-4 py-3 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-sm">Join now</a>
             </div>
           <% } %>
         </div>
@@ -330,39 +329,35 @@
 </nav>
 <style>
   .glass-nav {
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-  }
-  
-  .nav-item {
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .nav-item::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(99, 102, 241, 0.1));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    border-radius: 0.75rem;
-  }
-  
-  .nav-item:hover::before {
-    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.95);
   }
   
   .glass-card {
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background-color: rgba(255, 255, 255, 0.95);
   }
   
   #profileButton:hover .fa-caret-down {
     transform: rotate(180deg);
+  }
+  
+  /* Mobile menu animation */
+  #mobile-menu.hidden {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  #mobile-menu {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  
+  /* Ensure mobile menu panel is always solid */
+  #mobile-menu > div {
+    background-color: white !important;
+    backdrop-filter: none !important;
   }
 </style>
 

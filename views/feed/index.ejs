@@ -91,10 +91,11 @@
     }
   }
   
-  /* Mobile responsive styles for feed */
+  /* Enhanced Mobile responsive styles for feed */
   @media (max-width: 768px) {
     .grid.grid-cols-1.lg\:grid-cols-12 {
-      display: block;
+      display: block !important;
+      grid-template-columns: none !important;
     }
     
     .lg\:col-span-3 {
@@ -282,69 +283,32 @@
                 <% } %>
                 
                 <% if (locals.loggedInUserId && locals.userRole !== 'lawyer') { %>
-                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl shadow-lg mb-6 border border-blue-100">
-                        <div class="p-8">
-                            <div class="flex items-center space-x-4 mb-6">
-                                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
-                                    <i class="fas fa-balance-scale text-white text-2xl"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <h3 class="text-2xl font-bold text-gray-800 mb-2">Welcome to the Legal Community!</h3>
-                                    <p class="text-gray-600 text-lg">Connect with verified lawyers, explore legal resources, and find opportunities in the legal field.</p>
+                    <div class="bg-white rounded-xl shadow-sm mb-4 border border-gray-100">
+                        <div class="p-4">
+                            <div class="flex items-center justify-between mb-3">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-compass text-blue-600 text-sm"></i>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-gray-800">Explore Legal Community</h3>
                                 </div>
                             </div>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                                <a href="/search" class="group flex items-center p-4 bg-white rounded-xl hover:bg-blue-50 transition-all duration-300 shadow-sm hover:shadow-md border border-gray-100">
-                                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-blue-200 transition-colors">
-                                        <i class="fas fa-search text-blue-600 text-lg"></i>
-                                    </div>
-                                    <div>
-                                        <span class="text-gray-800 font-semibold group-hover:text-blue-600 transition-colors block">Find Lawyers</span>
-                                        <p class="text-sm text-gray-500">Search for legal experts</p>
-                                    </div>
+                            <div class="grid grid-cols-3 gap-3">
+                                <a href="/search" class="group flex flex-col items-center p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-all duration-200">
+                                    <i class="fas fa-search text-blue-600 text-lg mb-1"></i>
+                                    <span class="text-xs text-gray-700 font-medium">Find Lawyers</span>
                                 </a>
                                 
-                                <a href="/mynetwork" class="group flex items-center p-4 bg-white rounded-xl hover:bg-green-50 transition-all duration-300 shadow-sm hover:shadow-md border border-gray-100">
-                                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-green-200 transition-colors">
-                                        <i class="fas fa-users text-green-600 text-lg"></i>
-                                    </div>
-                                    <div>
-                                        <span class="text-gray-800 font-semibold group-hover:text-green-600 transition-colors block">Network</span>
-                                        <p class="text-sm text-gray-500">Build connections</p>
-                                    </div>
+                                <a href="/mynetwork" class="group flex flex-col items-center p-3 bg-gray-50 rounded-lg hover:bg-green-50 transition-all duration-200">
+                                    <i class="fas fa-users text-green-600 text-lg mb-1"></i>
+                                    <span class="text-xs text-gray-700 font-medium">Network</span>
                                 </a>
                                 
-                                <a href="/jobs" class="group flex items-center p-4 bg-white rounded-xl hover:bg-purple-50 transition-all duration-300 shadow-sm hover:shadow-md border border-gray-100">
-                                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-purple-200 transition-colors">
-                                        <i class="fas fa-briefcase text-purple-600 text-lg"></i>
-                                    </div>
-                                    <div>
-                                        <span class="text-gray-800 font-semibold group-hover:text-purple-600 transition-colors block">Job Opportunities</span>
-                                        <p class="text-sm text-gray-500">Explore careers</p>
-                                    </div>
+                                <a href="/jobs" class="group flex flex-col items-center p-3 bg-gray-50 rounded-lg hover:bg-purple-50 transition-all duration-200">
+                                    <i class="fas fa-briefcase text-purple-600 text-lg mb-1"></i>
+                                    <span class="text-xs text-gray-700 font-medium">Jobs</span>
                                 </a>
-                            </div>
-                            
-                            <div class="bg-white rounded-xl p-6 border border-gray-100">
-                                <h4 class="text-lg font-semibold text-gray-800 mb-3 flex items-center">
-                                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
-                                    Quick Tips
-                                </h4>
-                                <ul class="space-y-2 text-gray-600">
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-green-500 mr-2 mt-1 text-sm"></i>
-                                        <span>Follow verified lawyers to see their legal insights and advice</span>
-                                    </li>
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-green-500 mr-2 mt-1 text-sm"></i>
-                                        <span>Use the search feature to find lawyers specializing in your area of need</span>
-                                    </li>
-                                    <li class="flex items-start">
-                                        <i class="fas fa-check-circle text-green-500 mr-2 mt-1 text-sm"></i>
-                                        <span>Explore legal resources in the sidebar for helpful guides and information</span>
-                                    </li>
-                                </ul>
                             </div>
                         </div>
                     </div>
@@ -352,188 +316,170 @@
                 
                 <% if (posts && posts.length > 0) { %>
                     <% posts.forEach(post => { let groupedReactions = {}; if (post.reacts && post.reacts.length > 0) { post.reacts.forEach(r => { groupedReactions[r.reaction] = (groupedReactions[r.reaction] || 0) + 1; }); } %>
-                    <div id="post-<%= post.id %>" class="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl mb-10 border border-white/20 hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 overflow-visible">
-                        <div class="p-8">
-                            <!-- Enhanced Post Header -->
-                            <div class="flex items-center mb-6">
-                                <a href="/in/<%= post.user ? post.user.id : '#' %>" class="flex items-center hover:opacity-80 transition-all duration-300 transform hover:scale-105">
-                                    <div class="relative">
-                                        <img src="https://ui-avatars.com/api/?name=<%= post.user ? encodeURIComponent(post.user.firstName + ' ' + post.user.lastName) : 'User' %>&background=0D47A1&color=fff&size=64" alt="Profile" class="rounded-full mr-5 shadow-2xl ring-4 ring-white/50" style="width: 64px; height: 64px; object-fit: cover;">
-                                        <div class="absolute bottom-0 right-3 w-4 h-4 bg-green-500 rounded-full border-2 border-white shadow-lg animate-pulse"></div>
-                                    </div>
-                                    <div class="flex-1">
-                                        <div class="flex items-center space-x-2 mb-1">
-                                            <h6 class="font-bold text-xl text-gray-900 hover:text-blue-600 transition-colors">
+                    <div id="post-<%= post.id %>" class="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 mb-2">
+                        <!-- Post Header -->
+                        <div class="p-3">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start space-x-3">
+                                    <a href="/in/<%= post.user ? post.user.id : '#' %>" class="flex-shrink-0">
+                                        <img src="https://ui-avatars.com/api/?name=<%= post.user ? encodeURIComponent(post.user.firstName + ' ' + post.user.lastName) : 'User' %>&background=0D47A1&color=fff&size=48" alt="Profile" class="w-12 h-12 rounded-full object-cover">
+                                    </a>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center space-x-2">
+                                            <a href="/in/<%= post.user ? post.user.id : '#' %>" class="font-semibold text-gray-900 hover:text-blue-600 hover:underline text-sm">
                                                 <%= post.user ? post.user.firstName : '' %> <%= post.user ? post.user.lastName : '' %>
-                                            </h6>
+                                            </a>
                                             <% if (post.user && post.user.role==='lawyer' && post.user.lawyer) { %>
-                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg">
-                                                    <i class="fas fa-gavel text-xs mr-1"></i>
-                                                    Verified Lawyer
-                                                </span>
                                                 <% 
-                                                    // Get lawyer rank information
                                                     let rankBadge = 'Training Lawyer';
                                                     let rankIcon = 'fas fa-graduation-cap';
-                                                    let rankBg = 'bg-blue-100';
-                                                    let rankText = 'text-blue-800';
-                                                    let rankBorder = 'border-blue-200';
+                                                    let rankColor = 'text-blue-600';
                                                     
                                                     if (post.user.lawyer.verificationStatus === 'approved') {
                                                         rankBadge = 'Verified Lawyer';
                                                         rankIcon = 'fas fa-certificate';
-                                                        rankBg = 'bg-emerald-100';
-                                                        rankText = 'text-emerald-800';
-                                                        rankBorder = 'border-emerald-200';
+                                                        rankColor = 'text-green-600';
                                                     } else if (post.user.lawyer.verificationStatus === 'pending') {
                                                         rankBadge = 'Pending Verification';
                                                         rankIcon = 'fas fa-clock';
-                                                        rankBg = 'bg-yellow-100';
-                                                        rankText = 'text-yellow-800';
-                                                        rankBorder = 'border-yellow-200';
+                                                        rankColor = 'text-yellow-600';
                                                     } else if (post.user.lawyer.verificationStatus === 'rejected') {
                                                         rankBadge = 'Verification Rejected';
                                                         rankIcon = 'fas fa-times-circle';
-                                                        rankBg = 'bg-red-100';
-                                                        rankText = 'text-red-800';
-                                                        rankBorder = 'border-red-200';
+                                                        rankColor = 'text-red-600';
                                                     }
                                                 %>
-                                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium <%= rankBg %> <%= rankText %> border <%= rankBorder %>">
-                                                    <i class="<%= rankIcon %> text-xs mr-2"></i>
+                                                <span class="inline-flex items-center text-xs <%= rankColor %>">
+                                                    <i class="<%= rankIcon %> mr-1"></i>
                                                     <%= rankBadge %>
-                                                </span>
-                                            <% } else { %>
-                                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
-                                                    <i class="fas fa-user text-xs mr-1"></i>
-                                                    Member
                                                 </span>
                                             <% } %>
                                         </div>
-                                        <div class="flex items-center space-x-3">
+                                        <div class="flex items-center text-xs text-gray-500 mt-1">
                                             <% if (post.user && post.user.role==='lawyer' && post.user.lawyer) { %>
-                                                <p class="text-sm text-blue-600 font-semibold"><%= post.user.lawyer.lawFirm %></p>
-                                                <span class="text-gray-300">•</span>
+                                                <span class="font-medium"><%= post.user.lawyer.lawFirm %></span>
+                                                <span class="mx-1">•</span>
                                             <% } %>
-                                            <p class="text-sm text-gray-500 font-medium"><%= new Date(post.createdAt).toLocaleDateString() %></p>
-                                            <span class="text-gray-300">•</span>
-                                            <div class="flex items-center space-x-1 text-gray-500">
-                                                <i class="fas fa-globe-americas text-xs"></i>
-                                                <span class="text-xs font-medium">Public</span>
+                                            <time><%= new Date(post.createdAt).toLocaleDateString() %></time>
+                                            <span class="mx-1">•</span>
+                                            <div class="flex items-center">
+                                                <i class="fas fa-globe-americas mr-1"></i>
+                                                <span>Public</span>
                                             </div>
                                         </div>
                                     </div>
-                                </a>
+                                </div>
                                 <% if (locals.loggedInUserId && (post.userId === locals.loggedInUserId || post.authorId === locals.loggedInUserId)) { %>
-                                    <div class="ml-2 flex space-x-3 items-center">
-                                        <button class="p-1.5 text-gray-500 hover:text-blue-500 transition-all duration-200 ease-in-out edit-post-btn" title="Edit Post" data-post-id="<%= post.id %>" data-title="<%- post.title.replace(/&/g, '&amp;').replace(/\"/g, '&quot;') %>" data-content="<%- post.content.replace(/&/g, '&amp;').replace(/\"/g, '&quot;') %>">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-2.828 0L9 13zm0 0V21h8" /></svg>
+                                    <div class="flex items-center space-x-1">
+                                        <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors edit-post-btn" title="Edit Post" data-post-id="<%= post.id %>" data-title="<%- post.title.replace(/&/g, '&amp;').replace(/\"/g, '&quot;') %>" data-content="<%- post.content.replace(/&/g, '&amp;').replace(/\"/g, '&quot;') %>">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-2.828 0L9 13zm0 0V21h8"></path>
+                                            </svg>
                                         </button>
-                                        <button class="p-1.5 text-gray-500 hover:text-red-500 transition-all duration-200 ease-in-out delete-post-btn" title="Delete Post" data-post-id="<%= post.id %>">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                        <button class="p-2 text-gray-400 hover:text-red-500 hover:bg-gray-100 rounded-full transition-colors delete-post-btn" title="Delete Post" data-post-id="<%= post.id %>">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                            </svg>
                                         </button>
                                     </div>
                                 <% } %>
                             </div>
-                            <!-- Enhanced Post Content -->
-                            <div class="w-full mb-6">
-                                <div class="mb-4">
-                                    <h5 class="font-bold text-2xl bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent mb-4 leading-tight"><%= post.title %></h5>
-                                    <div class="prose prose-lg max-w-none">
-                                        <p class="text-gray-800 text-lg leading-relaxed font-medium tracking-wide"><%= post.content.length > 200 ? post.content.substring(0, 200) + '...' : post.content %></p>
-                                        <% if (post.content.length > 200) { %>
-                                            <button class="text-blue-600 hover:text-blue-800 font-semibold text-sm mt-2 transition-colors">Read more</button>
-                                        <% } %>
-                                    </div>
-                                </div>
-                                <% if (post.post_photos && post.post_photos.length > 0) { %>
-                                    <div class="mt-6">
-                                        <% if (post.post_photos.length === 1) { %>
+                        </div>
+                        
+                        <!-- Post Content -->
+                        <div class="px-3 pb-3">
+                            <% if (post.title && post.title.trim()) { %>
+                                <h2 class="text-gray-900 font-medium text-base mb-2 leading-snug"><%= post.title %></h2>
+                            <% } %>
+                            <div class="text-gray-700 text-sm leading-relaxed">
+                                <p><%= post.content.length > 300 ? post.content.substring(0, 300) + '...' : post.content %></p>
+                                <% if (post.content.length > 300) { %>
+                                    <button class="text-blue-600 hover:text-blue-800 font-medium mt-1 text-sm">...see more</button>
+                                <% } %>
+                            </div>
+                            
+                            <!-- Post Images -->
+                            <% if (post.post_photos && post.post_photos.length > 0) { %>
+                                <div class="mt-3 -mx-3">
+                                    <% if (post.post_photos.length === 1) { %>
+                                        <% post.post_photos.forEach(postPhoto => { %>
+                                            <% if (postPhoto.photo && postPhoto.photo.photoPath) { %>
+                                                <div class="relative">
+                                                    <img src="<%= postPhoto.photo.photoPath.startsWith('/') ? postPhoto.photo.photoPath : '/' + postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-auto object-cover" style="max-height: 500px;">
+                                                </div>
+                                            <% } %>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <div class="grid grid-cols-2 gap-1">
                                             <% post.post_photos.forEach(postPhoto => { %>
                                                 <% if (postPhoto.photo && postPhoto.photo.photoPath) { %>
-                                                    <div class="relative group overflow-hidden rounded-2xl shadow-2xl">
-                                                        <img src="<%= postPhoto.photo.photoPath.startsWith('/') ? postPhoto.photo.photoPath : '/' + postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-auto object-cover transition-transform duration-700 group-hover:scale-110" style="max-height: 600px;">
-                                                        <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                                        <button class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full p-3 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110 shadow-lg">
-                                                            <i class="fas fa-expand text-gray-700"></i>
-                                                        </button>
+                                                    <div class="relative">
+                                                        <img src="<%= postPhoto.photo.photoPath.startsWith('/') ? postPhoto.photo.photoPath : '/' + postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-48 object-cover">
                                                     </div>
                                                 <% } %>
                                             <% }); %>
-                                        <% } else { %>
-                                            <div class="grid grid-cols-2 gap-4">
-                                                <% post.post_photos.forEach(postPhoto => { %>
-                                                    <% if (postPhoto.photo && postPhoto.photo.photoPath) { %>
-                                                        <div class="relative group overflow-hidden rounded-xl shadow-xl">
-                                                            <img src="<%= postPhoto.photo.photoPath.startsWith('/') ? postPhoto.photo.photoPath : '/' + postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105">
-                                                            <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                                        </div>
-                                                    <% } %>
-                                                <% }); %>
-                                            </div>
-                                        <% } %>
-                                    </div>
-                                <% } %>
-                            </div>
-                            <!-- Enhanced Post Stats -->
-                            <div class="flex justify-between items-center text-sm text-gray-500 border-t pt-4 mb-3">
-                                <div class="flex items-center space-x-3">
-                                    <% if (post.reacts && post.reacts.length > 0) { %>
-                                        <div class="flex items-center bg-gray-50 rounded-full px-3 py-1 hover:bg-gray-100 transition-colors cursor-pointer" id="reactionStats-<%= post.id %>">
-                                            <div class="flex -space-x-1 mr-2">
-                                                <% Object.keys(groupedReactions).slice(0, 3).forEach(key => { %>
-                                                    <span class="text-lg bg-white rounded-full p-1 shadow-sm border border-gray-200"><%= reactionTypes[key] %></span>
-                                                <% }); %>
-                                            </div>
-                                            <span class="font-medium text-gray-700 reaction-count"><%= post.reacts.length %></span>
-                                        </div>
-                                    <% } else { %>
-                                        <div class="hidden flex items-center bg-gray-50 rounded-full px-3 py-1 hover:bg-gray-100 transition-colors cursor-pointer" id="reactionStats-<%= post.id %>">
-                                            <div class="flex -space-x-1 mr-2" id="reactionIcons-<%= post.id %>"></div>
-                                            <span class="font-medium text-gray-700 reaction-count">0</span>
                                         </div>
                                     <% } %>
                                 </div>
-                                <div class="flex items-center space-x-1 hover:text-blue-600 cursor-pointer transition-colors" onclick="toggleComments(<%= post.id %>)">
-                                    <i class="far fa-comment text-sm"></i>
-                                    <span class="comment-count font-medium"><%= post.comments ? post.comments.length : 0 %> comments</span>
-                                </div>
-                            </div>
-                            <!-- Enhanced Post Actions -->
-                            <div class="flex justify-around border-t pt-4 relative overflow-visible">
-                                <div class="relative">
-                                    <button class="flex items-center space-x-2 text-gray-600 hover:text-blue-600 font-medium like-button transition-all duration-300 transform hover:scale-105 px-4 py-2 rounded-xl hover:bg-blue-50 group" onclick="toggleReactionPopup(<%= post.id %>, this)">
-                                        <i class="far fa-thumbs-up text-lg group-hover:animate-bounce"></i>
-                                        <span class="font-semibold">Like</span>
-                                        <div class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse"></div>
-                                    </button>
-                                    <div id="reactionPopup-<%= post.id %>" class="hidden absolute bg-gradient-to-br from-white/95 to-blue-50/95 backdrop-blur-xl rounded-2xl shadow-2xl p-3 z-50 border border-white/30 reaction-popup" style="bottom: 120%; left: 50%; transform: translateX(-50%); min-width: 260px; animation: slideUp 0.3s ease-out; margin-bottom: 10px;">
-                                        <div class="text-center mb-2">
-                                            <h6 class="text-xs font-semibold text-gray-600 mb-1">Choose your reaction</h6>
-                                            <div class="w-8 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 mx-auto rounded-full"></div>
+                            <% } %>
+                        </div>
+                        
+                        <!-- Post Stats -->
+                        <div class="px-3 py-2 border-t border-gray-100">
+                            <div class="flex items-center justify-between text-xs text-gray-500">
+                                <div class="flex items-center space-x-4">
+                                    <% if (post.reacts && post.reacts.length > 0) { %>
+                                        <button class="flex items-center space-x-1 hover:text-blue-600 transition-colors" id="reactionStats-<%= post.id %>">
+                                            <div class="flex -space-x-1">
+                                                <% Object.keys(groupedReactions).slice(0, 3).forEach(key => { %>
+                                                    <span class="text-sm bg-white rounded-full border border-gray-200 w-5 h-5 flex items-center justify-center"><%= reactionTypes[key] %></span>
+                                                <% }); %>
+                                            </div>
+                                            <span class="reaction-count"><%= post.reacts.length %></span>
+                                        </button>
+                                    <% } else { %>
+                                        <div class="hidden flex items-center space-x-1" id="reactionStats-<%= post.id %>">
+                                            <div class="flex -space-x-1" id="reactionIcons-<%= post.id %>"></div>
+                                            <span class="reaction-count">0</span>
                                         </div>
-                                        <div class="flex space-x-1 justify-center">
+                                    <% } %>
+                                </div>
+                                <button class="hover:text-blue-600 transition-colors" onclick="toggleComments(<%= post.id %>)">
+                                    <span class="comment-count"><%= post.comments ? post.comments.length : 0 %> comments</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Post Actions -->
+                        <div class="px-3 py-2 border-t border-gray-100">
+                            <div class="flex items-center justify-around">
+                                <div class="relative">
+                                    <button class="flex items-center space-x-2 text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-lg transition-colors like-button" onclick="toggleReactionPopup(<%= post.id %>, this)">
+                                        <i class="far fa-thumbs-up text-lg"></i>
+                                        <span class="text-sm font-medium">Like</span>
+                                    </button>
+                                    <div id="reactionPopup-<%= post.id %>" class="hidden absolute bg-white rounded-lg shadow-lg border border-gray-200 p-2 z-40 reaction-popup" style="bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 8px;">
+                                        <div class="flex space-x-1">
                                             <% Object.entries(reactionTypes).forEach(([key, emoji]) => { %>
-                                                <button onclick="submitReaction(<%= post.id %>, '<%= key %>', this)" class="reaction-btn text-3xl hover:scale-125 transition-all duration-300 transform hover:-translate-y-1 p-2 rounded-xl hover:bg-white/70 hover:shadow-lg relative group" title="<%= key.charAt(0).toUpperCase() + key.slice(1) %>" data-reaction="<%= key %>">
-                                                    <span class="block transform group-hover:rotate-12 transition-transform duration-300"><%= emoji %></span>
-                                                    <div class="absolute -bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap z-60"><%= key.charAt(0).toUpperCase() + key.slice(1) %></div>
-                                                    <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-pink-400/20 to-purple-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                                <button onclick="submitReaction(<%= post.id %>, '<%= key %>', this)" class="reaction-btn text-xl hover:scale-110 transition-transform p-1 rounded" title="<%= key.charAt(0).toUpperCase() + key.slice(1) %>" data-reaction="<%= key %>">
+                                                    <%= emoji %>
                                                 </button>
                                             <% }); %>
                                         </div>
-                                        <div class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-12 border-l-transparent border-r-12 border-r-transparent border-t-12 border-t-white/95 filter drop-shadow-lg"></div>
-                                        <div class="absolute inset-0 rounded-3xl bg-gradient-to-br from-blue-400/10 to-purple-400/10 pointer-events-none"></div>
+                                        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-4 border-t-gray-200"></div>
                                     </div>
                                 </div>
-                                <button class="flex items-center space-x-2 text-gray-600 hover:text-green-600 font-medium transition-all duration-300 transform hover:scale-105 px-4 py-2 rounded-xl hover:bg-green-50" onclick="toggleCommentForm(<%= post.id %>)">
-                                    <i class="far fa-comment text-lg"></i><span class="font-semibold">Comment</span>
+                                <button class="flex items-center space-x-2 text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-lg transition-colors" onclick="toggleCommentForm(<%= post.id %>)">
+                                    <i class="far fa-comment text-lg"></i>
+                                    <span class="text-sm font-medium">Comment</span>
                                 </button>
                                 <% if (locals.loggedInUserId) { %>
-                                    <button class="flex items-center space-x-2 text-gray-600 hover:text-purple-600 font-medium transition-all duration-300 transform hover:scale-105 px-4 py-2 rounded-xl hover:bg-purple-50" onclick="sharePost(<%= post.id %>)">
-                                        <i class="far fa-share text-lg"></i><span class="font-semibold">Share</span>
+                                    <button class="flex items-center space-x-2 text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-lg transition-colors" onclick="sharePost(<%= post.id %>)">
+                                        <i class="fas fa-share text-lg"></i>
+                                        <span class="text-sm font-medium">Share</span>
                                     </button>
                                 <% } else { %>
-                                    <button class="flex items-center space-x-2 text-gray-400 font-medium px-4 py-2 rounded-xl cursor-not-allowed" disabled>
+                                    <button class="flex items-center space-x-2 text-gray-400 px-4 py-2 rounded-lg cursor-not-allowed" disabled>
                                         <i class="far fa-share text-lg"></i><span class="font-semibold">Share</span>
                                     </button>
                                 <% } %>
@@ -544,38 +490,34 @@
                                     <div id="commentsList-<%= post.id %>" class="space-y-3 hidden">
                                         <% const initialComments = post.comments.slice(0, 4); const hasMoreComments = post.comments.length > 4; %>
                                         <% initialComments.forEach(comment => { %>
-                                            <div class="flex items-start space-x-3 group comment-item" data-comment-id="<%= comment.id %>">
-                                                <a href="/in/<%= comment.user ? comment.user.id : '#' %>" class="hover:opacity-80 transition-opacity">
-                                                    <img src="https://ui-avatars.com/api/?name=<%= comment.user ? comment.user.firstName + ' ' + comment.user.lastName : 'User' %>" alt="Commenter" class="rounded-full shadow-lg ring-2 ring-white" style="width: 36px; height: 36px; object-fit: cover;">
-                                                </a>
-                                                <div>
-                                                    <div class="mb-1">
-                                                        <a href="/in/<%= comment.user ? comment.user.id : '#' %>" class="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">
-                                                            <%= comment.user ? comment.user.firstName + ' ' + comment.user.lastName : 'User' %>
-                                                        </a>
-                                                    </div>
-                                                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl px-4 py-3 relative shadow-sm border border-blue-100 hover:shadow-md transition-all duration-300">
-                                                <div class="pr-16">
-                                                    <p class="text-sm text-gray-800 break-words whitespace-normal leading-relaxed" style="word-wrap: break-word; max-width: 100%; overflow-wrap: break-word;"><%= comment.content.replace(/(.{50})/g, "$1\n") %></p>
-                                                </div>
-                                                <% if (locals.loggedInUserId && comment.userId === locals.loggedInUserId) { %>
-                                                    <div class="absolute right-3 top-3">
-                                                        <div class="flex space-x-1 items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                                            <button class="p-1.5 text-gray-400 hover:text-blue-500 transition-all duration-200 ease-in-out edit-comment-inline-btn rounded-full hover:bg-blue-100" title="Edit Comment" data-comment-id="<%= comment.id %>" data-content="<%- comment.content.replace(/&/g, '&amp;').replace(/\"/g, '&quot;') %>">
-                                                                <i class="fas fa-edit text-xs"></i>
-                                                            </button>
-                                                            <button class="p-1.5 text-gray-400 hover:text-red-500 transition-all duration-200 ease-in-out delete-comment-btn rounded-full hover:bg-red-100" title="Delete Comment" data-comment-id="<%= comment.id %>" data-post-id="<%= post.id %>">
-                                                                <i class="fas fa-trash text-xs"></i>
-                                                            </button>
+                                            <div class="px-3 py-3 border-t border-gray-100 comment-item" data-comment-id="<%= comment.id %>">
+                                                <div class="flex items-start space-x-3">
+                                                    <a href="/in/<%= comment.user ? comment.user.id : '#' %>" class="flex-shrink-0">
+                                                        <img src="https://ui-avatars.com/api/?name=<%= comment.user ? comment.user.firstName + ' ' + comment.user.lastName : 'User' %>" alt="Commenter" class="w-8 h-8 rounded-full">
+                                                    </a>
+                                                    <div class="flex-1 min-w-0">
+                                                        <div class="bg-gray-100 rounded-lg px-3 py-2">
+                                                            <div class="flex items-center justify-between mb-1">
+                                                                <a href="/in/<%= comment.user ? comment.user.id : '#' %>" class="text-sm font-medium text-gray-900 hover:text-blue-600">
+                                                                    <%= comment.user ? comment.user.firstName + ' ' + comment.user.lastName : 'User' %>
+                                                                </a>
+                                                                <% if (locals.loggedInUserId && comment.userId === locals.loggedInUserId) { %>
+                                                                    <div class="flex space-x-1">
+                                                                        <button class="text-gray-400 hover:text-blue-500 edit-comment-inline-btn" data-comment-id="<%= comment.id %>" data-content="<%- comment.content.replace(/&/g, '&amp;').replace(/\"/g, '&quot;') %>">
+                                                                            <i class="fas fa-edit text-xs"></i>
+                                                                        </button>
+                                                                        <button class="text-gray-400 hover:text-red-500 delete-comment-btn" data-comment-id="<%= comment.id %>" data-post-id="<%= post.id %>">
+                                                                            <i class="fas fa-trash text-xs"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                <% } %>
+                                                            </div>
+                                                            <p class="text-sm text-gray-800"><%= comment.content %></p>
                                                         </div>
-                                                    </div>
-                                                <% } %>
-                                            </div>
-                                                    <div class="mt-2 flex items-center justify-between">
-                                                        <div class="flex items-center space-x-4 text-xs text-gray-500">
-                                                            <span class="font-medium"><%= new Date(comment.createdAt).toLocaleDateString() %></span>
-                                                            <button class="hover:text-blue-600 transition-colors font-medium">Like</button>
-                                                            <button class="hover:text-blue-600 transition-colors font-medium">Reply</button>
+                                                        <div class="flex items-center space-x-4 mt-1 text-xs text-gray-500">
+                                                            <span><%= new Date(comment.createdAt).toLocaleDateString() %></span>
+                                                            <button class="hover:text-blue-600">Like</button>
+                                                            <button class="hover:text-blue-600">Reply</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -629,16 +571,18 @@
                                     </div>
                                 <% } %>
                                 <% if (locals.loggedInUserId) { %>
-                                    <div id="commentForm-<%= post.id %>" class="mt-4 flex items-start space-x-3 border-t pt-4 hidden">
-                                        <img src="https://ui-avatars.com/api/?background=random" alt="Your avatar" class="rounded-full shadow-lg ring-2 ring-white" style="width: 40px; height: 40px; object-fit: cover;">
-                                        <form class="flex-1" onsubmit="event.preventDefault(); submitComment(this, <%= post.id %>);">
-                                            <div class="relative">
-                                                <input type="text" name="content" placeholder="Write a comment..." class="w-full border border-gray-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 hover:bg-white transition-all duration-300 pr-12">
-                                                <button type="submit" class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 text-white rounded-full p-2 hover:bg-blue-700 transition-all duration-300 transform hover:scale-105 shadow-lg">
-                                                    <i class="fas fa-paper-plane text-xs"></i>
-                                                </button>
-                                            </div>
-                                        </form>
+                                    <div id="commentForm-<%= post.id %>" class="px-3 py-3 border-t border-gray-100 hidden">
+                                        <div class="flex items-start space-x-3">
+                                            <img src="https://ui-avatars.com/api/?background=random" alt="Your avatar" class="w-8 h-8 rounded-full">
+                                            <form class="flex-1" onsubmit="event.preventDefault(); submitComment(this, <%= post.id %>);">
+                                                <div class="flex items-center space-x-2">
+                                                    <input type="text" name="content" placeholder="Write a comment..." class="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-blue-500 bg-white">
+                                                    <button type="submit" class="bg-blue-600 text-white rounded-full px-4 py-2 text-sm hover:bg-blue-700 transition-colors">
+                                                        Post
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
                                 <% } %>
                             </div>
@@ -1039,7 +983,7 @@
         
         function showNotification(message, type = 'info') {
             const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-500 translate-x-full backdrop-blur-lg border border-white/20`;
+            notification.className = `fixed top-4 right-4 z-40 px-6 py-4 rounded-2xl shadow-2xl transform transition-all duration-500 translate-x-full backdrop-blur-lg border border-white/20`;
             
             const colors = {
                 success: 'bg-gradient-to-r from-green-500 to-emerald-500 text-white',
