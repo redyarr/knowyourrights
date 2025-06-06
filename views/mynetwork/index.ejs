@@ -275,64 +275,55 @@
         <!-- Connection Requests Tab -->
         <div id="requests-tab" class="tab-content">
             <% if (connectionRequests && connectionRequests.length > 0) { %>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="space-y-4">
                     <% connectionRequests.forEach(request => { %>
-                        <div class="network-card searchable-item" data-name="<%= request.requester.firstName %> <%= request.requester.lastName %>">
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 searchable-item" data-name="<%= request.requester.firstName %> <%= request.requester.lastName %>">
                             <div class="flex items-start space-x-4">
                                 <!-- Profile Image -->
                                 <div class="flex-shrink-0">
                                     <% if (request.requester.ProfileImage && request.requester.ProfileImage.imagePath) { %>
                                         <img src="<%= request.requester.ProfileImage.imagePath %>" alt="Profile"
-                                            class="w-16 h-16 rounded-full object-cover border-2 border-white shadow-lg">
+                                            class="w-12 h-12 rounded-full object-cover">
                                     <% } else { %>
-                                        <img src="https://ui-avatars.com/api/?name=<%= encodeURIComponent(request.requester.firstName + ' ' + request.requester.lastName) %>&size=64&background=3b82f6&color=ffffff" alt="Profile"
-                                            class="w-16 h-16 rounded-full object-cover border-2 border-white shadow-lg">
+                                        <img src="https://ui-avatars.com/api/?name=<%= encodeURIComponent(request.requester.firstName + ' ' + request.requester.lastName) %>&size=48&background=3b82f6&color=ffffff" alt="Profile"
+                                            class="w-12 h-12 rounded-full object-cover">
                                     <% } %>
                                 </div>
                                 
                                 <!-- User Info -->
                                 <div class="flex-1 min-w-0">
-                                    <h3 class="font-semibold text-gray-800 truncate">
+                                    <h3 class="font-medium text-gray-900">
                                         <%= request.requester.firstName %> <%= request.requester.lastName %>
                                     </h3>
-                                    <p class="text-sm text-gray-600 capitalize">
+                                    <p class="text-sm text-gray-600">
                                         <%= request.requester.role %>
                                         <% if (request.requester.role === 'lawyer' && request.requester.Lawyer) { %>
                                             • <%= request.requester.Lawyer.lawFirm || 'Independent Practice' %>
                                         <% } %>
                                     </p>
-                                    <div class="status-badge status-pending mt-2">
-                                        <i class="fas fa-clock mr-1"></i>Pending
-                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">Wants to connect</p>
                                 </div>
-                            </div>
-                            
-                            <!-- Action Buttons -->
-                            <div class="flex space-x-2 mt-4">
-                                <button class="action-button action-accept flex-1" onclick="acceptRequest('<%= request.id %>')">
-                                    <i class="fas fa-check"></i>Accept
-                                </button>
-                                <button class="action-button action-decline flex-1" onclick="declineRequest('<%= request.id %>')">
-                                    <i class="fas fa-times"></i>Decline
-                                </button>
-                            </div>
-                            
-                            <!-- View Profile Link -->
-                            <div class="mt-3">
-                                <a href="/profile/<%= request.requester.id %>" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                                    <i class="fas fa-user mr-1"></i>View Profile
-                                </a>
+                                
+                                <!-- Action Buttons -->
+                                <div class="flex space-x-2">
+                                    <button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md" onclick="acceptRequest('<%= request.id %>')">
+                                        Accept
+                                    </button>
+                                    <button class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md" onclick="declineRequest('<%= request.id %>')">
+                                        Decline
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     <% }); %>
                 </div>
             <% } else { %>
-                <div class="empty-state">
-                    <div class="empty-state-icon">
-                        <i class="fas fa-user-clock"></i>
+                <div class="bg-white border border-gray-200 rounded-lg p-8 text-center">
+                    <div class="text-gray-400 mb-4">
+                        <i class="fas fa-user-clock text-4xl"></i>
                     </div>
-                    <h3 class="text-lg font-semibold mb-2">No Connection Requests</h3>
-                    <p>You don't have any pending connection requests at the moment.</p>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No Connection Requests</h3>
+                    <p class="text-gray-600">You don't have any pending connection requests at the moment.</p>
                 </div>
             <% } %>
         </div>
