@@ -226,50 +226,49 @@
     }
 </style>
 
-<div class="container mx-auto px-4 py-8 max-w-6xl">
-    <!-- Header -->
-    <div class="glass-card rounded-2xl p-6 mb-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">My Network</h1>
-                <p class="text-gray-600">Manage your professional connections and grow your network</p>
-            </div>
-            <div class="text-right">
-                <div class="text-2xl font-bold text-blue-600"><%= (connectionRequests?.length || 0) + (pendingRequests?.length || 0) + (friends?.length || 0) %></div>
-                <div class="text-sm text-gray-500">Total Connections</div>
-            </div>
+<div class="min-h-screen bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Header -->
+        <div class="mb-6">
+            <h1 class="text-2xl font-semibold text-gray-900 mb-2">
+                My Network
+            </h1>
+            <p class="text-gray-600 text-sm">
+                Manage your professional relationships
+            </p>
         </div>
-    </div>
 
-    <!-- Search Box -->
-    <div class="search-box">
-        <div class="search-icon">
-            <i class="fas fa-search"></i>
+        <!-- Navigation Tabs -->
+        <div class="bg-white rounded-lg border border-gray-200 mb-6">
+            <div class="flex border-b border-gray-200">
+                <button onclick="showTab('requests')" id="requests-tab" class="network-nav-item active flex-1 px-4 py-3 text-sm font-medium text-center border-b-2 border-blue-600 text-blue-600" data-tab="requests">
+                    Requests
+                    <% if (connectionRequests && connectionRequests.length > 0) { %>
+                        <span class="ml-2 bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs"><%= connectionRequests.length %></span>
+                    <% } %>
+                </button>
+                <button onclick="showTab('pending')" id="pending-tab" class="network-nav-item flex-1 px-4 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="pending">
+                    Pending
+                    <% if (pendingRequests && pendingRequests.length > 0) { %>
+                        <span class="ml-2 bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs"><%= pendingRequests.length %></span>
+                    <% } %>
+                </button>
+                <button onclick="showTab('connections')" id="connections-tab" class="network-nav-item flex-1 px-4 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="connections">
+                    Connections
+                    <% if (friends && friends.length > 0) { %>
+                        <span class="ml-2 bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs"><%= friends.length %></span>
+                    <% } %>
+                </button>
+            </div>
         </div>
-        <input type="text" class="search-input" placeholder="Search your network..." id="networkSearch">
-    </div>
 
-    <!-- Navigation Tabs -->
-    <div class="network-nav flex space-x-0 mb-6">
-        <div class="network-nav-item active" data-tab="requests">
-            <i class="fas fa-user-clock mr-2"></i>Requests
-            <% if (connectionRequests && connectionRequests.length > 0) { %>
-                <span class="badge"><%= connectionRequests.length %></span>
-            <% } %>
+        <!-- Search Box -->
+        <div class="search-box">
+            <div class="search-icon">
+                <i class="fas fa-search"></i>
+            </div>
+            <input type="text" class="search-input" placeholder="Search your network..." id="networkSearch">
         </div>
-        <div class="network-nav-item" data-tab="pending">
-            <i class="fas fa-clock mr-2"></i>Pending
-            <% if (pendingRequests && pendingRequests.length > 0) { %>
-                <span class="badge"><%= pendingRequests.length %></span>
-            <% } %>
-        </div>
-        <div class="network-nav-item" data-tab="connections">
-            <i class="fas fa-users mr-2"></i>Connections
-            <% if (friends && friends.length > 0) { %>
-                 <span class="badge"><%= friends.length %></span>
-             <% } %>
-        </div>
-    </div>
 
     <!-- Tab Content -->
     <div class="tab-content-container">
@@ -469,6 +468,7 @@
             <% } %>
         </div>
     </div>
+    </div>
 </div>
 
 <style>
@@ -632,18 +632,33 @@
 
 <script>
 // Tab switching functionality
+function showTab(tabName) {
+    // Remove active class from all nav items
+    document.querySelectorAll('.network-nav-item').forEach(nav => {
+        nav.classList.remove('active');
+        nav.classList.remove('border-blue-600', 'text-blue-600');
+        nav.classList.add('border-transparent', 'text-gray-500');
+    });
+    
+    // Add active class to clicked item
+    const activeTab = document.getElementById(tabName + '-tab');
+    activeTab.classList.add('active');
+    activeTab.classList.remove('border-transparent', 'text-gray-500');
+    activeTab.classList.add('border-blue-600', 'text-blue-600');
+    
+    // Hide all tab content
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+    // Show selected tab content
+    const tabId = tabName + '-tab';
+    document.getElementById(tabId.replace('-tab', 's-tab')).classList.remove('hidden');
+}
+
+// Legacy support for data-tab clicks
 document.querySelectorAll('.network-nav-item').forEach(item => {
     item.addEventListener('click', function() {
-        // Remove active class from all nav items
-        document.querySelectorAll('.network-nav-item').forEach(nav => nav.classList.remove('active'));
-        // Add active class to clicked item
-        this.classList.add('active');
-        
-        // Hide all tab content
-        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-        // Show selected tab content
-        const tabId = this.dataset.tab + '-tab';
-        document.getElementById(tabId).classList.remove('hidden');
+        if (this.dataset.tab) {
+            showTab(this.dataset.tab);
+        }
     });
 });
 

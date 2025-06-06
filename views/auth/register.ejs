@@ -8,290 +8,271 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-<div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-    <!-- Animated background elements -->
-    <div class="absolute inset-0 overflow-hidden pointer-events-none">
-        <div class="absolute -top-40 -right-40 w-80 h-80 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-purple-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-        <div class="absolute top-40 left-40 w-80 h-80 bg-yellow-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
-    </div>
-
-  <div class="max-w-lg w-full relative z-10">
-    <!-- Logo and Header -->
-    <div class="text-center mb-8">
-      <div class="mx-auto h-16 w-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center mb-4 shadow-lg transform hover:scale-105 transition-transform duration-200">
-        <i class="fas fa-balance-scale text-white text-2xl"></i>
+<div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-600 rounded-lg mb-4">
+          <i class="fas fa-balance-scale text-white text-xl"></i>
+        </div>
+        <h2 class="text-2xl font-semibold text-gray-900 mb-2">Join Legal Network</h2>
+        <p class="text-sm text-gray-600">Make the most of your professional life</p>
       </div>
-      <h2 class="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent mb-2">
-        Join Legal Network
-      </h2>
-      <p class="text-gray-600 text-lg">Create your professional legal account</p>
-    </div>
 
-    <!-- Registration Form Card -->
-    <div class="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300">
       <% if (error) { %>
-        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 flex items-center">
-          <i class="fas fa-exclamation-circle mr-2"></i>
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 text-sm">
           <%= error %>
         </div>
       <% } %>
 
-      <form action="/register" method="POST" class="space-y-6" enctype="multipart/form-data">
-        <!-- Basic Info -->
-        <div class="space-y-2">
-          <label class="block text-gray-700 font-semibold text-sm" for="role">
-            <i class="fas fa-user-tag mr-2 text-gray-500"></i>I want to join as:
+      <form action="/register" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <!-- Role Selection -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-3">
+            I am a:
           </label>
-          <select name="role" id="role" class="w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
-            onchange="toggleLawyerFields()">
-            <option value="visitor">Regular User</option>
-            <option value="lawyer">Lawyer</option>
-          </select>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="relative cursor-pointer">
+              <input type="radio" name="role" value="visitor" onchange="toggleLawyerFields()" class="sr-only peer">
+              <div class="bg-white border border-gray-300 rounded-lg p-3 text-center hover:border-blue-500 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all duration-200">
+                <i class="fas fa-user text-lg text-gray-600 peer-checked:text-blue-600 mb-1"></i>
+                <p class="text-sm font-medium text-gray-700 peer-checked:text-blue-700">Regular User</p>
+                <p class="text-xs text-gray-500">Seeking legal services</p>
+              </div>
+            </label>
+            <label class="relative cursor-pointer">
+              <input type="radio" name="role" value="lawyer" onchange="toggleLawyerFields()" class="sr-only peer">
+              <div class="bg-white border border-gray-300 rounded-lg p-3 text-center hover:border-blue-500 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all duration-200">
+                <i class="fas fa-gavel text-lg text-gray-600 peer-checked:text-blue-600 mb-1"></i>
+                <p class="text-sm font-medium text-gray-700 peer-checked:text-blue-700">Lawyer</p>
+                <p class="text-xs text-gray-500">Providing legal services</p>
+              </div>
+            </label>
+          </div>
         </div>
 
+        <!-- Basic Information -->
         <div class="grid grid-cols-2 gap-4">
-          <div class="space-y-2">
-            <label class="block text-gray-700 font-semibold text-sm" for="firstName">
-              <i class="fas fa-user mr-2 text-gray-500"></i>First name
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="firstName">
+              First name
             </label>
-            <input type="text" name="firstName" id="firstName" required
-              class="w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
-              placeholder="Enter first name">
+            <input type="text" id="firstName" name="firstName" required 
+                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="First name">
           </div>
-          <div class="space-y-2">
-            <label class="block text-gray-700 font-semibold text-sm" for="lastName">
-              <i class="fas fa-user mr-2 text-gray-500"></i>Last name
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="lastName">
+              Last name
             </label>
-            <input type="text" name="lastName" id="lastName" required
-              class="w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
-              placeholder="Enter last name">
+            <input type="text" id="lastName" name="lastName" required 
+                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="Last name">
           </div>
         </div>
 
-        <div class="space-y-2">
-          <label class="block text-gray-700 font-semibold text-sm" for="email">
-            <i class="fas fa-envelope mr-2 text-gray-500"></i>Email Address
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1" for="email">
+            Email
           </label>
-          <input type="email" name="email" id="email" required
-            class="w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
-            placeholder="Enter your email">
+          <input type="email" id="email" name="email" required 
+                 class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                 placeholder="Email">
         </div>
 
-        <div class="space-y-2">
-          <label class="block text-gray-700 font-semibold text-sm" for="password">
-            <i class="fas fa-lock mr-2 text-gray-500"></i>Password (6 or more characters)
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1" for="password">
+            Password (6+ characters)
           </label>
-          <input type="password" name="password" id="password" required minlength="6"
-            class="w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
-            placeholder="Create a secure password">
+          <input type="password" id="password" name="password" required minlength="6"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                 placeholder="Password">
         </div>
 
-        <!-- Lawyer Specific Fields -->
-        <div id="lawyerFields" class="hidden space-y-6">
-          <!-- Law Firm Checkbox and Input -->
-          <div class="bg-blue-50 p-4 rounded-xl border border-blue-200">
-            <div class="flex items-center mb-3">
-              <input type="checkbox" id="inLawFirm" class="mr-3 w-4 h-4 text-blue-600 rounded focus:ring-blue-500" onchange="toggleLawFirmField()">
-              <label class="text-gray-700 font-semibold text-sm" for="inLawFirm">
-                <i class="fas fa-building mr-2 text-gray-500"></i>I work in a law firm
-              </label>
-            </div>
-            <div id="lawFirmInputContainer" class="hidden space-y-2">
-              <label class="block text-gray-700 font-semibold text-sm" for="lawFirm">
-                <i class="fas fa-briefcase mr-2 text-gray-500"></i>Law Firm Name
-              </label>
-              <input type="text" name="lawFirm" id="lawFirm" 
-                class="w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
-                placeholder="Enter law firm name">
-            </div>
-          </div>
-
-          <!-- Badge Information -->
-          <div class="bg-gradient-to-r from-purple-50 to-blue-50 p-6 rounded-xl border border-purple-200">
-            <h3 class="font-bold text-gray-900 text-lg mb-4 flex items-center">
-              <i class="fas fa-certificate mr-2 text-purple-600"></i>Professional Credentials
+        <!-- Lawyer-specific fields (hidden by default) -->
+        <div id="lawyerFields" class="hidden space-y-6 border-t border-gray-200 pt-6">
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h3 class="text-sm font-medium text-blue-800 mb-1">
+              Professional Information
             </h3>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="space-y-2">
-                <label class="block text-gray-700 font-semibold text-sm" for="badgeNumber">
-                  <i class="fas fa-id-badge mr-2 text-gray-500"></i>Badge Number
-                </label>
-                <input type="text" name="badgeNumber" id="badgeNumber" required
-                  class="w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white"
-                  placeholder="Enter badge number">
-              </div>
-              
-              <div class="space-y-2">
-                <label class="block text-gray-700 font-semibold text-sm" for="badgeIssueDate">
-                  <i class="fas fa-calendar mr-2 text-gray-500"></i>Badge Issue Date
-                </label>
-                <input type="date" name="badgeIssueDate" id="badgeIssueDate" required
-                  class="w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white">
-              </div>
+            <p class="text-blue-700 text-xs">Please provide your legal credentials for verification.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Badge Number -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1" for="badgeNumber">
+                Badge Number
+              </label>
+              <input type="text" name="badgeNumber" id="badgeNumber" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Badge number">
             </div>
-            
-            <div class="space-y-2 mt-4">
-              <label class="block text-gray-700 font-semibold text-sm" for="badgeIssuingAuthority">
-                <i class="fas fa-shield-alt mr-2 text-gray-500"></i>Authority Level
+
+            <!-- Badge Issue Date -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1" for="badgeIssueDate">
+                Badge Issue Date
+              </label>
+              <input type="date" name="badgeIssueDate" id="badgeIssueDate" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <!-- Badge Issuing Authority -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1" for="badgeIssuingAuthority">
+                Badge Issuing Authority
               </label>
               <select name="badgeIssuingAuthority" id="badgeIssuingAuthority" required 
-                class="w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white">
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 <option value="">Select Authority Level</option>
                 <option value="training">Training</option>
                 <option value="approved">Approved</option>
                 <option value="consultant">Consultant</option>
               </select>
             </div>
-            
-            <div class="space-y-2 mt-4">
-              <label class="block text-gray-700 font-semibold text-sm" for="badgeUpload">
-                <i class="fas fa-upload mr-2 text-gray-500"></i>Upload Badge (Image/PDF)
+
+            <!-- Badge Upload -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1" for="badgeUpload">
+                Badge Document
               </label>
               <input type="file" name="badgeUpload" id="badgeUpload" accept="image/*,.pdf" required
-                class="w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
             </div>
           </div>
 
-          <div class="space-y-2">
-            <label class="block text-gray-700 font-semibold text-sm" for="summary">
-              <i class="fas fa-user-tie mr-2 text-gray-500"></i>Professional Summary
+          <!-- Summary -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="summary">
+              Professional Summary
             </label>
             <textarea name="summary" id="summary" rows="3"
-              class="w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white resize-none"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
               placeholder="Brief description of your legal expertise and experience"></textarea>
           </div>
 
-          <div class="space-y-2">
-            <label class="block text-gray-700 font-semibold text-sm" for="contactNumber">
-              <i class="fas fa-phone mr-2 text-gray-500"></i>Contact Number
+          <!-- Contact Number -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="contactNumber">
+              Contact Number
             </label>
             <input type="tel" name="contactNumber" id="contactNumber" required
-              class="w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white"
-              placeholder="Enter your contact number">
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contact number">
           </div>
 
-          <!-- Education Section -->
-          <div class="bg-green-50 p-6 rounded-xl border border-green-200">
-            <h3 class="font-bold text-gray-900 text-lg mb-4 flex items-center">
-              <i class="fas fa-graduation-cap mr-2 text-green-600"></i>Education Background
-            </h3>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <!-- University -->
-              <div class="space-y-2">
-                <label class="block text-gray-700 font-semibold text-sm" for="universitySelect">
-                  <i class="fas fa-university mr-2 text-gray-500"></i>University
-                </label>
-                <select name="universitySelect" id="universitySelect" 
-                        class="w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white" 
-                        onchange="toggleInput('universitySelect', 'universityInput')" required>
-                  <% educations.forEach(function(edu) { %>
-                    <option value="<%= edu.university %>"><%= edu.university %></option>
-                  <% }) %>
-                  <option value="other">Other</option>
-                </select>
-                <input type="text" name="university" id="universityInput" placeholder="Enter new university" 
-                       class="w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white hidden">
-              </div>
+          <!-- Law Firm Checkbox -->
+          <div class="space-y-3">
+            <div class="flex items-center">
+              <input type="checkbox" id="inLawFirm" name="inLawFirm" value="true" onchange="toggleLawFirmField()"
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+              <label for="inLawFirm" class="ml-2 block text-sm font-medium text-gray-700">
+                I work at a law firm
+              </label>
+            </div>
 
-              <!-- Degree (Dropdown) -->
-              <div class="space-y-2">
-                <label class="block text-gray-700 font-semibold text-sm" for="degreeSelect">
-                  <i class="fas fa-certificate mr-2 text-gray-500"></i>Degree
-                </label>
-                <select name="degree" id="degreeSelect" required 
-                        class="w-full border border-gray-300 rounded-xl p-4 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white">
-                  <option value="">Select Degree</option>
-                  <option value="Bachelor of Laws (LLB)">Bachelor of Laws (LLB)</option>
-                  <option value="Master of Laws (LLM)">Master of Laws (LLM)</option>
-                  <option value="Juris Doctor (JD)">Juris Doctor (JD)</option>
-                  <option value="Doctor of Juridical Science (SJD)">Doctor of Juridical Science (SJD)</option>
-                  <option value="Doctor of Laws (LLD)">Doctor of Laws (LLD)</option>
-                  <option value="Bachelor of Civil Law (BCL)">Bachelor of Civil Law (BCL)</option>
-                  <option value="Master of Legal Studies (MLS)">Master of Legal Studies (MLS)</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
+            <!-- Law Firm Input (hidden by default) -->
+            <div id="lawFirmInputContainer" class="hidden">
+              <label class="block text-sm font-medium text-gray-700 mb-1" for="lawFirm">
+                Law Firm Name
+              </label>
+              <input type="text" name="lawFirm" id="lawFirm"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Law firm name">
+            </div>
+          </div>
+
+          <!-- University Selection -->
+          <div class="space-y-3">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1" for="universitySelect">
+                University
+              </label>
+              <select name="universitySelect" id="universitySelect" required onchange="toggleInput('universitySelect', 'universityInput')"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <% educations.forEach(function(edu) { %>
+                  <option value="<%= edu.university %>"><%= edu.university %></option>
+                <% }) %>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <!-- Custom University Input (hidden by default) -->
+            <div id="universityInputContainer" class="hidden">
+              <label class="block text-sm font-medium text-gray-700 mb-1" for="universityInput">
+                University Name
+              </label>
+              <input type="text" name="university" id="universityInput"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter new university">
+            </div>
+
+            <!-- Degree (Dropdown) -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1" for="degreeSelect">
+                Degree
+              </label>
+              <select name="degree" id="degreeSelect" required 
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="">Select Degree</option>
+                <option value="Bachelor of Laws (LLB)">Bachelor of Laws (LLB)</option>
+                <option value="Master of Laws (LLM)">Master of Laws (LLM)</option>
+                <option value="Juris Doctor (JD)">Juris Doctor (JD)</option>
+                <option value="Doctor of Juridical Science (SJD)">Doctor of Juridical Science (SJD)</option>
+                <option value="Doctor of Laws (LLD)">Doctor of Laws (LLD)</option>
+                <option value="Bachelor of Civil Law (BCL)">Bachelor of Civil Law (BCL)</option>
+                <option value="Master of Legal Studies (MLS)">Master of Legal Studies (MLS)</option>
+                <option value="Other">Other</option>
+              </select>
             </div>
           </div>
         </div>
 
         <button type="submit"
-                class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-6 rounded-xl hover:from-blue-700 hover:to-purple-700 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center">
-          <i class="fas fa-user-plus mr-2"></i>
-          Create Account & Join
+                class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors duration-200">
+          Agree & Join
         </button>
       </form>
 
       <!-- Divider -->
-            <div class="my-6 flex items-center">
-                <div class="flex-1 border-t border-gray-300"></div>
-                <span class="px-4 text-gray-500 text-sm">or</span>
-                <div class="flex-1 border-t border-gray-300"></div>
-            </div>
+      <div class="mt-6">
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-300"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-white text-gray-500">or</span>
+          </div>
+        </div>
 
-            <!-- Google Sign In -->
-            <div class="mb-6">
-                <a href="/google" 
-                   class="w-full bg-white border-2 border-gray-300 text-gray-700 py-4 px-6 rounded-xl hover:bg-gray-50 hover:border-gray-400 font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 flex items-center justify-center">
-                    <svg class="w-5 h-5 mr-3" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    Continue with Google
-                </a>
-            </div>
-
-            <!-- Login Link -->
-      <div class="text-center">
-        <p class="text-gray-600 mb-4">Already have an account?</p>
-        <a href="/user/login" 
-           class="inline-flex items-center px-6 py-3 border-2 border-blue-600 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white font-semibold transition-all duration-200 transform hover:scale-105">
-          <i class="fas fa-sign-in-alt mr-2"></i>
-          Sign In
-        </a>
+        <!-- Google Sign In -->
+        <div class="mt-6">
+          <a href="/google" 
+             class="w-full flex justify-center items-center px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+            <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Continue with Google
+          </a>
+        </div>
       </div>
-    </div>
 
-    <!-- Footer -->
-    <div class="text-center mt-8 text-gray-500 text-sm">
-      <p>&copy; 2024 Legal Network. Empowering legal professionals.</p>
+      <!-- Login Link -->
+      <div class="text-center mt-6 pt-6 border-t border-gray-200">
+        <p class="text-sm text-gray-600">
+          Already on Legal Network?
+          <a href="/user/login" class="font-medium text-blue-600 hover:text-blue-500">Sign in</a>
+        </p>
+      </div>
     </div>
   </div>
 </div>
 
-<style>
-@keyframes blob {
-    0% {
-        transform: translate(0px, 0px) scale(1);
-    }
-    33% {
-        transform: translate(30px, -50px) scale(1.1);
-    }
-    66% {
-        transform: translate(-20px, 20px) scale(0.9);
-    }
-    100% {
-        transform: translate(0px, 0px) scale(1);
-    }
-}
 
-.animate-blob {
-    animation: blob 7s infinite;
-}
-
-.animation-delay-2000 {
-    animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-    animation-delay: 4s;
-}
-</style>
 
 <script>
   // Call toggleLawyerFields when the page loads
@@ -300,7 +281,15 @@
   });
 
   function toggleLawyerFields() {
-    const role = document.getElementById('role').value;
+    const roleInputs = document.querySelectorAll('input[name="role"]');
+    let selectedRole = null;
+    
+    roleInputs.forEach(input => {
+      if (input.checked) {
+        selectedRole = input.value;
+      }
+    });
+    
     const lawyerFields = document.getElementById('lawyerFields');
     const lawyerInputs = [
       'badgeNumber',
@@ -314,7 +303,7 @@
       'degreeSelect'
     ];
   
-    if (role === 'lawyer') {
+    if (selectedRole === 'lawyer') {
       lawyerFields.classList.remove('hidden');
       lawyerInputs.forEach(fieldId => {
         const field = document.getElementById(fieldId);
