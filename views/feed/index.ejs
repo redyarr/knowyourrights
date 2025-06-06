@@ -180,149 +180,152 @@
     }
   }
 </style>
-    <div class="max-w-7xl mx-auto px-4 py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    <div class="max-w-6xl mx-auto px-4 py-6">
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <!-- Left Sidebar -->
-            <div class="lg:col-span-3 space-y-8">
+            <div class="lg:col-span-1 space-y-4">
                 <% if (locals.loggedInUserId) { %>
-                    <div class="card bg-gradient-to-br from-blue-50 to-blue-100 shadow-2xl rounded-3xl overflow-hidden hover:shadow-3xl transition-all duration-500">
-                        <div class="p-8 text-center">
-                            <div class="relative inline-block mb-4">
-                                <img src="https://media.licdn.com/dms/image/v2/D4D03AQF9FvdZ1W1_9g/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1712227644410?e=1746662400&v=beta&t=h_guvHTPpOuEEWiAAnuGwQLiaaMLVRgSJGwzP79vRlU" alt="Profile" class="profile-img-lg mx-auto" style="width: 100px; height: 100px;">
-                                <div class="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center">
-                                    <i class="fas fa-check text-white text-xs"></i>
-                                </div>
+                    <!-- Profile Card -->
+                    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                        <!-- Cover Photo -->
+                        <div class="h-16 bg-gradient-to-r from-blue-600 to-blue-700"></div>
+                        <div class="px-4 pb-4">
+                            <div class="relative -mt-8 mb-4">
+                                <img src="<%= locals.user && locals.user.profilePicture ? locals.user.profilePicture : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(locals.user ? (locals.user.firstName + ' ' + locals.user.lastName) : 'User') + '&size=64&background=3b82f6&color=ffffff' %>" alt="Profile" class="w-16 h-16 rounded-full border-4 border-white object-cover">
                             </div>
-                            <h5 class="font-bold text-xl text-gray-900 mb-2">Your Profile</h5>
-                            <p class="text-sm text-blue-700 mb-4 font-medium">Manage your professional presence</p>
-                            <a href="/in" class="btn btn-primary inline-flex items-center gap-2">
-                                <i class="fas fa-user"></i>
-                                View Profile
+                            <h3 class="font-semibold text-gray-900 text-sm mb-1"><%= locals.user ? (locals.user.firstName + ' ' + locals.user.lastName) : 'User' %></h3>
+                            <p class="text-xs text-gray-500 mb-3"><%= locals.user ? locals.user.headline || 'Professional' : '' %></p>
+                            <a href="/profile/<%= locals.loggedInUserId %>" class="text-blue-600 hover:text-blue-700 text-xs font-semibold">View profile</a>
+                        </div>
+                        <div class="border-t border-gray-200 px-4 py-3">
+                            <div class="flex justify-between text-xs text-gray-600">
+                                <span>Profile viewers</span>
+                                <span class="text-blue-600 font-semibold">12</span>
+                            </div>
+                            <div class="flex justify-between text-xs text-gray-600 mt-2">
+                                <span>Post impressions</span>
+                                <span class="text-blue-600 font-semibold">1,204</span>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-200 px-4 py-3">
+                            <a href="/premium" class="flex items-center text-xs text-gray-600 hover:text-gray-900">
+                                <i class="fas fa-crown text-yellow-500 mr-2"></i>
+                                Try Premium for free
                             </a>
                         </div>
                     </div>
                 <% } %>
-                <div class="card bg-white rounded-2xl shadow-lg">
-                    <div class="border-b border-gray-100 px-6 py-5">
-                        <h6 class="font-bold text-gray-800 text-lg flex items-center gap-2">
-                            <i class="fas fa-book-open text-blue-600"></i>
-                            Legal Resource Guides
-                        </h6>
+                <!-- Recent Activity -->
+                <div class="bg-white rounded-lg border border-gray-200">
+                    <div class="px-4 py-3 border-b border-gray-200">
+                        <h3 class="font-semibold text-gray-900 text-sm">Recent</h3>
                     </div>
-                    <div class="p-6">
-                        <ul class="space-y-3">
-                            <li>
-                                <a href="/resources/family-law" class="flex items-center p-3 rounded-xl hover:bg-blue-50 transition-all duration-300 group">
-                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-blue-200 transition-colors">
-                                        <i class="fas fa-home text-blue-600"></i>
-                                    </div>
-                                    <div>
-                                        <span class="text-gray-800 font-semibold group-hover:text-blue-600 transition-colors">Family Law Guide</span>
-                                        <p class="text-sm text-gray-500">Divorce, custody, and more</p>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/resources/employment" class="flex items-center p-3 rounded-xl hover:bg-green-50 transition-all duration-300 group">
-                                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-green-200 transition-colors">
-                                        <i class="fas fa-briefcase text-green-600"></i>
-                                    </div>
-                                    <div>
-                                        <span class="text-gray-800 font-semibold group-hover:text-green-600 transition-colors">Employment Rights</span>
-                                        <p class="text-sm text-gray-500">Workplace protection</p>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/resources/consumer" class="flex items-center p-3 rounded-xl hover:bg-purple-50 transition-all duration-300 group">
-                                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-purple-200 transition-colors">
-                                        <i class="fas fa-shield-alt text-purple-600"></i>
-                                    </div>
-                                    <div>
-                                        <span class="text-gray-800 font-semibold group-hover:text-purple-600 transition-colors">Consumer Protection</span>
-                                        <p class="text-sm text-gray-500">Rights and remedies</p>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/search" class="flex items-center p-3 rounded-xl hover:bg-indigo-50 transition-all duration-300 group">
-                                    <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-indigo-200 transition-colors">
-                                        <i class="fas fa-search text-indigo-600"></i>
-                                    </div>
-                                    <div>
-                                        <span class="text-gray-800 font-semibold group-hover:text-indigo-600 transition-colors">Find Legal Help</span>
-                                        <p class="text-sm text-gray-500">Locate attorneys</p>
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/mynetwork" class="flex items-center p-3 rounded-xl hover:bg-orange-50 transition-all duration-300 group">
-                                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center mr-4 group-hover:bg-orange-200 transition-colors">
-                                        <i class="fas fa-users text-orange-600"></i>
-                                    </div>
-                                    <div>
-                                        <span class="text-gray-800 font-semibold group-hover:text-orange-600 transition-colors">Connect with Lawyers</span>
-                                        <p class="text-sm text-gray-500">Build your network</p>
-                                    </div>
-                                </a>
-                            </li>
-                        </ul>
+                    <div class="px-4 py-2">
+                        <a href="/groups/family-law" class="flex items-center py-2 text-xs text-gray-600 hover:text-gray-900">
+                            <i class="fas fa-users mr-3 text-gray-400"></i>
+                            Family Law Group
+                        </a>
+                        <a href="/groups/employment" class="flex items-center py-2 text-xs text-gray-600 hover:text-gray-900">
+                            <i class="fas fa-users mr-3 text-gray-400"></i>
+                            Employment Rights
+                        </a>
+                        <a href="/groups/consumer" class="flex items-center py-2 text-xs text-gray-600 hover:text-gray-900">
+                            <i class="fas fa-users mr-3 text-gray-400"></i>
+                            Consumer Protection
+                        </a>
+                    </div>
+                    <div class="px-4 py-3 border-t border-gray-200">
+                        <h3 class="font-semibold text-gray-900 text-sm mb-2">Groups</h3>
+                        <a href="/groups" class="flex items-center py-2 text-xs text-gray-600 hover:text-gray-900">
+                            <i class="fas fa-users mr-3 text-gray-400"></i>
+                            Legal Professionals
+                        </a>
+                        <a href="/groups" class="flex items-center py-2 text-xs text-gray-600 hover:text-gray-900">
+                            <i class="fas fa-users mr-3 text-gray-400"></i>
+                            Know Your Rights
+                        </a>
+                        <div class="mt-3">
+                            <a href="/groups" class="text-xs text-gray-500 hover:text-blue-600">Show all (5)</a>
+                        </div>
+                    </div>
+                    <div class="px-4 py-3 border-t border-gray-200">
+                        <h3 class="font-semibold text-gray-900 text-sm mb-2">Followed Hashtags</h3>
+                        <a href="/hashtag/legaladvice" class="flex items-center py-2 text-xs text-gray-600 hover:text-gray-900">
+                            <span class="mr-3">#</span>
+                            legaladvice
+                        </a>
+                        <a href="/hashtag/knowyourrights" class="flex items-center py-2 text-xs text-gray-600 hover:text-gray-900">
+                            <span class="mr-3">#</span>
+                            knowyourrights
+                        </a>
+                    </div>
+                    <div class="px-4 py-3 border-t border-gray-200">
+                        <a href="/discover" class="text-xs text-gray-500 hover:text-blue-600">Discover more</a>
                     </div>
                 </div>
             </div>
 
             <!-- Main Content -->
-            <div class="lg:col-span-6 space-y-8">
+            <div class="lg:col-span-2 space-y-4">
                 <% if (locals.loggedInUserId && locals.userRole === 'lawyer') { %>
-                    <div class="bg-white rounded-2xl shadow-lg mb-4">
-                        <div class="p-6 flex items-center space-x-4">
-                            <img src="https://media.licdn.com/dms/image/v2/D4D03AQF9FvdZ1W1_9g/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1712227644410?e=1746662400&v=beta&t=h_guvHTPpOuEEWiAAnuGwQLiaaMLVRgSJGwzP79vRlU" alt="Profile" class="rounded-full shadow border-2 border-white" style="width: 48px; height: 48px; object-fit: cover;">
-                            <button onclick="togglePostModal()" class="flex-1 border border-blue-200 rounded-full px-6 py-3 text-md text-gray-700 bg-blue-50 hover:bg-blue-100 shadow">Share Legal Insights</button>
+                    <!-- Post Creation Box for Lawyers -->
+                    <div class="bg-white rounded-lg border border-gray-200 p-4">
+                        <div class="flex items-center space-x-3">
+                            <img src="<%= locals.user && locals.user.profilePicture ? locals.user.profilePicture : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(locals.user ? (locals.user.firstName + ' ' + locals.user.lastName) : 'User') + '&size=48&background=3b82f6&color=ffffff' %>" alt="Profile" class="w-12 h-12 rounded-full object-cover">
+                            <button onclick="togglePostModal()" class="flex-1 border border-gray-300 rounded-full px-4 py-3 text-left text-gray-500 hover:bg-gray-50 transition-colors duration-200">Share legal insights...</button>
+                        </div>
+                        <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-200">
+                            <button class="flex items-center space-x-2 text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors duration-200">
+                                <i class="fas fa-image text-blue-600"></i>
+                                <span class="text-sm font-medium">Photo</span>
+                            </button>
+                            <button class="flex items-center space-x-2 text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors duration-200">
+                                <i class="fas fa-video text-green-600"></i>
+                                <span class="text-sm font-medium">Video</span>
+                            </button>
+                            <button class="flex items-center space-x-2 text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors duration-200">
+                                <i class="fas fa-file-alt text-red-600"></i>
+                                <span class="text-sm font-medium">Document</span>
+                            </button>
+                            <button class="flex items-center space-x-2 text-gray-600 hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors duration-200">
+                                <i class="fas fa-calendar text-orange-600"></i>
+                                <span class="text-sm font-medium">Event</span>
+                            </button>
                         </div>
                     </div>
                 <% } %>
                 
                 <% if (locals.loggedInUserId && locals.userRole !== 'lawyer') { %>
-                    <div class="bg-white rounded-xl shadow-sm mb-4 border border-gray-100">
-                        <div class="p-4">
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="flex items-center space-x-3">
-                                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                                        <i class="fas fa-compass text-blue-600 text-sm"></i>
-                                    </div>
-                                    <h3 class="text-lg font-semibold text-gray-800">Explore Legal Community</h3>
-                                </div>
-                            </div>
+                    <!-- Quick Actions for Non-Lawyers -->
+                    <div class="bg-white rounded-lg border border-gray-200 p-4">
+                        <div class="grid grid-cols-3 gap-3">
+                            <a href="/search" class="flex flex-col items-center p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-all duration-200 group">
+                                <i class="fas fa-search text-blue-600 text-lg mb-2 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-xs text-gray-700 font-medium text-center">Find Lawyers</span>
+                                </a>
+                                
+                            <a href="/mynetwork" class="flex flex-col items-center p-3 bg-gray-50 rounded-lg hover:bg-green-50 transition-all duration-200 group">
+                                <i class="fas fa-users text-green-600 text-lg mb-2 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-xs text-gray-700 font-medium text-center">Network</span>
+                            </a>
                             
-                            <div class="grid grid-cols-3 gap-3">
-                                <a href="/search" class="group flex flex-col items-center p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-all duration-200">
-                                    <i class="fas fa-search text-blue-600 text-lg mb-1"></i>
-                                    <span class="text-xs text-gray-700 font-medium">Find Lawyers</span>
-                                </a>
-                                
-                                <a href="/mynetwork" class="group flex flex-col items-center p-3 bg-gray-50 rounded-lg hover:bg-green-50 transition-all duration-200">
-                                    <i class="fas fa-users text-green-600 text-lg mb-1"></i>
-                                    <span class="text-xs text-gray-700 font-medium">Network</span>
-                                </a>
-                                
-                                <a href="/jobs" class="group flex flex-col items-center p-3 bg-gray-50 rounded-lg hover:bg-purple-50 transition-all duration-200">
-                                    <i class="fas fa-briefcase text-purple-600 text-lg mb-1"></i>
-                                    <span class="text-xs text-gray-700 font-medium">Jobs</span>
-                                </a>
-                            </div>
+                            <a href="/jobs" class="flex flex-col items-center p-3 bg-gray-50 rounded-lg hover:bg-purple-50 transition-all duration-200 group">
+                                <i class="fas fa-briefcase text-purple-600 text-lg mb-2 group-hover:scale-110 transition-transform"></i>
+                                <span class="text-xs text-gray-700 font-medium text-center">Jobs</span>
+                            </a>
                         </div>
                     </div>
                 <% } %>
                 
                 <% if (posts && posts.length > 0) { %>
                     <% posts.forEach(post => { let groupedReactions = {}; if (post.reacts && post.reacts.length > 0) { post.reacts.forEach(r => { groupedReactions[r.reaction] = (groupedReactions[r.reaction] || 0) + 1; }); } %>
-                    <div id="post-<%= post.id %>" class="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 mb-2">
+                    <div id="post-<%= post.id %>" class="bg-white rounded-lg border border-gray-200 mb-4 hover:shadow-md transition-shadow duration-200">
                         <!-- Post Header -->
-                        <div class="p-3">
+                        <div class="p-4">
                             <div class="flex items-start justify-between">
                                 <div class="flex items-start space-x-3">
                                     <a href="/in/<%= post.user ? post.user.id : '#' %>" class="flex-shrink-0">
-                                        <img src="https://ui-avatars.com/api/?name=<%= post.user ? encodeURIComponent(post.user.firstName + ' ' + post.user.lastName) : 'User' %>&background=0D47A1&color=fff&size=48" alt="Profile" class="w-12 h-12 rounded-full object-cover">
+                                        <img src="<%= post.user && post.user.profilePicture ? post.user.profilePicture : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(post.user ? (post.user.firstName + ' ' + post.user.lastName) : 'User') + '&size=48&background=0D47A1&color=fff' %>" alt="Profile" class="w-12 h-12 rounded-full object-cover">
                                     </a>
                                     <div class="flex-1 min-w-0">
                                         <div class="flex items-center space-x-2">
@@ -387,74 +390,74 @@
                         </div>
                         
                         <!-- Post Content -->
-                        <div class="px-3 pb-3">
+                        <div class="px-4">
                             <% if (post.title && post.title.trim()) { %>
-                                <h2 class="text-gray-900 font-medium text-base mb-2 leading-snug"><%= post.title %></h2>
+                                <h2 class="text-gray-900 font-medium text-base mb-3 leading-snug"><%= post.title %></h2>
                             <% } %>
-                            <div class="text-gray-700 text-sm leading-relaxed">
+                            <div class="text-gray-700 text-sm leading-relaxed mb-3">
                                 <p><%= post.content.length > 300 ? post.content.substring(0, 300) + '...' : post.content %></p>
                                 <% if (post.content.length > 300) { %>
-                                    <button class="text-blue-600 hover:text-blue-800 font-medium mt-1 text-sm">...see more</button>
+                                    <button class="text-blue-600 hover:text-blue-800 font-medium mt-2 text-sm">...see more</button>
                                 <% } %>
                             </div>
-                            
-                            <!-- Post Images -->
-                            <% if (post.post_photos && post.post_photos.length > 0) { %>
-                                <div class="mt-3 -mx-3">
-                                    <% if (post.post_photos.length === 1) { %>
+                        </div>
+                        
+                        <!-- Post Images -->
+                        <% if (post.post_photos && post.post_photos.length > 0) { %>
+                            <div class="mb-3">
+                                <% if (post.post_photos.length === 1) { %>
+                                    <% post.post_photos.forEach(postPhoto => { %>
+                                        <% if (postPhoto.photo && postPhoto.photo.photoPath) { %>
+                                            <div class="relative">
+                                                <img src="<%= postPhoto.photo.photoPath.startsWith('/') ? postPhoto.photo.photoPath : '/' + postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-auto object-cover rounded-lg" style="max-height: 500px;">
+                                            </div>
+                                        <% } %>
+                                    <% }); %>
+                                <% } else { %>
+                                    <div class="grid grid-cols-2 gap-2 px-4">
                                         <% post.post_photos.forEach(postPhoto => { %>
                                             <% if (postPhoto.photo && postPhoto.photo.photoPath) { %>
                                                 <div class="relative">
-                                                    <img src="<%= postPhoto.photo.photoPath.startsWith('/') ? postPhoto.photo.photoPath : '/' + postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-auto object-cover" style="max-height: 500px;">
+                                                    <img src="<%= postPhoto.photo.photoPath.startsWith('/') ? postPhoto.photo.photoPath : '/' + postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-48 object-cover rounded-lg">
                                                 </div>
                                             <% } %>
                                         <% }); %>
-                                    <% } else { %>
-                                        <div class="grid grid-cols-2 gap-1">
-                                            <% post.post_photos.forEach(postPhoto => { %>
-                                                <% if (postPhoto.photo && postPhoto.photo.photoPath) { %>
-                                                    <div class="relative">
-                                                        <img src="<%= postPhoto.photo.photoPath.startsWith('/') ? postPhoto.photo.photoPath : '/' + postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-48 object-cover">
-                                                    </div>
-                                                <% } %>
-                                            <% }); %>
-                                        </div>
-                                    <% } %>
-                                </div>
-                            <% } %>
-                        </div>
+                                    </div>
+                                <% } %>
+                            </div>
+                        <% } %>
                         
                         <!-- Post Stats -->
-                        <div class="px-3 py-2 border-t border-gray-100">
-                            <div class="flex items-center justify-between text-xs text-gray-500">
+                        <div class="px-4 py-2">
+                            <div class="flex items-center justify-between text-sm text-gray-500">
                                 <div class="flex items-center space-x-4">
                                     <% if (post.reacts && post.reacts.length > 0) { %>
-                                        <button class="flex items-center space-x-1 hover:text-blue-600 transition-colors" id="reactionStats-<%= post.id %>">
+                                        <button class="flex items-center space-x-2 hover:text-blue-600 transition-colors" id="reactionStats-<%= post.id %>">
                                             <div class="flex -space-x-1">
                                                 <% Object.keys(groupedReactions).slice(0, 3).forEach(key => { %>
-                                                    <span class="text-sm bg-white rounded-full border border-gray-200 w-5 h-5 flex items-center justify-center"><%= reactionTypes[key] %></span>
+                                                    <span class="text-sm bg-white rounded-full border border-gray-200 w-6 h-6 flex items-center justify-center shadow-sm"><%= reactionTypes[key] %></span>
                                                 <% }); %>
                                             </div>
-                                            <span class="reaction-count"><%= post.reacts.length %></span>
+                                            <span class="reaction-count font-medium"><%= post.reacts.length %></span>
                                         </button>
                                     <% } else { %>
-                                        <div class="hidden flex items-center space-x-1" id="reactionStats-<%= post.id %>">
+                                        <div class="hidden flex items-center space-x-2" id="reactionStats-<%= post.id %>">
                                             <div class="flex -space-x-1" id="reactionIcons-<%= post.id %>"></div>
-                                            <span class="reaction-count">0</span>
+                                            <span class="reaction-count font-medium">0</span>
                                         </div>
                                     <% } %>
                                 </div>
-                                <button class="hover:text-blue-600 transition-colors" onclick="toggleComments(<%= post.id %>)">
+                                <button class="hover:text-blue-600 transition-colors font-medium" onclick="toggleComments(<%= post.id %>)">
                                     <span class="comment-count"><%= post.comments ? post.comments.length : 0 %> comments</span>
                                 </button>
                             </div>
                         </div>
                         
                         <!-- Post Actions -->
-                        <div class="px-3 py-2 border-t border-gray-100">
+                        <div class="px-4 py-3 border-t border-gray-100">
                             <div class="flex items-center justify-around">
                                 <div class="relative">
-                                    <button class="flex items-center space-x-2 text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-lg transition-colors like-button" onclick="toggleReactionPopup(<%= post.id %>, this)">
+                                    <button class="flex items-center space-x-2 text-gray-600 hover:bg-gray-100 px-6 py-2 rounded-lg transition-colors like-button" onclick="toggleReactionPopup(<%= post.id %>, this)">
                                         <i class="far fa-thumbs-up text-lg"></i>
                                         <span class="text-sm font-medium">Like</span>
                                     </button>
@@ -469,18 +472,19 @@
                                         <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-4 border-t-gray-200"></div>
                                     </div>
                                 </div>
-                                <button class="flex items-center space-x-2 text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-lg transition-colors" onclick="toggleCommentForm(<%= post.id %>)">
+                                <button class="flex items-center space-x-2 text-gray-600 hover:bg-gray-100 px-6 py-2 rounded-lg transition-colors" onclick="toggleCommentForm(<%= post.id %>)">
                                     <i class="far fa-comment text-lg"></i>
                                     <span class="text-sm font-medium">Comment</span>
                                 </button>
                                 <% if (locals.loggedInUserId) { %>
-                                    <button class="flex items-center space-x-2 text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-lg transition-colors" onclick="sharePost(<%= post.id %>)">
+                                    <button class="flex items-center space-x-2 text-gray-600 hover:bg-gray-100 px-6 py-2 rounded-lg transition-colors" onclick="sharePost(<%= post.id %>)">
                                         <i class="fas fa-share text-lg"></i>
                                         <span class="text-sm font-medium">Share</span>
                                     </button>
                                 <% } else { %>
-                                    <button class="flex items-center space-x-2 text-gray-400 px-4 py-2 rounded-lg cursor-not-allowed" disabled>
-                                        <i class="far fa-share text-lg"></i><span class="font-semibold">Share</span>
+                                    <button class="flex items-center space-x-2 text-gray-400 px-6 py-2 rounded-lg cursor-not-allowed" disabled>
+                                        <i class="far fa-share text-lg"></i>
+                                        <span class="text-sm font-medium">Share</span>
                                     </button>
                                 <% } %>
                             </div>
@@ -623,48 +627,100 @@
                 </div>
                 <% } %>
                 <!-- Right Sidebar -->
-                <div class="lg:col-span-3 space-y-8">
-                    <div class="bg-white rounded-2xl shadow-lg">
-                        <div class="border-b px-6 py-4">
-                            <h6 class="font-semibold text-blue-700 text-lg">Quick Legal Help</h6>
+                <div class="lg:col-span-2 space-y-4">
+                    <!-- LinkedIn News Widget -->
+                    <div class="bg-white rounded-lg border border-gray-200">
+                        <div class="p-4 border-b border-gray-200">
+                            <h3 class="font-semibold text-gray-900">Legal News</h3>
                         </div>
-                        <div class="p-8">
-                            <div class="space-y-4">
-                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                                    <h4 class="font-semibold text-blue-800 mb-2">Need Legal Advice?</h4>
-                                    <p class="text-blue-700 text-sm mb-3">Connect with qualified lawyers in your area</p>
-                                    <a href="/search?type=lawyer" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition inline-flex items-center">
-                                        <i class="fas fa-search mr-2"></i>
-                                        Find Lawyers
-                                    </a>
-                                </div>
-                                <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                                    <h4 class="font-semibold text-green-800 mb-2">Job Opportunities</h4>
-                                    <p class="text-green-700 text-sm mb-3">Post or find legal job opportunities</p>
-                                    <a href="/jobs" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition inline-flex items-center">
-                                        <i class="fas fa-briefcase mr-2"></i>
-                                        Browse Jobs
-                                    </a>
-                                </div>
-                                <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                                    <h4 class="font-semibold text-purple-800 mb-2">Legal Resources</h4>
-                                    <p class="text-purple-700 text-sm mb-3">Free guides to understand your rights</p>
-                                    <a href="/resources/consumer" class="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700 transition inline-flex items-center">
-                                        <i class="fas fa-book mr-2"></i>
-                                        Learn More
-                                    </a>
-                                </div>
+                        <div class="p-4">
+                            <div class="space-y-3">
+                                <a href="#" class="block hover:bg-gray-50 p-2 rounded transition-colors">
+                                    <h4 class="text-sm font-medium text-gray-900 mb-1">New Employment Law Changes</h4>
+                                    <p class="text-xs text-gray-500">2 hours ago • 1,234 readers</p>
+                                </a>
+                                <a href="#" class="block hover:bg-gray-50 p-2 rounded transition-colors">
+                                    <h4 class="text-sm font-medium text-gray-900 mb-1">Supreme Court Ruling Impact</h4>
+                                    <p class="text-xs text-gray-500">5 hours ago • 2,567 readers</p>
+                                </a>
+                                <a href="#" class="block hover:bg-gray-50 p-2 rounded transition-colors">
+                                    <h4 class="text-sm font-medium text-gray-900 mb-1">Consumer Rights Update</h4>
+                                    <p class="text-xs text-gray-500">1 day ago • 892 readers</p>
+                                </a>
+                                <a href="#" class="block hover:bg-gray-50 p-2 rounded transition-colors">
+                                    <h4 class="text-sm font-medium text-gray-900 mb-1">Legal Tech Innovations</h4>
+                                    <p class="text-xs text-gray-500">2 days ago • 1,456 readers</p>
+                                </a>
                             </div>
+                            <button class="text-sm text-blue-600 hover:text-blue-800 font-medium mt-3">Show more</button>
                         </div>
                     </div>
-                    <div class="bg-white rounded-2xl shadow-lg">
-                        <div class="border-b px-6 py-4">
-                            <h6 class="font-semibold text-blue-700 text-lg">Connect with Lawyers</h6>
+                    
+                    <!-- People You May Know -->
+                    <div class="bg-white rounded-lg border border-gray-200">
+                        <div class="p-4 border-b border-gray-200">
+                            <h3 class="font-semibold text-gray-900">People you may know</h3>
                         </div>
-                        <div class="p-8">
-                            <ul class="space-y-4 text-md" id="suggestedLawyers">
-                                <li class="text-center text-gray-500 py-2">Loading suggestions...</li>
-                            </ul>
+                        <div class="p-4">
+                            <div class="space-y-4" id="suggestedLawyers">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://ui-avatars.com/api/?name=Sarah+Johnson&size=48&background=3b82f6&color=ffffff" alt="Profile" class="w-12 h-12 rounded-full">
+                                        <div>
+                                            <h4 class="text-sm font-medium text-gray-900">Sarah Johnson</h4>
+                                            <p class="text-xs text-gray-500">Employment Lawyer</p>
+                                            <p class="text-xs text-gray-500">2 mutual connections</p>
+                                        </div>
+                                    </div>
+                                    <button class="text-blue-600 border border-blue-600 px-4 py-1 rounded-full text-sm font-medium hover:bg-blue-50 transition-colors">Connect</button>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://ui-avatars.com/api/?name=Michael+Chen&size=48&background=3b82f6&color=ffffff" alt="Profile" class="w-12 h-12 rounded-full">
+                                        <div>
+                                            <h4 class="text-sm font-medium text-gray-900">Michael Chen</h4>
+                                            <p class="text-xs text-gray-500">Corporate Lawyer</p>
+                                            <p class="text-xs text-gray-500">5 mutual connections</p>
+                                        </div>
+                                    </div>
+                                    <button class="text-blue-600 border border-blue-600 px-4 py-1 rounded-full text-sm font-medium hover:bg-blue-50 transition-colors">Connect</button>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <img src="https://ui-avatars.com/api/?name=Emily+Davis&size=48&background=3b82f6&color=ffffff" alt="Profile" class="w-12 h-12 rounded-full">
+                                        <div>
+                                            <h4 class="text-sm font-medium text-gray-900">Emily Davis</h4>
+                                            <p class="text-xs text-gray-500">Family Lawyer</p>
+                                            <p class="text-xs text-gray-500">1 mutual connection</p>
+                                        </div>
+                                    </div>
+                                    <button class="text-blue-600 border border-blue-600 px-4 py-1 rounded-full text-sm font-medium hover:bg-blue-50 transition-colors">Connect</button>
+                                </div>
+                            </div>
+                            <button class="text-sm text-gray-600 hover:text-blue-600 font-medium mt-3">Show more</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Footer Links -->
+                    <div class="bg-white rounded-lg border border-gray-200 p-4">
+                        <div class="text-xs text-gray-500 space-y-2">
+                            <div class="flex flex-wrap gap-x-3 gap-y-1">
+                                <a href="#" class="hover:text-blue-600">About</a>
+                                <a href="#" class="hover:text-blue-600">Accessibility</a>
+                                <a href="#" class="hover:text-blue-600">Help Center</a>
+                                <a href="#" class="hover:text-blue-600">Privacy Policy</a>
+                                <a href="#" class="hover:text-blue-600">Terms</a>
+                            </div>
+                            <div class="flex flex-wrap gap-x-3 gap-y-1">
+                                <a href="#" class="hover:text-blue-600">Ad Choices</a>
+                                <a href="#" class="hover:text-blue-600">Advertising</a>
+                                <a href="#" class="hover:text-blue-600">Legal Services</a>
+                                <a href="#" class="hover:text-blue-600">Get the App</a>
+                                <a href="#" class="hover:text-blue-600">More</a>
+                            </div>
+                            <div class="pt-2 border-t border-gray-200">
+                                <p class="text-gray-400">KnowYourRights Corporation © 2024</p>
+                            </div>
                         </div>
                     </div>
                 </div>

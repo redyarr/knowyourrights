@@ -1,63 +1,82 @@
 <div class="max-w-4xl mx-auto px-4 py-8 mt-16">
-    <!-- Enhanced Profile Header Card -->
-    <div class="glass-card bg-white/90 backdrop-blur-lg rounded-2xl shadow-xl mb-6 relative border border-white/20 overflow-hidden">
-        <!-- Enhanced Background Gradient -->
-        <div class="h-52 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-600 rounded-t-2xl relative">
-            <div class="absolute inset-0 bg-gradient-to-r from-black/10 to-transparent"></div>
-            <div class="absolute top-4 right-4 flex space-x-2">
-                <div class="w-3 h-3 bg-white/30 rounded-full animate-pulse"></div>
-                <div class="w-3 h-3 bg-white/20 rounded-full animate-pulse" style="animation-delay: 0.5s;"></div>
-                <div class="w-3 h-3 bg-white/25 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
-            </div>
-        </div>
-        <!-- Enhanced Profile Photo & Action Buttons -->
-        <div class="absolute top-0 left-0 right-0 flex justify-between items-start px-6 pt-6">
-            <div class="mt-28">
-                <% if (profile.ProfileImage && profile.ProfileImage.imagePath) { %>
-                    <img src="<%= profile.ProfileImage.imagePath %>" alt="Profile"
-                        class="w-36 h-36 rounded-full border-4 border-white/90 object-cover shadow-xl ring-4 ring-white/50 backdrop-blur-sm">
-                <% } else { %>
-                    <img src="https://ui-avatars.com/api/?name=<%= encodeURIComponent(profile.firstName + ' ' + profile.lastName) %>&size=160&background=3b82f6&color=ffffff" alt="Profile"
-                        class="w-36 h-36 rounded-full border-4 border-white/90 object-cover shadow-xl ring-4 ring-white/50 backdrop-blur-sm">
-                <% } %>
-            </div>
-            <div class="mt-8">
-                <% if (loggedInUserId && loggedInUserId != profile.id) { %>
-                    <div class="flex space-x-3">
-                        <% if (!connectionStatus) { %>
-                            <button type="button" id="connectBtn" data-user-id="<%= profile.id %>" data-action="connect"
-                                class="glass-button bg-blue-600/90 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-blue-700/90 transition-all duration-300 transform hover:-translate-y-1 border border-white/20">
-                                <i class="fas fa-user-plus mr-2"></i>Connect
-                            </button>
-                        <% } else if (connectionStatus === 'pending') { %>
-                            <button type="button" id="connectBtn" data-user-id="<%= profile.id %>" data-action="cancel"
-                                class="glass-button bg-gray-400/90 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-red-500/90 transition-all duration-300 transform hover:-translate-y-1 border border-white/20">
-                                <i class="fas fa-clock mr-2"></i>Pending
-                            </button>
-                        <% } else if (connectionStatus === 'accepted') { %>
-                            <button type="button" id="connectBtn"
-                                class="glass-button bg-green-600/90 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold shadow-lg border border-white/20">
-                                <i class="fas fa-check mr-2"></i>Connected
-                            </button>
-                        <% } %>
-                        <a href="/messaging/<%= profile.id %>"
-                            class="glass-button bg-white/90 backdrop-blur-sm border-2 border-blue-600/50 text-blue-600 px-6 py-3 rounded-xl font-semibold text-center shadow-lg hover:bg-blue-50/90 transition-all duration-300 transform hover:-translate-y-1">
-                            <i class="fas fa-envelope mr-2"></i>Message
-                        </a>
-                    </div>
-                <% } else if (loggedInUserId == profile.id) { %>
-                    <div class="flex space-x-3">
-                        <a href="/profile/edit"
-                            class="glass-button bg-blue-600/90 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:bg-blue-700/90 transition-all duration-300 transform hover:-translate-y-1 border border-white/20">
-                            <i class="fas fa-edit mr-2"></i>Edit Profile
-                        </a>
-                    </div>
-                <% } %>
-            </div>
+    <!-- LinkedIn-inspired Profile Header Card -->
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6 overflow-hidden">
+        <!-- Cover Photo -->
+        <div class="h-48 bg-gradient-to-r from-blue-600 to-blue-700 relative">
+            <!-- Optional: Add cover photo upload for own profile -->
+            <% if (loggedInUserId == profile.id) { %>
+                <div class="absolute top-4 right-4">
+                    <button class="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition-colors">
+                        <i class="fas fa-camera text-sm"></i>
+                    </button>
+                </div>
+            <% } %>
         </div>
         
-        <!-- Profile Info -->
-        <div class="mt-20 px-6 pb-6">
+        <!-- Profile Content -->
+        <div class="px-6 pb-6">
+            <!-- Profile Photo & Action Buttons -->
+            <div class="flex justify-between items-start -mt-16 mb-4">
+                <div class="relative">
+                    <% if (profile.ProfileImage && profile.ProfileImage.imagePath) { %>
+                        <img src="<%= profile.ProfileImage.imagePath %>" alt="Profile"
+                            class="w-32 h-32 rounded-full border-4 border-white object-cover shadow-lg">
+                    <% } else { %>
+                        <img src="https://ui-avatars.com/api/?name=<%= encodeURIComponent(profile.firstName + ' ' + profile.lastName) %>&size=128&background=0ea5e9&color=ffffff" alt="Profile"
+                            class="w-32 h-32 rounded-full border-4 border-white object-cover shadow-lg">
+                    <% } %>
+                    <% if (loggedInUserId == profile.id) { %>
+                        <button class="absolute bottom-2 right-2 bg-white border border-gray-300 rounded-full p-2 shadow-sm hover:bg-gray-50 transition-colors">
+                            <i class="fas fa-camera text-gray-600 text-sm"></i>
+                        </button>
+                    <% } %>
+                </div>
+                
+                <div class="mt-16">
+                    <% if (loggedInUserId && loggedInUserId != profile.id) { %>
+                        <div class="flex space-x-2">
+                            <% if (!connectionStatus) { %>
+                                <button type="button" id="connectBtn" data-user-id="<%= profile.id %>" data-action="connect"
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full font-medium transition-colors flex items-center">
+                                    <i class="fas fa-user-plus mr-2"></i>Connect
+                                </button>
+                            <% } else if (connectionStatus === 'pending') { %>
+                                <button type="button" id="connectBtn" data-user-id="<%= profile.id %>" data-action="cancel"
+                                    class="bg-gray-400 hover:bg-red-500 text-white px-4 py-2 rounded-full font-medium transition-colors flex items-center">
+                                    <i class="fas fa-clock mr-2"></i>Pending
+                                </button>
+                            <% } else if (connectionStatus === 'accepted') { %>
+                                <button type="button" id="connectBtn"
+                                    class="bg-green-600 text-white px-4 py-2 rounded-full font-medium flex items-center">
+                                    <i class="fas fa-check mr-2"></i>Connected
+                                </button>
+                            <% } %>
+                            <a href="/messaging/<%= profile.id %>"
+                                class="border border-blue-600 text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-full font-medium transition-colors flex items-center">
+                                <i class="fas fa-envelope mr-2"></i>Message
+                            </a>
+                            <button class="border border-gray-300 text-gray-700 hover:bg-gray-50 p-2 rounded-full transition-colors">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                        </div>
+                    <% } else if (loggedInUserId == profile.id) { %>
+                        <div class="flex space-x-2">
+                            <a href="/profile/edit"
+                                class="border border-blue-600 text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-full font-medium transition-colors flex items-center">
+                                <i class="fas fa-edit mr-2"></i>Edit Profile
+                            </a>
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full font-medium transition-colors">
+                                Add section
+                            </button>
+                            <button class="border border-gray-300 text-gray-700 hover:bg-gray-50 p-2 rounded-full transition-colors">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </button>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        
+            <!-- Profile Info -->
             <div>
                 <% if (profile?.role === 'lawyer') { %>
                     <% 
@@ -67,7 +86,6 @@
                       let authorityBg = 'bg-yellow-50';
                       let authorityBorder = 'border-yellow-200';
                       let authorityText = 'text-yellow-800';
-                      let authorityGradient = 'from-yellow-500 to-yellow-600';
                       
                       if (profile?.lawyer?.verificationStatus === 'approved') {
                         authorityColor = 'emerald';
@@ -76,7 +94,6 @@
                         authorityBg = 'bg-emerald-50';
                         authorityBorder = 'border-emerald-200';
                         authorityText = 'text-emerald-800';
-                        authorityGradient = 'from-emerald-500 to-emerald-600';
                       } else if (profile?.lawyer?.verificationStatus === 'rejected') {
                         authorityColor = 'red';
                         authorityBadge = 'Verification Rejected';
@@ -84,7 +101,6 @@
                         authorityBg = 'bg-red-50';
                         authorityBorder = 'border-red-200';
                         authorityText = 'text-red-800';
-                        authorityGradient = 'from-red-500 to-red-600';
                       } else if (profile?.lawyer?.verificationStatus === 'pending') {
                         authorityColor = 'yellow';
                         authorityBadge = 'Pending Verification';
@@ -92,40 +108,31 @@
                         authorityBg = 'bg-yellow-50';
                         authorityBorder = 'border-yellow-200';
                         authorityText = 'text-yellow-800';
-                        authorityGradient = 'from-yellow-500 to-yellow-600';
                       }
                     %>
-                    <div class="flex items-center flex-wrap gap-4 mb-3">
-                        <h2 class="text-3xl font-bold text-gray-800">
+                    <div class="mb-4">
+                        <h1 class="text-2xl font-semibold text-gray-900 mb-1">
                             <%= profile.firstName %> <%= profile.lastName %>
-                        </h2>
-                        <div class="flex items-center <%= authorityBg %> <%= authorityText %> px-4 py-2 rounded-xl <%= authorityBorder %> border-2 shadow-sm hover:shadow-md transition-all duration-200">
-                            <div class="w-6 h-6 rounded-full bg-gradient-to-r <%= authorityGradient %> flex items-center justify-center mr-3">
-                                <i class="<%= authorityIcon %> text-white text-xs"></i>
-                            </div>
-                            <span class="text-sm font-semibold tracking-wide"><%= authorityBadge %></span>
+                        </h1>
+                        <div class="flex items-center mb-2">
+                            <span class="<%= authorityText %> text-sm font-medium px-2 py-1 <%= authorityBg %> rounded-md border <%= authorityBorder %> flex items-center">
+                                <i class="<%= authorityIcon %> mr-1 text-xs"></i>
+                                <%= authorityBadge %>
+                            </span>
                         </div>
                     </div>
                     <% if (profile?.lawyer?.verificationStatus === 'pending') { %>
-                        <p class="text-yellow-600 text-lg font-medium flex items-center">
-                            <i class="fas fa-clock text-yellow-500 mr-2"></i>
-                            Lawyer verification pending review
-                        </p>
-                        <div class="mt-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                            <p class="text-sm text-yellow-800">
+                        <div class="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                            <p class="text-sm text-yellow-800 flex items-center">
                                 <i class="fas fa-info-circle mr-2"></i>
                                 Your lawyer verification is currently under review. You'll be notified once it's processed.
                             </p>
                         </div>
                     <% } else if (profile?.lawyer?.verificationStatus === 'rejected') { %>
-                        <p class="text-red-600 text-lg font-medium flex items-center">
-                            <i class="fas fa-times-circle text-red-500 mr-2"></i>
-                            Lawyer verification rejected
-                        </p>
-                        <div class="mt-3 p-4 bg-red-50 border border-red-200 rounded-lg">
-                            <p class="text-sm text-red-800">
+                        <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                            <p class="text-sm text-red-800 flex items-center">
                                 <i class="fas fa-exclamation-triangle mr-2"></i>
-                                Your lawyer verification was rejected. 
+                                Your lawyer verification was rejected.
                                 <% if (profile?.lawyer?.rejectionReason) { %>
                                     Reason: <%= profile.lawyer.rejectionReason %>
                                 <% } %>
@@ -147,9 +154,11 @@
                         </p>
                     <% } %>
                 <% } else { %>
-                    <h2 class="text-3xl font-bold text-gray-800">
-                        <%= profile.firstName %> <%= profile.lastName %>
-                    </h2>
+                    <div class="mb-4">
+                        <h1 class="text-2xl font-semibold text-gray-900 mb-1">
+                            <%= profile.firstName %> <%= profile.lastName %>
+                        </h1>
+                    </div>
                     <p class="text-gray-600 text-lg">
                         <%= profile.role.charAt(0).toUpperCase() + profile.role.slice(1) %> at LegalNet
                     </p>
