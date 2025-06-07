@@ -1,63 +1,68 @@
-<div class="container mt-5">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <h2 class="mb-4">Lawyer Feedback</h2>
-            
-            <!-- Lawyer Information -->
-            <div id="lawyer-info" class="card mb-4">
-                <div class="card-body">
-                    <h3 id="lawyer-name">Loading...</h3>
-                    <p id="lawyer-firm"></p>
-                    <div class="d-flex align-items-center mb-2">
-                        <div id="average-rating" class="me-2">0.0</div>
-                        <div id="rating-stars" class="me-2"></div>
-                        <div id="total-reviews">(0 reviews)</div>
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-4xl mx-auto px-4">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-4">
+                    <i class="fas fa-star text-white text-xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900">Lawyer Feedback</h1>
+            </div>
+        </div>
+        
+        <!-- Lawyer Information -->
+        <div id="lawyer-info" class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <h3 id="lawyer-name" class="text-xl font-semibold text-gray-900 mb-2">Loading...</h3>
+            <p id="lawyer-firm" class="text-gray-600 mb-4"></p>
+            <div class="flex items-center space-x-3">
+                <div id="average-rating" class="text-2xl font-bold text-gray-900">0.0</div>
+                <div id="rating-stars" class="flex items-center"></div>
+                <div id="total-reviews" class="text-gray-500">(0 reviews)</div>
+            </div>
+        </div>
+
+        <!-- Submit Feedback Form -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+            <div class="p-6 border-b border-gray-200">
+                <h4 class="text-lg font-semibold text-gray-900">Submit Your Feedback</h4>
+            </div>
+            <div class="p-6">
+                <form id="feedback-form" class="space-y-6">
+                    <input type="hidden" id="lawyer-id" name="lawyerId">
+                    
+                    <div>
+                        <label for="rating" class="block text-sm font-medium text-gray-700 mb-2">Rating</label>
+                        <div class="rating-input flex items-center space-x-1">
+                            <% for(let i=5; i>=1; i--) { %>
+                            <input type="radio" id="star<%= i %>" name="rating" value="<%= i %>" class="hidden" />
+                            <label for="star<%= i %>" title="<%= i %> stars" class="text-3xl text-gray-300 hover:text-yellow-400 cursor-pointer transition-colors">★</label>
+                            <% } %>
+                        </div>
                     </div>
-                </div>
+                    
+                    <div>
+                        <label for="review" class="block text-sm font-medium text-gray-700 mb-2">Your Review</label>
+                        <textarea id="review" name="review" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Share your experience with this lawyer"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                        Submit Feedback
+                    </button>
+                </form>
             </div>
+        </div>
 
-            <!-- Submit Feedback Form -->
-            <div class="card mb-4">
-                <div class="card-header bg-primary text-white">
-                    <h4 class="mb-0">Submit Your Feedback</h4>
-                </div>
-                <div class="card-body">
-                    <form id="feedback-form">
-                        <input type="hidden" id="lawyer-id" name="lawyerId">
-                        
-                        <div class="mb-3">
-                            <label for="rating" class="form-label">Rating</label>
-                            <div class="rating-input">
-                                <% for(let i=5; i>=1; i--) { %>
-                                <input type="radio" id="star<%= i %>" name="rating" value="<%= i %>" />
-                                <label for="star<%= i %>" title="<%= i %> stars">★</label>
-                                <% } %>
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="review" class="form-label">Your Review</label>
-                            <textarea class="form-control" id="review" name="review" rows="4" placeholder="Share your experience with this lawyer"></textarea>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">Submit Feedback</button>
-                    </form>
-                </div>
+        <!-- Feedback List -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+            <div class="p-6 border-b border-gray-200">
+                <h4 class="text-lg font-semibold text-gray-900">Reviews</h4>
             </div>
-
-            <!-- Feedback List -->
-            <div class="card">
-                <div class="card-header bg-light">
-                    <h4 class="mb-0">Reviews</h4>
-                </div>
-                <div class="card-body">
-                    <div id="feedback-list">
-                        <!-- Feedback items will be loaded here -->
-                        <div class="text-center" id="loading-feedback">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
-                        </div>
+            <div class="p-6">
+                <div id="feedback-list">
+                    <!-- Feedback items will be loaded here -->
+                    <div class="text-center py-8" id="loading-feedback">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        <p class="mt-2 text-gray-500">Loading reviews...</p>
                     </div>
                 </div>
             </div>
@@ -66,32 +71,18 @@
 </div>
 
 <style>
-    .rating-input {
-        display: flex;
-        flex-direction: row-reverse;
-        justify-content: flex-end;
-    }
-    
-    .rating-input input {
-        display: none;
-    }
-    
-    .rating-input label {
-        font-size: 30px;
-        color: #ddd;
-        cursor: pointer;
-        margin: 0 5px;
+    .rating-input input:checked ~ label {
+        color: #fbbf24 !important;
     }
     
     .rating-input label:hover,
-    .rating-input label:hover ~ label,
-    .rating-input input:checked ~ label {
-        color: #ffd700;
+    .rating-input label:hover ~ label {
+        color: #fbbf24 !important;
     }
     
     .feedback-item {
-        border-bottom: 1px solid #eee;
-        padding: 15px 0;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 1rem 0;
     }
     
     .feedback-item:last-child {
@@ -99,7 +90,7 @@
     }
     
     .feedback-stars {
-        color: #ffd700;
+        color: #fbbf24;
     }
 </style>
 
