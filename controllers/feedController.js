@@ -5,7 +5,7 @@ const { Op } = require('sequelize');
 exports.createPost = async (req, res) => {
     try {
         // Check if user is a lawyer
-        if (req.session.user_role !== 'lawyer') {
+        if (req.session.user?.role !== 'lawyer') {
             return res.status(403).json({ success: false, error: "Only lawyers can create posts." });
         }
 
@@ -24,6 +24,25 @@ exports.createPost = async (req, res) => {
             createdAt: new Date(),
             updatedAt: new Date()
         });
+
+        // Handle image upload if present
+        if (req.file) {
+            try {
+                // Create photo record
+                const photo = await Photo.create({
+                    photoPath: `/uploads/posts/${req.file.filename}`
+                });
+
+                // Create post-photo association
+                await PostPhoto.create({
+                    postId: post.id,
+                    photoId: photo.id
+                });
+            } catch (imageError) {
+                console.error('Error saving image:', imageError);
+                // Continue without failing the post creation
+            }
+        }
 
         return res.json({ success: true, post });
     } catch (error) {
@@ -56,6 +75,13 @@ exports.getAllPosts = async (req, res) => {
                         attributes: ['id', 'firstName', 'lastName', 'role']
                     }],
                     order: [['createdAt', 'ASC']]
+                },
+                {
+                    model: require('../models').PostPhoto,
+                    include: [{
+                        model: require('../models').Photo,
+                        attributes: ['id', 'photoPath']
+                    }]
                 }
             ],
             order: [['createdAt', 'DESC']]
@@ -115,6 +141,13 @@ exports.getFeedPosts = async (req, res) => {
                         attributes: ['id', 'firstName', 'lastName', 'role']
                     }],
                     order: [['createdAt', 'ASC']]
+                },
+                {
+                    model: require('../models').PostPhoto,
+                    include: [{
+                        model: require('../models').Photo,
+                        attributes: ['id', 'photoPath']
+                    }]
                 }
             ],
             order: [['createdAt', 'DESC']]
@@ -146,7 +179,8 @@ exports.getFeedPosts = async (req, res) => {
         res.render('feed/index', {
             posts: postsWithStats,
             loggedInUserId: req.session.user_id,
-            userRole: req.session.user_role
+            userRole: req.session.user?.role,
+            user: req.session.user
         });
     } catch (error) {
         console.error('Error fetching feed posts:', error);
@@ -261,7 +295,7 @@ exports.editPost = async (req, res) => {
         }
 
         // Check if user owns the post or is admin
-        if (post.userId !== userId && req.session.user_role !== 'admin') {
+        if (post.userId !== userId && req.session.user?.role !== 'admin') {
             return res.status(403).json({ success: false, error: "You can only edit your own posts." });
         }
 
@@ -290,7 +324,7 @@ exports.deletePost = async (req, res) => {
         }
 
         // Check if user owns the post or is admin
-        if (post.userId !== userId && req.session.user_role !== 'admin') {
+        if (post.userId !== userId && req.session.user?.role !== 'admin') {
             return res.status(403).json({ success: false, error: "You can only delete your own posts." });
         }
 
@@ -315,7 +349,7 @@ exports.editComment = async (req, res) => {
         }
 
         // Check if user owns the comment or is admin
-        if (comment.userId !== userId && req.session.user_role !== 'admin') {
+        if (comment.userId !== userId && req.session.user?.role !== 'admin') {
             return res.status(403).json({ success: false, error: "You can only edit your own comments." });
         }
 
@@ -342,7 +376,7 @@ exports.deleteComment = async (req, res) => {
         }
 
         // Check if user owns the comment or is admin
-        if (comment.userId !== userId && req.session.user_role !== 'admin') {
+        if (comment.userId !== userId && req.session.user?.role !== 'admin') {
             return res.status(403).json({ success: false, error: "You can only delete your own comments." });
         };
         await comment.destroy();

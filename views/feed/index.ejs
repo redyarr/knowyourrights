@@ -408,19 +408,19 @@
                                 <% if (post.post_photos.length === 1) { %>
                                     <% post.post_photos.forEach(postPhoto => { %>
                                         <% if (postPhoto.photo && postPhoto.photo.photoPath) { %>
-                                            <div class="relative">
-                                                <img src="<%= postPhoto.photo.photoPath.startsWith('/') ? postPhoto.photo.photoPath : '/' + postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-auto object-cover rounded-lg" style="max-height: 500px;">
-                                            </div>
-                                        <% } %>
+                            <div class="relative">
+                                <img src="<%= postPhoto.photo.photoPath.startsWith('/') ? postPhoto.photo.photoPath : '/' + postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-auto object-cover rounded-lg" style="max-height: 500px;">
+                            </div>
+                        <% } %>
                                     <% }); %>
                                 <% } else { %>
                                     <div class="grid grid-cols-2 gap-2 px-4">
                                         <% post.post_photos.forEach(postPhoto => { %>
                                             <% if (postPhoto.photo && postPhoto.photo.photoPath) { %>
-                                                <div class="relative">
-                                                    <img src="<%= postPhoto.photo.photoPath.startsWith('/') ? postPhoto.photo.photoPath : '/' + postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-48 object-cover rounded-lg">
-                                                </div>
-                                            <% } %>
+                                <div class="relative">
+                                    <img src="<%= postPhoto.photo.photoPath.startsWith('/') ? postPhoto.photo.photoPath : '/' + postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-48 object-cover rounded-lg">
+                                </div>
+                            <% } %>
                                         <% }); %>
                                     </div>
                                 <% } %>
