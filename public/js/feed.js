@@ -525,4 +525,98 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 300);
         }, 3000);
     }
+
+    // Legal-focused post creation features
+    window.addLegalCategory = function() {
+        const modal = document.getElementById('postModal');
+        const contentTextarea = document.getElementById('content');
+        const titleInput = document.getElementById('title');
+        
+        if (modal && !modal.classList.contains('hidden')) {
+            // Show category selection dropdown
+            const categories = [
+                'Family Law', 'Employment Law', 'Criminal Defense', 'Corporate Law',
+                'Real Estate Law', 'Immigration Law', 'Personal Injury', 'Tax Law',
+                'Intellectual Property', 'Consumer Protection', 'Constitutional Law'
+            ];
+            
+            const categoryHtml = categories.map(cat => 
+                `<span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-2 mb-2 cursor-pointer hover:bg-blue-200" onclick="selectCategory('${cat}')">${cat}</span>`
+            ).join('');
+            
+            showNotification('Select a legal category to add to your post', 'info');
+            
+            // Create category selector if it doesn't exist
+            let categorySelector = document.getElementById('categorySelector');
+            if (!categorySelector) {
+                categorySelector = document.createElement('div');
+                categorySelector.id = 'categorySelector';
+                categorySelector.className = 'mb-4 p-3 border border-blue-200 rounded-lg bg-blue-50';
+                categorySelector.innerHTML = `
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Legal Categories</label>
+                    <div class="flex flex-wrap">${categoryHtml}</div>
+                `;
+                titleInput.parentNode.insertBefore(categorySelector, titleInput.nextSibling);
+            }
+        } else {
+            togglePostModal();
+            setTimeout(() => addLegalCategory(), 100);
+        }
+    };
+
+    window.selectCategory = function(category) {
+        const titleInput = document.getElementById('title');
+        if (titleInput && !titleInput.value.includes(`[${category}]`)) {
+            titleInput.value = `[${category}] ${titleInput.value}`.trim();
+        }
+        showNotification(`Added ${category} category`, 'success');
+    };
+
+    window.addCaseStudy = function() {
+        const modal = document.getElementById('postModal');
+        const contentTextarea = document.getElementById('content');
+        
+        if (modal && !modal.classList.contains('hidden')) {
+            const caseTemplate = `\n\n📋 CASE STUDY:\n\n🔍 Background:\n[Describe the legal situation]\n\n⚖️ Legal Issues:\n[Key legal questions or challenges]\n\n📖 Analysis:\n[Your legal analysis and reasoning]\n\n✅ Outcome/Recommendation:\n[Result or recommended course of action]\n\n💡 Key Takeaway:\n[Important lesson for others]`;
+            
+            contentTextarea.value += caseTemplate;
+            contentTextarea.focus();
+            showNotification('Case study template added to your post', 'success');
+        } else {
+            togglePostModal();
+            setTimeout(() => addCaseStudy(), 100);
+        }
+    };
+
+    window.addLegalAdvice = function() {
+        const modal = document.getElementById('postModal');
+        const contentTextarea = document.getElementById('content');
+        
+        if (modal && !modal.classList.contains('hidden')) {
+            const adviceTemplate = `\n\n💡 LEGAL TIP:\n\n📌 Quick Advice:\n[Your practical legal tip]\n\n⚠️ Important Note:\n[Key warnings or considerations]\n\n📚 Legal Basis:\n[Relevant laws or precedents]\n\n🎯 Action Steps:\n1. [First step]\n2. [Second step]\n3. [Third step]\n\n⚖️ Disclaimer: This is general information only. Consult with a qualified attorney for advice specific to your situation.`;
+            
+            contentTextarea.value += adviceTemplate;
+            contentTextarea.focus();
+            showNotification('Legal tip template added to your post', 'success');
+        } else {
+            togglePostModal();
+            setTimeout(() => addLegalAdvice(), 100);
+        }
+    };
+
+    window.addConsultation = function() {
+        const modal = document.getElementById('postModal');
+        const contentTextarea = document.getElementById('content');
+        
+        if (modal && !modal.classList.contains('hidden')) {
+            const consultationTemplate = `\n\n🤝 CONSULTATION AVAILABLE:\n\n📋 Service Offered:\n[Type of legal consultation]\n\n🎯 Specialization:\n[Your area of expertise]\n\n⏰ Availability:\n[Your consultation hours/schedule]\n\n💼 What's Included:\n• [Service 1]\n• [Service 2]\n• [Service 3]\n\n📞 How to Book:\n[Contact information or booking process]\n\n💰 Consultation: [Free initial consultation/Paid service details]`;
+            
+            contentTextarea.value += consultationTemplate;
+            contentTextarea.focus();
+            showNotification('Consultation template added to your post', 'success');
+        } else {
+            togglePostModal();
+            setTimeout(() => addConsultation(), 100);
+        }
+    };
 });
