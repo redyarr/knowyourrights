@@ -27,7 +27,9 @@ const upload = multer({
 router.post('/create-post', isAuthenticated, isVerifiedLawyer, upload.single('image'), FeedController.createPost);
 
 // Feed routes
-router.get('/', isAuthenticated, isVerifiedLawyer, FeedController.getFeedPosts);
+router.get('/', isAuthenticated, FeedController.getFeedPosts);
+
+// Booking route removed - handled by appointments router
 
 // Post reaction and comment routes
 router.post('/post/:id/react', isAuthenticated, FeedController.reactToPost);

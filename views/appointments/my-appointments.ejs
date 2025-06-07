@@ -1,0 +1,384 @@
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">My Appointments</h1>
+                    <p class="text-gray-600 mt-2">Manage your scheduled consultations</p>
+                </div>
+                <a href="/feed" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                    <i class="fas fa-plus mr-2"></i>Book New Consultation
+                </a>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="bg-white rounded-lg shadow-sm mb-8">
+            <div class="border-b border-gray-200">
+                <nav class="-mb-px flex space-x-8 px-6">
+                    <button onclick="filterAppointments('all')" 
+                        class="filter-tab py-4 px-1 border-b-2 font-medium text-sm transition-colors border-blue-500 text-blue-600" 
+                        data-filter="all">
+                        All Appointments
+                        <span class="ml-2 bg-blue-100 text-blue-600 py-1 px-2 rounded-full text-xs"><%= appointments.length %></span>
+                    </button>
+                    <button onclick="filterAppointments('upcoming')" 
+                        class="filter-tab py-4 px-1 border-b-2 font-medium text-sm transition-colors border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" 
+                        data-filter="upcoming">
+                        Upcoming
+                        <span class="ml-2 bg-gray-100 text-gray-600 py-1 px-2 rounded-full text-xs"><%= appointments.filter(apt => new Date(apt.appointmentDate + 'T' + apt.startTime) > new Date()).length %></span>
+                    </button>
+                    <button onclick="filterAppointments('completed')" 
+                        class="filter-tab py-4 px-1 border-b-2 font-medium text-sm transition-colors border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" 
+                        data-filter="completed">
+                        Completed
+                        <span class="ml-2 bg-gray-100 text-gray-600 py-1 px-2 rounded-full text-xs"><%= appointments.filter(apt => apt.status === 'completed').length %></span>
+                    </button>
+                    <button onclick="filterAppointments('cancelled')" 
+                        class="filter-tab py-4 px-1 border-b-2 font-medium text-sm transition-colors border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300" 
+                        data-filter="cancelled">
+                        Cancelled
+                        <span class="ml-2 bg-gray-100 text-gray-600 py-1 px-2 rounded-full text-xs"><%= appointments.filter(apt => apt.status === 'cancelled').length %></span>
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Appointments List -->
+        <div class="space-y-6">
+            <% if (appointments.length === 0) { %>
+                <div class="bg-white rounded-lg shadow-sm p-12 text-center">
+                    <i class="fas fa-calendar-alt text-6xl text-gray-300 mb-4"></i>
+                    <h3 class="text-xl font-medium text-gray-900 mb-2">No Appointments Yet</h3>
+                    <p class="text-gray-600 mb-6">You haven't scheduled any consultations yet.</p>
+                    <a href="/feed" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>Book Your First Consultation
+                    </a>
+                </div>
+            <% } else { %>
+                <% appointments.forEach(appointment => { %>
+                    <% 
+                    const appointmentDateTime = new Date(appointment.appointmentDate + 'T' + appointment.startTime);
+                    const isUpcoming = appointmentDateTime > new Date();
+                    const isPast = appointmentDateTime < new Date();
+                    const statusColors = {
+                        'scheduled': 'bg-blue-100 text-blue-800',
+                        'confirmed': 'bg-green-100 text-green-800',
+                        'completed': 'bg-gray-100 text-gray-800',
+                        'cancelled': 'bg-red-100 text-red-800',
+                        'rescheduled': 'bg-yellow-100 text-yellow-800'
+                    };
+                    const meetingTypeIcons = {
+                        'video_call': 'fas fa-video text-blue-600',
+                        'phone_call': 'fas fa-phone text-green-600',
+                        'in_person': 'fas fa-handshake text-purple-600'
+                    };
+                    %>
+                    
+                    <div class="appointment-card bg-white rounded-lg shadow-sm border-l-4 <%= appointment.status === 'cancelled' ? 'border-red-400' : isUpcoming ? 'border-blue-400' : 'border-gray-300' %>" 
+                         data-status="<%= appointment.status %>" 
+                         data-date="<%= appointment.appointmentDate %>">
+                        <div class="p-6">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start space-x-4">
+                                    <!-- Lawyer Avatar -->
+                                    <img src="https://ui-avatars.com/api/?name=<%= appointment.Lawyer.firstName %>+<%= appointment.Lawyer.lastName %>&background=0ea5e9&color=ffffff" 
+                                         alt="<%= appointment.Lawyer.firstName %> <%= appointment.Lawyer.lastName %>" 
+                                         class="w-16 h-16 rounded-full shadow-sm">
+                                    
+                                    <div class="flex-1">
+                                        <!-- Lawyer Info -->
+                                        <h3 class="text-lg font-semibold text-gray-900">
+                                            <%= appointment.Lawyer.firstName %> <%= appointment.Lawyer.lastName %>
+                                        </h3>
+                                        <% if (appointment.Lawyer.Lawyer) { %>
+                                            <p class="text-gray-600 text-sm">
+                                                <%= appointment.Lawyer.Lawyer.specialization || 'General Legal Practice' %>
+                                            </p>
+                                        <% } %>
+                                        
+                                        <!-- Appointment Details -->
+                                        <div class="mt-3 space-y-2">
+                                            <div class="flex items-center text-gray-600">
+                                                <i class="fas fa-calendar text-blue-600 mr-3 w-4"></i>
+                                                <span><%= new Date(appointment.appointmentDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+                                            </div>
+                                            <div class="flex items-center text-gray-600">
+                                                <i class="fas fa-clock text-green-600 mr-3 w-4"></i>
+                                                <span><%= formatTime(appointment.startTime) %> - <%= formatTime(appointment.endTime) %></span>
+                                            </div>
+                                            <div class="flex items-center text-gray-600">
+                                                <i class="<%= meetingTypeIcons[appointment.meetingType] || 'fas fa-question-circle text-gray-600' %> mr-3 w-4"></i>
+                                                <span class="capitalize"><%= appointment.meetingType.replace('_', ' ') %></span>
+                                            </div>
+                                            <div class="flex items-center text-gray-600">
+                                                <i class="fas fa-tag text-purple-600 mr-3 w-4"></i>
+                                                <span class="capitalize"><%= appointment.consultationType.replace('_', ' ') %></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Notes -->
+                                        <% if (appointment.notes) { %>
+                                            <div class="mt-3 p-3 bg-gray-50 rounded-lg">
+                                                <p class="text-sm text-gray-700">
+                                                    <i class="fas fa-sticky-note text-yellow-600 mr-2"></i>
+                                                    <%= appointment.notes %>
+                                                </p>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                
+                                <!-- Status and Actions -->
+                                <div class="text-right">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium <%= statusColors[appointment.status] || 'bg-gray-100 text-gray-800' %>">
+                                        <%= appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1) %>
+                                    </span>
+                                    
+                                    <!-- Action Buttons -->
+                                    <div class="mt-4 space-y-2">
+                                        <% if (appointment.status === 'scheduled' || appointment.status === 'confirmed') { %>
+                                            <% if (isUpcoming) { %>
+                                                <!-- Join Meeting Button (show 15 minutes before) -->
+                                                <% if (appointmentDateTime - new Date() <= 15 * 60 * 1000) { %>
+                                                    <button onclick="joinMeeting('<%= appointment.id %>')" 
+                                                        class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm">
+                                                        <i class="fas fa-video mr-2"></i>Join Meeting
+                                                    </button>
+                                                <% } %>
+                                                
+                                                <!-- Reschedule Button -->
+                                                <button onclick="rescheduleAppointment('<%= appointment.id %>')" 
+                                                    class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm">
+                                                    <i class="fas fa-calendar-alt mr-2"></i>Reschedule
+                                                </button>
+                                                
+                                                <!-- Cancel Button -->
+                                                <button onclick="cancelAppointment('<%= appointment.id %>')" 
+                                                    class="w-full bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors text-sm">
+                                                    <i class="fas fa-times mr-2"></i>Cancel
+                                                </button>
+                                            <% } %>
+                                        <% } %>
+                                        
+                                        <% if (appointment.status === 'completed') { %>
+                                            <!-- Leave Review Button -->
+                                            <button onclick="leaveReview('<%= appointment.Lawyer.id %>', '<%= appointment.id %>')" 
+                                                class="w-full bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors text-sm">
+                                                <i class="fas fa-star mr-2"></i>Leave Review
+                                            </button>
+                                        <% } %>
+                                        
+                                        <!-- View Details Button -->
+                                        <button onclick="viewAppointmentDetails('<%= appointment.id %>')" 
+                                            class="w-full bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors text-sm">
+                                            <i class="fas fa-eye mr-2"></i>View Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<!-- Reschedule Modal -->
+<div id="rescheduleModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Reschedule Appointment</h3>
+                <p class="text-gray-600 mb-6">Please contact the lawyer directly to reschedule your appointment. This feature will be available soon.</p>
+                <div class="flex space-x-3">
+                    <button onclick="closeModal('rescheduleModal')" class="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors">
+                        Close
+                    </button>
+                    <button onclick="contactLawyer()" class="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                        Contact Lawyer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Confirmation Modal -->
+<div id="cancelModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div class="p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Cancel Appointment</h3>
+                <p class="text-gray-600 mb-6">Are you sure you want to cancel this appointment? This action cannot be undone.</p>
+                <div class="flex space-x-3">
+                    <button onclick="closeModal('cancelModal')" class="flex-1 bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition-colors">
+                        Keep Appointment
+                    </button>
+                    <button onclick="confirmCancel()" class="flex-1 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                        Cancel Appointment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentAppointmentId = null;
+
+// Filter functionality
+function filterAppointments(filter) {
+    const cards = document.querySelectorAll('.appointment-card');
+    const tabs = document.querySelectorAll('.filter-tab');
+    
+    // Update tab styles
+    tabs.forEach(tab => {
+        if (tab.dataset.filter === filter) {
+            tab.className = 'filter-tab py-4 px-1 border-b-2 font-medium text-sm transition-colors border-blue-500 text-blue-600';
+        } else {
+            tab.className = 'filter-tab py-4 px-1 border-b-2 font-medium text-sm transition-colors border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300';
+        }
+    });
+    
+    // Filter cards
+    cards.forEach(card => {
+        const status = card.dataset.status;
+        const appointmentDate = new Date(card.dataset.date + 'T00:00:00');
+        const now = new Date();
+        const isUpcoming = appointmentDate >= now;
+        
+        let show = false;
+        
+        switch (filter) {
+            case 'all':
+                show = true;
+                break;
+            case 'upcoming':
+                show = isUpcoming && (status === 'scheduled' || status === 'confirmed');
+                break;
+            case 'completed':
+                show = status === 'completed';
+                break;
+            case 'cancelled':
+                show = status === 'cancelled';
+                break;
+        }
+        
+        card.style.display = show ? 'block' : 'none';
+    });
+}
+
+// Appointment actions
+function joinMeeting(appointmentId) {
+    // This would integrate with video calling service
+    alert('Joining meeting... This feature will integrate with video calling service.');
+}
+
+function rescheduleAppointment(appointmentId) {
+    currentAppointmentId = appointmentId;
+    document.getElementById('rescheduleModal').classList.remove('hidden');
+}
+
+function cancelAppointment(appointmentId) {
+    currentAppointmentId = appointmentId;
+    document.getElementById('cancelModal').classList.remove('hidden');
+}
+
+async function confirmCancel() {
+    if (!currentAppointmentId) return;
+    
+    try {
+        const response = await fetch(`/appointments/${currentAppointmentId}/cancel`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            location.reload();
+        } else {
+            alert('Error cancelling appointment: ' + result.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error cancelling appointment. Please try again.');
+    }
+    
+    closeModal('cancelModal');
+}
+
+function leaveReview(lawyerId, appointmentId) {
+    // Redirect to review page or open review modal
+    window.location.href = `/lawyers/${lawyerId}/review?appointment=${appointmentId}`;
+}
+
+function viewAppointmentDetails(appointmentId) {
+    // Redirect to appointment details page
+    window.location.href = `/appointments/${appointmentId}`;
+}
+
+function contactLawyer() {
+    // Redirect to messaging
+    window.location.href = '/messaging';
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
+    currentAppointmentId = null;
+}
+
+// Helper function to format time
+function formatTime(timeString) {
+    const [hours, minutes] = timeString.split(':');
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const displayHour = hour % 12 || 12;
+    return `${displayHour}:${minutes} ${ampm}`;
+}
+
+// Close modals when clicking outside
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('bg-opacity-50')) {
+        const modals = ['rescheduleModal', 'cancelModal'];
+        modals.forEach(modalId => {
+            document.getElementById(modalId).classList.add('hidden');
+        });
+        currentAppointmentId = null;
+    }
+});
+</script>
+
+<%- contentFor('head') %>
+<style>
+.appointment-card {
+    transition: all 0.3s ease;
+}
+
+.appointment-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.filter-tab {
+    transition: all 0.2s ease;
+}
+
+@media (max-width: 768px) {
+    .appointment-card .flex {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .appointment-card .text-right {
+        text-align: left;
+        margin-top: 1rem;
+    }
+}
+</style>

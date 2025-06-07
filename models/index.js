@@ -27,6 +27,8 @@ const PostReport = require('./postReport');
 const UserReport = require('./userReport');
 const lawyerDoc = require('./lawwyerDoc');
 const LawyerFeedback = require('./lawyerFeedback');
+const Appointment = require('./appointment');
+const { Availability, AvailabilityOverride } = require('./availability');
 
 
 
@@ -187,7 +189,10 @@ module.exports = {
     lawyerDoc,
     Job,
     JobReport,
-    LawyerFeedback
+    LawyerFeedback,
+    Appointment,
+    Availability,
+    AvailabilityOverride
 };
 
 console.log("Models exported");
@@ -198,3 +203,17 @@ PostPhoto.belongsTo(Post, { foreignKey: 'postId' });
 // PostPhoto and Photo
 PostPhoto.belongsTo(Photo, { foreignKey: 'photoId' });
 Photo.hasMany(PostPhoto, { foreignKey: 'photoId' });
+
+// Appointment associations
+User.hasMany(Appointment, { as: 'LawyerAppointments', foreignKey: 'lawyer_id' });
+User.hasMany(Appointment, { as: 'ClientAppointments', foreignKey: 'client_id' });
+Appointment.belongsTo(User, { as: 'Lawyer', foreignKey: 'lawyer_id' });
+Appointment.belongsTo(User, { as: 'Client', foreignKey: 'client_id' });
+
+// Availability associations
+User.hasMany(Availability, { foreignKey: 'lawyer_id' });
+Availability.belongsTo(User, { foreignKey: 'lawyer_id' });
+
+// Availability Override associations
+User.hasMany(AvailabilityOverride, { foreignKey: 'lawyer_id' });
+AvailabilityOverride.belongsTo(User, { foreignKey: 'lawyer_id' });

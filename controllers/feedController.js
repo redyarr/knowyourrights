@@ -212,8 +212,28 @@ exports.getFeedPosts = async (req, res) => {
             };
         });
 
+        // Get all lawyers for the booking sidebar
+        const lawyers = await User.findAll({
+            include: [
+                {
+                    model: Lawyer,
+                    attributes: ['legalAreas', 'summary', 'lawFirm', 'badgeIssuingAuthority', 'verificationStatus']
+                },
+                {
+                    model: require('../models').ProfileImage,
+                    attributes: ['imagePath']
+                }
+            ],
+            where: {
+                '$Lawyer.id$': { [require('sequelize').Op.ne]: null }
+            },
+            attributes: ['id', 'firstName', 'lastName'],
+            limit: 10
+        });
+
         res.render('feed/index', {
             posts: postsWithStats,
+            lawyers: lawyers,
             loggedInUserId: req.session.user_id,
             userRole: req.session.user?.role,
             user: req.session.user

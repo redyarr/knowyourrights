@@ -23,6 +23,7 @@ const AdminRouter = require('./routes/admin.js'); // Add this line for the admi
 const FeedbackRouter = require('./routes/feedback.js');
 const SearchRouter = require('./routes/search.js');
 const ResourcesRouter = require('./routes/resources.js');
+const AppointmentRouter = require('./routes/appointments.js');
 const storeRouter = require('./util/seed.js');
 
 // Import session configuration
@@ -81,6 +82,7 @@ app.use('/messaging', MessaginRouter)  // Handles all messaging routes including
 app.use('/notifications', NotificationsRouter)
 app.use('/feedback', FeedbackRouter); // lawyer feedback system
 app.use('/resources', ResourcesRouter); // legal resource pages
+app.use('/appointments', AppointmentRouter); // appointment booking system
 app.use('/admin', AdminRouter );
 app.use('/seed', storeRouter);
 
