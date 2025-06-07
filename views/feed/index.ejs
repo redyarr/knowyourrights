@@ -409,7 +409,7 @@
                                     <% post.post_photos.forEach(postPhoto => { %>
                                         <% if (postPhoto.photo && postPhoto.photo.photoPath) { %>
                             <div class="relative">
-                                <img src="<%= postPhoto.photo.photoPath.startsWith('/') ? postPhoto.photo.photoPath : '/' + postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-auto object-cover rounded-lg" style="max-height: 500px;">
+                                <img src="<%= postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-auto object-cover rounded-lg" style="max-height: 500px;">
                             </div>
                         <% } %>
                                     <% }); %>
@@ -418,7 +418,7 @@
                                         <% post.post_photos.forEach(postPhoto => { %>
                                             <% if (postPhoto.photo && postPhoto.photo.photoPath) { %>
                                 <div class="relative">
-                                    <img src="<%= postPhoto.photo.photoPath.startsWith('/') ? postPhoto.photo.photoPath : '/' + postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-48 object-cover rounded-lg">
+                                    <img src="<%= postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-48 object-cover rounded-lg">
                                 </div>
                             <% } %>
                                         <% }); %>
