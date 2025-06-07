@@ -1,63 +1,49 @@
 <div class="max-w-6xl mx-auto px-6 py-12">
   <!-- Hero Profile Section -->
-  <div class="relative bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 rounded-3xl overflow-hidden mb-12 shadow-2xl">
-    <!-- Premium Background Pattern -->
-    <div class="absolute inset-0 opacity-10">
-      <svg class="w-full h-full" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5"/>
-          </pattern>
-        </defs>
-        <rect width="100" height="100" fill="url(#grid)" />
-      </svg>
-    </div>
-    
-    <!-- Elegant Background Overlay -->
-    <div class="h-80 bg-cover bg-center relative"
-      style="background-image: url('<%= profile && profile.backgroundImage ? profile.backgroundImage : 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?auto=format&fit=crop&w=1600&q=80' %>');">      
-      <div class="absolute inset-0 bg-gradient-to-br from-slate-900/80 via-blue-900/70 to-indigo-900/80"></div>
+  <div class="relative bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mb-8">
+    <!-- Clean Background -->
+    <div class="h-48 bg-gradient-to-r from-blue-50 to-indigo-50 relative">
       
-      <!-- Premium Verification Badge -->
+      <!-- Verification Badge -->
       <% if (profile?.role === 'lawyer' && profile?.lawyer?.verificationStatus) { %>
-        <div class="absolute top-8 left-8 z-20">
-          <div class="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl px-6 py-4 shadow-2xl">
-            <div class="flex items-center space-x-4">
+        <div class="absolute top-4 left-4 z-20">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-200 px-4 py-3">
+            <div class="flex items-center space-x-3">
               <div class="relative">
                 <% if (profile?.lawyer?.verificationStatus === 'approved') { %>
-                  <div class="w-16 h-16 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center shadow-xl">
-                    <i class="fas fa-shield-check text-white text-2xl"></i>
+                  <div class="w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-shield-check text-white text-lg"></i>
                   </div>
-                  <div class="absolute -top-2 -right-2 w-6 h-6 bg-emerald-400 rounded-full flex items-center justify-center">
+                  <div class="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full flex items-center justify-center">
                     <i class="fas fa-check text-white text-xs"></i>
                   </div>
                 <% } else if (profile?.lawyer?.verificationStatus === 'pending') { %>
-                  <div class="w-16 h-16 bg-gradient-to-br from-amber-400 to-amber-600 rounded-2xl flex items-center justify-center shadow-xl">
-                    <i class="fas fa-hourglass-half text-white text-2xl"></i>
+                  <div class="w-12 h-12 bg-amber-500 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-hourglass-half text-white text-lg"></i>
                   </div>
-                  <div class="absolute -top-2 -right-2 w-6 h-6 bg-amber-400 rounded-full animate-pulse"></div>
+                  <div class="absolute -top-1 -right-1 w-4 h-4 bg-amber-400 rounded-full animate-pulse"></div>
                 <% } else if (profile?.lawyer?.verificationStatus === 'rejected') { %>
-                  <div class="w-16 h-16 bg-gradient-to-br from-red-400 to-red-600 rounded-2xl flex items-center justify-center shadow-xl">
-                    <i class="fas fa-exclamation-triangle text-white text-2xl"></i>
+                  <div class="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-exclamation-triangle text-white text-lg"></i>
                   </div>
                 <% } else { %>
-                  <div class="w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-600 rounded-2xl flex items-center justify-center shadow-xl">
-                    <i class="fas fa-question-circle text-white text-2xl"></i>
+                  <div class="w-12 h-12 bg-gray-500 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-question-circle text-white text-lg"></i>
                   </div>
                 <% } %>
               </div>
-              <div class="text-white">
-                <div class="text-lg font-bold tracking-wide">LEGAL AUTHORITY</div>
+              <div class="text-gray-900">
+                <div class="text-sm font-semibold">LEGAL AUTHORITY</div>
                 <div class="flex items-center space-x-2 mt-1">
-                  <span class="text-sm font-semibold
+                  <span class="text-xs font-medium
                     <% if (profile?.lawyer?.verificationStatus === 'approved') { %>
-                      text-emerald-300
+                      text-emerald-600
                     <% } else if (profile?.lawyer?.verificationStatus === 'pending') { %>
-                      text-amber-300
+                      text-amber-600
                     <% } else if (profile?.lawyer?.verificationStatus === 'rejected') { %>
-                      text-red-300
+                      text-red-600
                     <% } else { %>
-                      text-gray-300
+                      text-gray-600
                     <% } %>">
                     <% if (profile?.lawyer?.verificationStatus === 'approved') { %>
                       ✓ VERIFIED ATTORNEY
@@ -77,83 +63,83 @@
       <% } %>
     </div>
     
-    <!-- Premium Profile Image -->
-    <div class="absolute top-60 left-12 z-10">
+    <!-- Profile Image -->
+    <div class="absolute top-32 left-8 z-10">
       <div class="relative">
-        <!-- Elegant Frame -->
-        <div class="w-48 h-48 rounded-3xl bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-xl border border-white/30 p-2 shadow-2xl">
-          <div class="w-full h-full rounded-2xl overflow-hidden bg-gradient-to-br from-slate-100 to-slate-200">
+        <!-- Clean Frame -->
+        <div class="w-32 h-32 rounded-lg bg-white border-4 border-white shadow-lg">
+          <div class="w-full h-full rounded-md overflow-hidden">
             <img id="profileImage"
-              src="<%= (profile.ProfileImage && profile.ProfileImage.imagePath) ? profile.ProfileImage.imagePath : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.firstName + ' ' + profile.lastName) + '&size=192&background=1e293b&color=ffffff&bold=true' %>"
+              src="<%= (profile.ProfileImage && profile.ProfileImage.imagePath) ? profile.ProfileImage.imagePath : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(profile.firstName + ' ' + profile.lastName) + '&size=128&background=3b82f6&color=ffffff&bold=true' %>"
               alt="Profile" class="w-full h-full object-cover">
           </div>
         </div>
         
-        <!-- Professional Status Ring -->
-        <div class="absolute -bottom-3 -right-3 w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full border-4 border-white shadow-xl flex items-center justify-center">
-          <div class="w-4 h-4 bg-emerald-300 rounded-full animate-pulse"></div>
+        <!-- Status Indicator -->
+        <div class="absolute -bottom-1 -right-1 w-8 h-8 bg-emerald-500 rounded-full border-2 border-white flex items-center justify-center">
+          <div class="w-3 h-3 bg-emerald-300 rounded-full"></div>
         </div>
         
-        <!-- Premium Edit Overlay -->
+        <!-- Edit Overlay -->
         <% if (locals.loggedInUserId && locals.loggedInUserId === profile?.id) { %>
-          <div class="absolute inset-0 bg-black/60 backdrop-blur-sm rounded-3xl flex items-center justify-center opacity-0 hover:opacity-100 transition-all duration-300 cursor-pointer group" onclick="document.getElementById('profileImageInput').click()">
-            <div class="text-center transform group-hover:scale-110 transition-transform">
-              <i class="fas fa-camera text-white text-3xl mb-2"></i>
-              <div class="text-white text-sm font-semibold">Update Photo</div>
+          <div class="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center opacity-0 hover:opacity-100 transition-all duration-200 cursor-pointer group" onclick="document.getElementById('profileImageInput').click()">
+            <div class="text-center">
+              <i class="fas fa-camera text-white text-xl mb-1"></i>
+              <div class="text-white text-xs font-medium">Update</div>
             </div>
           </div>
           <input type="file" id="profileImageInput" accept="image/*" style="display: none;" onchange="uploadProfileImage(this)">
         <% } %>
       </div>
     </div>
-    <!-- Premium Action Buttons -->
-    <div class="absolute top-8 right-8 flex space-x-4 z-20">
+    <!-- Action Buttons -->
+    <div class="absolute top-4 right-4 flex space-x-3 z-20">
       <% if (locals.loggedInUserId && locals.loggedInUserId===profile?.id) { %>
         <a href="/in/edit"
-          class="group flex items-center px-6 py-3 backdrop-blur-xl bg-white/10 border border-white/20 text-white rounded-2xl hover:bg-white/20 shadow-2xl transition-all duration-300 hover:scale-105">
-          <i class="fas fa-pencil-alt mr-3 group-hover:rotate-12 transition-transform"></i> 
-          <span class="font-semibold">Edit Profile</span>
+          class="flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 shadow-sm transition-all duration-200">
+          <i class="fas fa-pencil-alt mr-2"></i> 
+          <span class="font-medium">Edit Profile</span>
         </a>
       <% } else { %>
-        <div class="flex space-x-4">
-          <button class="group flex items-center px-6 py-3 backdrop-blur-xl bg-white/10 border border-white/20 text-white rounded-2xl hover:bg-white/20 shadow-2xl transition-all duration-300 hover:scale-105">
-            <i class="fas fa-comment mr-3 group-hover:scale-110 transition-transform"></i> 
-            <span class="font-semibold">Message</span>
+        <div class="flex space-x-3">
+          <button class="flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 shadow-sm transition-all duration-200">
+            <i class="fas fa-comment mr-2"></i> 
+            <span class="font-medium">Message</span>
           </button>
           <form action="/mynetwork/connect/<%= profile.id %>" method="POST" class="inline">
             <button type="submit"
-              class="group flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-2xl shadow-2xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 hover:scale-105">
-              <i class="fas fa-user-plus mr-3 group-hover:scale-110 transition-transform"></i> 
-              <span class="font-semibold">Connect</span>
+              class="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow-sm transition-all duration-200">
+              <i class="fas fa-user-plus mr-2"></i> 
+              <span class="font-medium">Connect</span>
             </button>
           </form>
         </div>
       <% } %>
     </div>
-    <!-- Premium Profile Information -->
-    <div class="pt-40 pb-12 px-12">
-      <div class="ml-60">
-        <div class="flex items-center space-x-6 mb-4">
-          <h1 class="text-6xl font-bold text-black tracking-tight drop-shadow-xl">
+    <!-- Profile Information -->
+    <div class="pt-20 pb-8 px-8">
+      <div class="ml-40">
+        <div class="flex items-center space-x-4 mb-3">
+          <h1 class="text-3xl font-bold text-gray-900">
             <%= profile?.firstName %> <%= profile?.lastName %>
           </h1>
           <% if (profile?.role === 'lawyer' && profile?.lawyer?.verificationStatus === 'approved') { %>
-            <div class="flex items-center backdrop-blur-xl bg-emerald-500/40 border border-emerald-400/60 px-4 py-2 rounded-2xl">
-              <i class="fas fa-certificate text-emerald-100 text-lg mr-2"></i>
-              <span class="text-black font-bold tracking-wide drop-shadow-md">VERIFIED ATTORNEY</span>
+            <div class="flex items-center bg-emerald-100 border border-emerald-200 px-3 py-1 rounded-lg">
+              <i class="fas fa-certificate text-emerald-600 text-sm mr-2"></i>
+              <span class="text-emerald-800 font-semibold text-sm">VERIFIED ATTORNEY</span>
             </div>
           <% } %>
         </div>
         
-        <div class="flex items-center space-x-4 mb-6">
-          <div class="backdrop-blur-xl bg-white/25 border border-white/50 px-6 py-3 rounded-2xl">
-            <p class="text-black font-bold text-xl tracking-wide drop-shadow-md">
+        <div class="flex items-center space-x-3 mb-4">
+          <div class="bg-gray-100 border border-gray-200 px-4 py-2 rounded-lg">
+            <p class="text-gray-700 font-medium text-sm">
               <%= profile?.role?.charAt(0).toUpperCase() + profile?.role?.slice(1) %>
             </p>
           </div>
           <% if (profile?.lawyer?.specialization) { %>
-            <div class="backdrop-blur-xl bg-blue-500/40 border border-blue-400/60 px-6 py-3 rounded-2xl">
-              <p class="text-black font-bold text-lg drop-shadow-md">
+            <div class="bg-blue-100 border border-blue-200 px-4 py-2 rounded-lg">
+              <p class="text-blue-800 font-medium text-sm">
                 <%= profile.lawyer.specialization %>
               </p>
             </div>
@@ -161,8 +147,8 @@
         </div>
         
         <% if (profile?.city || profile?.country) { %>
-          <div class="flex items-center text-black font-bold text-xl mb-8 drop-shadow-lg">
-            <i class="fas fa-map-marker-alt mr-3 text-blue-200 drop-shadow-md"></i>
+          <div class="flex items-center text-gray-600 text-sm mb-6">
+            <i class="fas fa-map-marker-alt mr-2 text-gray-400"></i>
             <% if (profile?.city && profile?.country) { %>
               <%= profile.city %>, <%= profile.country %>
             <% } else if (profile?.city) { %>
@@ -173,26 +159,26 @@
           </div>
         <% } %>
         
-        <!-- Premium Stats Display -->
-        <div class="flex items-center space-x-12 mt-8">
-          <div class="flex items-center text-white">
-            <div class="w-16 h-16 backdrop-blur-xl bg-white/25 border border-white/50 rounded-2xl flex items-center justify-center mr-4">
-              <i class="fas fa-user-friends text-blue-200 text-2xl drop-shadow-md"></i>
+        <!-- Stats Display -->
+        <div class="flex items-center space-x-8 mt-6">
+          <div class="flex items-center">
+            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+              <i class="fas fa-user-friends text-blue-600 text-lg"></i>
             </div>
             <div>
-              <div class="text-4xl font-bold drop-shadow-lg"><%= connectionsCount %></div>
-              <div class="text-black font-bold drop-shadow-md">Professional Network</div>
+              <div class="text-2xl font-bold text-gray-900"><%= connectionsCount %></div>
+              <div class="text-gray-600 text-sm font-medium">Connections</div>
             </div>
           </div>
           
           <% if (profile?.role === 'lawyer') { %>
-            <div class="flex items-center text-white">
-              <div class="w-16 h-16 backdrop-blur-xl bg-white/25 border border-white/50 rounded-2xl flex items-center justify-center mr-4">
-                <i class="fas fa-gavel text-purple-200 text-2xl drop-shadow-md"></i>
+            <div class="flex items-center">
+              <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                <i class="fas fa-gavel text-purple-600 text-lg"></i>
               </div>
               <div>
-                <div class="text-4xl font-bold drop-shadow-lg"><%= new Date().getFullYear() - new Date(profile?.createdAt || new Date()).getFullYear() %></div>
-                <div class="text-black font-bold drop-shadow-md">Years of Practice</div>
+                <div class="text-2xl font-bold text-gray-900"><%= new Date().getFullYear() - new Date(profile?.createdAt || new Date()).getFullYear() %></div>
+                <div class="text-gray-600 text-sm font-medium">Years Active</div>
               </div>
             </div>
           <% } %>
@@ -201,118 +187,118 @@
     </div>
   </div>
 
-  <!-- Premium About Section -->
-  <div class="backdrop-blur-xl bg-white/15 border border-white/30 rounded-3xl shadow-2xl mb-12 p-10">
-    <div class="flex items-center mb-8">
-      <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mr-6 shadow-xl">
-        <i class="fas fa-user text-white text-2xl"></i>
+  <!-- About Section -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8 p-6">
+    <div class="flex items-center mb-6">
+      <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-4">
+        <i class="fas fa-user text-white text-lg"></i>
       </div>
-      <h3 class="text-4xl font-bold text-black tracking-wide drop-shadow-lg">Professional Profile</h3>
+      <h3 class="text-2xl font-bold text-gray-900">About</h3>
     </div>
-    <div class="backdrop-blur-xl bg-white/20 border border-white/40 rounded-2xl p-8">
-      <p class="text-black text-lg leading-relaxed font-semibold drop-shadow-md">
+    <div class="bg-gray-50 rounded-lg p-6">
+      <p class="text-gray-700 text-base leading-relaxed">
         <%= profile?.about || 'Distinguished legal professional committed to excellence in client service and legal advocacy.' %>
       </p>
     </div>
   </div>
 
-  <!-- Premium Professional Metrics -->
-  <div class="backdrop-blur-xl bg-white/15 border border-white/30 rounded-3xl shadow-2xl mb-12 p-10">
-    <div class="flex items-center mb-10">
-      <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl flex items-center justify-center mr-6 shadow-xl">
-        <i class="fas fa-chart-bar text-white text-2xl"></i>
+  <!-- Professional Metrics -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8 p-6">
+    <div class="flex items-center mb-6">
+      <div class="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mr-4">
+        <i class="fas fa-chart-bar text-white text-lg"></i>
       </div>
       <% if (profile?.role === 'lawyer') { %>
-        <h3 class="text-4xl font-bold text-black tracking-wide drop-shadow-lg">Professional Excellence</h3>
+        <h3 class="text-2xl font-bold text-gray-900">Professional Metrics</h3>
       <% } else { %>
-        <h3 class="text-4xl font-bold text-black tracking-wide drop-shadow-lg">Community Leadership</h3>
+        <h3 class="text-2xl font-bold text-gray-900">Activity Overview</h3>
       <% } %>
     </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
       <% if (profile?.role === 'lawyer') { %>
-        <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-blue-500/30 to-blue-600/40 border border-blue-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
-          <div class="text-5xl font-bold text-blue-100 mb-4 drop-shadow-lg"><%= profile?.posts?.length || 0 %></div>
-          <div class="text-lg font-bold text-black mb-2 drop-shadow-md">Legal Publications</div>
-          <i class="fas fa-file-alt text-blue-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
+        <div class="text-center p-4 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
+          <div class="text-2xl font-bold text-blue-600 mb-2"><%= profile?.posts?.length || 0 %></div>
+          <div class="text-sm font-medium text-gray-700 mb-2">Publications</div>
+          <i class="fas fa-file-alt text-blue-500 text-lg"></i>
         </div>
-        <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-emerald-500/30 to-emerald-600/40 border border-emerald-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
-          <div class="text-5xl font-bold text-emerald-100 mb-4 drop-shadow-lg"><%= connectionsCount %></div>
-          <div class="text-lg font-bold text-black mb-2 drop-shadow-md">Elite Network</div>
-          <i class="fas fa-users text-emerald-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
+        <div class="text-center p-4 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors">
+          <div class="text-2xl font-bold text-emerald-600 mb-2"><%= connectionsCount %></div>
+          <div class="text-sm font-medium text-gray-700 mb-2">Network</div>
+          <i class="fas fa-users text-emerald-500 text-lg"></i>
         </div>
-        <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-purple-500/30 to-purple-600/40 border border-purple-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
-          <div class="text-5xl font-bold text-purple-100 mb-4 drop-shadow-lg"><%= profile?.lawyer?.Educations?.length || 0 %></div>
-          <div class="text-lg font-bold text-black mb-2 drop-shadow-md">Advanced Degrees</div>
-          <i class="fas fa-graduation-cap text-purple-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
+        <div class="text-center p-4 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors">
+          <div class="text-2xl font-bold text-purple-600 mb-2"><%= profile?.lawyer?.Educations?.length || 0 %></div>
+          <div class="text-sm font-medium text-gray-700 mb-2">Degrees</div>
+          <i class="fas fa-graduation-cap text-purple-500 text-lg"></i>
         </div>
-        <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-amber-500/30 to-amber-600/40 border border-amber-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
-          <div class="text-5xl font-bold text-amber-100 mb-4 drop-shadow-lg"><%= new Date().getFullYear() - new Date(profile?.createdAt || new Date()).getFullYear() %></div>
-          <div class="text-lg font-bold text-black mb-2 drop-shadow-md">Years of Excellence</div>
-          <i class="fas fa-calendar-alt text-amber-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
+        <div class="text-center p-4 bg-amber-50 border border-amber-200 rounded-lg hover:bg-amber-100 transition-colors">
+          <div class="text-2xl font-bold text-amber-600 mb-2"><%= new Date().getFullYear() - new Date(profile?.createdAt || new Date()).getFullYear() %></div>
+          <div class="text-sm font-medium text-gray-700 mb-2">Years Active</div>
+          <i class="fas fa-calendar-alt text-amber-500 text-lg"></i>
         </div>
       <% } else { %>
-        <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-blue-500/30 to-blue-600/40 border border-blue-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
-          <div class="text-5xl font-bold text-blue-100 mb-4 drop-shadow-lg"><%= profile?.posts?.length || 0 %></div>
-          <div class="text-lg font-bold text-black mb-2 drop-shadow-md">Forum Contributions</div>
-          <i class="fas fa-comments text-blue-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
+        <div class="text-center p-4 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors">
+          <div class="text-2xl font-bold text-blue-600 mb-2"><%= profile?.posts?.length || 0 %></div>
+          <div class="text-sm font-medium text-gray-700 mb-2">Contributions</div>
+          <i class="fas fa-comments text-blue-500 text-lg"></i>
         </div>
-        <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-emerald-500/30 to-emerald-600/40 border border-emerald-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
-          <div class="text-5xl font-bold text-emerald-100 mb-4 drop-shadow-lg"><%= connectionsCount %></div>
-          <div class="text-lg font-bold text-black mb-2 drop-shadow-md">Active Network</div>
-          <i class="fas fa-users text-emerald-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
+        <div class="text-center p-4 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors">
+          <div class="text-2xl font-bold text-emerald-600 mb-2"><%= connectionsCount %></div>
+          <div class="text-sm font-medium text-gray-700 mb-2">Network</div>
+          <i class="fas fa-users text-emerald-500 text-lg"></i>
         </div>
-        <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-purple-500/30 to-purple-600/40 border border-purple-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
-          <div class="text-5xl font-bold text-purple-100 mb-4 drop-shadow-lg"><%= connectionsCount %></div>
-          <div class="text-lg font-bold text-black mb-2 drop-shadow-md">Legal Connections</div>
-          <i class="fas fa-balance-scale text-purple-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
+        <div class="text-center p-4 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors">
+          <div class="text-2xl font-bold text-purple-600 mb-2"><%= connectionsCount %></div>
+          <div class="text-sm font-medium text-gray-700 mb-2">Connections</div>
+          <i class="fas fa-balance-scale text-purple-500 text-lg"></i>
         </div>
-        <div class="group text-center p-8 backdrop-blur-xl bg-gradient-to-br from-amber-500/30 to-amber-600/40 border border-amber-400/50 rounded-3xl hover:scale-105 transition-all duration-300 cursor-pointer">
-          <div class="text-5xl font-bold text-amber-100 mb-4 drop-shadow-lg"><%= Math.floor((new Date() - new Date(profile?.createdAt || new Date())) / (1000 * 60 * 60 * 24)) %></div>
-          <div class="text-lg font-bold text-black mb-2 drop-shadow-md">Days Active</div>
-          <i class="fas fa-calendar-check text-amber-200 text-3xl group-hover:scale-110 transition-transform drop-shadow-md"></i>
+        <div class="text-center p-4 bg-amber-50 border border-amber-200 rounded-lg hover:bg-amber-100 transition-colors">
+          <div class="text-2xl font-bold text-amber-600 mb-2"><%= Math.floor((new Date() - new Date(profile?.createdAt || new Date())) / (1000 * 60 * 60 * 24)) %></div>
+          <div class="text-sm font-medium text-gray-700 mb-2">Days Active</div>
+          <i class="fas fa-calendar-check text-amber-500 text-lg"></i>
         </div>
       <% } %>
     </div>
   </div>
 
-  <!-- Premium Expertise & Interests -->
-  <div class="backdrop-blur-xl bg-white/15 border border-white/30 rounded-3xl shadow-2xl mb-12 p-10">
-    <div class="flex items-center mb-10">
+  <!-- Expertise & Interests -->
+  <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-8 p-6">
+    <div class="flex items-center mb-6">
       <% if (profile?.role === 'lawyer') { %>
-        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center mr-6 shadow-xl">
-          <i class="fas fa-gavel text-white text-2xl"></i>
+        <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-4">
+          <i class="fas fa-gavel text-white text-lg"></i>
         </div>
-        <h3 class="text-4xl font-bold text-black tracking-wide drop-shadow-lg">Legal Expertise</h3>
+        <h3 class="text-2xl font-bold text-gray-900">Legal Expertise</h3>
       <% } else { %>
-        <div class="w-16 h-16 bg-gradient-to-br from-pink-500 to-rose-600 rounded-2xl flex items-center justify-center mr-6 shadow-xl">
-          <i class="fas fa-heart text-white text-2xl"></i>
+        <div class="w-12 h-12 bg-pink-600 rounded-lg flex items-center justify-center mr-4">
+          <i class="fas fa-heart text-white text-lg"></i>
         </div>
-        <h3 class="text-4xl font-bold text-black tracking-wide drop-shadow-lg">Interests & Legal Areas</h3>
+        <h3 class="text-2xl font-bold text-gray-900">Interests & Legal Areas</h3>
       <% } %>
     </div>
-    <div class="flex flex-wrap gap-4">
+    <div class="flex flex-wrap gap-3">
       <% if (profile?.role === 'lawyer') { %>
         <% if (profile?.lawyer?.legalAreas) { %>
           <% profile.lawyer.legalAreas.split(',').forEach(area => { %>
-            <span class="group px-6 py-3 backdrop-blur-xl bg-gradient-to-r from-blue-500/40 to-indigo-600/50 border border-blue-400/60 text-black rounded-2xl font-bold text-lg hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-lg">
-              <i class="fas fa-gavel mr-2 group-hover:rotate-12 transition-transform"></i><%= area.trim() %>
+            <span class="px-4 py-2 bg-blue-100 border border-blue-200 text-blue-800 rounded-lg text-sm font-medium hover:bg-blue-200 transition-colors">
+              <i class="fas fa-gavel mr-2"></i><%= area.trim() %>
             </span>
           <% }); %>
         <% } else { %>
-          <div class="backdrop-blur-xl bg-white/20 border border-white/40 rounded-2xl p-6">
-            <p class="text-black text-lg font-semibold drop-shadow-md">No legal areas specified yet. <a href="/in/edit" class="text-blue-600 hover:text-blue-800 font-bold underline">Add your expertise areas</a></p>
+          <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+            <p class="text-gray-600 text-sm">No legal areas specified yet. <a href="/in/edit" class="text-blue-600 hover:text-blue-800 font-medium underline">Add your expertise areas</a></p>
           </div>
         <% } %>
       <% } else { %>
         <% if (profile?.interests) { %>
           <% profile.interests.split(',').forEach(interest => { %>
-            <span class="group px-6 py-3 backdrop-blur-xl bg-gradient-to-r from-pink-500/40 to-rose-600/50 border border-pink-400/60 text-black rounded-2xl font-bold text-lg hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-lg">
-              <i class="fas fa-star mr-2 group-hover:rotate-12 transition-transform"></i><%= interest.trim() %>
+            <span class="px-4 py-2 bg-pink-100 border border-pink-200 text-pink-800 rounded-lg text-sm font-medium hover:bg-pink-200 transition-colors">
+              <i class="fas fa-star mr-2"></i><%= interest.trim() %>
             </span>
           <% }); %>
         <% } else { %>
-          <div class="backdrop-blur-xl bg-white/20 border border-white/40 rounded-2xl p-6">
-            <p class="text-black text-lg font-semibold drop-shadow-md">No interests specified yet. <a href="/in/edit" class="text-pink-600 hover:text-pink-800 font-bold underline">Add your interests</a></p>
+          <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+            <p class="text-gray-600 text-sm">No interests specified yet. <a href="/in/edit" class="text-pink-600 hover:text-pink-800 font-medium underline">Add your interests</a></p>
           </div>
         <% } %>
       <% } %>
@@ -320,17 +306,17 @@
     
     <!-- Additional Interests for Lawyers -->
     <% if (profile?.role === 'lawyer' && profile?.interests) { %>
-      <div class="mt-10">
-        <h4 class="text-2xl font-bold text-white mb-6 flex items-center drop-shadow-lg">
-          <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center mr-4 shadow-xl">
-            <i class="fas fa-heart text-white"></i>
+      <div class="mt-6 pt-6 border-t border-gray-200">
+        <h4 class="text-lg font-bold text-gray-900 mb-4 flex items-center">
+          <div class="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center mr-3">
+            <i class="fas fa-heart text-white text-sm"></i>
           </div>
           Personal Interests
         </h4>
-        <div class="flex flex-wrap gap-4">
+        <div class="flex flex-wrap gap-3">
           <% profile.interests.split(',').forEach(interest => { %>
-            <span class="group px-6 py-3 backdrop-blur-xl bg-gradient-to-r from-emerald-500/40 to-green-600/50 border border-emerald-400/60 text-white rounded-2xl font-bold text-lg hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-lg">
-              <i class="fas fa-heart mr-2 group-hover:scale-110 transition-transform"></i><%= interest.trim() %>
+            <span class="px-4 py-2 bg-emerald-100 border border-emerald-200 text-emerald-800 rounded-lg text-sm font-medium hover:bg-emerald-200 transition-colors">
+              <i class="fas fa-heart mr-2"></i><%= interest.trim() %>
             </span>
           <% }); %>
         </div>
