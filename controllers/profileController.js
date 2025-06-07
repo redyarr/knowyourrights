@@ -195,23 +195,56 @@ exports.CreatePost = async (req, res) => {
         const post = await Post.create({ authorId, title, content });
         // Handle image upload if present
         if (req.file) {
+            console.log('📸 Profile post file detected:', {
+                originalname: req.file.originalname,
+                mimetype: req.file.mimetype,
+                size: req.file.size,
+                bufferLength: req.file.buffer ? req.file.buffer.length : 'No buffer'
+            });
+            
             try {
+                console.log('🚀 Starting ImageKit upload for profile post...');
+                
                 // Upload image to ImageKit.io
                 const uploadResponse = await imagekit.upload({
-                    file: req.file.buffer,
-                    fileName: `post_${post.id}_${Date.now()}_${req.file.originalname}`,
-                    folder: '/posts',
+                    file: req.file.buffer, // Use buffer from memory storage
+                    fileName: `post_${Date.now()}_${req.file.originalname}`,
+                    folder: '/posts', // Organize images in folders
                     useUniqueFileName: true,
-                    tags: ['post', 'profile_upload']
+                    tags: ['post', 'user_upload']
+                });
+
+                console.log('✅ ImageKit upload successful for profile post:', {
+                    url: uploadResponse.url,
+                    fileId: uploadResponse.fileId,
+                    name: uploadResponse.name
                 });
 
                 // Create photo record with ImageKit URL
-                const photo = await Photo.create({ photoPath: uploadResponse.url });
-                await PostPhoto.create({ postId: post.id, photoId: photo.id });
+                const photo = await Photo.create({
+                    photoPath: uploadResponse.url // Store the ImageKit URL
+                });
+
+                console.log('💾 Profile post photo record created:', photo.id);
+
+                // Create post-photo association
+                await PostPhoto.create({
+                    postId: post.id,
+                    photoId: photo.id
+                });
+
+                console.log('🔗 Profile post-photo association created');
             } catch (imageError) {
-                console.error('Error uploading image to ImageKit:', imageError);
+                console.error('❌ Error uploading profile post image to ImageKit:', imageError);
+                console.error('Error details:', {
+                    message: imageError.message,
+                    stack: imageError.stack,
+                    response: imageError.response?.data
+                });
                 // Continue without failing the post creation
             }
+        } else {
+            console.log('📷 No file detected in profile post request');
         }
         res.redirect(`/`);
     } catch (error) {
@@ -262,10 +295,19 @@ exports.uploadProfileImage = [profileUpload.single('profileImage'), async (req, 
             return res.status(400).json({ error: 'No image file provided' });
         }
 
-        console.log('File details:', {
+        console.log('📸 Profile image file details:', {
             originalname: req.file.originalname,
             size: req.file.size,
-            mimetype: req.file.mimetype
+            mimetype: req.file.mimetype,
+            bufferLength: req.file.buffer ? req.file.buffer.length : 'No buffer'
+        });
+
+        console.log('🚀 Starting ImageKit upload for profile image...');
+        console.log('ImageKit config check:', {
+            hasPublicKey: !!process.env.IMAGEKIT_PUBLIC_KEY,
+            hasPrivateKey: !!process.env.IMAGEKIT_PRIVATE_KEY,
+            hasUrlEndpoint: !!process.env.IMAGEKIT_URL_ENDPOINT,
+            urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT
         });
 
         // Upload image to ImageKit.io
@@ -277,8 +319,15 @@ exports.uploadProfileImage = [profileUpload.single('profileImage'), async (req, 
             tags: ['profile', 'user_avatar']
         });
 
+        console.log('✅ ImageKit upload successful for profile:', {
+            url: uploadResponse.url,
+            fileId: uploadResponse.fileId,
+            name: uploadResponse.name,
+            size: uploadResponse.size
+        });
+
         const imagePath = uploadResponse.url;
-        console.log('ImageKit upload successful, URL:', imagePath);
+        console.log('💾 Profile image URL to save:', imagePath);
 
         // Check if user already has a profile image
         const existingImage = await ProfileImage.findOne({ where: { userId } });
@@ -303,7 +352,12 @@ exports.uploadProfileImage = [profileUpload.single('profileImage'), async (req, 
         console.log('Profile image upload successful');
         res.json({ success: true, imagePath });
     } catch (error) {
-        console.error('Error uploading profile image:', error);
+        console.error('❌ Error uploading profile image:', error);
+        console.error('Error details:', {
+            message: error.message,
+            stack: error.stack,
+            response: error.response?.data
+        });
         res.status(500).json({ error: 'Failed to upload profile image: ' + error.message });
     }
 }];

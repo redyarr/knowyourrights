@@ -28,7 +28,16 @@ exports.createPost = async (req, res) => {
 
         // Handle image upload if present
         if (req.file) {
+            console.log('📸 File detected for upload:', {
+                originalname: req.file.originalname,
+                mimetype: req.file.mimetype,
+                size: req.file.size,
+                bufferLength: req.file.buffer ? req.file.buffer.length : 'No buffer'
+            });
+            
             try {
+                console.log('🚀 Starting ImageKit upload...');
+                
                 // Upload image to ImageKit.io
                 const uploadResponse = await imagekit.upload({
                     file: req.file.buffer, // Use buffer from memory storage
@@ -38,20 +47,37 @@ exports.createPost = async (req, res) => {
                     tags: ['post', 'user_upload']
                 });
 
+                console.log('✅ ImageKit upload successful:', {
+                    url: uploadResponse.url,
+                    fileId: uploadResponse.fileId,
+                    name: uploadResponse.name
+                });
+
                 // Create photo record with ImageKit URL
                 const photo = await Photo.create({
                     photoPath: uploadResponse.url // Store the ImageKit URL
                 });
+
+                console.log('💾 Photo record created:', photo.id);
 
                 // Create post-photo association
                 await PostPhoto.create({
                     postId: post.id,
                     photoId: photo.id
                 });
+
+                console.log('🔗 Post-photo association created');
             } catch (imageError) {
-                console.error('Error uploading image to ImageKit:', imageError);
+                console.error('❌ Error uploading image to ImageKit:', imageError);
+                console.error('Error details:', {
+                    message: imageError.message,
+                    stack: imageError.stack,
+                    response: imageError.response?.data
+                });
                 // Continue without failing the post creation
             }
+        } else {
+            console.log('📷 No file detected in request');
         }
 
         return res.json({ success: true, post });
