@@ -206,6 +206,40 @@
         outline: none;
         border-color: #3b82f6;
         box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 15px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+    }
+    
+    /* Search animation styles */
+    .searchable-item {
+        transition: all 0.3s ease;
+    }
+    
+    .searchable-item.hidden {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    
+    .empty-search-message {
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Search highlight styles */
+    mark {
+        background-color: #fef08a !important;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-weight: 600;
     }
     
     .floating-add {
@@ -262,19 +296,19 @@
         <!-- Navigation Tabs -->
         <div class="bg-white rounded-lg border border-gray-200 mb-6">
             <div class="flex border-b border-gray-200">
-                <button onclick="showTab('requests')" id="requests-tab" class="network-nav-item active flex-1 px-4 py-3 text-sm font-medium text-center border-b-2 border-blue-600 text-blue-600" data-tab="requests">
+                <button id="requests-tab" class="network-nav-item active flex-1 px-4 py-3 text-sm font-medium text-center border-b-2 border-blue-600 text-blue-600" data-tab="requests">
                     Requests
                     <% if (connectionRequests && connectionRequests.length > 0) { %>
                         <span class="ml-2 bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs"><%= connectionRequests.length %></span>
                     <% } %>
                 </button>
-                <button onclick="showTab('pending')" id="pending-tab" class="network-nav-item flex-1 px-4 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="pending">
+                <button id="pending-tab" class="network-nav-item flex-1 px-4 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="pending">
                     Pending
                     <% if (pendingRequests && pendingRequests.length > 0) { %>
                         <span class="ml-2 bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs"><%= pendingRequests.length %></span>
                     <% } %>
                 </button>
-                <button onclick="showTab('connections')" id="connections-tab" class="network-nav-item flex-1 px-4 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="connections">
+                <button id="connections-tab" class="network-nav-item flex-1 px-4 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="connections">
                     Connections
                     <% if (friends && friends.length > 0) { %>
                         <span class="ml-2 bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs"><%= friends.length %></span>
@@ -288,13 +322,21 @@
              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                  <i class="fas fa-search text-gray-400"></i>
              </div>
-             <input type="text" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Search your network..." id="networkSearch">
+             <input type="text" class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm transition-all duration-200" placeholder="Search your network..." id="networkSearch">
+             <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors duration-200" id="clearSearch" style="display: none;">
+                 <i class="fas fa-times"></i>
+             </button>
+         </div>
+         
+         <!-- Search Results Counter -->
+         <div id="searchResultsCounter" class="mb-4 text-sm text-gray-600" style="display: none;">
+             <span id="resultsCount">0</span> results found
          </div>
 
     <!-- Tab Content -->
     <div class="tab-content-container">
         <!-- Connection Requests Tab -->
-        <div id="requests-tab" class="tab-content">
+        <div id="requests-content" class="tab-content">
             <% if (connectionRequests && connectionRequests.length > 0) { %>
                 <div class="space-y-4">
                     <% connectionRequests.forEach(request => { %>
@@ -350,7 +392,7 @@
         </div>
 
         <!-- Pending Requests Tab -->
-        <div id="pending-tab" class="tab-content hidden">
+        <div id="pending-content" class="tab-content hidden">
             <% if (pendingRequests && pendingRequests.length > 0) { %>
                 <div class="space-y-4">
                     <% pendingRequests.forEach(request => { %>
@@ -403,7 +445,7 @@
         </div>
 
         <!-- Connections Tab -->
-        <div id="connections-tab" class="tab-content hidden">
+        <div id="connections-content" class="tab-content hidden">
             <% if (friends && friends.length > 0) { %>
                 <div class="space-y-4">
                     <% friends.forEach(friend => { %>
@@ -483,16 +525,21 @@ function showTab(tabName) {
     });
     
     // Add active class to clicked item
-    const activeTab = document.getElementById(tabName + '-tab');
-    activeTab.classList.add('active');
-    activeTab.classList.remove('border-transparent', 'text-gray-500');
-    activeTab.classList.add('border-blue-600', 'text-blue-600');
+    const activeTabButton = document.getElementById(tabName + '-tab');
+    if (activeTabButton) {
+        activeTabButton.classList.add('active');
+        activeTabButton.classList.remove('border-transparent', 'text-gray-500');
+        activeTabButton.classList.add('border-blue-600', 'text-blue-600');
+    }
     
     // Hide all tab content
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+    
     // Show selected tab content
-    const tabId = tabName + '-tab';
-    document.getElementById(tabId.replace('-tab', 's-tab')).classList.remove('hidden');
+    const tabContent = document.getElementById(tabName + '-content');
+    if (tabContent && tabContent.classList.contains('tab-content')) {
+        tabContent.classList.remove('hidden');
+    }
 }
 
 // Legacy support for data-tab clicks
@@ -504,19 +551,103 @@ document.querySelectorAll('.network-nav-item').forEach(item => {
     });
 });
 
-// Search functionality
-document.getElementById('networkSearch').addEventListener('input', function() {
-    const searchTerm = this.value.toLowerCase();
-    const items = document.querySelectorAll('.searchable-item');
+// Enhanced LinkedIn-style search functionality
+const searchInput = document.getElementById('networkSearch');
+const clearButton = document.getElementById('clearSearch');
+
+// Clear search functionality
+clearButton.addEventListener('click', function() {
+    searchInput.value = '';
+    searchInput.focus();
+    clearButton.style.display = 'none';
+    // Trigger input event to reset search
+    searchInput.dispatchEvent(new Event('input'));
+});
+
+// Combined search functionality with clear button toggle
+searchInput.addEventListener('input', function() {
+    // Show/hide clear button
+    const hasValue = this.value.trim().length > 0;
+    clearButton.style.display = hasValue ? 'flex' : 'none';
+    const searchTerm = this.value.toLowerCase().trim();
+    const activeTab = document.querySelector('.network-nav-item.active').dataset.tab;
+    const activeTabContent = document.getElementById(activeTab + '-content');
+    
+    if (!activeTabContent) return;
+    
+    const items = activeTabContent.querySelectorAll('.searchable-item');
+    let visibleCount = 0;
     
     items.forEach(item => {
         const name = item.dataset.name.toLowerCase();
-        if (name.includes(searchTerm)) {
+        const nameElement = item.querySelector('h3, .font-semibold');
+        const titleElement = item.querySelector('.text-gray-600, .text-sm');
+        
+        let searchableText = name;
+        if (titleElement) {
+            searchableText += ' ' + titleElement.textContent.toLowerCase();
+        }
+        
+        const isVisible = searchTerm === '' || searchableText.includes(searchTerm);
+        
+        if (isVisible) {
             item.style.display = 'block';
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+            visibleCount++;
+            
+            // Highlight matching text
+            if (searchTerm && nameElement) {
+                const originalText = nameElement.textContent;
+                const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                const highlightedText = originalText.replace(regex, '<mark class="bg-yellow-200 px-1 rounded">$1</mark>');
+                nameElement.innerHTML = highlightedText;
+            }
         } else {
             item.style.display = 'none';
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(-10px)';
         }
     });
+    
+    // Update search results counter
+     const resultsCounter = document.getElementById('searchResultsCounter');
+     const resultsCount = document.getElementById('resultsCount');
+     
+     if (searchTerm !== '') {
+         resultsCounter.style.display = 'block';
+         resultsCount.textContent = visibleCount;
+     } else {
+         resultsCounter.style.display = 'none';
+     }
+     
+     // Show/hide empty state message
+     let emptyMessage = activeTabContent.querySelector('.empty-search-message');
+     if (visibleCount === 0 && searchTerm !== '') {
+         if (!emptyMessage) {
+             emptyMessage = document.createElement('div');
+             emptyMessage.className = 'empty-search-message text-center py-8 text-gray-500';
+             emptyMessage.innerHTML = `
+                 <i class="fas fa-search text-4xl mb-4 text-gray-300"></i>
+                 <p class="text-lg font-medium">No results found</p>
+                 <p class="text-sm">Try adjusting your search terms</p>
+             `;
+             activeTabContent.appendChild(emptyMessage);
+         }
+         emptyMessage.style.display = 'block';
+     } else if (emptyMessage) {
+         emptyMessage.style.display = 'none';
+     }
+    
+    // Clear highlights when search is empty
+    if (searchTerm === '') {
+        items.forEach(item => {
+            const nameElement = item.querySelector('h3, .font-semibold');
+            if (nameElement && nameElement.innerHTML.includes('<mark')) {
+                nameElement.innerHTML = nameElement.textContent;
+            }
+        });
+    }
 });
 
 // Connection request functions

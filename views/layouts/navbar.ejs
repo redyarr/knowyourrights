@@ -327,11 +327,11 @@
   }
 
   // Enhanced search functionality
-  const searchInput = document.getElementById('searchInput');
+  const navSearchInput = document.getElementById('searchInput');
   const searchResults = document.getElementById('searchResults');
   
   // Show search suggestions on focus
-  searchInput.addEventListener('focus', function() {
+  navSearchInput.addEventListener('focus', function() {
     searchResults.classList.remove('hidden');
   });
   
@@ -346,19 +346,19 @@
   document.addEventListener('keydown', function(event) {
     if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
       event.preventDefault();
-      searchInput.focus();
+      navSearchInput.focus();
     }
     
     // Hide search results on Escape
     if (event.key === 'Escape') {
       searchResults.classList.add('hidden');
-      searchInput.blur();
+      navSearchInput.blur();
     }
   });
   
   // Real-time search suggestions (optional - can be enhanced with AJAX)
   let searchTimeout;
-  searchInput.addEventListener('input', function() {
+  navSearchInput.addEventListener('input', function() {
     clearTimeout(searchTimeout);
     const query = this.value.trim();
     
