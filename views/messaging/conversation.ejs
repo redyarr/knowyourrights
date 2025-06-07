@@ -738,7 +738,7 @@
             data.lawyerId = document.getElementById('feedbackLawyerId').value;
             data.conversationId = document.getElementById('feedbackConversationId').value;
 
-            if (!rating) {
+            if (!data.rating) {
                     notifications.warning('Please select a rating.');
                     return;
                 }
