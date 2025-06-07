@@ -1,7 +1,8 @@
-const { User, Lawyer, Education, Contact, Post, ProfileImage, Connection } = require('../models');
+const { User, Lawyer, Education, Contact, Post, Connection, ProfileImage } = require('../models');
 const multer = require('multer');
 const path = require('path');
 const { PostPhoto, Photo } = require('../models');
+const imagekit = require('../config/imagekit');
 
 exports.findProfile = async (req, res) => {
     const userId = req.session.user_id;
@@ -142,32 +143,24 @@ exports.updateProfile = async (req, res) => {
     }
 };
 
-// Multer storage configuration for posts
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, '../public/uploads/posts'));
+// Multer configuration for ImageKit (memory storage)
+const upload = multer({ 
+    storage: multer.memoryStorage(),
+    fileFilter: function (req, file, cb) {
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed!'), false);
+        }
     },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + '-' + file.originalname);
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB limit
     }
 });
-const upload = multer({ storage: storage });
 
-// Multer storage configuration for profile images
-const profileStorage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        const resolvedPath = path.join(__dirname, '../public/uploads/profiles');
-        console.log('Multer profile image upload destination:', resolvedPath);
-        cb(null, resolvedPath);
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, 'profile-' + uniqueSuffix + '-' + file.originalname);
-    }
-});
+// Profile image upload configuration
 const profileUpload = multer({ 
-    storage: profileStorage,
+    storage: multer.memoryStorage(),
     fileFilter: function (req, file, cb) {
         if (file.mimetype.startsWith('image/')) {
             cb(null, true);
@@ -202,8 +195,23 @@ exports.CreatePost = async (req, res) => {
         const post = await Post.create({ authorId, title, content });
         // Handle image upload if present
         if (req.file) {
-            const photo = await Photo.create({ photoPath: '/uploads/posts/' + req.file.filename });
-            await PostPhoto.create({ postId: post.id, photoId: photo.id });
+            try {
+                // Upload image to ImageKit.io
+                const uploadResponse = await imagekit.upload({
+                    file: req.file.buffer,
+                    fileName: `post_${post.id}_${Date.now()}_${req.file.originalname}`,
+                    folder: '/posts',
+                    useUniqueFileName: true,
+                    tags: ['post', 'profile_upload']
+                });
+
+                // Create photo record with ImageKit URL
+                const photo = await Photo.create({ photoPath: uploadResponse.url });
+                await PostPhoto.create({ postId: post.id, photoId: photo.id });
+            } catch (imageError) {
+                console.error('Error uploading image to ImageKit:', imageError);
+                // Continue without failing the post creation
+            }
         }
         res.redirect(`/`);
     } catch (error) {
@@ -255,14 +263,22 @@ exports.uploadProfileImage = [profileUpload.single('profileImage'), async (req, 
         }
 
         console.log('File details:', {
-            filename: req.file.filename,
             originalname: req.file.originalname,
             size: req.file.size,
             mimetype: req.file.mimetype
         });
 
-        const imagePath = '/uploads/profiles/' + req.file.filename;
-        console.log('Image path to save:', imagePath);
+        // Upload image to ImageKit.io
+        const uploadResponse = await imagekit.upload({
+            file: req.file.buffer,
+            fileName: `profile_${userId}_${Date.now()}_${req.file.originalname}`,
+            folder: '/profiles',
+            useUniqueFileName: true,
+            tags: ['profile', 'user_avatar']
+        });
+
+        const imagePath = uploadResponse.url;
+        console.log('ImageKit upload successful, URL:', imagePath);
 
         // Check if user already has a profile image
         const existingImage = await ProfileImage.findOne({ where: { userId } });

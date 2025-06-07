@@ -7,7 +7,21 @@ const multer = require('multer');
 // Import controllers
 const FeedController = require('../controllers/feedController');
 
-const upload = multer({ dest: 'public/uploads/posts/' });
+// Configure multer for memory storage (ImageKit will handle file storage)
+const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB limit
+    },
+    fileFilter: (req, file, cb) => {
+        // Accept only image files
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed!'), false);
+        }
+    }
+});
 
 // Create post route
 router.post('/create-post', isAuthenticated, isVerifiedLawyer, upload.single('image'), FeedController.createPost);

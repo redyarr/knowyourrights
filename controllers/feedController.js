@@ -1,5 +1,6 @@
-const { Post, User, Lawyer, React, Comment, Share } = require('../models');
+const { Post, User, Lawyer, React, Comment, Share, Photo, PostPhoto } = require('../models');
 const { Op } = require('sequelize');
+const imagekit = require('../config/imagekit');
 
 // Create a new post (only lawyers can post)
 exports.createPost = async (req, res) => {
@@ -28,9 +29,18 @@ exports.createPost = async (req, res) => {
         // Handle image upload if present
         if (req.file) {
             try {
-                // Create photo record
+                // Upload image to ImageKit.io
+                const uploadResponse = await imagekit.upload({
+                    file: req.file.buffer, // Use buffer from memory storage
+                    fileName: `post_${post.id}_${Date.now()}_${req.file.originalname}`,
+                    folder: '/posts', // Organize images in folders
+                    useUniqueFileName: true,
+                    tags: ['post', 'user_upload']
+                });
+
+                // Create photo record with ImageKit URL
                 const photo = await Photo.create({
-                    photoPath: `/uploads/posts/${req.file.filename}`
+                    photoPath: uploadResponse.url // Store the ImageKit URL
                 });
 
                 // Create post-photo association
@@ -39,7 +49,7 @@ exports.createPost = async (req, res) => {
                     photoId: photo.id
                 });
             } catch (imageError) {
-                console.error('Error saving image:', imageError);
+                console.error('Error uploading image to ImageKit:', imageError);
                 // Continue without failing the post creation
             }
         }

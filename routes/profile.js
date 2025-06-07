@@ -8,16 +8,8 @@ const ProfileController = require('../controllers/profileController');
 const multer = require('multer');
 const path = require('path');
 
-// Multer storage configuration (should match controller)
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, path.join(__dirname, '../public/uploads/posts'));
-    },
-    filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        cb(null, uniqueSuffix + '-' + file.originalname);
-    }
-});
+// Multer configuration for ImageKit (memory storage)
+const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // view profile routes
