@@ -21,7 +21,7 @@ exports.createPost = async (req, res) => {
             title,
             content,
             category: category || 'General',
-            userId,
+            authorId: userId,
             createdAt: new Date(),
             updatedAt: new Date()
         });
@@ -331,7 +331,7 @@ exports.editPost = async (req, res) => {
         }
 
         // Check if user owns the post or is admin
-        if (post.userId !== userId && req.session.user?.role !== 'admin') {
+        if (post.authorId !== userId && req.session.user?.role !== 'admin') {
             return res.status(403).json({ success: false, error: "You can only edit your own posts." });
         }
 
@@ -360,7 +360,7 @@ exports.deletePost = async (req, res) => {
         }
 
         // Check if user owns the post or is admin
-        if (post.userId !== userId && req.session.user?.role !== 'admin') {
+        if (post.authorId !== userId && req.session.user?.role !== 'admin') {
             return res.status(403).json({ success: false, error: "You can only delete your own posts." });
         }
 

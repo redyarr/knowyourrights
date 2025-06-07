@@ -372,7 +372,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <% if (locals.loggedInUserId && (post.userId === locals.loggedInUserId || post.authorId === locals.loggedInUserId)) { %>
+                                <% if (locals.loggedInUserId && post.authorId === locals.loggedInUserId) { %>
                                     <div class="flex items-center space-x-1">
                                         <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors edit-post-btn" title="Edit Post" data-post-id="<%= post.id %>" data-title="<%- post.title.replace(/&/g, '&amp;').replace(/\"/g, '&quot;') %>" data-content="<%- post.content.replace(/&/g, '&amp;').replace(/\"/g, '&quot;') %>">
                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

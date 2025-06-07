@@ -224,10 +224,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         <div class="absolute right-2 top-2">
                             <span class="flex space-x-1 items-center">
                                 <button class="p-1 text-gray-500 hover:text-blue-500 transition-all duration-200 ease-in-out edit-comment-inline-btn" title="Edit Comment" data-comment-id="${comment.id}" data-content="${comment.content.replace(/&/g, '&amp;').replace(/"/g, '&quot;')}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-2.828 0L9 13zm0 0V21h8" /></svg>
+                                    <i class="fas fa-edit text-xs"></i>
                                 </button>
                                 <button class="p-1 text-gray-500 hover:text-red-500 transition-all duration-200 ease-in-out delete-comment-btn" title="Delete Comment" data-comment-id="${comment.id}" data-post-id="${comment.postId}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    <i class="fas fa-trash text-xs"></i>
                                 </button>
                             </span>
                         </div>
@@ -266,8 +266,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.success) {
                     const postDiv = document.getElementById(`post-${postId}`);
                     if (postDiv) {
-                        postDiv.querySelector('h5').textContent = title;
-                        postDiv.querySelector('p.text-gray-700').textContent = content.length > 150 ? content.substring(0, 150) + '...' : content;
+                        const titleElement = postDiv.querySelector('h2');
+                        const contentElement = postDiv.querySelector('div.text-gray-700 p');
+                        if (titleElement) titleElement.textContent = title;
+                        if (contentElement) contentElement.textContent = content.length > 300 ? content.substring(0, 300) + '...' : content;
                     }
                     toggleEditPostModal();
                 } else {
@@ -288,8 +290,11 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 if (data.success) {
                     document.querySelectorAll(`[data-comment-id="${commentId}"]`).forEach(btn => {
-                        const commentText = btn.closest('.bg-blue-50').querySelector('p.text-sm');
-                        if (commentText) commentText.textContent = content;
+                        const commentContainer = btn.closest('.bg-blue-50') || btn.closest('.bg-gray-100');
+                        if (commentContainer) {
+                            const commentText = commentContainer.querySelector('p.text-sm');
+                            if (commentText) commentText.textContent = content;
+                        }
                     });
                     toggleEditCommentModal();
                 } else {
@@ -313,13 +318,23 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Attach event listeners for inline comment editing
-    document.querySelectorAll('.edit-comment-inline-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            const commentId = this.getAttribute('data-comment-id');
-            const content = this.getAttribute('data-content');
-            const commentContainer = this.closest('.bg-blue-50');
+    // Attach event listeners for inline comment editing using event delegation
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.edit-comment-inline-btn')) {
+            const button = e.target.closest('.edit-comment-inline-btn');
+            const commentId = button.getAttribute('data-comment-id');
+            const content = button.getAttribute('data-content');
+            // Look for either bg-blue-50 or bg-gray-100 comment containers
+            const commentContainer = button.closest('.bg-blue-50') || button.closest('.bg-gray-100');
+            if (!commentContainer) {
+                console.error('Comment container not found');
+                return;
+            }
             const commentText = commentContainer.querySelector('p.text-sm');
+            if (!commentText) {
+                console.error('Comment text element not found');
+                return;
+            }
 
             // Create inline editing form
             const originalContent = commentText.innerHTML;
@@ -349,7 +364,7 @@ document.addEventListener('DOMContentLoaded', function () {
             commentText.appendChild(buttonsDiv);
 
             // Hide edit and delete buttons while editing
-            const actionButtons = this.closest('.absolute');
+            const actionButtons = button.closest('.absolute');
             if (actionButtons) actionButtons.style.display = 'none';
 
             // Handle save button click
@@ -395,7 +410,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Focus the textarea
             textArea.focus();
-        });
+        }
     });
 
     window.showEditCommentModalFromButton = function (btn) {
@@ -429,12 +444,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    document.querySelectorAll('.delete-comment-btn').forEach(button => {
-        button.addEventListener('click', function () {
-            const commentId = this.getAttribute('data-comment-id');
-            const postId = this.getAttribute('data-post-id');
+    // Attach event listeners for delete comment using event delegation
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.delete-comment-btn')) {
+            const button = e.target.closest('.delete-comment-btn');
+            const commentId = button.getAttribute('data-comment-id');
+            const postId = button.getAttribute('data-post-id');
             showDeleteModal('comment', commentId, postId);
-        });
+        }
     });
     window.confirmDelete = function () {
         if (pendingDelete.type === 'comment') {
