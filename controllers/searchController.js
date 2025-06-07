@@ -40,6 +40,29 @@ exports.searchUsers = async (req, res) => {
         const trimmedQuery = query.trim();
         const searchResults = await performUserSearch(trimmedQuery, searchType);
         
+        // Get current user's connection information
+        const currentUserId = req.session?.user_id;
+        let connectionStatuses = {};
+        
+        if (currentUserId) {
+            // Get all connections for the current user
+            const { Connection } = require('../models');
+            const connections = await Connection.findAll({
+                where: {
+                    [Op.or]: [
+                        { requester_id: currentUserId },
+                        { receiver_id: currentUserId }
+                    ]
+                }
+            });
+            
+            // Build connection status map
+            connections.forEach(conn => {
+                const otherUserId = conn.requester_id === currentUserId ? conn.receiver_id : conn.requester_id;
+                connectionStatuses[otherUserId] = conn.status;
+            });
+        }
+
         // Map lawyer results with proper formatting
         const mappedLawyers = searchResults.lawyers.map(user => {
             const lawyer = user.Lawyer || user.lawyer;
@@ -72,25 +95,28 @@ exports.searchUsers = async (req, res) => {
             return {
                 id: user.id,
                 title: `${user.firstName} ${user.lastName}`,
-                summary: `Lawyer at ${lawyer?.lawFirm || 'Law Firm'}`,
-                link: `/in/${user.id}`,
-                profileImage: user.ProfileImage?.imagePath || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName + ' ' + user.lastName)}`,
-                isLawyer: true,
+                profileImage: user.ProfileImage?.imagePath || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName + ' ' + user.lastName)}&size=64&background=3b82f6&color=ffffff`,
+                summary: lawyer?.bio || 'Experienced legal professional',
+                link: `/profile/${user.id}`,
                 authorityColor,
                 authorityBadge,
-                authorityIcon
+                authorityIcon,
+                lawFirm: lawyer?.lawFirm || 'Independent Practice',
+                specialization: lawyer?.specialization || 'General Practice',
+                experience: lawyer?.experience || 'Experienced',
+                connectionStatus: connectionStatuses[user.id] || null
             };
         });
 
-        // Map regular user results
+        // Map user results with proper formatting
         const mappedUsers = searchResults.users.map(user => {
             return {
                 id: user.id,
                 title: `${user.firstName} ${user.lastName}`,
-                summary: 'User',
-                link: `/in/${user.id}`,
-                profileImage: user.ProfileImage?.imagePath || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName + ' ' + user.lastName)}`,
-                isLawyer: false
+                profileImage: user.ProfileImage?.imagePath || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName + ' ' + user.lastName)}&size=64&background=6b7280&color=ffffff`,
+                summary: user.interests || 'Community member interested in legal topics',
+                link: `/profile/${user.id}`,
+                connectionStatus: connectionStatuses[user.id] || null
             };
         });
 
@@ -98,7 +124,9 @@ exports.searchUsers = async (req, res) => {
             lawyers: mappedLawyers,
             users: mappedUsers, 
             query: trimmedQuery,
-            searchType: searchType || 'all'
+            searchType: searchType || 'all',
+            currentUserId: currentUserId,
+            loggedInUserId: currentUserId
         });
     } catch (error) {
         console.error('Search Error:', error);

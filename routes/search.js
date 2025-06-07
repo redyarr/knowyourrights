@@ -5,6 +5,7 @@ const SearchController = require('../controllers/searchController');
 
 // Search routes
 router.get('/', SearchController.searchUsers);
+router.get('/results', SearchController.searchUsers); // Add results route for filtering
 router.get('/lawyers', SearchController.searchLawyersBySpecialty);
 router.get('/api/users', isAuthenticated, SearchController.apiSearchUsers);
 
