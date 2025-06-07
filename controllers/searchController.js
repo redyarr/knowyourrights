@@ -1,4 +1,4 @@
-const { User, ProfileImage, Lawyer } = require('../models');
+const { User, Lawyer, ProfileImage } = require('../models');
 const { Op } = require('sequelize');
 const { sequelize } = require('../util/db');
 
@@ -6,90 +6,19 @@ const { sequelize } = require('../util/db');
 exports.apiSearchUsers = async (req, res) => {
     try {
         const { query, searchType } = req.query;
-        if (!query || query.length < 2) {
+        
+        // Return empty results for short queries
+        if (!query || query.trim().length < 2) {
             return res.json({ users: [] });
         }
-        
-        // Create flexible search patterns
-        const searchTerms = query.toLowerCase().split(' ').filter(term => term.length > 0);
-        const searchConditions = [];
-        
-        // Add exact and partial matches for each search term
-        searchTerms.forEach(term => {
-            searchConditions.push(
-                { first_name: { [Op.like]: `%${term}%` } },
-                { last_name: { [Op.like]: `%${term}%` } },
-                { email: { [Op.like]: `%${term}%` } }
-            );
-        });
-        
-        // Also add full query search
-        searchConditions.push(
-            { first_name: { [Op.like]: `%${query}%` } },
-            { last_name: { [Op.like]: `%${query}%` } },
-            { email: { [Op.like]: `%${query}%` } },
-            // Add concatenated name search
-            sequelize.where(
-                sequelize.fn('CONCAT', sequelize.col('first_name'), ' ', sequelize.col('last_name')),
-                { [Op.like]: `%${query}%` }
-            )
-        );
-        
-        let lawyers = [];
-        let regularUsers = [];
-        
-        // Search based on type
-        if (!searchType || searchType === 'all' || searchType === 'lawyers') {
-            lawyers = await User.findAll({
-                where: {
-                    [Op.and]: [
-                        {
-                            [Op.or]: searchConditions
-                        },
-                        { role: 'lawyer' }
-                    ]
-                },
-                include: [
-                    {
-                        model: ProfileImage,
-                        attributes: ['imagePath'],
-                    },
-                    {
-                        model: Lawyer,
-                        required: true
-                    }
-                ],
-                limit: 7
-            });
-        }
 
-        if (!searchType || searchType === 'all' || searchType === 'users') {
-            regularUsers = await User.findAll({
-                where: {
-                    [Op.and]: [
-                        {
-                            [Op.or]: searchConditions
-                        },
-                        { role: { [Op.ne]: 'lawyer' } }
-                    ]
-                },
-                include: [
-                    {
-                        model: ProfileImage,
-                        attributes: ['imagePath'],
-                    }
-                ],
-                limit: 7
-            });
-        }
-
-        // Combine results with lawyers first
-        const users = [...lawyers, ...regularUsers];
+        const trimmedQuery = query.trim();
+        const searchResults = await performUserSearch(trimmedQuery, searchType);
         
-        return res.json({ users });
+        return res.json({ users: searchResults.allUsers });
     } catch (error) {
-        console.error('Error searching users:', error);
-        return res.status(500).json({ error: 'An error occurred while searching users' });
+        console.error('API Search Error:', error);
+        return res.status(500).json({ error: 'Search failed' });
     }
 };
 
@@ -98,7 +27,8 @@ exports.searchUsers = async (req, res) => {
     try {
         const { query, searchType } = req.query;
         
-        if (!query || query.length < 2) {
+        // Handle empty or short queries
+        if (!query || query.trim().length < 2) {
             return res.render('search/results', { 
                 lawyers: [],
                 users: [], 
@@ -107,90 +37,20 @@ exports.searchUsers = async (req, res) => {
             });
         }
 
-        let lawyers = [];
-        let regularUsers = [];
-
-        // Create flexible search patterns
-        const searchTerms = query.toLowerCase().split(' ').filter(term => term.length > 0);
-        const searchConditions = [];
+        const trimmedQuery = query.trim();
+        const searchResults = await performUserSearch(trimmedQuery, searchType);
         
-        // Add exact and partial matches for each search term
-        searchTerms.forEach(term => {
-            searchConditions.push(
-                { first_name: { [Op.like]: `%${term}%` } },
-                { last_name: { [Op.like]: `%${term}%` } },
-                { email: { [Op.like]: `%${term}%` } }
-            );
-        });
-        
-        // Also add full query search
-        searchConditions.push(
-            { first_name: { [Op.like]: `%${query}%` } },
-            { last_name: { [Op.like]: `%${query}%` } },
-            { email: { [Op.like]: `%${query}%` } },
-            // Add concatenated name search
-            sequelize.where(
-                sequelize.fn('CONCAT', sequelize.col('first_name'), ' ', sequelize.col('last_name')),
-                { [Op.like]: `%${query}%` }
-            )
-        );
-
-        // Search based on type
-        if (searchType === 'all' || searchType === 'lawyers') {
-            lawyers = await User.findAll({
-                where: {
-                    [Op.and]: [
-                        {
-                            [Op.or]: searchConditions
-                        },
-                        { role: 'lawyer' }
-                    ]
-                },
-                include: [
-                    {
-                        model: ProfileImage,
-                        attributes: ['imagePath'],
-                    },
-                    {
-                        model: Lawyer,
-                        required: true
-                    }
-                ],
-                limit: 20
-            });
-        }
-
-        if (searchType === 'all' || searchType === 'users') {
-            regularUsers = await User.findAll({
-                where: {
-                    [Op.and]: [
-                        {
-                            [Op.or]: searchConditions
-                        },
-                        { role: { [Op.ne]: 'lawyer' } }
-                    ]
-                },
-                include: [
-                    {
-                        model: ProfileImage,
-                        attributes: ['imagePath'],
-                    }
-                ],
-                limit: 20
-            });
-        }
-
-        // Map lawyer results
-        const mappedLawyers = lawyers.map(user => {
-            const isLawyer = user.role === 'lawyer' && user.lawyer;
+        // Map lawyer results with proper formatting
+        const mappedLawyers = searchResults.lawyers.map(user => {
+            const lawyer = user.Lawyer || user.lawyer;
             
             // Authority level styling for lawyers
             let authorityColor = 'blue';
             let authorityBadge = 'LAWYER';
             let authorityIcon = '⚖️';
             
-            if (isLawyer && user.lawyer.badgeIssuingAuthority) {
-                switch(user.lawyer.badgeIssuingAuthority) {
+            if (lawyer && lawyer.badgeIssuingAuthority) {
+                switch(lawyer.badgeIssuingAuthority) {
                     case 'training':
                         authorityColor = 'yellow';
                         authorityBadge = 'TRAINING';
@@ -212,7 +72,7 @@ exports.searchUsers = async (req, res) => {
             return {
                 id: user.id,
                 title: `${user.firstName} ${user.lastName}`,
-                summary: `Lawyer at ${user.lawyer?.lawFirm || 'Law Firm'}`,
+                summary: `Lawyer at ${lawyer?.lawFirm || 'Law Firm'}`,
                 link: `/in/${user.id}`,
                 profileImage: user.ProfileImage?.imagePath || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.firstName + ' ' + user.lastName)}`,
                 isLawyer: true,
@@ -223,7 +83,7 @@ exports.searchUsers = async (req, res) => {
         });
 
         // Map regular user results
-        const mappedUsers = regularUsers.map(user => {
+        const mappedUsers = searchResults.users.map(user => {
             return {
                 id: user.id,
                 title: `${user.firstName} ${user.lastName}`,
@@ -237,14 +97,126 @@ exports.searchUsers = async (req, res) => {
         res.render('search/results', { 
             lawyers: mappedLawyers,
             users: mappedUsers, 
-            query,
+            query: trimmedQuery,
             searchType: searchType || 'all'
         });
     } catch (error) {
-        console.error('Error searching users:', error);
+        console.error('Search Error:', error);
         res.status(500).render('error', { error: 'An error occurred while searching users' });
     }
 };
+
+// Core search function
+async function performUserSearch(query, searchType = 'all') {
+    const searchConditions = buildSearchConditions(query);
+    
+    let lawyers = [];
+    let users = [];
+    
+    try {
+        // Search lawyers if requested
+        if (searchType === 'all' || searchType === 'lawyers') {
+            lawyers = await User.findAll({
+                where: {
+                    [Op.and]: [
+                        { [Op.or]: searchConditions },
+                        { role: 'lawyer' }
+                    ]
+                },
+                include: [
+                    {
+                        model: ProfileImage,
+                        attributes: ['imagePath'],
+                        required: false
+                    },
+                    {
+                        model: Lawyer,
+                        required: true
+                    }
+                ],
+                limit: 20,
+                order: [['firstName', 'ASC']]
+            });
+        }
+
+        // Search regular users if requested
+        if (searchType === 'all' || searchType === 'users') {
+            users = await User.findAll({
+                where: {
+                    [Op.and]: [
+                        { [Op.or]: searchConditions },
+                        { role: { [Op.ne]: 'lawyer' } }
+                    ]
+                },
+                include: [
+                    {
+                        model: ProfileImage,
+                        attributes: ['imagePath'],
+                        required: false
+                    }
+                ],
+                limit: 20,
+                order: [['firstName', 'ASC']]
+            });
+        }
+
+        return {
+            lawyers,
+            users,
+            allUsers: [...lawyers, ...users]
+        };
+    } catch (error) {
+        console.error('Database search error:', error);
+        throw error;
+    }
+}
+
+// Build search conditions for flexible matching
+function buildSearchConditions(query) {
+    const conditions = [];
+    const lowerQuery = query.toLowerCase();
+    
+    // Split query into individual terms for more flexible searching
+    const searchTerms = lowerQuery.split(/\s+/).filter(term => term.length > 0);
+    
+    // Add individual field searches for each term (MySQL compatible)
+    searchTerms.forEach(term => {
+        const termPattern = `%${term}%`;
+        conditions.push(
+            sequelize.where(sequelize.fn('LOWER', sequelize.col('first_name')), { [Op.like]: termPattern }),
+            sequelize.where(sequelize.fn('LOWER', sequelize.col('last_name')), { [Op.like]: termPattern }),
+            sequelize.where(sequelize.fn('LOWER', sequelize.col('email')), { [Op.like]: termPattern })
+        );
+    });
+    
+    // Add full query searches (MySQL compatible)
+    const fullPattern = `%${lowerQuery}%`;
+    conditions.push(
+        sequelize.where(sequelize.fn('LOWER', sequelize.col('first_name')), { [Op.like]: fullPattern }),
+        sequelize.where(sequelize.fn('LOWER', sequelize.col('last_name')), { [Op.like]: fullPattern }),
+        sequelize.where(sequelize.fn('LOWER', sequelize.col('email')), { [Op.like]: fullPattern })
+    );
+    
+    // Add concatenated name search using MySQL CONCAT function
+    try {
+        conditions.push(
+            sequelize.where(
+                sequelize.fn('LOWER', 
+                    sequelize.fn('CONCAT', 
+                        sequelize.col('first_name'), 
+                        ' ', 
+                        sequelize.col('last_name')
+                    )
+                ),
+                { [Op.like]: fullPattern }
+            )
+        );
+    } catch (error) {
+        console.warn('CONCAT search not supported, skipping:', error.message);
+    }
+    
+    return conditions;
+}
 
 // Search lawyers by specialty
 exports.searchLawyersBySpecialty = async (req, res) => {
@@ -252,7 +224,7 @@ exports.searchLawyersBySpecialty = async (req, res) => {
         const { specialty } = req.query;
         const userId = req.session?.user_id;
         
-        if (!specialty) {
+        if (!specialty || specialty.trim().length === 0) {
             return res.render('search/results', {
                 results: [],
                 query: '',
@@ -261,14 +233,19 @@ exports.searchLawyersBySpecialty = async (req, res) => {
             });
         }
 
+        const trimmedSpecialty = specialty.trim();
+        
         const lawyers = await User.findAll({
+            where: {
+                role: 'lawyer'
+            },
             include: [
                 {
                     model: Lawyer,
                     required: true,
                     where: {
                         legalAreas: {
-                            [Op.like]: `%${specialty}%`
+                            [Op.iLike]: `%${trimmedSpecialty}%`
                         }
                     }
                 },
@@ -277,25 +254,29 @@ exports.searchLawyersBySpecialty = async (req, res) => {
                     attributes: ['imagePath'],
                     required: false
                 }
-            ]
+            ],
+            order: [['firstName', 'ASC']]
         });
 
         // Map lawyers to a generic result format for the template
-        const results = lawyers.map(user => ({
-            title: user.firstName + ' ' + user.lastName,
-            summary: `Lawyer at ${user.lawyer.lawFirm || 'Law Firm'} - Specializes in ${specialty}`,
-            link: '/in/' + user.id,
-            specialty: user.lawyer.legalAreas
-        }));
+        const results = lawyers.map(user => {
+            const lawyer = user.Lawyer || user.lawyer;
+            return {
+                title: `${user.firstName} ${user.lastName}`,
+                summary: `Lawyer at ${lawyer?.lawFirm || 'Law Firm'} - Specializes in ${trimmedSpecialty}`,
+                link: `/in/${user.id}`,
+                specialty: lawyer?.legalAreas || ''
+            };
+        });
 
         return res.render('search/results', {
             results,
-            query: `${specialty} lawyers`,
+            query: `${trimmedSpecialty} lawyers`,
             loggedInUserId: userId,
             path: req.path
         });
     } catch (error) {
-        console.error('Error searching lawyers by specialty:', error);
+        console.error('Specialty search error:', error);
         return res.status(500).render('error', { error: 'An error occurred while searching lawyers' });
     }
 };
