@@ -23,6 +23,7 @@ const AdminRouter = require('./routes/admin.js'); // Add this line for the admi
 const FeedbackRouter = require('./routes/feedback.js');
 const SearchRouter = require('./routes/search.js');
 const ResourcesRouter = require('./routes/resources.js');
+const AboutRouter = require('./routes/about.js');
 const storeRouter = require('./util/seed.js');
 
 // Import session configuration
@@ -31,7 +32,7 @@ const { sessionMiddleware, setLoggedInUser } = require('./middlewares/session');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // Middlewares
 app.use(express.urlencoded({ extended: true }));
@@ -81,6 +82,7 @@ app.use('/messaging', MessaginRouter)  // Handles all messaging routes including
 app.use('/notifications', NotificationsRouter)
 app.use('/feedback', FeedbackRouter); // lawyer feedback system
 app.use('/resources', ResourcesRouter); // legal resource pages
+app.use('/about', AboutRouter); // about us page
 app.use('/admin', AdminRouter );
 app.use('/seed', storeRouter);
 
