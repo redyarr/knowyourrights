@@ -1,229 +1,124 @@
-<div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 mt-16">
-    <div class="max-w-6xl mx-auto px-4">
-        <div class="glass-card bg-white/80 backdrop-blur-lg rounded-2xl shadow-xl border border-white/20 overflow-hidden">
-            <div class="grid grid-cols-12 h-[calc(100vh-200px)]">
-                <!-- Conversations Sidebar -->
-                <div class="col-span-4 bg-white border-r border-gray-200 flex flex-col h-full shadow-sm">
-                    <div class="p-6 border-b border-gray-200 bg-white">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <div class="w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center mr-3 shadow-lg">
-                                    <i class="fas fa-comments text-white"></i>
-                                </div>
-                                <h2 class="text-xl font-bold text-gray-900">Messages</h2>
-                            </div>
-                            <a href="/messaging" class="bg-gray-600 hover:bg-gray-700 text-white p-2 rounded-xl shadow-lg transition-all duration-300 transform hover:-translate-y-1" title="Back to Messages">
-                                <i class="fas fa-arrow-left"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="p-4">
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 pl-4 flex items-center">
-                                <i class="fas fa-search text-gray-400"></i>
-                            </span>
-                            <input type="text" id="messageSearch" placeholder="Search conversations..."
-                                class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white placeholder-gray-500 text-sm transition-all duration-200">
-                        </div>
-                    </div>
-            <!-- Conversations List -->
-            <div class="flex-1 overflow-y-auto">
-                <% if (conversations.length === 0) { %>
-                    <div class="p-8 text-center">
-                        <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                            <i class="fas fa-comments text-gray-400"></i>
-                        </div>
-                        <h3 class="text-sm font-medium text-gray-900 mb-1">No conversations</h3>
-                        <p class="text-xs text-gray-500">Start messaging to see conversations here</p>
-                    </div>
-                <% } else { %>
-                    <div class="divide-y divide-gray-200">
-                        <% conversations.forEach(conv => { %>
-                            <a href="/messaging/<%= conv.user.id %>" class="block">
-                                <div class="message-item p-4 hover:bg-gray-50 cursor-pointer flex items-center space-x-3 transition-all duration-200 <%= activeConversation == conv.user.id ? 'bg-blue-50 border-r-4 border-blue-500' : '' %> <%= conv.unreadCount > 0 && activeConversation != conv.user.id ? 'bg-blue-50 border-r-4 border-blue-500' : '' %>">
-                                    <div class="relative flex-shrink-0">
-                                        <img src="https://ui-avatars.com/api/?name=<%= conv.user.firstName %>+<%= conv.user.lastName %>&background=0ea5e9&color=ffffff" 
-                                             alt="<%= conv.user.firstName %> <%= conv.user.lastName %>" class="w-12 h-12 rounded-full shadow-sm">
-                                        <% if (conv.unreadCount > 0) { %>
-                                            <span class="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-medium shadow-sm">
-                                                <%= conv.unreadCount %>
-                                            </span>
-                                        <% } %>
-                                        <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
-                                    </div>
-                                    <div class="flex-1 min-w-0">
-                                        <div class="flex justify-between items-start mb-1">
-                                            <div class="flex items-center space-x-2">
-                                                <h4 class="font-semibold text-gray-900 truncate <%= conv.unreadCount > 0 ? 'text-gray-900' : 'text-gray-800' %>">
-                                                    <%= conv.user.firstName %> <%= conv.user.lastName %>
-                                                </h4>
-                                            <% if (conv.user && conv.user.role === 'lawyer' && conv.user.lawyer) { %>
-                                                <% 
-                                                    // Get lawyer rank information
-                                                    let rankInfo = {
-                                                        badge: 'Training',
-                                                        color: 'yellow',
-                                                        icon: '🎓'
-                                                    };
-                                                    
-                                                    if (conv.user.lawyer.verificationStatus === 'approved') {
-                                                        rankInfo = {
-                                                            badge: 'Verified',
-                                                            color: 'green',
-                                                            icon: '✓'
-                                                        };
-                                                    } else if (conv.user.lawyer.verificationStatus === 'pending') {
-                                                        rankInfo = {
-                                                            badge: 'Pending',
-                                                            color: 'yellow',
-                                                            icon: '⏳'
-                                                        };
-                                                    } else if (conv.user.lawyer.verificationStatus === 'rejected') {
-                                                        rankInfo = {
-                                                            badge: 'Rejected',
-                                                            color: 'red',
-                                                            icon: '✗'
-                                                        };
-                                                    }
-                                                %>
-                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-<%= rankInfo.color %>-100 text-<%= rankInfo.color %>-800 shadow-sm">
-                                                    <span class="mr-1"><%= rankInfo.icon %></span>
-                                                    <%= rankInfo.badge %>
-                                                </span>
-                                            <% } %>
-                                        </div>
-                                        <span class="text-xs text-gray-500 font-medium flex-shrink-0">
-                                            <%= new Date(conv.lastMessage.createdAt).toLocaleDateString() %>
-                                        </span>
-                                    </div>
-                                    <p class="text-sm text-gray-600 truncate <%= conv.unreadCount > 0 ? 'font-medium text-gray-800' : '' %> leading-relaxed">
-                                        <%= conv.lastMessage.content %>
-                                    </p>
-                                </div>
-                            </div>
-                        </a>
-                    <% }) %>
-                    </div>
-                <% } %>
-            </div>
-            </div>
-            
+<div class="min-h-screen bg-white">
+    <div class="max-w-full mx-auto">
+        <div class="bg-white overflow-hidden">
+            <div class="h-screen">
         <!-- Conversation Content -->
-        <div class="col-span-8 flex flex-col h-full bg-white">
+        <div class="flex-1 flex flex-col h-screen bg-white">
             <% if (conversationPartner) { %>
                 <!-- Conversation Header -->
-                <div class="p-6 border-b border-gray-200 bg-white shadow-sm">
-                    <div class="flex items-center justify-between">
-                        <a href="/in/<%= conversationPartner.id %>" class="flex items-center space-x-4 hover:opacity-80 transition-all duration-200">
-                            <div class="relative">
-                                <img src="https://ui-avatars.com/api/?name=<%= conversationPartner.firstName %>+<%= conversationPartner.lastName %>&background=0ea5e9&color=ffffff" 
-                                     alt="<%= conversationPartner.firstName %> <%= conversationPartner.lastName %>" class="w-12 h-12 rounded-full shadow-sm">
-                                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
+                <div class="flex items-center p-4 border-b border-gray-200 bg-white">
+                    <button onclick="history.back()" class="mr-4 p-2 hover:bg-gray-100 rounded-full transition-colors">
+                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="flex items-center flex-1">
+                        <img src="https://ui-avatars.com/api/?name=<%= conversationPartner.firstName %>+<%= conversationPartner.lastName %>&background=0ea5e9&color=ffffff" 
+                             alt="<%= conversationPartner.firstName %> <%= conversationPartner.lastName %>" class="w-10 h-10 rounded-full mr-3">
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-gray-900"><%= conversationPartner.firstName %> <%= conversationPartner.lastName %></h3>
+                            <p class="text-sm text-gray-500">Active now</p>
+                        </div>
+                    </div>
+                    <button class="p-2 hover:bg-gray-100 rounded-full transition-colors mr-2">
+                        <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Messages Container -->
+                <div class="flex-1 overflow-y-auto p-4 space-y-4" id="messageContainer">
+                    <% if (messages.length === 0) { %>
+                        <div class="flex items-center justify-center h-full">
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-comments text-gray-400 text-xl"></i>
+                                </div>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">No messages yet</h3>
+                                <p class="text-gray-600">Start the conversation by sending a message below.</p>
                             </div>
-                            <div>
-                                <div class="flex items-center space-x-3 mb-1">
-                                    <h3 class="font-bold text-lg text-gray-900"><%= conversationPartner.firstName %> <%= conversationPartner.lastName %></h3>
-                                    <% if (conversationPartner && conversationPartner.role === 'lawyer' && conversationPartner.lawyer) { %>
-                                        <% 
-                                            // Get lawyer rank information
-                                            let rankInfo = {
-                                                badge: 'Training',
-                                                color: 'yellow',
-                                                icon: '🎓'
-                                            };
-                                            
-                                            if (conversationPartner.lawyer.verificationStatus === 'approved') {
-                                                rankInfo = {
-                                                    badge: 'Verified',
-                                                    color: 'green',
-                                                    icon: '✓'
-                                                };
-                                            } else if (conversationPartner.lawyer.verificationStatus === 'pending') {
-                                                rankInfo = {
-                                                    badge: 'Pending',
-                                                    color: 'yellow',
-                                                    icon: '⏳'
-                                                };
-                                            } else if (conversationPartner.lawyer.verificationStatus === 'rejected') {
-                                                rankInfo = {
-                                                    badge: 'Rejected',
-                                                    color: 'red',
-                                                    icon: '✗'
-                                                };
-                                            }
-                                        %>
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-<%= rankInfo.color %>-100 text-<%= rankInfo.color %>-800 shadow-sm">
-                                            <span class="mr-1"><%= rankInfo.icon %></span>
-                                            <%= rankInfo.badge %>
+                        </div>
+                    <% } else { %>
+                        <!-- Date Headers -->
+                        <% 
+                            let currentDate = null;
+                            messages.forEach(message => {
+                                const messageDate = new Date(message.createdAt).toDateString();
+                                if (currentDate !== messageDate) {
+                                    currentDate = messageDate;
+                        %>
+                                    <div class="text-center my-4">
+                                        <span class="bg-gray-100 text-gray-600 text-xs px-3 py-1 rounded-full">
+                                            <%= new Date(message.createdAt).toLocaleDateString('en-US', { 
+                                                weekday: 'long', 
+                                                year: 'numeric', 
+                                                month: 'long', 
+                                                day: 'numeric' 
+                                            }) %>
                                         </span>
-                                     <% } %>
-                                 </div>
-                                 <p class="text-sm text-green-600 font-medium flex items-center">
-                                     <div class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
-                                     Active now
-                                 </p>
-                             </div>
-                         </a>
-                         <div class="flex items-center space-x-3">
-                             <% if (conversationPartner && conversationPartner.role === 'lawyer') { %>
-                             <button id="giveFeedbackBtn" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg shadow-sm transition-all duration-200">
-                                    <i class="fas fa-star mr-2"></i>
-                                    Give Feedback
-                              </button>
-                              <% } %>
-                              <button class="bg-gray-100 hover:bg-gray-200 text-gray-600 font-medium py-2 px-4 rounded-lg shadow-sm transition-all duration-200">
-                                  <i class="fas fa-ellipsis-h"></i>
-                              </button>
-                          </div>
-                      </div>
-                  </div>
+                                    </div>
+                        <% 
+                                }
+                        %>
+                                <div class="flex <%= message.senderId == userId ? 'justify-end' : 'justify-start' %> mb-2">
+                                    <% if (message.senderId != userId) { %>
+                                        <img src="https://ui-avatars.com/api/?name=<%= conversationPartner.firstName %>+<%= conversationPartner.lastName %>&background=0ea5e9&color=ffffff" 
+                                             class="w-8 h-8 rounded-full mr-2 mt-auto">
+                                    <% } %>
+                                    <div class="max-w-xs lg:max-w-md">
+                                        <div class="<%= message.senderId == userId ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800' %> rounded-2xl px-4 py-2">
+                                            <p class="text-sm"><%= message.content %></p>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1 <%= message.senderId == userId ? 'text-right' : 'text-left' %>">
+                                            <%= new Date(message.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
+                                        </p>
+                                    </div>
+                                </div>
+                        <% 
+                            });
+                        %>
+                    <% } %>
+                </div>
 
-                  <!-- Messages Container -->
-                  <div class="flex-1 p-6 overflow-y-auto bg-gray-50" id="messageContainer">
-                      <% if (messages.length === 0) { %>
-                          <div class="flex items-center justify-center h-full">
-                              <div class="text-center">
-                                  <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                                      <i class="fas fa-comments text-gray-400 text-xl"></i>
-                                  </div>
-                                  <h3 class="text-lg font-medium text-gray-900 mb-2">No messages yet</h3>
-                                  <p class="text-gray-600">Start the conversation by sending a message below.</p>
-                              </div>
-                          </div>
-                      <% } else { %>
-                          <% messages.forEach(message => { %>
-                              <div class="mb-4 <%= message.senderId == userId ? 'flex justify-end' : 'flex justify-start' %>">
-                                  <div class="<%= message.senderId == userId ? 'bg-blue-600 text-white' : 'bg-white text-gray-800 border border-gray-200' %> rounded-2xl px-4 py-3 max-w-xs lg:max-w-md shadow-sm">
-                                      <p class="text-sm leading-relaxed"><%= message.content %></p>
-                                      <p class="text-xs <%= message.senderId == userId ? 'text-blue-100' : 'text-gray-500' %> text-right mt-2">
-                                          <%= new Date(message.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
-                                      </p>
-                                  </div>
-                              </div>
-                          <% }) %>
-                      <% } %>
-                  </div>
-
-                  <!-- Message Input -->
-                  <div class="p-6 border-t border-gray-200 bg-white">
-                      <form action="/messaging/<%= conversationPartner.id %>/send" method="POST" class="flex space-x-3" id="messageForm">
-                          <div class="flex-1 relative">
-                              <input type="text" name="content" placeholder="Type your message..." required id="messageInput"
-                                  class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all duration-200 text-gray-800 placeholder-gray-500 pr-20">
-                              <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex space-x-2">
-                                  <button type="button" class="text-gray-400 hover:text-blue-500 transition-colors duration-200" title="Add emoji">
-                                      <i class="fas fa-smile text-sm"></i>
-                                  </button>
-                                  <button type="button" class="text-gray-400 hover:text-blue-500 transition-colors duration-200" title="Attach file">
-                                      <i class="fas fa-paperclip text-sm"></i>
-                                  </button>
-                              </div>
-                          </div>
-                          <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-4 py-3 shadow-sm transition-all duration-200">
-                              <i class="fas fa-paper-plane"></i>
-                          </button>
-                      </form>
-                  </div>
+                <!-- Message Input -->
+                <div class="p-4 border-t border-gray-200 bg-white">
+                    <div class="flex items-center space-x-3 mb-3">
+                        <button class="bg-blue-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-blue-600 transition-colors">
+                            Sent
+                        </button>
+                        <button class="bg-orange-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-orange-600 transition-colors">
+                            Thanks
+                        </button>
+                        <% if (conversationPartner && conversationPartner.role === 'lawyer') { %>
+                        <button id="giveFeedbackBtn" class="bg-yellow-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-yellow-600 transition-colors">
+                            ⭐ Feedback
+                        </button>
+                        <% } %>
+                    </div>
+                    <form action="/messaging/<%= conversationPartner.id %>/send" method="POST" class="flex items-center space-x-3" id="messageForm">
+                        <div class="flex-1 relative">
+                            <input type="text" name="content" placeholder="Write a message..." required id="messageInput"
+                                class="w-full px-4 py-3 bg-gray-100 border-0 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 placeholder-gray-500">
+                        </div>
+                        <button type="button" class="p-3 text-gray-400 hover:text-blue-500 transition-colors" title="Attach file">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                            </svg>
+                        </button>
+                        <button type="button" class="p-3 text-gray-400 hover:text-blue-500 transition-colors" title="Take photo">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                        </button>
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-full transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
             <% } else { %>
                 <div class="flex-1 flex items-center justify-center bg-white">
                     <div class="text-center p-12">
