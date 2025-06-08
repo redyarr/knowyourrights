@@ -1,295 +1,54 @@
-<div class="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 py-8 mt-16">
-    <!-- Header -->
-<div class="bg-white border-b border-gray-200 sticky top-0 z-40">
-  <div class="max-w-6xl mx-auto px-4 py-4">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center space-x-4">
-        <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
-          <i class="fas fa-comments text-white"></i>
-        </div>
-        <div>
-          <h1 class="text-2xl font-semibold text-gray-900">Messages</h1>
-          <p class="text-sm text-gray-600 mt-1">Stay connected with your network</p>
-        </div>
-      </div>
-      
-      <div class="flex items-center space-x-3">
-        <a href="/messaging/search" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow-sm" title="Find Users">
-          <i class="fas fa-user-plus mr-2"></i>
-          New Message
-        </a>
-        <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all duration-200">
-          <i class="fas fa-ellipsis-h"></i>
-        </button>
-      </div>
-    </div>
+<div class="fixed top-0 left-0 right-0 bg-white z-50">
+  <!-- Header -->
+  <div class="flex items-center justify-between p-4 border-b">
+    <button onclick="history.back()" class="p-2">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    
+    <h1 class="text-lg font-semibold">Messages</h1>
+    
+    <button onclick="window.location.href='/messaging/search'" class="p-2">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M12 20H21L16 15L21 10H12M12 4V20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+  
+  <!-- Inbox Label -->
+  <div class="px-4 py-3 bg-gray-50 border-b">
+    <h2 class="text-sm font-medium text-gray-600">Inbox</h2>
   </div>
 </div>
-
-<!-- Main Content -->
-<div class="bg-gray-50 min-h-screen">
-  <div class="max-w-6xl mx-auto px-4 py-6">
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-      <!-- Search Bar -->
-      <div class="p-6 border-b border-gray-200">
-        <div class="relative">
-          <span class="absolute inset-y-0 left-0 pl-4 flex items-center">
-            <i class="fas fa-search text-gray-400"></i>
-          </span>
-          <input type="text" id="messageSearch" placeholder="Search conversations..."
-            class="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200">
-        </div>
-      </div>
-
-      <!-- Messages list -->
-      <div class="divide-y divide-gray-200">
-        <% if (messages.length === 0) { %>
-          <div class="p-12 text-center">
-            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <i class="fas fa-comments text-gray-400 text-xl"></i>
-            </div>
-            <h3 class="text-lg font-medium text-gray-900 mb-2">No conversations yet</h3>
-            <p class="text-gray-600 mb-6">Start a conversation by searching for users to connect with.</p>
-            <a href="/messaging/search" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-all duration-200">
-              <i class="fas fa-user-plus mr-2"></i>
-              Find Users
-            </a>
-          </div>
-        <% } else { %>
-          <% messages.forEach(message => { %>
-            <a href="/messaging/<%= message.user.id %>" class="block">
-              <div class="message-item p-6 hover:bg-gray-50 cursor-pointer flex items-center space-x-4 transition-all duration-200 <%= message.unreadCount > 0 ? 'bg-blue-50 border-l-4 border-blue-500' : '' %>">
-                <div class="relative flex-shrink-0">
-                  <img src="https://ui-avatars.com/api/?name=<%= message.user.firstName %>+<%= message.user.lastName %>&background=0ea5e9&color=ffffff"
-                    alt="<%= message.user.firstName %> <%= message.user.lastName %>" class="w-14 h-14 rounded-full shadow-sm">
-                  <% if (message.unreadCount > 0) { %>
-                    <span class="absolute -top-1 -right-1 bg-blue-600 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-medium shadow-sm">
-                      <%= message.unreadCount %>
-                    </span>
-                  <% } %>
-                  <div class="absolute bottom-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
-                </div>
-                  <div class="flex-1 min-w-0">
-                    <div class="flex justify-between items-start mb-2">
-                      <div class="flex items-center space-x-3">
-                        <h4 class="font-semibold text-gray-900 truncate <%= message.unreadCount > 0 ? 'text-gray-900' : 'text-gray-800' %>">
-                          <%= message.user.firstName %> <%= message.user.lastName %>
-                        </h4>
-                        <% if (message.user && message.user.role === 'lawyer' && message.user.lawyer) { %>
-                          <% 
-                            // Get lawyer rank information
-                            let rankInfo = {
-                              badge: 'Training',
-                              color: 'yellow',
-                              icon: '🎓'
-                            };
-                            
-                            if (message.user.lawyer.verificationStatus === 'approved') {
-                              rankInfo = {
-                                badge: 'Verified',
-                                color: 'green',
-                                icon: '✓'
-                              };
-                            } else if (message.user.lawyer.verificationStatus === 'pending') {
-                              rankInfo = {
-                                badge: 'Pending',
-                                color: 'yellow',
-                                icon: '⏳'
-                              };
-                            } else if (message.user.lawyer.verificationStatus === 'rejected') {
-                              rankInfo = {
-                                badge: 'Rejected',
-                                color: 'red',
-                                icon: '✗'
-                              };
-                            }
-                          %>
-                          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-<%= rankInfo.color %>-100 text-<%= rankInfo.color %>-800 shadow-sm">
-                            <span class="mr-1"><%= rankInfo.icon %></span>
-                            <%= rankInfo.badge %>
-                          </span>
-                        <% } %>
-                      </div>
-                      <span class="text-xs text-gray-500 font-medium flex-shrink-0 ml-2">
-                        <%= new Date(message.lastMessage.createdAt).toLocaleDateString() %>
-                      </span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                      <p class="text-sm text-gray-600 truncate pr-2 <%= message.unreadCount > 0 ? 'font-medium text-gray-800' : '' %>">
-                        <%= message.lastMessage.content %>
-                      </p>
-                      <% if (message.unreadCount > 0) { %>
-                         <span class="ml-2 w-2 h-2 bg-blue-600 rounded-full flex-shrink-0"></span>
-                       <% } %>
-                     </div>
-                   </div>
-                 </div>
-               </a>
-             <% }) %>
-           <% } %>
-         </div>
-        </div>
+  
+<!-- Messages list -->
+<div class="bg-white mt-32">
+  <% if (messages.length === 0) { %>
+    <div class="p-8 text-center text-gray-500">
+      <p>No conversations yet</p>
     </div>
+  <% } else { %>
+    <% messages.forEach(message => { %>
+      <a href="/messaging/<%= message.user.id %>" class="block">
+        <div class="flex items-center p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors">
+          <img src="https://ui-avatars.com/api/?name=<%= message.user.firstName %>+<%= message.user.lastName %>&background=0ea5e9&color=ffffff"
+               alt="<%= message.user.firstName %> <%= message.user.lastName %>" 
+               class="w-12 h-12 rounded-full mr-3 flex-shrink-0">
+          <div class="flex-1 min-w-0">
+            <div class="flex justify-between items-start mb-1">
+              <h3 class="font-medium text-gray-900 truncate"><%= message.user.firstName %> <%= message.user.lastName %></h3>
+              <span class="text-xs text-gray-500 ml-2 flex-shrink-0">
+                <%= new Date(message.lastMessage.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %>
+              </span>
+            </div>
+            <p class="text-sm text-gray-600 truncate"><%= message.lastMessage.content %></p>
+          </div>
+          <% if (message.unreadCount > 0) { %>
+            <div class="w-2 h-2 bg-blue-500 rounded-full ml-3 flex-shrink-0"></div>
+          <% } %>
+        </div>
+      </a>
+    <% }) %>
+  <% } %>
 </div>
-
-<style>
-/* Enhanced responsive styles for messaging page */
-@media (max-width: 768px) {
-    .max-w-4xl {
-        max-width: 100%;
-        padding: 0;
-    }
-    
-    .glass-card {
-        margin: 0.5rem;
-        border-radius: 1rem;
-    }
-    
-    .p-6 {
-        padding: 1rem !important;
-    }
-    
-    .p-8 {
-        padding: 1.5rem !important;
-    }
-    
-    /* Header adjustments */
-    .flex.justify-between.items-center {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
-    }
-    
-    .flex.space-x-2 {
-        width: 100%;
-        justify-content: flex-end;
-    }
-    
-    .text-2xl {
-        font-size: 1.25rem;
-    }
-    
-    /* Message items mobile */
-    .message-item {
-        padding: 1rem !important;
-    }
-    
-    .flex.items-center.space-x-4 {
-        flex-direction: row;
-        align-items: flex-start;
-        gap: 0.75rem;
-    }
-    
-    .w-14.h-14 {
-        width: 2.5rem !important;
-        height: 2.5rem !important;
-        flex-shrink: 0;
-    }
-    
-    .flex.justify-between.items-baseline {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.25rem;
-    }
-    
-    .flex.items-center.space-x-2 {
-        flex-wrap: wrap;
-        gap: 0.25rem;
-    }
-    
-    .message-name {
-        font-size: 1rem;
-    }
-    
-    .message-preview {
-        font-size: 0.875rem;
-        line-height: 1.25;
-    }
-    
-    /* Search input mobile */
-    .relative input {
-        padding-left: 2.5rem;
-        font-size: 1rem;
-    }
-    
-    .absolute.inset-y-0.left-0 {
-        padding-left: 0.75rem;
-    }
-    
-    /* Scrollable area mobile */
-    .max-h-\[calc\(100vh-300px\)\] {
-        max-height: calc(100vh - 200px);
-    }
-}
-
-@media (max-width: 480px) {
-    .glass-card {
-        margin: 0.25rem;
-        border-radius: 0.75rem;
-    }
-    
-    .p-6 {
-        padding: 0.75rem !important;
-    }
-    
-    .message-item {
-        padding: 0.75rem !important;
-    }
-    
-    .w-14.h-14 {
-        width: 2rem !important;
-        height: 2rem !important;
-    }
-    
-    .text-2xl {
-        font-size: 1.125rem;
-    }
-    
-    .message-name {
-        font-size: 0.875rem;
-    }
-    
-    .message-preview {
-        font-size: 0.75rem;
-    }
-    
-    .glass-button {
-        padding: 0.5rem;
-    }
-}
-
-/* Tablet adjustments */
-@media (min-width: 769px) and (max-width: 1024px) {
-    .max-w-4xl {
-        max-width: 90%;
-    }
-    
-    .message-item {
-        padding: 1.25rem;
-    }
-    
-    .w-14.h-14 {
-        width: 3rem !important;
-        height: 3rem !important;
-    }
-}
-</style>
-
-<script>
-    // Search functionality
-    document.getElementById('messageSearch').addEventListener('input', function (e) {
-        const searchTerm = e.target.value.toLowerCase();
-        const messageItems = document.querySelectorAll('.message-item');
-
-        messageItems.forEach(item => {
-            const name = item.querySelector('.message-name').textContent.toLowerCase();
-            const preview = item.querySelector('.message-preview').textContent.toLowerCase();
-
-            if (name.includes(searchTerm) || preview.includes(searchTerm)) {
-                item.closest('a').style.display = 'block';
-            } else {
-                item.closest('a').style.display = 'none';
-            }
-        });
-    });
-</script>

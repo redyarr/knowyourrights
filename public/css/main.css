@@ -574,6 +574,128 @@ main {
     }
 }
 
+/* Mobile First Responsive Design - Enhanced */
+@media screen and (max-width: 480px) {
+    /* Extra small mobile devices */
+    .container, .max-w-7xl, .max-w-4xl, .max-w-6xl {
+        padding-left: 1rem;
+        padding-right: 1rem;
+        max-width: 100%;
+    }
+    
+    /* Typography adjustments */
+    h1 { font-size: 1.5rem; }
+    h2 { font-size: 1.25rem; }
+    h3 { font-size: 1.125rem; }
+    
+    /* Card adjustments */
+    .card, .glass-card {
+        margin: 0.5rem 0;
+        padding: 1rem;
+        border-radius: 12px;
+    }
+    
+    /* Button adjustments */
+    .btn, button, .glass-button {
+        width: 100%;
+        margin-bottom: 0.5rem;
+        padding: 12px 16px;
+        font-size: 0.9rem;
+    }
+    
+    /* Grid layouts */
+    .grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem;
+    }
+    
+    /* Flex layouts */
+    .flex.space-x-3,
+    .flex.space-x-4 {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .flex.space-x-3 > *,
+    .flex.space-x-4 > * {
+        margin-right: 0;
+        margin-bottom: 0.75rem;
+        width: 100%;
+    }
+    
+    /* Profile images */
+    .profile-img-lg {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .w-36.h-36 {
+        width: 6rem !important;
+        height: 6rem !important;
+    }
+    
+    /* Form controls */
+    .form-control {
+        padding: 12px 14px;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    /* Messaging popup */
+    .messaging-popup {
+        width: calc(100vw - 2rem) !important;
+        left: 1rem !important;
+        right: 1rem !important;
+        max-height: 70vh;
+    }
+}
+
+@media screen and (min-width: 481px) and (max-width: 768px) {
+    /* Standard mobile devices */
+    .container, .max-w-7xl, .max-w-4xl, .max-w-6xl {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        max-width: 100%;
+    }
+    
+    /* Grid layouts */
+    .grid.grid-cols-1.md\:grid-cols-2.lg\:grid-cols-3 {
+        grid-template-columns: 1fr !important;
+        gap: 1.25rem;
+    }
+    
+    /* Card adjustments */
+    .card, .glass-card {
+        padding: 1.25rem;
+    }
+    
+    /* Button adjustments */
+    .btn, button, .glass-button {
+        width: auto;
+        min-width: 120px;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Flex layouts */
+    .flex.space-x-3,
+    .flex.space-x-4 {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    
+    /* Profile images */
+    .w-36.h-36 {
+        width: 7rem !important;
+        height: 7rem !important;
+    }
+    
+    /* Messaging popup */
+    .messaging-popup {
+        width: calc(100vw - 3rem) !important;
+        left: 1.5rem !important;
+        right: 1.5rem !important;
+    }
+}
+
 /* Tablet responsive styles - Enhanced */
 @media (min-width: 769px) and (max-width: 1024px) {
     .max-w-7xl, .max-w-4xl, .max-w-6xl {

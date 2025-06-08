@@ -458,7 +458,79 @@
   background-color: #ecf0f1;
 }
 
-/* Responsive styles */
+/* Enhanced Responsive Navigation */
+@media screen and (max-width: 480px) {
+  /* Extra small mobile */
+  .navbar-container {
+    padding: 0 15px;
+  }
+  
+  .navbar-brand {
+    font-size: 1.25rem;
+  }
+  
+  .nav-link {
+    font-size: 0.75rem;
+    padding: 8px 3px;
+  }
+  
+  .nav-link i {
+    font-size: 1.1rem;
+    margin-bottom: 2px;
+  }
+  
+  .nav-profile-img {
+    width: 20px;
+    height: 20px;
+  }
+  
+  /* Search bar adjustments */
+  .search-container {
+    max-width: 200px;
+  }
+  
+  .search-input {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+}
+
+@media screen and (min-width: 481px) and (max-width: 768px) {
+  /* Standard mobile */
+  .navbar-container {
+    padding: 0 20px;
+  }
+  
+  .navbar-brand {
+    font-size: 1.35rem;
+  }
+  
+  .nav-link {
+    font-size: 0.8rem;
+    padding: 9px 4px;
+  }
+  
+  .nav-link i {
+    font-size: 1.2rem;
+    margin-bottom: 3px;
+  }
+  
+  .search-container {
+    max-width: 250px;
+  }
+}
+
+@media screen and (min-width: 769px) and (max-width: 960px) {
+  /* Tablet */
+  .navbar-container {
+    padding: 0 25px;
+  }
+  
+  .search-container {
+    max-width: 300px;
+  }
+}
+
 @media screen and (max-width: 960px) {
   .navbar-container {
     padding: 0 30px;

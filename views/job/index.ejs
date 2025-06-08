@@ -1,16 +1,73 @@
-<div class="min-h-screen bg-gray-50 py-8">
-    <div class="max-w-6xl mx-auto px-4">
+<style>
+/* Responsive styles for job listings */
+@media screen and (max-width: 480px) {
+  .job-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  
+  .job-header h1 {
+    font-size: 1.25rem;
+  }
+  
+  .job-card {
+    padding: 1rem;
+  }
+  
+  .job-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .job-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .job-actions button,
+  .job-actions a {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .profile-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+}
+
+@media screen and (min-width: 481px) and (max-width: 768px) {
+  .job-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .job-card {
+    padding: 1.25rem;
+  }
+  
+  .job-actions {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+}
+</style>
+
+<div class="min-h-screen bg-gray-50 py-4 sm:py-6 md:py-8">
+    <div class="max-w-6xl mx-auto px-2 sm:px-4">
         <!-- Header -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 mb-4 sm:mb-6">
+            <div class="job-header flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div class="flex items-center">
-                    <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-4">
-                        <i class="fas fa-briefcase text-white text-xl"></i>
+                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-3 sm:mr-4">
+                        <i class="fas fa-briefcase text-white text-lg sm:text-xl"></i>
                     </div>
-                    <h1 class="text-2xl font-bold text-gray-900">Job Opportunities</h1>
+                    <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Job Opportunities</h1>
                 </div>
                 <% if (locals.user && user.role !== 'lawyer') { %>
-                    <a href="/jobs/create" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                    <a href="/jobs/create" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm sm:text-base">
                         <i class="fas fa-plus mr-2"></i>
                         Post a Job
                     </a>
@@ -20,19 +77,19 @@
 
         <!-- Job Listings -->
         <% if (jobs && jobs.length > 0) { %>
-            <div class="space-y-4">
+            <div class="space-y-3 sm:space-y-4">
                 <% jobs.forEach(job => { %>
-                    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
-                        <div class="flex items-start space-x-4">
+                    <div class="job-card bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-shadow">
+                        <div class="job-content flex items-start space-x-3 sm:space-x-4">
                             <!-- Profile Image -->
-                            <div class="flex-shrink-0">
+                            <div class="profile-section flex-shrink-0">
                                 <% if (job.user && job.user.ProfileImage && job.user.ProfileImage.imagePath) { %>
-                                    <img src="<%= job.user.ProfileImage.imagePath %>" alt="Profile" class="w-12 h-12 rounded-full object-cover">
+                                    <img src="<%= job.user.ProfileImage.imagePath %>" alt="Profile" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover">
                                 <% } else if (job.user) { %>
-                                    <img src="https://ui-avatars.com/api/?name=<%= encodeURIComponent(job.user.firstName + ' ' + job.user.lastName) %>&size=48&background=3b82f6&color=ffffff" alt="Profile" class="w-12 h-12 rounded-full object-cover">
+                                    <img src="https://ui-avatars.com/api/?name=<%= encodeURIComponent(job.user.firstName + ' ' + job.user.lastName) %>&size=48&background=3b82f6&color=ffffff" alt="Profile" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover">
                                 <% } else { %>
-                                    <div class="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
-                                        <i class="fas fa-user text-gray-600"></i>
+                                    <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gray-300 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-user text-gray-600 text-sm sm:text-base"></i>
                                     </div>
                                 <% } %>
                             </div>
@@ -41,34 +98,38 @@
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-start justify-between">
                                     <div class="flex-1">
-                                        <h3 class="font-semibold text-gray-900 mb-1">
+                                        <h3 class="font-semibold text-gray-900 mb-1 text-sm sm:text-base">
                                             <% if (job.user) { %>
                                                 <%= job.user.firstName %> <%= job.user.lastName %>
                                             <% } else { %>
                                                 Unknown User
                                             <% } %>
                                         </h3>
-                                        <div class="flex items-center text-sm text-gray-500 mb-2">
-                                            <i class="fas fa-map-marker-alt mr-1"></i>
-                                            <span><%= job.city %>, <%= job.country %></span>
-                                            <span class="mx-2">•</span>
+                                        <div class="flex flex-col sm:flex-row sm:items-center text-xs sm:text-sm text-gray-500 mb-2 gap-1 sm:gap-0">
+                                            <div class="flex items-center">
+                                                <i class="fas fa-map-marker-alt mr-1"></i>
+                                                <span><%= job.city %>, <%= job.country %></span>
+                                            </div>
+                                            <span class="hidden sm:inline mx-2">•</span>
                                             <span><%= new Date(job.createdAt).toLocaleDateString() %></span>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <p class="text-gray-700 mb-4 line-clamp-3">
+                                <p class="text-gray-700 mb-3 sm:mb-4 line-clamp-3 text-sm sm:text-base">
                                     <%= job.summary %>
                                 </p>
                                 
-                                <div class="flex items-center space-x-3">
-                                    <a href="/jobs/<%= job.id %>" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
-                                        <i class="fas fa-eye mr-2"></i>
-                                        View Details
+                                <div class="job-actions flex items-center space-x-2 sm:space-x-3">
+                                    <a href="/jobs/<%= job.id %>" class="inline-flex items-center px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-sm font-medium">
+                                        <i class="fas fa-eye mr-1 sm:mr-2"></i>
+                                        <span class="hidden sm:inline">View Details</span>
+                                        <span class="sm:hidden">View</span>
                                     </a>
-                                    <button class="inline-flex items-center px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
-                                        <i class="fas fa-share mr-2"></i>
-                                        Share
+                                    <button class="inline-flex items-center px-3 sm:px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-xs sm:text-sm font-medium">
+                                        <i class="fas fa-share mr-1 sm:mr-2"></i>
+                                        <span class="hidden sm:inline">Share</span>
+                                        <span class="sm:hidden">Share</span>
                                     </button>
                                 </div>
                              </div>

@@ -46,6 +46,7 @@ exports.searchUsers = async (req, res) => {
             query,
             userId,
             user: req.session.user,
+            path: req.path,
             pagination: {
                 page,
                 limit,
@@ -152,7 +153,8 @@ exports.getMessages = async (req, res) => {
             messages: conversationsWithLastMessage,
             userId,
             activeConversation: null,
-            user: req.session.user
+            user: req.session.user,
+            path: req.path
         });
         console.log('=== End of getMessages ===');
     } catch (error) {
@@ -287,7 +289,8 @@ exports.getConversation = async (req, res) => {
             conversationPartner,
             userId,
             activeConversation: conversationId,
-            user: req.session.user
+            user: req.session.user,
+            path: req.path
         });
     } catch (error) {
         console.error('Error fetching conversation:', error);

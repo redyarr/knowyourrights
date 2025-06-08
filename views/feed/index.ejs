@@ -92,46 +92,126 @@
   }
   
   /* Enhanced Mobile responsive styles for feed */
-  @media (max-width: 768px) {
-    .grid.grid-cols-1.lg\:grid-cols-12 {
-      display: block !important;
-      grid-template-columns: none !important;
+  @media (max-width: 480px) {
+    /* Extra small mobile devices */
+    .max-w-6xl {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+    
+    .grid.grid-cols-1.lg\:grid-cols-4 {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    
+    .lg\:col-span-1 {
+      display: none; /* Hide sidebar on very small screens */
     }
     
     .lg\:col-span-3 {
-      display: none;
+      grid-column: span 1;
     }
     
-    .lg\:col-span-6 {
-      width: 100%;
-    }
-    
-    .max-w-7xl {
-      padding-left: 0.5rem;
-      padding-right: 0.5rem;
-    }
-    
-    .rounded-3xl {
-      border-radius: 1rem;
-    }
-    
-    .p-8 {
-      padding: 1rem;
-    }
-    
-    .p-6 {
-      padding: 0.75rem;
-    }
-    
-    .space-y-8 > * + * {
-      margin-top: 1rem;
-    }
-    
-    .mb-10 {
+    /* Post adjustments */
+    .bg-white.rounded-lg {
+      border-radius: 0.75rem;
       margin-bottom: 1rem;
     }
     
-    /* Post content adjustments */
+    .p-6 {
+      padding: 1rem;
+    }
+    
+    .p-4 {
+      padding: 0.75rem;
+    }
+    
+    /* Typography */
+    .text-2xl {
+      font-size: 1.125rem;
+    }
+    
+    .text-xl {
+      font-size: 1rem;
+    }
+    
+    .text-lg {
+      font-size: 0.95rem;
+    }
+    
+    /* Images */
+    .w-full.h-auto {
+      max-height: 250px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+    }
+    
+    /* Profile images */
+    .w-10.h-10 {
+      width: 2rem;
+      height: 2rem;
+    }
+    
+    .w-16.h-16 {
+      width: 3rem;
+      height: 3rem;
+    }
+    
+    /* Buttons and interactions */
+    .flex.items-center.space-x-4 {
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      justify-content: space-between;
+    }
+    
+    .flex.items-center.space-x-4 button {
+      flex: 1;
+      min-width: 80px;
+      padding: 0.5rem;
+      font-size: 0.8rem;
+    }
+    
+    /* Modal adjustments */
+    .fixed.inset-0 .bg-white {
+      margin: 0.5rem;
+      max-height: calc(100vh - 1rem);
+      overflow-y: auto;
+      border-radius: 1rem;
+    }
+    
+    /* Form adjustments */
+    textarea {
+      min-height: 80px;
+      font-size: 16px; /* Prevents zoom on iOS */
+    }
+  }
+  
+  @media (min-width: 481px) and (max-width: 768px) {
+    /* Standard mobile devices */
+    .max-w-6xl {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+    
+    .grid.grid-cols-1.lg\:grid-cols-4 {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+    
+    .lg\:col-span-1 {
+      order: -1; /* Show simplified sidebar at top */
+    }
+    
+    .lg\:col-span-3 {
+      grid-column: span 1;
+    }
+    
+    /* Post adjustments */
+    .p-6 {
+      padding: 1.25rem;
+    }
+    
+    /* Typography */
     .text-2xl {
       font-size: 1.25rem;
     }
@@ -140,19 +220,19 @@
       font-size: 1.125rem;
     }
     
-    /* Image adjustments */
+    /* Images */
     .w-full.h-auto {
       max-height: 300px;
       object-fit: cover;
     }
     
-    /* Button adjustments */
+    /* Buttons */
     .flex.items-center.space-x-4 {
       flex-wrap: wrap;
-      gap: 0.5rem;
+      gap: 0.75rem;
     }
     
-    /* Modal adjustments for mobile */
+    /* Modal adjustments */
     .fixed.inset-0 .bg-white {
       margin: 1rem;
       max-height: calc(100vh - 2rem);
@@ -160,23 +240,24 @@
     }
   }
   
-  @media (max-width: 480px) {
-    .py-8 {
-      padding-top: 1rem;
-      padding-bottom: 1rem;
+  @media (min-width: 769px) and (max-width: 1024px) {
+    /* Tablet devices */
+    .max-w-6xl {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
     }
     
-    .gap-8 {
-      gap: 1rem;
+    .grid.grid-cols-1.lg\:grid-cols-4 {
+      grid-template-columns: 1fr 2fr;
+      gap: 1.5rem;
     }
     
-    .text-lg {
-      font-size: 1rem;
+    .lg\:col-span-1 {
+      grid-column: span 1;
     }
     
-    .px-4 {
-      padding-left: 0.5rem;
-      padding-right: 0.5rem;
+    .lg\:col-span-3 {
+      grid-column: span 1;
     }
   }
 </style>
@@ -195,7 +276,7 @@
                             </div>
                             <h3 class="font-semibold text-gray-900 text-sm mb-1"><%= locals.user ? (locals.user.firstName + ' ' + locals.user.lastName) : 'User' %></h3>
                             <p class="text-xs text-gray-500 mb-3"><%= locals.user ? locals.user.headline || 'Professional' : '' %></p>
-                            <a href="/profile/<%= locals.loggedInUserId %>" class="text-blue-600 hover:text-blue-700 text-xs font-semibold">View profile</a>
+                            <a href="/in/<%= locals.loggedInUserId %>" class="text-blue-600 hover:text-blue-700 text-xs font-semibold">View profile</a>
                         </div>
                         <div class="border-t border-gray-200 px-4 py-3">
                             <div class="flex justify-between text-xs text-gray-600">

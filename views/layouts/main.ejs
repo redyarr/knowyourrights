@@ -7,11 +7,16 @@
   <title><%= typeof title !== 'undefined' ? title : 'LegalNet' %></title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-  <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/nav.css">
-  <link rel="stylesheet" href="/css/auth.css">
   <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/modern-enhancements.css">
+  <link rel="stylesheet" href="/css/nav.css">
+  <link rel="stylesheet" href="/css/profile.css">
+  <link rel="stylesheet" href="/css/auth.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/css/userTable.css">
+  <link rel="stylesheet" href="/css/feedback.css">
+  <link rel="stylesheet" href="/css/responsive-utilities.css">
   <style>
     /* Custom styles for Messaging Popup */
     .messaging-popup {
@@ -23,23 +28,30 @@
   </style>
 </head>
 
-<body class="bg-gray-100 min-h-screen overflow-x-hidden">
-  <% // Set the current path for active nav highlighting  
-     let path = '';
-     if (typeof originalUrl !== 'undefined' && typeof originalUrl === 'string') {
-       path = originalUrl;
-     } else if (typeof req !== 'undefined') {
-       path = req.originalUrl || req.url || '';
-     }
-  %>
+<% // Set the current path for active nav highlighting %>
+<% let path = '';
+   if (typeof originalUrl !== 'undefined' && typeof originalUrl === 'string') {
+     path = originalUrl;
+   } else if (typeof req !== 'undefined') {
+     path = req.originalUrl || req.url || '';
+   }
+%>
+
+<body class="bg-gray-100 min-h-screen overflow-x-hidden <%= path.includes('/messaging') ? 'messaging-page' : '' %>">
 
   <%- include('./navbar', { path: path, locals: locals }) %>
 
-  <main class="pt-24 pb-8 min-h-screen">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <% if (path.includes('/messaging')) { %>
+    <main class="min-h-screen">
       <%- body %>
-    </div>
-  </main>
+    </main>
+  <% } else { %>
+    <main class="pt-24 pb-8 min-h-screen">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <%- body %>
+      </div>
+    </main>
+  <% } %>
 
   <!-- Messaging Popup -->
 

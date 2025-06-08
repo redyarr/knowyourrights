@@ -13,13 +13,90 @@
         .card:hover {
             transform: translateY(-5px);
         }
+        
+        /* Responsive adjustments for About page cards */
+        @media screen and (max-width: 480px) {
+            .card {
+                width: 100% !important;
+                max-width: 320px;
+                height: 24rem !important;
+                margin: 0 auto;
+            }
+            
+            .card .absolute.-top-32 {
+                top: -6rem !important;
+            }
+            
+            .card .w-64.h-64 {
+                width: 12rem !important;
+                height: 12rem !important;
+            }
+            
+            .card .pt-36 {
+                padding-top: 7rem !important;
+            }
+            
+            .card h2 {
+                font-size: 1.25rem !important;
+            }
+            
+            .card p {
+                font-size: 0.9rem !important;
+            }
+        }
+        
+        @media screen and (min-width: 481px) and (max-width: 768px) {
+            .card {
+                width: 100% !important;
+                max-width: 350px;
+                height: 26rem !important;
+                margin: 0 auto;
+            }
+            
+            .card .absolute.-top-32 {
+                top: -7rem !important;
+            }
+            
+            .card .w-64.h-64 {
+                width: 14rem !important;
+                height: 14rem !important;
+            }
+            
+            .card .pt-36 {
+                padding-top: 8rem !important;
+            }
+            
+            .card h2 {
+                font-size: 1.375rem !important;
+            }
+        }
+        
+        @media screen and (min-width: 769px) and (max-width: 1024px) {
+            .card {
+                width: 22rem !important;
+                height: 26rem !important;
+            }
+            
+            .card .absolute.-top-32 {
+                top: -7rem !important;
+            }
+            
+            .card .w-64.h-64 {
+                width: 15rem !important;
+                height: 15rem !important;
+            }
+            
+            .card .pt-36 {
+                padding-top: 8.5rem !important;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
     <%- include('layouts/navbar') %>
     
-    <div class="min-h-screen flex items-center justify-center p-8 pt-40 pb-16">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 gap-y-20 items-center justify-center max-w-6xl">
+    <div class="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8 pt-32 sm:pt-36 md:pt-40 pb-16">
+        <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 gap-y-16 sm:gap-y-18 md:gap-y-20 items-center justify-center max-w-6xl w-full">
             <!-- First Card - CEO -->
             <div class="card relative bg-white rounded-2xl p-8 w-96 h-[28rem] shadow-xl overflow-visible group">
                 <!-- CEO Image - Breaking out of card without frame -->
