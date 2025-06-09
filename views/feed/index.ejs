@@ -90,14 +90,232 @@
       opacity: 1;
     }
   }
-  
+
+  /* LinkedIn-style responsive layout */
+  body {
+    background: #f3f6f8;
+    padding-top: 64px;
+  }
+
+  /* Mobile bottom navigation */
+  .mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #e5e7eb;
+    z-index: 50;
+    display: none;
+  }
+
+  @media (max-width: 1023px) {
+    .mobile-bottom-nav {
+      display: flex;
+    }
+    body {
+      padding-bottom: 64px;
+    }
+  }
+
+  /* 12-column responsive grid */
+  .feed-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem 1rem;
+  }
+
+  @media (min-width: 1024px) {
+    .feed-container {
+      grid-template-columns: 260px 1fr;
+      gap: 2rem;
+      padding: 1.5rem 2rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .feed-container {
+      grid-template-columns: 260px 1fr 300px;
+      gap: 2rem;
+    }
+  }
+
+  /* Main content area */
+  .main-feed {
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* Post cards */
+  .post-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid #e5e7eb;
+    margin-bottom: 1.5rem;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .post-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  @media (max-width: 768px) {
+    .post-card {
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+  }
+
+  /* Post creation box */
+  .post-create-box {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid #e5e7eb;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+  }
+
+  @media (max-width: 768px) {
+    .post-create-box {
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      padding: 0.75rem;
+    }
+  }
+
+  /* Sidebar styles */
+  .sidebar {
+    position: sticky;
+    top: 80px;
+    height: fit-content;
+  }
+
+  .sidebar-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid #e5e7eb;
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+
+  /* Avatar responsive sizing */
+  .avatar-sm {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .avatar-md {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .avatar-lg {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  @media (min-width: 768px) {
+    .avatar-sm {
+      width: 3rem;
+      height: 3rem;
+    }
+    .avatar-md {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+    .avatar-lg {
+      width: 4.5rem;
+      height: 4.5rem;
+    }
+  }
+
+  /* Image handling */
+  .post-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    max-height: 500px;
+  }
+
+  .post-image.tall {
+    max-height: 500px;
+    overflow-y: auto;
+  }
+
+  /* Button and interaction styles */
+  .interaction-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .interaction-btn:hover {
+    background-color: #f3f4f6;
+  }
+
+  /* Text hierarchy */
+  .post-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+
+  .post-content {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .post-meta {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+
+  /* Hide sidebar on mobile */
+  @media (max-width: 1023px) {
+    .sidebar {
+      display: none;
+    }
+  }
+
   /* Enhanced Mobile responsive styles for feed */
   @media (max-width: 644px) {
-     /* Force post header to stay in a row, never wrap under profile */
-     .flex.items-start.space-x-3 {
+     /* On mobile, stack name/badge below image, keep gap */
+     .flex.items-start.gap-3 {
       flex-direction: row !important;
       align-items: flex-start !important;
       gap: 0.75rem;
+    }
+    .flex-1.min-w-0 {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 0.1rem;
+    }
+  }
+  @media (min-width: 645px) {
+    /* On desktop, restore classic row layout for post header */
+    .flex.items-start.gap-3 {
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 1rem;
+    }
+    .flex-1.min-w-0 {
+      flex-direction: row !important;
+      align-items: center !important;
+      gap: 0.5rem;
+    }
+  
     }
     .w-12.h-12 {
       width: 2.5rem;
@@ -484,35 +702,19 @@
       padding: 1rem;
     }
   }
-  
-  @media (min-width: 769px) and (max-width: 1024px) {
-    /* Tablet devices */
-    .max-w-6xl {
-      padding-left: 1.5rem;
-      padding-right: 1.5rem;
-    }
-    
-    .grid.grid-cols-1.lg\:grid-cols-4 {
-      grid-template-columns: 1fr 2fr;
-      gap: 1.5rem;
-    }
-    
-    .lg\:col-span-1 {
-      grid-column: span 1;
-    }
-    
-    .lg\:col-span-3 {
-      grid-column: span 1;
-    }
-  }
+
 </style>
-    <div class="w-full max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 xl:px-10 2xl:px-0 py-6">
-  <div class="grid grid-cols-1 md:grid-cols-4 xl:grid-cols-12 gap-6">
-            <!-- Right Sidebar -->
-    <aside class="hidden md:block md:col-span-1 xl:col-span-3 space-y-4">
+    <!-- Main Feed Container - LinkedIn-style responsive layout -->
+    <div class="min-h-screen bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left Sidebar - Hidden on mobile, visible on lg+ -->
+                <aside class="hidden lg:block lg:col-span-3 xl:col-span-2">
+                    <div class="sticky top-20 space-y-4">
                 <% if (locals.loggedInUserId) { %>
-                    <!-- Profile Card -->
-                    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                        <!-- Profile Card -->
+                        <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                         <!-- Cover Photo -->
                         <div class="h-16 bg-gradient-to-r from-blue-600 to-blue-700"></div>
                         <div class="px-4 pb-4">
@@ -541,8 +743,8 @@
                         </div>
                     </div>
                 <% } %>
-                <!-- Recent Activity -->
-                <div class="bg-white rounded-lg border border-gray-200">
+                        <!-- Recent Activity -->
+                        <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
                     <div class="px-4 py-3 border-b border-gray-200">
                         <h3 class="font-semibold text-gray-900 text-sm">Recent</h3>
                     </div>
@@ -585,19 +787,21 @@
                             knowyourrights
                         </a>
                     </div>
-                    <div class="px-4 py-3 border-t border-gray-200">
-                        <a href="/discover" class="text-xs text-gray-500 hover:text-blue-600">Discover more</a>
+                            <div class="px-4 py-3 border-t border-gray-200">
+                                <a href="/discover" class="text-xs text-gray-500 hover:text-blue-600">Discover more</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
+                </aside>
 
-            <!-- Main Content -->
-    <main class="col-span-1 md:col-span-2 xl:col-span-6 flex flex-col space-y-4">
+                <!-- Main Content - Responsive feed area -->
+                <main class="col-span-1 lg:col-span-6 xl:col-span-7">
+                    <div class="space-y-4">
                 <% if (locals.loggedInUserId && locals.userRole === 'lawyer') { %>
-                    <!-- Post Creation Box for Lawyers -->
-                    <div class="bg-white rounded-lg border border-gray-200 p-4">
+                        <!-- Post Creation Box for Lawyers -->
+                        <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
                         <div class="flex items-center space-x-3">
-                            <img src="<%= locals.user && locals.user.profilePicture ? locals.user.profilePicture : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(locals.user ? (locals.user.firstName + ' ' + locals.user.lastName) : 'User') + '&size=48&background=3b82f6&color=ffffff' %>" alt="Profile" class="w-12 h-12 rounded-full object-cover">
+                            <img src="<%= locals.user && locals.user.profilePicture ? locals.user.profilePicture : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(locals.user ? (locals.user.firstName + ' ' + locals.user.lastName) : 'User') + '&size=48&background=3b82f6&color=ffffff' %>" alt="Profile" class="avatar-md rounded-full object-cover">
                             <button onclick="togglePostModal()" class="flex-1 border border-gray-300 rounded-full px-4 py-3 text-left text-gray-500 hover:bg-gray-50 transition-colors duration-200">Share legal insights...</button>
                         </div>
                         <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-200">
@@ -622,8 +826,8 @@
                 <% } %>
                 
                 <% if (locals.loggedInUserId && locals.userRole !== 'lawyer') { %>
-                    <!-- Quick Actions for Non-Lawyers -->
-                    <div class="bg-white rounded-lg border border-gray-200 p-4">
+                        <!-- Quick Actions for Non-Lawyers -->
+                        <div class="bg-white rounded-lg border border-gray-200 shadow-sm p-4">
                         <div class="grid grid-cols-3 gap-3">
                             <a href="/search" class="flex flex-col items-center p-3 bg-gray-50 rounded-lg hover:bg-blue-50 transition-all duration-200 group">
                                 <i class="fas fa-search text-blue-600 text-lg mb-2 group-hover:scale-110 transition-transform"></i>
@@ -645,17 +849,17 @@
                 
                 <% if (posts && posts.length > 0) { %>
                     <% posts.forEach(post => { let groupedReactions = {}; if (post.reacts && post.reacts.length > 0) { post.reacts.forEach(r => { groupedReactions[r.reaction] = (groupedReactions[r.reaction] || 0) + 1; }); } %>
-                    <div id="post-<%= post.id %>" class="bg-white rounded-lg border border-gray-200 mb-4 hover:shadow-md transition-shadow duration-200">
+                        <article id="post-<%= post.id %>" class="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
                         <!-- Post Header -->
                         <div class="p-4">
                             <div class="flex items-start justify-between">
                                 <div class="flex items-center w-full gap-3">
   <a href="/in/<%= post.user ? post.user.id : '#' %>" class="flex-shrink-0">
-    <img src="<%= post.user && post.user.profilePicture ? post.user.profilePicture : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(post.user ? (post.user.firstName + ' ' + post.user.lastName) : 'User') + '&size=48&background=0D47A1&color=fff' %>" alt="Profile" class="w-12 h-12 rounded-full object-cover border border-gray-300">
+    <img src="<%= post.user && post.user.profilePicture ? post.user.profilePicture : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(post.user ? (post.user.firstName + ' ' + post.user.lastName) : 'User') + '&size=48&background=0D47A1&color=fff' %>" alt="Profile" class="avatar-md rounded-full object-cover border border-gray-300">
   </a>
   <div class="flex flex-col min-w-0 flex-1">
     <div class="flex items-center min-w-0 gap-2">
-      <a href="/in/<%= post.user ? post.user.id : '#' %>" class="font-semibold text-gray-900 hover:text-blue-600 hover:underline text-base leading-tight whitespace-nowrap overflow-hidden text-ellipsis" style="max-width: 140px;">
+      <a href="/in/<%= post.user ? post.user.id : '#' %>" class="post-title text-gray-900 hover:text-blue-600 hover:underline leading-tight whitespace-nowrap overflow-hidden text-ellipsis" style="max-width: 140px;">
         <%= post.user ? post.user.firstName : '' %> <%= post.user ? post.user.lastName : '' %>
       </a>
       <% if (post.user && post.user.role==='lawyer' && post.user.lawyer) { %>
@@ -740,7 +944,7 @@
                                     <% post.post_photos.forEach(postPhoto => { %>
                                         <% if (postPhoto.photo && postPhoto.photo.photoPath) { %>
                             <div class="relative">
-                                <img src="<%= postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-auto object-cover rounded-lg" style="max-height: 500px;">
+                                <img src="<%= postPhoto.photo.photoPath %>" alt="Post Image" class="post-image object-contain rounded-lg">
                             </div>
                         <% } %>
                                     <% }); %>
@@ -749,7 +953,7 @@
                                         <% post.post_photos.forEach(postPhoto => { %>
                                             <% if (postPhoto.photo && postPhoto.photo.photoPath) { %>
                                 <div class="relative">
-                                    <img src="<%= postPhoto.photo.photoPath %>" alt="Post Image" class="w-full h-48 object-cover rounded-lg">
+                                    <img src="<%= postPhoto.photo.photoPath %>" alt="Post Image" class="post-image object-cover rounded-lg">
                                 </div>
                             <% } %>
                                         <% }); %>
@@ -788,9 +992,9 @@
                         <div class="px-4 py-3 border-t border-gray-100">
                             <div class="flex items-center justify-around">
                                 <div class="relative">
-                                    <button class="flex items-center space-x-2 text-gray-600 hover:bg-gray-100 px-6 py-2 rounded-lg transition-colors like-button" onclick="toggleReactionPopup(<%= post.id %>, this)">
+                                    <button class="flex items-center space-x-1 sm:space-x-2 text-gray-600 hover:bg-gray-100 px-2 sm:px-6 py-2 rounded-lg transition-colors like-button" onclick="toggleReactionPopup(<%= post.id %>, this)">
                                         <i class="far fa-thumbs-up text-lg"></i>
-                                        <span class="text-sm font-medium">Like</span>
+                                        <span class="text-xs sm:text-sm font-medium hidden xs:inline">Like</span>
                                     </button>
                                     <div id="reactionPopup-<%= post.id %>" class="hidden absolute bg-white rounded-lg shadow-lg border border-gray-200 p-2 z-40 reaction-popup" style="bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 8px;">
                                         <div class="flex space-x-1">
@@ -803,19 +1007,19 @@
                                         <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-4 border-t-gray-200"></div>
                                     </div>
                                 </div>
-                                <button class="flex items-center space-x-2 text-gray-600 hover:bg-gray-100 px-6 py-2 rounded-lg transition-colors" onclick="toggleCommentForm(<%= post.id %>)">
+                                <button class="flex items-center space-x-1 sm:space-x-2 text-gray-600 hover:bg-gray-100 px-2 sm:px-6 py-2 rounded-lg transition-colors" onclick="toggleCommentForm(<%= post.id %>)">
                                     <i class="far fa-comment text-lg"></i>
-                                    <span class="text-sm font-medium">Comment</span>
+                                    <span class="text-xs sm:text-sm font-medium hidden xs:inline">Comment</span>
                                 </button>
                                 <% if (locals.loggedInUserId) { %>
-                                    <button class="flex items-center space-x-2 text-gray-600 hover:bg-gray-100 px-6 py-2 rounded-lg transition-colors" onclick="sharePost(<%= post.id %>)">
+                                    <button class="flex items-center space-x-1 sm:space-x-2 text-gray-600 hover:bg-gray-100 px-2 sm:px-6 py-2 rounded-lg transition-colors" onclick="sharePost(<%= post.id %>)">
                                         <i class="fas fa-share text-lg"></i>
-                                        <span class="text-sm font-medium">Share</span>
+                                        <span class="text-xs sm:text-sm font-medium hidden xs:inline">Share</span>
                                     </button>
                                 <% } else { %>
-                                    <button class="flex items-center space-x-2 text-gray-400 px-6 py-2 rounded-lg cursor-not-allowed" disabled>
+                                    <button class="flex items-center space-x-1 sm:space-x-2 text-gray-400 px-2 sm:px-6 py-2 rounded-lg cursor-not-allowed" disabled>
                                         <i class="far fa-share text-lg"></i>
-                                        <span class="text-sm font-medium">Share</span>
+                                        <span class="text-xs sm:text-sm font-medium hidden xs:inline">Share</span>
                                     </button>
                                 <% } %>
                             </div>
@@ -957,8 +1161,10 @@
                     </div>
                 </div>
                 <% } %>
+                </main>
+                
                 <!-- Right Sidebar -->
-                <div class="lg:col-span-2 space-y-4">
+                <aside class="hidden lg:block lg:col-span-3 xl:col-span-2 space-y-4">
                     <!-- LinkedIn News Widget -->
                     <div class="bg-white rounded-lg border border-gray-200">
                         <div class="p-4 border-b border-gray-200">
@@ -1033,7 +1239,7 @@
                     </div>
                     
                     <!-- Footer Links -->
-                    <div class="bg-white rounded-lg border border-gray-200 p-4">
+                    <div class="bg-white rounded-lg border border-gray-200 p-4 post-create-box shadow-sm" style="margin-bottom: 16px;">
                         <div class="text-xs text-gray-500 space-y-2">
 ~                            <div class="flex flex-wrap gap-x-3 gap-y-1">
                                 <a href="/about" class="hover:text-blue-600">About</a>
@@ -1054,9 +1260,35 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </aside>
             </div>
         </div>
+
+        <!-- Mobile Bottom Navigation -->
+        <nav class="mobile-bottom-nav">
+            <div class="flex justify-around items-center py-2">
+                <a href="/feed" class="flex flex-col items-center p-2 text-blue-600">
+                    <i class="fas fa-home text-lg"></i>
+                    <span class="text-xs mt-1">Feed</span>
+                </a>
+                <a href="/mynetwork" class="flex flex-col items-center p-2 text-gray-600 hover:text-blue-600">
+                    <i class="fas fa-users text-lg"></i>
+                    <span class="text-xs mt-1">Network</span>
+                </a>
+                <a href="/jobs" class="flex flex-col items-center p-2 text-gray-600 hover:text-blue-600">
+                    <i class="fas fa-briefcase text-lg"></i>
+                    <span class="text-xs mt-1">Jobs</span>
+                </a>
+                <a href="/messaging" class="flex flex-col items-center p-2 text-gray-600 hover:text-blue-600">
+                    <i class="fas fa-comment text-lg"></i>
+                    <span class="text-xs mt-1">Messages</span>
+                </a>
+                <a href="/in/<%= locals.loggedInUserId || '#' %>" class="flex flex-col items-center p-2 text-gray-600 hover:text-blue-600">
+                    <i class="fas fa-user text-lg"></i>
+                    <span class="text-xs mt-1">Me</span>
+                </a>
+            </div>
+        </nav>
     </div>
 
     <!-- Inline JavaScript for Reaction Popup -->
