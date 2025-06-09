@@ -486,7 +486,7 @@ function toggleReactionPopup(postId, button) {
 
 // Submit reaction
 function submitReaction(postId, reaction, button) {
-  fetch(`/feed/posts/${postId}/react`, {
+  fetch(`/feed/post/${postId}/react`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -520,22 +520,47 @@ function toggleComments(postId) {
 // Toggle comment form
 function toggleCommentForm(postId) {
   const commentForm = document.getElementById(`commentForm-${postId}`);
+  const commentsSection = commentForm.parentElement;
+  
+  // Move comment form to top of comments section
+  if (commentForm.classList.contains('hidden')) {
+    commentsSection.insertBefore(commentForm, commentsSection.firstChild);
+  }
+  
   commentForm.classList.toggle('hidden');
+  
+  // Focus on input when showing
+  if (!commentForm.classList.contains('hidden')) {
+    const input = commentForm.querySelector('input[name="content"]');
+    if (input) {
+      setTimeout(() => input.focus(), 100);
+    }
+  }
 }
 
 // Submit comment
 function submitComment(form, postId) {
   const formData = new FormData(form);
+  const commentInput = form.querySelector('input[name="content"]');
+  const commentText = commentInput.value.trim();
   
-  fetch(`/feed/posts/${postId}/comment`, {
+  if (!commentText) {
+    return;
+  }
+  
+  fetch(`/feed/post/${postId}/comment`, {
     method: 'POST',
     body: formData
   })
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      // Reload page to show new comment
-      location.reload();
+      // Add new comment to the UI without page refresh
+      addCommentToUI(postId, data.comment);
+      // Clear the input
+      commentInput.value = '';
+      // Hide the comment form
+      toggleCommentForm(postId);
     }
   })
   .catch(error => console.error('Error:', error));
@@ -543,7 +568,7 @@ function submitComment(form, postId) {
 
 // Share post
 function sharePost(postId) {
-  fetch(`/feed/posts/${postId}/share`, {
+  fetch(`/feed/post/${postId}/share`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -570,7 +595,104 @@ function updateReactionDisplay(postId, reactions) {
     reactionStats.classList.remove('hidden');
     // Update reaction count and icons
     const countElement = reactionStats.querySelector('.reaction-count');
-    countElement.textContent = reactions.length;
+    if (countElement) {
+      countElement.textContent = reactions.length;
+    }
+    
+    // Update reaction icons
+    const reactionIcons = reactionStats.querySelector('.flex.-space-x-1');
+    if (reactionIcons) {
+      reactionIcons.innerHTML = '';
+      const uniqueReactions = [...new Set(reactions.map(r => r.reaction))];
+      uniqueReactions.slice(0, 3).forEach(reaction => {
+        const span = document.createElement('span');
+        span.className = 'inline-flex items-center justify-center w-6 h-6 text-xs bg-white border-2 border-white rounded-full';
+        // Map reaction text to emoji
+        const emojiMap = {
+          'like': '👍',
+          'love': '❤️',
+          'laugh': '😂',
+          'wow': '😮',
+          'sad': '😢',
+          'angry': '😠'
+        };
+        span.textContent = emojiMap[reaction.toLowerCase()] || reaction;
+        reactionIcons.appendChild(span);
+      });
+    }
+  } else {
+    reactionStats.classList.add('hidden');
+  }
+}
+
+// Add new comment to UI
+function addCommentToUI(postId, comment) {
+  const commentsList = document.getElementById(`commentsList-${postId}`);
+  const showCommentsBtn = document.getElementById(`showCommentsBtn-${postId}`);
+  
+  // Create new comment element
+  const commentDiv = document.createElement('div');
+  commentDiv.className = 'px-3 py-3 border-t border-gray-100 comment-item';
+  commentDiv.setAttribute('data-comment-id', comment.id);
+  
+  commentDiv.innerHTML = `
+    <div class="flex items-start space-x-3">
+      <a href="/in/${comment.user.id}" class="flex-shrink-0">
+        <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(comment.user.firstName + ' ' + comment.user.lastName)}" alt="Commenter" class="w-8 h-8 rounded-full">
+      </a>
+      <div class="flex-1 min-w-0">
+        <div class="bg-gray-100 rounded-lg px-3 py-2">
+          <div class="flex items-center justify-between mb-1">
+            <a href="/in/${comment.user.id}" class="text-sm font-medium text-gray-900 hover:text-blue-600">
+              ${comment.user.firstName} ${comment.user.lastName}
+            </a>
+            <div class="flex space-x-1">
+              <button class="text-gray-400 hover:text-blue-500 edit-comment-inline-btn" data-comment-id="${comment.id}" data-content="${comment.content.replace(/"/g, '&quot;')}">
+                <i class="fas fa-edit text-xs"></i>
+              </button>
+              <button class="text-gray-400 hover:text-red-500 delete-comment-btn" data-comment-id="${comment.id}" data-post-id="${postId}">
+                <i class="fas fa-trash text-xs"></i>
+              </button>
+            </div>
+          </div>
+          <p class="text-sm text-gray-800">${comment.content}</p>
+        </div>
+        <div class="flex items-center space-x-4 mt-1 text-xs text-gray-500">
+          <span>${new Date(comment.createdAt).toLocaleDateString()}</span>
+          <button class="hover:text-blue-600">Like</button>
+          <button class="hover:text-blue-600">Reply</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Add to comments list
+  if (commentsList) {
+    commentsList.appendChild(commentDiv);
+    commentsList.classList.remove('hidden');
+    
+    // Update show comments button
+    if (showCommentsBtn) {
+      const currentCount = commentsList.children.length;
+      showCommentsBtn.textContent = `Hide Comments`;
+    }
+  } else {
+    // Create comments list if it doesn't exist
+    const commentsSection = document.querySelector(`#commentForm-${postId}`).parentElement;
+    const newCommentsList = document.createElement('div');
+    newCommentsList.id = `commentsList-${postId}`;
+    newCommentsList.className = 'space-y-3';
+    newCommentsList.appendChild(commentDiv);
+    
+    // Create show comments button if it doesn't exist
+    const newShowBtn = document.createElement('button');
+    newShowBtn.id = `showCommentsBtn-${postId}`;
+    newShowBtn.className = 'text-sm text-blue-600 hover:text-blue-800 mb-3';
+    newShowBtn.textContent = 'Hide Comments';
+    newShowBtn.onclick = () => toggleComments(postId);
+    
+    commentsSection.insertBefore(newShowBtn, commentsSection.firstChild);
+    commentsSection.insertBefore(newCommentsList, document.getElementById(`commentForm-${postId}`));
   }
 }
 

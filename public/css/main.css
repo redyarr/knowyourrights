@@ -115,12 +115,16 @@
   padding: 1rem 1.5rem;
   background-color: #fafafa;
   border-top: 1px solid #e5e7eb;
+  position: relative;
+  z-index: 1;
 }
 
 /* Individual comment styling */
 .comment-item {
   padding: 0.75rem 0;
   border-top: 1px solid #f3f4f6;
+  position: relative;
+  z-index: 2;
 }
 
 .comment-item:first-child {
@@ -133,48 +137,114 @@
   border-radius: 12px;
   padding: 0.75rem 1rem;
   border: 1px solid #e2e8f0;
+  position: relative;
+  z-index: 3;
 }
 
 /* Comment form styling */
-.post-card #commentForm-* {
+.post-card [id^="commentForm-"] {
   padding: 1rem 1.5rem;
   background-color: #ffffff;
   border-top: 1px solid #e5e7eb;
+  position: relative;
+  z-index: 10;
+  margin-top: 0.5rem;
+  clear: both;
 }
 
-.post-card #commentForm-* input {
+.post-card [id^="commentForm-"] .flex {
+  position: relative;
+  z-index: 11;
+}
+
+.post-card [id^="commentForm-"] input {
   border-radius: 20px;
   padding: 0.75rem 1rem;
   border: 1px solid #d1d5db;
   background-color: #f9fafb;
+  position: relative;
+  z-index: 12;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.post-card #commentForm-* input:focus {
+.post-card [id^="commentForm-"] input:focus {
   background-color: #ffffff;
   border-color: #3b82f6;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  outline: none;
+}
+
+.post-card [id^="commentForm-"] button {
+  position: relative;
+  z-index: 12;
+  flex-shrink: 0;
 }
 
 /* Reaction stats styling */
-.post-card #reactionStats-* {
+.post-card [id^="reactionStats-"] {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  position: relative;
+  z-index: 5;
+  padding: 0.5rem 1rem;
+  background-color: #ffffff;
 }
 
-.post-card #reactionStats-* .flex.-space-x-1 span {
+.post-card [id^="reactionStats-"] .flex.-space-x-1 span {
   width: 1.5rem;
   height: 1.5rem;
   border-radius: 50%;
   border: 2px solid #ffffff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.post-card [id^="reactionStats-"] .reaction-count {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 500;
 }
 
 /* Profile image in posts */
 .post-card .w-12.h-12 {
   border: 2px solid #e5e7eb;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Post actions section */
+.post-card .flex.items-center.justify-around {
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #f3f4f6;
+  background-color: #ffffff;
+  position: relative;
+  z-index: 4;
+}
+
+.post-card .flex.items-center.justify-around button {
+  transition: all 0.2s ease-in-out;
+  border-radius: 8px;
+  position: relative;
+  z-index: 6;
+}
+
+.post-card .flex.items-center.justify-around button:hover {
+  background-color: #f3f4f6;
+  transform: translateY(-1px);
+}
+
+/* Ensure proper spacing and layout */
+.post-card {
+  overflow: visible;
+  position: relative;
+}
+
+.post-card > * {
+  position: relative;
 }
 
 /* Mobile responsiveness */

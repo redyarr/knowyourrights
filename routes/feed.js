@@ -42,7 +42,7 @@ router.put('/comment/:id/edit', isAuthenticated, FeedController.editComment);
 router.delete('/comment/:id/delete', isAuthenticated, FeedController.deleteComment);
 
 // Share routes
-router.post('/posts/:id/share', isAuthenticated, FeedController.sharePost);
+router.post('/post/:id/share', isAuthenticated, FeedController.sharePost);
 router.get('/users/:userId/shared-posts', isAuthenticated, FeedController.getSharedPosts);
 router.get('/shared-posts', isAuthenticated, FeedController.getSharedPosts);
 
