@@ -10,6 +10,7 @@ const fileUpload = require('express-fileupload');
 require('dotenv').config();
 const { sequelize } = require('./models');
 const passport = require('./config/passport');
+const cors = require('cors');
 
 // Import routes
 const AuthRouter = require('./routes/auth.js')
@@ -33,6 +34,11 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 const PORT = process.env.PORT || 3001;
+
+app.use(cors({
+  origin: 'http://localhost:3000',  // ✅ Your Next.js frontend origin
+  credentials: true                 // ✅ Allow cookies
+}));
 
 // Middlewares
 app.use(express.urlencoded({ extended: true }));

@@ -2,6 +2,9 @@ const session = require('express-session');
 const { User, Lawyer, Education, Contact, LawyerEducation } = require('../models');
 const bcrypt = require('bcrypt');
 const fs = require('fs');
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
 
 exports.get = (req, res) =>{
     if (req.session.user) {
@@ -191,7 +194,7 @@ exports.register = async (req, res) => {
         throw new Error('Error creating contact: ' + contactError.message);
       }
     }
-
+//this session is for node.js application 
     // Set session information for both regular users and lawyers
     req.session.user_id = user.id;
     req.session.user = {
@@ -202,30 +205,44 @@ exports.register = async (req, res) => {
       role: user.role
     };
     console.log("9. Session set for user", req.session);
+    
+    //this session cookie is for Next.js application : 
+    const userData = {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role
+    } 
+
+    const token = jwt.sign(userData, JWT_SECRET, { expiresIn: '1h' });
+
+    res.cookie('token', token, {
+      httpOnly: true,      // 👈 Prevent JS access
+      secure: process.env.NODE_ENV === 'production',        // 👈 Only HTTPS in production
+      sameSite: 'strict',  // 👈 Protect CSRF
+      maxAge: 60 * 60 * 1000, // 1 hour in ms
+      path: '/',
+    });
 
     if (lawyer) {
       req.session.lawyer = lawyer;
       console.log("10. Lawyer-specific session info set");
     }
 
-    // Redirect based on user role
-    if (user.role === 'admin') {
-      console.log("11. Admin user registered, redirecting to '/admin/lawyers'");
-      res.redirect('/admin/lawyers');
-    } else {
-      console.log("11. Regular user registered, redirecting to '/feed'");
-      res.redirect('/feed');
-    }
+    // Send JSON response for API requests
+    return res.status(200).json({
+      success: true,
+      user: userData,
+      redirectUrl: user.role === 'admin' ? '/admin/lawyers' : '/feed'
+    });
+
   } catch (error) {
     console.error("Error during registration process:", error.message);
-
-    // Fetch education data to pass to the view
-    const educations = await Education.findAll();
-
-    res.render('auth/register', {
-      title: 'Join Legal Network',
-      error: error.message,
-      educations
+    
+    return res.status(400).json({
+      success: false,
+      error: error.message
     });
   }
 };
@@ -260,7 +277,10 @@ exports.login = async (req, res) => {
 
     if (!user || !(await user.validPassword(password))) {
       console.log("4. Invalid email or password");
-      throw new Error('Invalid email or password');
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid email or password'
+      });
     }
 
     console.log("5. Valid user found, setting session");
@@ -274,23 +294,40 @@ exports.login = async (req, res) => {
     };
     console.log("6. User session set:", req.session.user);
 
+    //this session cookie is for Next.js application : 
+    const userData = {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role
+    } 
+
+    const token = jwt.sign(userData, JWT_SECRET, { expiresIn: '1h' });
+
+    res.cookie('token', token, {
+      httpOnly: true,      // 👈 Prevent JS access
+      secure: process.env.NODE_ENV === 'production',        // 👈 Only HTTPS in production
+      sameSite: 'strict',  // 👈 Protect CSRF
+      maxAge: 60 * 60 * 1000, // 1 hour in ms
+      path: '/',
+    });
+
     if (user.Lawyer) {
       req.session.lawyer = user.Lawyer;
       console.log("7. Lawyer session set:", req.session.lawyer);
     }
 
-    // Redirect based on user role
-    if (user.role === 'admin') {
-      console.log("8. Admin user, redirecting to '/admin/lawyers'");
-      res.redirect('/admin/lawyers');
-    } else {
-      console.log("8. Regular user, redirecting to '/feed'");
-      res.redirect('/feed');
-    }
+    return res.status(200).json({
+      success: true,
+      message: 'User logged in successfully',
+      redirectUrl: user.role === 'admin' ? '/admin/lawyers' : '/feed'
+    });
+
   } catch (error) {
     console.error("Error during login process:", error.message);
-    res.render('auth/login', {
-      title: 'Sign In | Legal Network',
+    return res.status(500).json({
+      success: false,
       error: error.message
     });
   }
