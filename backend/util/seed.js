@@ -99,7 +99,7 @@ async function seedDatabase() {
 
     // --- 4. Seed Lawyers (depends on Users, now 4 rows for users with lawyer role) ---
     const lawyers = [
-      { userId: 2, lawFirm: 'Law Firm B', badgeNumber: 'LN1002', badgeIssueDate: new Date('2019-03-22'), badgeIssuingAuthority: 'consultant', summary: 'Expert in corporate law.' },
+      { userId: 2, lawFirm: 'Law Firm B', badgeNumber: 'LN1002', verificationStatus: "approved", badgeIssueDate: new Date('2019-03-22'), badgeIssuingAuthority: 'consultant', summary: 'Expert in corporate law.' },
       { userId: 5, lawFirm: 'Law Firm E', badgeNumber: 'LN1005', badgeIssueDate: new Date('2020-09-18'), badgeIssuingAuthority: 'consultant', summary: 'Well-versed in intellectual property.' },
       { userId: 8, lawFirm: 'Law Firm H', badgeNumber: 'LN1008', badgeIssueDate: new Date('2021-12-03'), badgeIssuingAuthority: 'consultant', summary: 'Experienced in labor law.' },
       { userId: 11, lawFirm: 'Law Firm K', badgeNumber: 'LN1011', badgeIssueDate: new Date('2021-01-20'), badgeIssuingAuthority: 'consultant', summary: 'Expert in intellectual property disputes.' }

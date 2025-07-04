@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { isAuthenticated } = require('../middlewares/auth');
-const { isVerifiedLawyer } = require('../middlewares/lawyerVerification');
+const { isAuthenticated, isVerifiedLawyer} = require('../middlewares/auth');
 const multer = require('multer');
 
 // Import controllers
@@ -24,12 +23,12 @@ const upload = multer({
 });
 
 // Create post route
-router.post('/create-post', isAuthenticated, isVerifiedLawyer, upload.single('image'), FeedController.createPost);
 
 // Feed routes
-router.get('/', isAuthenticated, isVerifiedLawyer, FeedController.getFeedPosts);
+router.get('/', FeedController.getFeedPosts);
 
 // Post reaction and comment routes
+router.post('/create-post', isAuthenticated, isVerifiedLawyer, upload.single('image'), FeedController.createPost);
 router.post('/post/:id/react', isAuthenticated, FeedController.reactToPost);
 router.post('/post/:id/comment', isAuthenticated, FeedController.commentOnPost);
 
