@@ -1,9 +1,12 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 const Page = () => {
   const [message, setMessage] = useState('');
+  const  [UserData, setUserData] = useState({});
+  console.log("user da guuu ", UserData );
+  
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -36,6 +39,30 @@ const Page = () => {
     }
   };
 
+  const getUserData = async () => {
+    try {
+      const response = await fetch('/api/getuserdata', {
+        method: 'GET',
+      });
+
+      const data = await response.json();
+      console.log('User data response:', data);
+      
+      if (data.success) {
+        setUserData(data.payload);
+      } else {
+        setMessage(data.error || 'errorgetting shit');
+      }
+    } catch (error) {
+      console.error('Signout error:', error);
+      setMessage('Network error during signout');
+    }
+  };
+
+  useEffect(()=>{
+    getUserData();
+  },[])
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="max-w-md w-full space-y-8 text-center">
@@ -43,8 +70,8 @@ const Page = () => {
           <h1 className="text-3xl font-extrabold text-gray-900">
             Welcome to Legal Network
           </h1>
-          <p className="mt-2 text-sm text-gray-600">
-            You are successfully logged in
+          <p className="mt-2 text-sm text-gray-600 flex items-center justify-center gap-4">
+           { UserData ? <p>{UserData.firstName}</p> : ''} You are successfully logged in
           </p>
         </div>
 

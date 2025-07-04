@@ -33,7 +33,6 @@ export default async function middleware(req) {
   
   //verify the token and get user data
   const { payload } = await jwtVerify(token, secret);
-    console.log("Middleware JWT payload:", payload);
 
       const { pathname } = req.nextUrl
       const isAuth = !!payload
