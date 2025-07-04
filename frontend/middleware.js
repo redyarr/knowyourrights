@@ -30,6 +30,10 @@ export default async function middleware(req) {
 
   //encode the secret key
   const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+  console.log("the secret is ");
+  console.log(secret);
+  console.log("++++++++++++++++++++");
+  
   
   //verify the token and get user data
   const { payload } = await jwtVerify(token, secret);

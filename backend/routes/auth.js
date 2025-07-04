@@ -7,13 +7,13 @@ const passport = require('passport');
 const AuthController = require('../controllers/authController');
 
 // Authentication routes
-router.get('/', AuthController.get); // completed
+router.get('/', AuthController.get); // no need to frontend could be removed
 router.get('/register', AuthController.getRegister); 
 router.post('/register', AuthController.register); 
 router.get('/login', AuthController.getLogin);
 router.post('/login', AuthController.login);
-router.get('/logout', isAuthenticated, AuthController.signout); // completed
-router.post('/signout', isAuthenticated, AuthController.signout); // completed
+router.get('/logout', isAuthenticated, AuthController.signout); // no need to frontend could be removed
+router.post('/signout', isAuthenticated, AuthController.signout); // no need to frontend could be removed
 
 // Google OAuth routes
 router.get('/google', (req, res, next) => {

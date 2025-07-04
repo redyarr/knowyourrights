@@ -5,6 +5,9 @@ const fs = require('fs');
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+  console.log("the secret is ");
+  console.log(JWT_SECRET);
+  console.log("++++++++++++++++++++");
 
 exports.get = (req, res) =>{
     if (req.session.user) {
@@ -229,6 +232,10 @@ exports.register = async (req, res) => {
     } 
 
     const token = jwt.sign(userData, JWT_SECRET, { expiresIn: '1h' });
+
+    console.log("the token is ");
+    console.log(token);
+    console.log("++++++++++++++++++++");
 
     res.cookie('token', token, {
       httpOnly: true,      // 👈 Prevent JS access
