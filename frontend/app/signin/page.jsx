@@ -35,12 +35,10 @@ const Signin = () => {
       });
 
       const data = await response.json();
-      console.log('Login response:', data);
       
 
       if (response.ok && data.success) {
-        // Redirect based on user role
-        // router.push(data.redirectUrl);
+        router.push(data.redirectUrl);
       } else {
         setError(data.error || 'Login failed');
       }

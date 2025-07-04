@@ -69,7 +69,7 @@ const SignUp = () => {
       
 
       if (response.ok && data.success) {
-        // router.push(data.redirectUrl);
+        router.push(data.redirectUrl);
       } else {
         setError(data.error || 'Registration failed');
       }

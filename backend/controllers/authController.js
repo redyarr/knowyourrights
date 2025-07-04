@@ -247,7 +247,7 @@ exports.register = async (req, res) => {
     return res.status(200).json({
       success: true,
       user: userData,
-      redirectUrl: user.role === 'admin' ? '/admin/lawyers' : '/feed'
+      redirectUrl: user.role === 'admin' ? '/admin/lawyers' : '/'
     });
 
   } catch (error) {
@@ -334,7 +334,7 @@ exports.login = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: 'User logged in successfully',
-      redirectUrl: user.role === 'admin' ? '/admin/lawyers' : '/feed'
+      redirectUrl: user.role === 'admin' ? '/admin/lawyers' : '/'
     });
 
   } catch (error) {
