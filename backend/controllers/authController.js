@@ -70,7 +70,11 @@ exports.register = async (req, res) => {
 
     // Validate required fields
     if (!email) {
-      throw new Error('Email is required');
+      return res.status(200).json({
+      success: false,
+      message: 'Email is required',
+    });
+
     }
 
     // Handle file upload if present
@@ -99,14 +103,20 @@ exports.register = async (req, res) => {
     // Check if email already exists
     const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
-      throw new Error('Email already in use. Please use a different email address.');
+      return res.status(200).json({
+      success: false,
+      message: 'Email already in use. Please use a different email address.',
+    });
     }
 
     // Check if contact number already exists (for lawyers)
     if (role === 'lawyer' && contactNumber) {
       const existingContact = await Contact.findOne({ where: { number: contactNumber } });
       if (existingContact) {
-        throw new Error('Contact number already in use. Please use a different number.');
+        return res.status(200).json({
+          success: true,
+          message: 'Contact number already in use. Please use a different number.',
+        });
       }
     }
 
@@ -191,7 +201,10 @@ exports.register = async (req, res) => {
         await LawyerEducation.destroy({ where: { lawyerId: lawyer.id } });
         await Lawyer.destroy({ where: { id: lawyer.id } });
         await User.destroy({ where: { id: user.id } });
-        throw new Error('Error creating contact: ' + contactError.message);
+        return res.status(400).json({
+          success: false,
+          error: 'Error creating contact: ' + contactError.message
+        });
       }
     }
 //this session is for node.js application 

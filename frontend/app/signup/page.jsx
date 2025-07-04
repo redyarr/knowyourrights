@@ -66,6 +66,8 @@ const SignUp = () => {
 
 
       const data = await response.json();
+      console.log('Registration response:', data);
+      
 
       if (response.ok && data.success) {
         // router.push(data.redirectUrl);
