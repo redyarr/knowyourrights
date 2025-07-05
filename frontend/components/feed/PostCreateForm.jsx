@@ -35,11 +35,6 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
     return `${userData.firstName?.[0] || ''}${userData.lastName?.[0] || ''}`.toUpperCase()
   }
 
-  const getUserDisplayName = () => {
-    if (!userData) return 'Guest User'
-    return `${userData.firstName || ''} ${userData.lastName || ''}`.trim()
-  }
-
   const categories = [
     { value: 'General', icon: Scale, label: 'General Legal', color: 'text-blue-600' },
     { value: 'Case Study', icon: Gavel, label: 'Case Study', color: 'text-green-600' },
