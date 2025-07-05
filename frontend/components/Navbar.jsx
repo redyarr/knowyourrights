@@ -52,7 +52,6 @@ const Navbar = () => {
       });
 
       const data = await response.json();
-      console.log('User data response:', data);
       
       if (data.success) {
         setUserData(data.payload);
@@ -398,7 +397,7 @@ const Navbar = () => {
 
             {/* Right Section */}
             <div className="flex items-center space-x-3">
-              {userData ? (
+              {userData &&
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="flex items-center space-x-2 h-auto p-2">
@@ -466,16 +465,7 @@ const Navbar = () => {
                     </div>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              ) : (
-                <div className="flex items-center space-x-3">
-                  <Button variant="ghost" asChild>
-                    <Link href="/signin">Sign in</Link>
-                  </Button>
-                  <Button asChild>
-                    <Link href="/signup">Join now</Link>
-                  </Button>
-                </div>
-              )}
+                }
             </div>
           </div>
         </div>
