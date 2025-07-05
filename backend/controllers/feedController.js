@@ -104,7 +104,6 @@ exports.getAllPosts = async (req, res) => {
                     attributes: ['id', 'firstName', 'lastName', 'role'],
                     include: [{
                         model: Lawyer,
-                        attributes: ['legalAreas', 'summary', 'lawFirm', 'badgeIssuingAuthority']
                     }]
                 },
                 {
