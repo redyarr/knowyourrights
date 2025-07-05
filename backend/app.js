@@ -26,7 +26,7 @@ const SearchRouter = require('./routes/search.js');
 const ResourcesRouter = require('./routes/resources.js');
 const AboutRouter = require('./routes/about.js');
 const storeRouter = require('./util/seed.js');
-
+const cookieParser = require('cookie-parser');
 // Import session configuration
 const { sessionMiddleware, setLoggedInUser } = require('./middlewares/session');
 
@@ -39,6 +39,9 @@ app.use(cors({
   origin: 'http://localhost:3000',  // ✅ Your Next.js frontend origin
   credentials: true                 // ✅ Allow cookies
 }));
+
+app.use(cookieParser());
+
 
 // Middlewares
 app.use(express.urlencoded({ extended: true }));

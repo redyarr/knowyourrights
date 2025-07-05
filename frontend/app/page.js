@@ -1,11 +1,16 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '../components/useHook';
 
 const Page = () => {
+  // Custom hook to handle authentication refresh
+  // This will automatically refresh the auth token every 50 minutes
+  useAuth();
+  
+  
   const [message, setMessage] = useState('');
   const  [UserData, setUserData] = useState({});
-  console.log("user da guuu ", UserData );
   
   const [loading, setLoading] = useState(false);
   const router = useRouter();

@@ -227,14 +227,25 @@ exports.register = async (req, res) => {
       email: user.email,
       role: user.role
     } 
-
+    //generate JWT token
     const token = jwt.sign(userData, JWT_SECRET, { expiresIn: '1h' });
+
+     //generate refresh token
+    const refreshToken = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '30d' });
 
     res.cookie('token', token, {
       httpOnly: true,      // 👈 Prevent JS access
       secure: process.env.NODE_ENV === 'production',        // 👈 Only HTTPS in production
-      sameSite: 'strict',  // 👈 Protect CSRF
+      sameSite: 'lax',  // 👈 Protect CSRF
       maxAge: 60 * 60 * 1000, // 1 hour in ms
+      path: '/',
+    });
+
+     res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       path: '/',
     });
 
@@ -316,13 +327,26 @@ exports.login = async (req, res) => {
       role: user.role
     } 
 
+    // Generate JWT token
     const token = jwt.sign(userData, JWT_SECRET, { expiresIn: '1h' });
+
+    //generate refresh token
+    const refreshToken = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '30d' });
+
 
     res.cookie('token', token, {
       httpOnly: true,      // 👈 Prevent JS access
       secure: process.env.NODE_ENV === 'production',        // 👈 Only HTTPS in production
-      sameSite: 'strict',  // 👈 Protect CSRF
+      sameSite: 'lax',  // 👈 Protect CSRF
       maxAge: 60 * 60 * 1000, // 1 hour in ms
+      path: '/',
+    });
+
+     res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       path: '/',
     });
 
@@ -346,21 +370,48 @@ exports.login = async (req, res) => {
   }
 };
 
-// Logout user
-exports.signout = (req, res) => {
-  try {
-    console.log("1. Starting signout process");
-    req.session.destroy((err) => {
-      if (err) {
-        console.error("2. Error destroying session:", err.message);
-        return res.status(500).send("Failed to sign out. Please try again.");
-      }
-      console.log("3. Session destroyed successfully");
-      res.redirect('/');
-      console.log("4. Redirected to '/' after signout");
+
+
+exports.refreshToken = async (req, res) => {
+ try {
+    const refreshToken = req.cookies.refreshToken;
+    
+    if (!refreshToken) {
+      return res.status(401).json({ success: false, error: 'No refresh token' });
+    }
+
+    const payload = jwt.verify(refreshToken, JWT_SECRET);
+    
+
+    // Recreate a fresh JWT token
+    const user = await User.findByPk(payload.id);
+
+    const userData = {
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      role: user.role
+    };
+
+    const newAccessToken = jwt.sign(userData, JWT_SECRET, { expiresIn: '1h' });
+
+    res.cookie('token', newAccessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 60 * 60 * 1000,
+      path: '/',
     });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Access token refreshed'
+    });
+
   } catch (error) {
-    console.error("Error during signout process:", error.message);
-    res.status(500).send("An unexpected error occurred during signout.");
+    console.error("Error refreshing token:", error.message);
+    return res.status(401).json({ success: false, error: 'Invalid refresh token' });
   }
 };
+  

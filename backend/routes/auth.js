@@ -12,8 +12,8 @@ router.get('/register', AuthController.getRegister);
 router.post('/register', AuthController.register); 
 router.get('/login', AuthController.getLogin);
 router.post('/login', AuthController.login);
-router.get('/logout', isAuthenticated, AuthController.signout); // completed
-router.post('/signout', isAuthenticated, AuthController.signout); // completed
+router.post('/refresh-token', AuthController.refreshToken); // completed
+
 
 // Google OAuth routes
 router.get('/google', (req, res, next) => {
