@@ -29,18 +29,31 @@ import {
 } from 'lucide-react'
 
 const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
-  console.log('PostCard rendered with post:', post);
-    
+
   const [showComments, setShowComments] = useState(false)
   const [showCommentForm, setShowCommentForm] = useState(false)
-  const [reactions, setReactions] = useState(post.reactionStats || {})
+  
+  const calculateReactionStats = (reactsArray) => {
+    const stats = { like: 0, love: 0, haha: 0, wow: 0, sad: 0, angry: 0 }
+    
+    if (reactsArray && Array.isArray(reactsArray)) {
+      reactsArray.forEach(react => {
+        if (stats.hasOwnProperty(react.reaction)) {
+          stats[react.reaction]++
+        }
+      })
+    }
+    
+    return stats
+  }
+  
+  // Initialize reactions by calculating from reacts array
+  const initialReactionStats = calculateReactionStats(post.reacts || [])
+  console.log('CALCULATED reaction stats from reacts array:', initialReactionStats)
+  
+  const [reactions, setReactions] = useState(initialReactionStats)
   const [userReaction, setUserReaction] = useState(post.userReaction)
-  // Initialize comments from the backend data - try multiple possible field names
-  const [comments, setComments] = useState(
-    post.Comments || 
-    post.comments || 
-    []
-  )
+  const [comments, setComments] = useState(post.comments || [])
   const [showReactionPicker, setShowReactionPicker] = useState(false)
   const commentInputRef = useRef(null)
 
@@ -203,11 +216,14 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
     }
   }
 
+  // Calculate total reactions - this should work immediately with seeded data
   const totalReactions = Object.values(reactions).reduce((sum, count) => sum + count, 0)
   const topReactions = Object.entries(reactions)
     .filter(([_, count]) => count > 0)
     .sort(([,a], [,b]) => b - a)
     .slice(0, 3)
+
+
 
   const verificationBadge = getLawyerVerificationBadge(post?.user?.lawyer?.verificationStatus)
 
@@ -329,25 +345,29 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
           </div>
         )}
 
-        {/* Reaction Stats */}
-        {totalReactions > 0 && (
+        {/* ALWAYS show reaction stats section if there are ANY reactions or comments */}
+        {(totalReactions > 0 || comments.length > 0) && (
           <div className="flex items-center justify-between py-2">
-            <div className="flex items-center space-x-2">
-              <div className="flex -space-x-1">
-                {topReactions.map(([reaction]) => (
-                  <span
-                    key={reaction}
-                    className="inline-flex items-center justify-center w-6 h-6 text-sm bg-white border-2 border-white rounded-full shadow-sm"
-                  >
-                    {reactionEmojis[reaction]?.emoji}
-                  </span>
-                ))}
+            {/* Reactions display */}
+            {totalReactions > 0 && (
+              <div className="flex items-center space-x-2">
+                <div className="flex -space-x-1">
+                  {topReactions.map(([reaction]) => (
+                    <span
+                      key={reaction}
+                      className="inline-flex items-center justify-center w-6 h-6 text-sm bg-white border-2 border-white rounded-full shadow-sm"
+                    >
+                      {reactionEmojis[reaction]?.emoji}
+                    </span>
+                  ))}
+                </div>
+                <span className="text-sm text-muted-foreground font-medium">
+                  {totalReactions}
+                </span>
               </div>
-              <span className="text-sm text-muted-foreground font-medium">
-                {totalReactions}
-              </span>
-            </div>
+            )}
             
+            {/* Comments display */}
             {comments.length > 0 && (
               <Button
                 variant="ghost"
