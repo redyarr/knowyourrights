@@ -12,8 +12,6 @@ router.get('/register', AuthController.getRegister);  // this route is no need, 
 router.post('/register', AuthController.register); 
 router.get('/login', AuthController.getLogin); // this route is no need, since frontend could handle it itself
 router.post('/login', AuthController.login);
-router.get('/logout', isAuthenticated, AuthController.signout); // this route is no need, since frontend could handle it itself
-router.post('/signout', isAuthenticated, AuthController.signout); 
 router.post('/refresh-token', AuthController.refreshToken); // completed
 
 
