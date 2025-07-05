@@ -132,6 +132,8 @@ exports.getAllPosts = async (req, res) => {
             offset: offset
         });
 
+        console.log("posts:", posts);
+        
         // Calculate reaction stats for each post
         const postsWithStats = posts.map(post => {
             const reactions = post.Reacts || [];
