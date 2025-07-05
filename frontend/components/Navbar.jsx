@@ -15,7 +15,6 @@ import {
 } from "./ui/dropdown-menu"
 import { Badge } from "./ui/badge"
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet"
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog"
 import { 
   Home, 
   Users, 
@@ -39,13 +38,14 @@ const Navbar = () => {
   const [message, setMessage] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
   const [showSearchResults, setShowSearchResults] = useState(false)
-  const [searchDialogOpen, setSearchDialogOpen] = useState(false)
+  const [showMobileSearchResults, setShowMobileSearchResults] = useState(false)
   const [profileSidebarOpen, setProfileSidebarOpen] = useState(false)
   const [unreadMessageCount, setUnreadMessageCount] = useState(0)
   
   const router = useRouter()
   const pathname = usePathname()
   const searchRef = useRef(null)
+  const mobileSearchRef = useRef(null)
 
   const getUserData = async () => {
     try {
@@ -67,9 +67,6 @@ const Navbar = () => {
   };
 
   const handleSignOut = async () => {
-    setLoading(true);
-    setMessage('');
-
     try {
       const response = await fetch('/api/signout', {
         method: 'GET',
@@ -79,20 +76,15 @@ const Navbar = () => {
       const data = await response.json();
 
       if (data.success) {
-        setMessage(data.message);
         setUserData(null);
-        setTimeout(() => {
           router.push('/signin');
-        }, 1500);
       } else {
         setMessage(data.error || 'Signout failed');
       }
     } catch (error) {
       console.error('Signout error:', error);
       setMessage('Network error during signout');
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   useEffect(() => {
@@ -103,6 +95,9 @@ const Navbar = () => {
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setShowSearchResults(false)
+      }
+      if (mobileSearchRef.current && !mobileSearchRef.current.contains(event.target)) {
+        setShowMobileSearchResults(false)
       }
     }
 
@@ -245,15 +240,15 @@ const Navbar = () => {
                   <div className="p-4 border-t">
                     <Button 
                       variant="ghost" 
-                      className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10" 
+                      className="w-full bg-destructive text-white justify-start hover:bg-destructive/80" 
                       onClick={() => {
                         setProfileSidebarOpen(false)
                         handleSignOut()
                       }}
                       disabled={loading}
                     >
-                      <LogOut className="h-5 w-5 mr-3" />
-                      {loading ? 'Signing out...' : 'Sign Out'}
+                      <LogOut className=" text-white h-5 w-5 mr-3" />
+                      {loading ? <p className='text-white'>Signing out...</p> : <p className='text-white'>Sign Out</p>}
                     </Button>
                   </div>
                 </div>
@@ -265,56 +260,47 @@ const Navbar = () => {
             </div>
           )}
           
-          {/* Search Bar - Opens Dialog */}
-          <div className="flex-1 mx-3">
-            <Dialog open={searchDialogOpen} onOpenChange={setSearchDialogOpen}>
-              <DialogTrigger asChild>
-                <div className="relative cursor-pointer">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <div className="w-full pl-9 pr-4 py-2.5 text-sm bg-muted/50 border-0 rounded-lg text-muted-foreground">
-                    Search
-                  </div>
-                </div>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md p-0 gap-0">
-                <div className="p-4 border-b">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      type="text"
-                      placeholder="Search"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 border-0 bg-muted/50 focus-visible:ring-1"
-                      autoFocus
-                    />
-                  </div>
-                </div>
-                
-                <div className="p-4">
-                  <div className="text-xs font-medium text-muted-foreground mb-4 uppercase tracking-wide">
-                    Quick Actions
-                  </div>
-                  <div className="space-y-2">
-                    {searchSuggestions.map((suggestion, index) => (
-                      <div 
-                        key={index} 
-                        className="flex items-center space-x-3 p-3 hover:bg-accent rounded-lg cursor-pointer transition-colors"
-                        onClick={() => setSearchDialogOpen(false)}
-                      >
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${suggestion.color}`}>
-                          <suggestion.icon className="h-4 w-4" />
+          {/* Search Bar - Shows Dropdown like Desktop */}
+          <div className="flex-1 mx-3" ref={mobileSearchRef}>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                type="text"
+                placeholder="Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setShowMobileSearchResults(true)}
+                className="pl-9 bg-muted/50 border-0 focus-visible:ring-1"
+              />
+              
+              {/* Mobile Search Results - Same as Desktop */}
+              {showMobileSearchResults && (
+                <div className="absolute mt-2 w-full bg-popover border rounded-xl shadow-xl z-50 max-h-96 overflow-y-auto">
+                  <div className="p-4">
+                    <div className="text-xs font-medium text-muted-foreground mb-3 uppercase tracking-wide">
+                      Quick Actions
+                    </div>
+                    <div className="space-y-1">
+                      {searchSuggestions.map((suggestion, index) => (
+                        <div 
+                          key={index} 
+                          className="flex items-center space-x-3 p-2.5 hover:bg-accent rounded-lg  transition-colors"
+                          onClick={() => setShowMobileSearchResults(false)}
+                        >
+                          <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${suggestion.color}`}>
+                            <suggestion.icon className="h-4 w-4" />
+                          </div>
+                          <div>
+                            <div className="font-medium text-foreground text-sm">{suggestion.title}</div>
+                            <div className="text-xs text-muted-foreground">{suggestion.description}</div>
+                          </div>
                         </div>
-                        <div>
-                          <div className="font-medium text-foreground text-sm">{suggestion.title}</div>
-                          <div className="text-xs text-muted-foreground">{suggestion.description}</div>
-                        </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </DialogContent>
-            </Dialog>
+              )}
+            </div>
           </div>
           
           {/* Messages Button */}
@@ -368,7 +354,7 @@ const Navbar = () => {
                         </div>
                         <div className="space-y-1">
                           {searchSuggestions.map((suggestion, index) => (
-                            <div key={index} className="flex items-center space-x-3 p-2.5 hover:bg-accent rounded-lg cursor-pointer transition-colors">
+                            <div key={index} className="flex items-center space-x-3 p-2.5 hover:bg-accent rounded-lg transition-colors">
                               <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${suggestion.color}`}>
                                 <suggestion.icon className="h-4 w-4" />
                               </div>
@@ -471,11 +457,11 @@ const Navbar = () => {
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem 
-                        className="text-destructive focus:text-destructive cursor-pointer text-sm"
+                        className="group text-white bg-destructive hover:bg-destructive/80  cursor-pointer text-sm transition duration-100"
                         onClick={handleSignOut}
                         disabled={loading}
                       >
-                        <LogOut className="mr-2 h-4 w-4" />
+                        <LogOut className="mr-2 h-4 w-4 text-white group-hover:text-black" />
                         {loading ? 'Signing out...' : 'Sign Out'}
                       </DropdownMenuItem>
                     </div>
@@ -536,12 +522,6 @@ const Navbar = () => {
         </div>
       )}
 
-      {/* Error Message Display */}
-      {message && (
-        <div className="fixed top-20 right-4 z-50 bg-destructive text-destructive-foreground px-3 py-2 rounded-lg shadow-lg text-sm">
-          {message}
-        </div>
-      )}
     </>
   )
 }
