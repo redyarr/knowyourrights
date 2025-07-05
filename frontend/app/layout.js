@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import "./globals.css";
 import NavbarWrapper from "@/components/NavbarWrapper";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata = {
   title: "Know Your Rights",
@@ -15,6 +16,7 @@ export default function RootLayout({ children }) {
           <Navbar />
         </NavbarWrapper>
         {children}
+         <Toaster />
       </body>
     </html>
   );

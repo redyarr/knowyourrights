@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
+import { toast } from "sonner"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
@@ -35,7 +36,6 @@ import {
 const Navbar = () => {
   const [userData, setUserData] = useState(null)
   const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
   const [showSearchResults, setShowSearchResults] = useState(false)
   const [showMobileSearchResults, setShowMobileSearchResults] = useState(false)
@@ -58,11 +58,20 @@ const Navbar = () => {
       if (data.success) {
         setUserData(data.payload);
       } else {
-        setMessage(data.error || 'Error getting user data');
+        toast("Error", {
+          description: "Error getting user data",
+          action: {
+            label: "Undo",
+          },
+        })
       }
     } catch (error) {
-      console.error('Get user data error:', error);
-      setMessage('Network error during data fetch');
+     toast("Ntwork Error", {
+          description: "etwork error during data fetch",
+          action: {
+            label: "Undo",
+          },
+        })
     }
   };
 
