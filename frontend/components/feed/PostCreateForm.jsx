@@ -93,9 +93,10 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
         formData.append('image', selectedFile)
       }
 
-      const response = await fetch('/api/feed/create-post', {
+      const response = await fetch('http://localhost:3001/feed/create-post', {
         method: 'POST',
-        body: formData
+        body: formData,
+        credentials: 'include'
       })
 
       const data = await response.json()
@@ -131,7 +132,7 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
     }
   }
 
-  if (!userData || userData.userType !== 'lawyer') {
+  if (!userData || userData.role !== 'lawyer') {
     return null
   }
 

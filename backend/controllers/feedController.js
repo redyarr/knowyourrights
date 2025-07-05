@@ -104,7 +104,6 @@ exports.getAllPosts = async (req, res) => {
                     attributes: ['id', 'firstName', 'lastName', 'role'],
                     include: [{
                         model: Lawyer,
-                        attributes: ['legalAreas', 'summary', 'lawFirm', 'badgeIssuingAuthority']
                     }]
                 },
                 {
@@ -132,8 +131,6 @@ exports.getAllPosts = async (req, res) => {
             offset: offset
         });
 
-        console.log("posts:", posts);
-        
         // Calculate reaction stats for each post
         const postsWithStats = posts.map(post => {
             const reactions = post.Reacts || [];

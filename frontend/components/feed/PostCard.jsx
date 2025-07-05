@@ -22,10 +22,15 @@ import {
   Edit3,
   Trash2,
   Globe,
-  Clock
+  Clock,
+  GraduationCap,
+  Certificate,
+  XCircle
 } from 'lucide-react'
 
 const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
+    console.log('PostCard rendered with post:', post);
+    
   const [showComments, setShowComments] = useState(false)
   const [showCommentForm, setShowCommentForm] = useState(false)
   const [reactions, setReactions] = useState(post.reactionStats || {})
@@ -61,14 +66,46 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
     })
   }
 
+  const getLawyerVerificationBadge = (lawyer) => {
+    
+    switch (lawyer) {
+      case 'approved':
+        return {
+          label: 'Verified',
+          icon: <Certificate className="h-3 w-3 mr-1" />,
+          color: 'text-green-600 bg-green-100'
+        }
+      case 'pending':
+        return {
+          label: 'Pending',
+          icon: <Clock className="h-3 w-3 mr-1" />,
+          color: 'text-yellow-600 bg-yellow-100'
+        }
+      case 'rejected':
+        return {
+          label: 'Rejected',
+          icon: <XCircle className="h-3 w-3 mr-1" />,
+          color: 'text-red-600 bg-red-100'
+        }
+      default:
+        return {
+          label: 'Training Lawyer',
+          icon: <GraduationCap className="h-3 w-3 mr-1" />,
+          color: 'text-blue-600 bg-blue-100'
+        }
+    }
+  }
+
+  
   const handleReaction = async (reactionType) => {
     try {
-      const response = await fetch(`/api/feed/post/${post.id}/react`, {
+      const response = await fetch(`http://localhost:3001/feed/post/${post.id}/react`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ reaction: reactionType })
+        body: JSON.stringify({ reaction: reactionType }),
+        credentials: 'include'
       })
 
       const data = await response.json()
@@ -77,6 +114,10 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
         setReactions(data.reactionStats)
         setUserReaction(data.userReaction)
         setShowReactionPicker(false)
+      } else {
+        toast("Reaction Failed", {
+          description: data.error || "Failed to react to post"
+        })
       }
     } catch (error) {
       toast("Error", {
@@ -92,12 +133,13 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
     if (!content) return
 
     try {
-      const response = await fetch(`/api/feed/post/${post.id}/comment`, {
+      const response = await fetch(`http://localhost:3001/feed/post/${post.id}/comment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ content })
+        body: JSON.stringify({ content }),
+        credentials: 'include'
       })
 
       const data = await response.json()
@@ -107,6 +149,14 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
         commentInputRef.current.value = ''
         setShowCommentForm(false)
         setShowComments(true)
+        
+        toast("Comment Posted", {
+          description: "Your comment has been added successfully"
+        })
+      } else {
+        toast("Comment Failed", {
+          description: data.error || "Failed to post comment"
+        })
       }
     } catch (error) {
       toast("Error", {
@@ -117,11 +167,12 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
 
   const handleShare = async () => {
     try {
-      const response = await fetch(`/api/feed/post/${post.id}/share`, {
+      const response = await fetch(`http://localhost:3001/feed/post/${post.id}/share`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
-        }
+        },
+        credentials: 'include'
       })
 
       const data = await response.json()
@@ -148,39 +199,53 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
     .sort(([,a], [,b]) => b - a)
     .slice(0, 3)
 
+  const verificationBadge = getLawyerVerificationBadge(post?.user?.lawyer?.verificationStatus)
+
   return (
     <Card className="w-full" ref={observerRef}>
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3 flex-1">
-            <Link href={`/in/${post.User?.id || '#'}`}>
+            <Link href={`/in/${post.user?.id || '#'}`}>
               <Avatar className="h-12 w-12">
-                <AvatarImage src={post.User?.profilePicture} alt="Profile" />
+                <AvatarImage src={post.user?.profilePicture} alt="Profile" />
                 <AvatarFallback className="bg-blue-600 text-white">
-                  {getUserInitials(post.User)}
+                  {getUserInitials(post.user)}
                 </AvatarFallback>
               </Avatar>
             </Link>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2 flex-wrap">
                 <Link
-                  href={`/in/${post.User?.id || '#'}`}
-                  className="font-semibold hover:text-blue-600 transition-colors"
+                  href={`/profile/${post.user?.id || '#'}`}
+                  className="font-semibold hover:text-blue-600 hover:underline transition-colors"
                 >
-                  {getUserDisplayName(post.User)}
+                  {getUserDisplayName(post.user)}
                 </Link>
-                {post.User?.role === 'lawyer' && (
-                  <Badge variant="secondary" className="text-xs">
-                    <span className="mr-1">⚖️</span>
-                    Lawyer
+                
+                {/* Verification Badge for Lawyers */}
+                {post.user?.role === 'lawyer' && verificationBadge && (
+                  <Badge variant="secondary" className={`text-xs ${verificationBadge.color}`}>
+                    {verificationBadge.icon}
+                    {verificationBadge.label}
                   </Badge>
                 )}
               </div>
-              {post.User?.Lawyer?.lawFirm && (
-                <p className="text-sm text-muted-foreground">
-                  {post.User.Lawyer.lawFirm}
+              
+              {/* Law Firm */}
+              {post.user?.role === 'lawyer' && post.user?.lawyer?.lawFirm && (
+                <p className="text-sm text-muted-foreground font-medium">
+                  {post?.user?.lawyer?.lawFirm}
                 </p>
               )}
+              
+              {/* User Headline */}
+              {post.user?.headline && (
+                <p className="text-xs text-muted-foreground">
+                  {post.user.headline}
+                </p>
+              )}
+              
               <div className="flex items-center space-x-2 text-xs text-muted-foreground mt-1">
                 <Clock className="h-3 w-3" />
                 <time>{formatDate(post.createdAt)}</time>
@@ -229,22 +294,22 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
         </div>
 
         {/* Post Images */}
-        {post.PostPhotos && post.PostPhotos.length > 0 && (
+        {post.postPhotos && post.postPhotos.length > 0 && (
           <div className="mb-4">
-            {post.PostPhotos.length === 1 ? (
+            {post.postPhotos.length === 1 ? (
               <div className="relative">
                 <img
-                  src={post.PostPhotos[0].Photo.photoPath}
+                  src={post.postPhotos[0].photo.photoPath}
                   alt="Post image"
                   className="w-full max-h-96 object-cover rounded-lg"
                 />
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-2">
-                {post.PostPhotos.map((postPhoto, index) => (
+                {post.postPhotos.map((postPhoto, index) => (
                   <img
                     key={index}
-                    src={postPhoto.Photo.photoPath}
+                    src={postPhoto.photo.photoPath}
                     alt="Post image"
                     className="w-full h-48 object-cover rounded-lg"
                   />
