@@ -24,12 +24,12 @@ import {
   Globe,
   Clock,
   GraduationCap,
-  Certificate,
-  XCircle
+  XCircle,
+  ShieldCheck
 } from 'lucide-react'
 
 const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
-    console.log('PostCard rendered with post:', post);
+  console.log('PostCard rendered with post:', post);
     
   const [showComments, setShowComments] = useState(false)
   const [showCommentForm, setShowCommentForm] = useState(false)
@@ -72,25 +72,25 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
       case 'approved':
         return {
           label: 'Verified',
-          icon: <Certificate className="h-3 w-3 mr-1" />,
+          icon: ShieldCheck,
           color: 'text-green-600 bg-green-100'
         }
       case 'pending':
         return {
           label: 'Pending',
-          icon: <Clock className="h-3 w-3 mr-1" />,
+          icon: Clock,
           color: 'text-yellow-600 bg-yellow-100'
         }
       case 'rejected':
         return {
           label: 'Rejected',
-          icon: <XCircle className="h-3 w-3 mr-1" />,
+          icon: XCircle,
           color: 'text-red-600 bg-red-100'
         }
       default:
         return {
           label: 'Training Lawyer',
-          icon: <GraduationCap className="h-3 w-3 mr-1" />,
+          icon: GraduationCap,
           color: 'text-blue-600 bg-blue-100'
         }
     }
@@ -226,7 +226,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                 {/* Verification Badge for Lawyers */}
                 {post.user?.role === 'lawyer' && verificationBadge && (
                   <Badge variant="secondary" className={`text-xs ${verificationBadge.color}`}>
-                    {verificationBadge.icon}
+                    <verificationBadge.icon className="h-3 w-3 mr-1" />
                     {verificationBadge.label}
                   </Badge>
                 )}
