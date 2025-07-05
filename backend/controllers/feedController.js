@@ -6,9 +6,9 @@ const imagekit = require('../config/imagekit');
 exports.createPost = async (req, res) => {
     try {
         // Check if user is a lawyer
-        if (req.session.user?.role !== 'lawyer') {
-            return res.status(403).json({ success: false, error: "Only lawyers can create posts." });
-        }
+        // if (req.session.user?.role !== 'lawyer') {
+        //     return res.status(403).json({ success: false, error: "Only lawyers can create posts." });
+        // }
 
         const { title, content, category } = req.body;
         const userId = req.session.user_id;
@@ -90,6 +90,13 @@ exports.createPost = async (req, res) => {
 // Get all posts with user and lawyer information
 exports.getAllPosts = async (req, res) => {
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 3; // Number of posts per page
+        const offset = (page - 1) * limit;
+
+        // Get total count of posts for pagination
+        const totalPosts = await Post.count();
+
         const posts = await Post.findAll({
             include: [
                 {
@@ -120,7 +127,9 @@ exports.getAllPosts = async (req, res) => {
                     }]
                 }
             ],
-            order: [['createdAt', 'DESC']]
+            order: [['createdAt', 'DESC']],
+            limit: limit,
+            offset: offset
         });
 
         // Calculate reaction stats for each post
@@ -146,7 +155,16 @@ exports.getAllPosts = async (req, res) => {
             };
         });
 
-        return res.json({ success: true, posts: postsWithStats });
+        return res.json({ 
+            success: true, 
+            posts: postsWithStats,
+            pagination: {
+                currentPage: page,
+                totalPages: Math.ceil(totalPosts / limit),
+                totalPosts: totalPosts,
+                hasMore: offset + posts.length < totalPosts
+            }
+        });
     } catch (error) {
         console.error('Error fetching posts:', error);
         return res.status(500).json({ success: false, error: error.message });

@@ -5,6 +5,7 @@ const fs = require('fs');
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+ 
 
 exports.get = (req, res) =>{
     if (req.session.user) {
@@ -230,6 +231,7 @@ exports.register = async (req, res) => {
     //generate JWT token
     const token = jwt.sign(userData, JWT_SECRET, { expiresIn: '1h' });
 
+    
      //generate refresh token
     const refreshToken = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '30d' });
 
@@ -299,13 +301,53 @@ exports.login = async (req, res) => {
     });
     console.log("3. User lookup result:", user);
 
-    if (!user || !(await user.validPassword(password))) {
-      console.log("4. Invalid email or password");
+    console.log("Checking user and password validation");
+    if (!user) {
+      console.log("User not found in database");
       return res.status(401).json({
         success: false,
         error: 'Invalid email or password'
       });
     }
+
+    console.log("User found, validating password");
+// Add additional validation and error handling for Postman requests
+let isValidPassword = false;
+
+// Check if password is provided
+if (!password) {
+  return res.status(400).json({
+    success: false,
+    error: 'Password is required'
+  });
+}
+
+try {
+  // Ensure both password and stored hash are strings
+  const passwordString = String(password);
+  const storedHash = String(user.password);
+  
+  isValidPassword = await bcrypt.compare(passwordString, storedHash);
+  console.log("Password validation successful:", isValidPassword);
+} catch (error) {
+  console.error("Error validating password:", error);
+  return res.status(500).json({
+    success: false,
+    error: 'Error validating password'
+  });
+}
+
+console.log("Password validation result:", isValidPassword);
+
+if (!isValidPassword) {
+  console.log("Password validation failed");
+  return res.status(401).json({
+    success: false,
+    error: 'Invalid email or password'
+  });
+}
+
+    console.log("Password validation successful");
 
     console.log("5. Valid user found, setting session");
     req.session.user_id = user.id;
