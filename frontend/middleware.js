@@ -5,10 +5,10 @@ import { NextResponse } from "next/server"
 export default async function middleware(req) {
   //get the token form the cookies
   const token = req.cookies.get('token')?.value ;
- 
+  const refreshToken = req.cookies.get('refreshToken')?.value ;
 
   //IF THERE IS NO TOKEN...
-  if (!token) {
+  if (!token && !refreshToken ) {
 
     const { pathname } = req.nextUrl;
     const publicRoutes = ['/not-found', '/example'];
@@ -25,23 +25,32 @@ export default async function middleware(req) {
     return NextResponse.next();
   }
 
-  //IF WE HAVE THE TOKEN....
+  //IF WE HAVE THE TOKENS...
 
+  // IF THE TOKEN IS EXPIRES:
 
   //encode the secret key
   const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-  console.log("the secret is ");
-  console.log(secret);
-  console.log("++++++++++++++++++++");
-  
-  
-  //verify the token and get user data
-  const { payload } = await jwtVerify(token, secret);
+
+  let payload;
+  let refreshPayload;
+   try {
+      const { payload: verifiedPayload } = await jwtVerify(token, secret);
+      payload = verifiedPayload;
+
+      const { payload: RverifiedPayload } = await jwtVerify(refreshToken, secret);
+      refreshPayload = RverifiedPayload;
+      return NextResponse.next();
+
+    } catch (err) {
+      console.log("Token check failed:", err.code || err.name);
+      payload = null;
+    }
 
       const { pathname } = req.nextUrl
-      const isAuth = !!payload
+      const isAuth = !!payload      
       const userRole = payload?.role || 'visitor';
-     
+     //IF EVERYTHING IS RIGHT AND USER IS AUTHORIZED, WE CAN PROCEED WITH THE MIDDLEWARE:
 
     // Routes that are always public (accessible to everyone)
     const publicRoutes = ['/not-found', '/example...']     

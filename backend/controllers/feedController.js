@@ -91,7 +91,7 @@ exports.createPost = async (req, res) => {
 exports.getAllPosts = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const limit = 3; // Number of posts per page
+        const limit = 20; // Number of posts per page
         const offset = (page - 1) * limit;
 
         // Get total count of posts for pagination

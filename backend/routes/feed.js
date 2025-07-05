@@ -25,7 +25,7 @@ const upload = multer({
 // Create post route
 
 // Feed routes
-router.get('/', FeedController.getFeedPosts);
+router.get('/', FeedController.getAllPosts);
 
 // Post reaction and comment routes
 router.post('/create-post', isAuthenticated, isVerifiedLawyer, upload.single('image'), FeedController.createPost);
