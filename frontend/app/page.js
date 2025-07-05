@@ -11,6 +11,7 @@ const Page = () => {
   
   const [message, setMessage] = useState('');
   const  [UserData, setUserData] = useState({});
+  console.log('UserData:', UserData);
   
   const [loading, setLoading] = useState(false);
   const router = useRouter();
