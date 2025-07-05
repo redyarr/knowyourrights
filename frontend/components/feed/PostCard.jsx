@@ -35,7 +35,12 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
   const [showCommentForm, setShowCommentForm] = useState(false)
   const [reactions, setReactions] = useState(post.reactionStats || {})
   const [userReaction, setUserReaction] = useState(post.userReaction)
-  const [comments, setComments] = useState(post.Comments || [])
+  // Initialize comments from the backend data - try multiple possible field names
+  const [comments, setComments] = useState(
+    post.Comments || 
+    post.comments || 
+    []
+  )
   const [showReactionPicker, setShowReactionPicker] = useState(false)
   const commentInputRef = useRef(null)
 
@@ -114,6 +119,10 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
         setReactions(data.reactionStats)
         setUserReaction(data.userReaction)
         setShowReactionPicker(false)
+        
+        toast("Reaction Updated", {
+          description: `You ${data.userReaction ? `reacted with ${data.userReaction}` : 'removed your reaction'}`
+        })
       } else {
         toast("Reaction Failed", {
           description: data.error || "Failed to react to post"
@@ -145,6 +154,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
       const data = await response.json()
 
       if (data.success) {
+        // Add the new comment to the comments list
         setComments([...comments, data.comment])
         commentInputRef.current.value = ''
         setShowCommentForm(false)
@@ -363,7 +373,9 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
               onClick={() => handleReaction('like')}
             >
               <ThumbsUp className="h-4 w-4" />
-              <span className="text-sm font-medium">Like</span>
+              <span className="text-sm font-medium">
+                {userReaction ? userReaction.charAt(0).toUpperCase() + userReaction.slice(1) : 'Like'}
+              </span>
             </Button>
             
             {/* Reaction Picker */}
@@ -444,15 +456,18 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
             {comments.map((comment) => (
               <div key={comment.id} className="flex items-start space-x-3">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={comment.User?.profilePicture} alt="Commenter" />
+                  <AvatarImage 
+                    src={comment.User?.profilePicture || comment.user?.profilePicture} 
+                    alt="Commenter" 
+                  />
                   <AvatarFallback className="bg-gray-500 text-white text-xs">
-                    {getUserInitials(comment.User)}
+                    {getUserInitials(comment.User || comment.user)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
                   <div className="bg-muted rounded-lg px-3 py-2">
                     <div className="font-medium text-sm">
-                      {getUserDisplayName(comment.User)}
+                      {getUserDisplayName(comment.User || comment.user)}
                     </div>
                     <p className="text-sm mt-1">{comment.content}</p>
                   </div>
@@ -468,6 +483,19 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Always show comment count if there are comments */}
+        {comments.length > 0 && !showComments && (
+          <div className="mt-4 pt-4 border-t">
+            <Button
+              variant="ghost"
+              className="text-sm text-muted-foreground p-0 h-auto"
+              onClick={() => setShowComments(true)}
+            >
+              View {comments.length} comment{comments.length !== 1 ? 's' : ''}
+            </Button>
           </div>
         )}
       </CardContent>

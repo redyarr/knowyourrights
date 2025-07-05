@@ -20,7 +20,7 @@ export function useAuth() {
           } catch (error) {
         console.error('Error refreshing token:', error);
       }
-      }, 50 * 60 * 1000); // every 50 mins
+      }, 30 * 60 * 1000); // every 30 mins
 
     return () => clearInterval(interval);
   }, []);

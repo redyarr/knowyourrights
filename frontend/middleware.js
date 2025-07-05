@@ -8,7 +8,7 @@ export default async function middleware(req) {
   const refreshToken = req.cookies.get('refreshToken')?.value ;
 
   //IF THERE IS NO TOKEN...
-  if (!token && !refreshToken ) {
+  if (!token ) {
 
     const { pathname } = req.nextUrl;
     const publicRoutes = ['/not-found', '/example'];
@@ -41,9 +41,14 @@ export default async function middleware(req) {
       const { payload: RverifiedPayload } = await jwtVerify(refreshToken, secret);
       refreshPayload = RverifiedPayload;
 
-      if(!verifiedPayload || !RverifiedPayload) {
+      if(!verifiedPayload ) {
         return NextResponse.redirect(new URL('/signin', req.url));
       }
+      if(!RverifiedPayload ) {
+        return NextResponse.redirect(new URL('/signin', req.url));
+      }
+
+      
 
       const { pathname } = req.nextUrl
       const isAuth = !!payload   
