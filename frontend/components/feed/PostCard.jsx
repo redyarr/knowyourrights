@@ -294,19 +294,19 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
         </div>
 
         {/* Post Images */}
-        {post.postPhotos && post.postPhotos.length > 0 && (
+        {post.post_photos && post.post_photos.length > 0 && (
           <div className="mb-4">
-            {post.postPhotos.length === 1 ? (
+            {post.post_photos.length === 1 ? (
               <div className="relative">
                 <img
-                  src={post.postPhotos[0].photo.photoPath}
+                  src={post.post_photos[0].photo.photoPath}
                   alt="Post image"
                   className="w-full max-h-96 object-cover rounded-lg"
                 />
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-2">
-                {post.postPhotos.map((postPhoto, index) => (
+                {post.post_photos.map((postPhoto, index) => (
                   <img
                     key={index}
                     src={postPhoto.photo.photoPath}
