@@ -169,7 +169,7 @@ const Navbar = () => {
   return (
     <>
       {/* Mobile Top Header - LinkedIn Style */}
-      <div className="lg:hidden sticky top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
+      <div className="lg:hidden sticky top-0 left-0 right-0 z-50 bg-white border-b">
         <div className="flex items-center justify-between px-4 py-2.5">
           {/* Profile Picture - Opens Sidebar */}
           {userData ? (
@@ -327,7 +327,7 @@ const Navbar = () => {
       </div>
 
       {/* Desktop Navigation */}
-      <nav className="hidden lg:block bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b sticky top-0 z-50">
+      <nav className="hidden lg:block bg-white border-b sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex justify-between h-14 items-center">
             {/* Left Section */}

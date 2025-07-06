@@ -29,8 +29,10 @@ import {
   GraduationCap,
   XCircle,
   ShieldCheck,
-  X
+  X,
+  AlertTriangle
 } from 'lucide-react'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
 
 const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
   const [showComments, setShowComments] = useState(false)
@@ -40,6 +42,9 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
   const [editContent, setEditContent] = useState(post.content || '')
   const [isEditing, setIsEditing] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [editingCommentId, setEditingCommentId] = useState(null)
+  const [editCommentContent, setEditCommentContent] = useState('')
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   
   const calculateReactionStats = (reactsArray) => {
     const stats = { like: 0, love: 0, haha: 0, wow: 0, sad: 0, angry: 0 }
@@ -139,10 +144,6 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
         setReactions(data.reactionStats)
         setUserReaction(data.userReaction)
         setShowReactionPicker(false)
-        
-        toast("Reaction Updated", {
-          description: `You ${data.userReaction ? `reacted with ${data.userReaction}` : 'removed your reaction'}`
-        })
       } else {
         toast("Reaction Failed", {
           description: data.error || "Failed to react to post"
@@ -179,10 +180,6 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
         commentInputRef.current.value = ''
         setShowCommentForm(false)
         setShowComments(true)
-        
-        toast("Comment Posted", {
-          description: "Your comment has been added successfully"
-        })
       } else {
         toast("Comment Failed", {
           description: data.error || "Failed to post comment"
@@ -193,6 +190,79 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
         description: "Failed to post comment"
       })
     }
+  }
+
+  const handleEditComment = async (commentId) => {
+    if (!editCommentContent.trim()) return
+
+    try {
+      const response = await fetch(`http://localhost:3001/feed/comment/${commentId}/edit`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ content: editCommentContent.trim() }),
+        credentials: 'include'
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Update the comment in the comments list
+        setComments(prev => prev.map(comment => 
+          comment.id === commentId 
+            ? { ...comment, content: editCommentContent.trim() }
+            : comment
+        ))
+        setEditingCommentId(null)
+        setEditCommentContent('')
+      } else {
+        toast("Edit Failed", {
+          description: data.error || "Failed to edit comment"
+        })
+      }
+    } catch (error) {
+      toast("Error", {
+        description: "Failed to edit comment"
+      })
+    }
+  }
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const response = await fetch(`http://localhost:3001/feed/comment/${commentId}/delete`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Remove the comment from the comments list
+        setComments(prev => prev.filter(comment => comment.id !== commentId))
+      } else {
+        toast("Delete Failed", {
+          description: data.error || "Failed to delete comment"
+        })
+      }
+    } catch (error) {
+      toast("Error", {
+        description: "Failed to delete comment"
+      })
+    }
+  }
+
+  const startEditingComment = (commentId, content) => {
+    setEditingCommentId(commentId)
+    setEditCommentContent(content)
+  }
+
+  const cancelEditingComment = () => {
+    setEditingCommentId(null)
+    setEditCommentContent('')
   }
 
   const handleShare = async () => {
@@ -281,10 +351,6 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
   }
 
   const handleDeletePost = async () => {
-    if (!window.confirm('Are you sure you want to delete this post? This action cannot be undone.')) {
-      return
-    }
-
     setIsDeleting(true)
 
     try {
@@ -319,6 +385,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
       })
     } finally {
       setIsDeleting(false)
+      setShowDeleteDialog(false)
     }
   }
 
@@ -410,12 +477,12 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                     Edit Post
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    onClick={handleDeletePost}
+                    onClick={() => setShowDeleteDialog(true)}
                     className="cursor-pointer text-destructive focus:text-destructive"
                     disabled={isDeleting}
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
-                    {isDeleting ? 'Deleting...' : 'Delete Post'}
+                    Delete Post
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -611,12 +678,64 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <div className="bg-muted rounded-lg px-3 py-2">
-                      <div className="font-medium text-sm">
-                        {getUserDisplayName(comment.User || comment.user)}
+                    {editingCommentId === comment.id ? (
+                      // Edit comment form
+                      <div className="space-y-2">
+                        <Textarea
+                          value={editCommentContent}
+                          onChange={(e) => setEditCommentContent(e.target.value)}
+                          className="min-h-[60px] text-sm"
+                          placeholder="Edit your comment..."
+                        />
+                        <div className="flex space-x-2">
+                          <Button 
+                            size="sm" 
+                            onClick={() => handleEditComment(comment.id)}
+                            disabled={!editCommentContent.trim()}
+                          >
+                            Save
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            onClick={cancelEditingComment}
+                          >
+                            Cancel
+                          </Button>
+                        </div>
                       </div>
-                      <p className="text-sm mt-1">{comment.content}</p>
-                    </div>
+                    ) : (
+                      // Display comment
+                      <div className="bg-muted rounded-lg px-3 py-2">
+                        <div className="flex items-center justify-between">
+                          <div className="font-medium text-sm">
+                            {getUserDisplayName(comment.User || comment.user)}
+                          </div>
+                          {/* Comment actions for comment author */}
+                          {userData && comment.userId === userData.id && (
+                            <div className="flex space-x-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-6 w-6 p-0 text-gray-400 hover:text-blue-600"
+                                onClick={() => startEditingComment(comment.id, comment.content)}
+                              >
+                                <Edit3 className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-6 w-6 p-0 text-gray-400 hover:text-red-600"
+                                onClick={() => handleDeleteComment(comment.id)}
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-sm mt-1">{comment.content}</p>
+                      </div>
+                    )}
                     <div className="flex items-center space-x-4 mt-1 text-xs text-muted-foreground">
                       <span>{formatDate(comment.createdAt)}</span>
                       <Button variant="ghost" className="p-0 h-auto text-xs">
@@ -704,6 +823,31 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Post Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <div className="flex items-center space-x-2">
+              <AlertTriangle className="h-5 w-5 text-red-600" />
+              <AlertDialogTitle>Delete Post</AlertDialogTitle>
+            </div>
+            <AlertDialogDescription>
+              Are you sure you want to delete this post? This action cannot be undone and will permanently remove your post and all its comments.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeletePost}
+              disabled={isDeleting}
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            >
+              {isDeleting ? 'Deleting...' : 'Delete Post'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   )
 }

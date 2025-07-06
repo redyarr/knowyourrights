@@ -160,7 +160,7 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
                 </DialogHeader>
                 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
+                  <div className='space-y-2'>
                     <Label htmlFor="title">Article Title</Label>
                     <Input
                       id="title"
@@ -171,7 +171,7 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
                     />
                   </div>
 
-                  <div>
+                  <div className='space-y-2'>
                     <Label htmlFor="content">Legal Content</Label>
                     <Textarea
                       id="content"
