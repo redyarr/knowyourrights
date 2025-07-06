@@ -15,9 +15,7 @@ import { Badge } from '../components/ui/badge';
 
 const FeedPage = () => {
   const [userData, setUserData] = useState(null);
-  const [posts, setPosts] = useState([]);  
-  console.log('FeedPage posts:', posts);
-  
+  const [posts, setPosts] = useState([]);   
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
