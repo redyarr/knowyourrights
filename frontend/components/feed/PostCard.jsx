@@ -35,7 +35,6 @@ import {
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
 
 const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
-  console.log('Rendering PostCard for post:', post);
   
   const [showComments, setShowComments] = useState(false)
   const [showCommentForm, setShowCommentForm] = useState(false)

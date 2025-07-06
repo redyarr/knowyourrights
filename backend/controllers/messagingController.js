@@ -95,7 +95,6 @@ exports.getMessages = async (req, res) => {
         console.log('7. Combined unique user IDs:', conversationUserIds);
         
         // Get user details for each conversation
-        console.log('8. Fetching user details...');
         const conversations = await User.findAll({
             where: { id: { [Op.in]: conversationUserIds } },
             attributes: ['id', 'firstName', 'lastName', 'email', 'role'],
@@ -104,7 +103,6 @@ exports.getMessages = async (req, res) => {
                 attributes: ['legalAreas', 'summary', 'lawFirm', 'badgeIssuingAuthority']
             }]
         });
-        console.log('9. User details retrieved:', JSON.stringify(conversations, null, 2));
         
         // Get the latest message for each conversation
         console.log('10. Getting latest messages for each conversation...');

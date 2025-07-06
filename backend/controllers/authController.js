@@ -220,13 +220,15 @@ exports.register = async (req, res) => {
     };
     console.log("9. Session set for user", req.session);
     
+    
     //this session cookie is for Next.js application : 
     const userData = {
       id: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      role: user.role
+      role: user.role,
+      lawyerVerivicationStatus : lawyer?.verificationStatus
     } 
     //generate JWT token
     const token = jwt.sign(userData, JWT_SECRET, { expiresIn: '1h' });
@@ -347,9 +349,7 @@ if (!isValidPassword) {
   });
 }
 
-    console.log("Password validation successful");
 
-    console.log("5. Valid user found, setting session");
     req.session.user_id = user.id;
     req.session.user = {
       id: user.id,
@@ -358,15 +358,16 @@ if (!isValidPassword) {
       email: user.email,
       role: user.role
     };
-    console.log("6. User session set:", req.session.user);
 
+    
     //this session cookie is for Next.js application : 
     const userData = {
       id: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      role: user.role
+      role: user.role,
+      lawyerVerivicationStatus : user?.lawyer?.verificationStatus
     } 
 
     // Generate JWT token

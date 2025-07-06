@@ -193,6 +193,12 @@ const FeedPage = () => {
           {/* Main Content - takes remaining space */}
           <main className="md:col-span-8 lg:col-span-6 space-y-6">
             {/* Post Creation Form */}
+             { userData?.lawyerVerivicationStatus !== 'approved' &&
+              <div className='w-full bg-yellow-200 dark:bg-yellow-950 text-yellow-700 dark:text-yellow-300 rounded-xl p-2 mb-4'>
+                <h3 className="text-lg font-medium mb-2">Verification Required</h3>
+                
+              </div>
+              }
             <PostCreateForm 
               userData={userData} 
               onPostCreated={handlePostCreated} 
@@ -200,6 +206,7 @@ const FeedPage = () => {
 
             {/* Posts */}
             <div className="space-y-6">
+             
               {posts.length === 0 ? (
                 <div className="bg-card rounded-lg border p-8 text-center">
                   <div className="bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded-xl p-6">

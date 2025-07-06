@@ -22,10 +22,8 @@ const setLoggedInUser = async (req, res, next) => {
     console.log('setLoggedInUser middleware triggered');
 
     if (req.session) {
-        console.log('Session exists:', req.session);
 
         if (req.session.user_id) {
-            console.log('User ID found in session:', req.session.user_id);
             res.locals.loggedInUserId = req.session.user_id;
 
             // Check if user object exists in session
@@ -33,8 +31,6 @@ const setLoggedInUser = async (req, res, next) => {
                 res.locals.userDetails = req.session.user;
                 res.locals.userRole = req.session.user.role;
                 res.locals.user = req.session.user; // Add user directly to locals for templates
-                console.log('User details:', req.session.user);
-                console.log("User Role:", res.locals.userRole);
 
                 // Calculate unread message count for navbar
                 try {
@@ -63,7 +59,6 @@ const setLoggedInUser = async (req, res, next) => {
                         res.locals.userDetails = user;
                         res.locals.userRole = user.role;
                         res.locals.user = user; // Add user directly to locals for templates
-                        console.log('User details fetched from DB:', user);
 
                         // Calculate unread message count for navbar
                         const unreadMessageCount = await Message.count({

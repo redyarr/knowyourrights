@@ -35,7 +35,7 @@ import {
 import ThemeToggle from './ThemeToggle'
 
 const Navbar = () => {
-  const [userData, setUserData] = useState(null)
+  const [userData, setUserData] = useState(null)  
   const [loading, setLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [showSearchResults, setShowSearchResults] = useState(false)

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Card, CardContent } from "../ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Button } from "../ui/button"
@@ -22,6 +22,9 @@ import {
 
 const PostCreateForm = ({ userData, onPostCreated }) => {
   const [isOpen, setIsOpen] = useState(false)
+  const [SessionData, setSessionData] = useState(null)  
+  console.log('SessionData:', SessionData);
+  
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [category, setCategory] = useState('General')
@@ -34,6 +37,38 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
     if (!userData) return 'U'
     return `${userData.firstName?.[0] || ''}${userData.lastName?.[0] || ''}`.toUpperCase()
   }
+
+  const getUserData = async () => {
+    try {
+      const response = await fetch('/api/getuserdata', {
+        method: 'GET',
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setSessionData(data.payload);
+      } else {
+        toast("Error", {
+          description: "Error getting user data",
+          action: {
+            label: "Undo",
+          },
+        })
+      }
+    } catch (error) {
+     toast("Ntwork Error", {
+          description: "etwork error during data fetch",
+          action: {
+            label: "Undo",
+          },
+        })
+    }
+  };
+
+  useEffect(() => {
+      getUserData();
+    }, [])
 
   const categories = [
     { value: 'General', icon: Scale, label: 'General Legal', color: 'text-blue-600' },
@@ -95,7 +130,7 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
       })
 
       const data = await response.json()
-
+      
       if (data.success) {
         toast("Post Created", {
           description: "Your legal insight has been shared successfully"
@@ -147,6 +182,7 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
                 <Button
                   variant="outline"
                   className="flex-1 justify-start text-muted-foreground hover:bg-muted/50"
+                  disabled={SessionData?.lawyerVerivicationStatus !== 'approved'}
                 >
                   Share legal insights...
                 </Button>

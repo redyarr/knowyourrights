@@ -11,6 +11,7 @@ require('dotenv').config();
 const { sequelize } = require('./models');
 const passport = require('./config/passport');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 // Import routes
 const AuthRouter = require('./routes/auth.js')
@@ -39,6 +40,8 @@ app.use(cors({
   origin: 'http://localhost:3000',  // ✅ Your Next.js frontend origin
   credentials: true                 // ✅ Allow cookies
 }));
+app.use(cookieParser());
+
 
 // Middlewares
 app.use(express.urlencoded({ extended: true }));
