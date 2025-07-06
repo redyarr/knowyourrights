@@ -279,7 +279,7 @@ const FeedPage = () => {
                     </div>
 
                     <div className="flex flex-col sm:flex-row gap-3">
-                      {userData?.lawyerVerivicationStatus === 'pending' ? (
+                      {userData?.lawyerVerivicationStatus === 'pending' && (
                         <>
                           <Button variant="ghost" className="text-amber-700 hover:text-amber-900 hover:bg-amber-100/50 dark:text-amber-300 dark:hover:text-amber-100 dark:hover:bg-amber-900/20 w-fit" asChild>
                             <Link href="/help/verification" className="flex items-center">
@@ -288,38 +288,10 @@ const FeedPage = () => {
                             </Link>
                           </Button>
                         </>
-                      ) : (
-                        <>
-                          <Button className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-md" asChild>
-                            <Link href="/profile/verification" className="flex items-center">
-                              <ShieldCheck className="h-4 w-4 mr-2" />
-                              Start Verification
-                            </Link>
-                          </Button>
-                          <Button variant="outline" className="bg-white/80 border-amber-300 text-amber-800 hover:bg-white hover:border-amber-400 dark:bg-amber-900/30 dark:border-amber-700 dark:text-amber-200" asChild>
-                            <Link href="/help/verification" className="flex items-center">
-                              <HelpCircle className="h-4 w-4 mr-2" />
-                              Learn More
-                            </Link>
-                          </Button>
-                        </>
-                      )}
+                      ) }
                     </div>
                   </div>
                 </div>
-
-                {/* Progress indicator for pending status */}
-                {userData?.lawyerVerivicationStatus === 'pending' && (
-                  <div className="mt-4 pt-4 border-t border-amber-200 dark:border-amber-800">
-                    <div className="flex items-center justify-between text-xs text-amber-700 dark:text-amber-300 mb-2">
-                      <span>Verification Progress</span>
-                      <span>Under Review</span>
-                    </div>
-                    <div className="w-full bg-amber-200 dark:bg-amber-900 rounded-full h-2">
-                      <div className="bg-gradient-to-r from-amber-500 to-orange-500 h-2 rounded-full animate-pulse" style={{ width: '66%' }}></div>
-                    </div>
-                  </div>
-                )}
               </div>
             )}
 

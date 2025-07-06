@@ -201,15 +201,7 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
                     )}
                   </Button>
                   
-                  {/* Tooltip for disabled state */}
-                  {SessionData?.lawyerVerivicationStatus !== 'approved' && (
-                    <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block">
-                      <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap">
-                        Complete verification to start posting
-                        <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-4 border-t-gray-900"></div>
-                      </div>
-                    </div>
-                  )}
+                  
                 </div>
               </DialogTrigger>
               <DialogContent className="sm:max-w-lg">
