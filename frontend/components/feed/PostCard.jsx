@@ -99,26 +99,26 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
     })
   }
 
-  const getLawyerVerificationBadge = (lawyer) => {
+  const getLawyerAuthority = (lawyer) => {
     
     switch (lawyer) {
       case 'approved':
         return {
-          label: 'Verified',
+          label: 'Approved',
           icon: ShieldCheck,
-          color: 'text-green-600 bg-green-100'
+          color: 'text-purple-600 text-purple-100'
         }
-      case 'pending':
+      case 'consultant':
         return {
-          label: 'Pending',
+          label: 'Consultant',
           icon: Clock,
           color: 'text-yellow-600 bg-yellow-100'
         }
-      case 'rejected':
+      case 'training':
         return {
-          label: 'Rejected',
-          icon: XCircle,
-          color: 'text-red-600 bg-red-100'
+          label: 'Training Lawyer',
+          icon: GraduationCap,
+          color: 'text-blue-600 bg-blue-100'
         }
       default:
         return {
@@ -399,7 +399,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
     .sort(([,a], [,b]) => b - a)
     .slice(0, 3)
 
-  const verificationBadge = getLawyerVerificationBadge(post?.user?.lawyer?.verificationStatus)
+  const Authority = getLawyerAuthority(post?.user?.lawyer?.badgeIssuingAuthority)
   
   return (
     <>
@@ -425,10 +425,10 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                   </Link>
                   
                   {/* Verification Badge for Lawyers */}
-                  {post?.user?.role === 'lawyer' && verificationBadge && (
-                    <Badge variant="secondary" className={`text-xs ${verificationBadge.color}`}>
-                      <verificationBadge.icon className="h-3 w-3 mr-1" />
-                      {verificationBadge.label}
+                  {post?.user?.role === 'lawyer' && Authority && (
+                    <Badge variant="secondary" className={`text-xs ${Authority.color}`}>
+                      <Authority.icon className="h-3 w-3 mr-1" />
+                      {Authority.label}
                     </Badge>
                   )}
                 </div>
