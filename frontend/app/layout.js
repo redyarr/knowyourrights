@@ -13,10 +13,10 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <NavbarWrapper>
-          <Navbar />
+          <Navbar/>
         </NavbarWrapper>
         {children}
-         <Toaster />
+         <Toaster/>
       </body>
     </html>
   );

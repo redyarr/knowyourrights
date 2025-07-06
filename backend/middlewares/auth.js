@@ -12,60 +12,92 @@ const isAuthenticated = (req, res, next) => {
 
 const isVerifiedLawyer = async (req, res, next) => {
     try {
-        // Check if user exists in database
+        // Check if user exists in database with lawyer details
         const user = await User.findByPk(req.session.user_id, {
             include: ['lawyer']
         });
 
+        // Handle various authentication and verification scenarios
         if (!user) {
-            return res.status(404).json({
-                message: 'User not found',
-                status: 'error'
+            return res.status(401).json({
+                success: false,
+                error: {
+                    code: 'USER_NOT_FOUND',
+                    message: 'Unable to authenticate user. Please login again.',
+                    details: 'User session is invalid or expired'
+                }
             });
         }
 
-        // Check if user is a lawyer
         if (user.role !== 'lawyer') {
             return res.status(403).json({
-                message: 'User is not a lawyer',
-                status: 'error'
+                success: false,
+                error: {
+                    code: 'UNAUTHORIZED_ROLE',
+                    message: 'Access restricted to verified lawyers only',
+                    details: 'Current user role does not have sufficient permissions'
+                }
             });
         }
 
-        // Verify lawyer details exist
         if (!user.lawyer) {
             return res.status(403).json({
-                message: 'Lawyer details not found',
-                status: 'error'
+                success: false,
+                error: {
+                    code: 'INCOMPLETE_PROFILE',
+                    message: 'Lawyer profile is incomplete',
+                    details: 'Please complete your lawyer registration process'
+                }
             });
         }
 
-        // Check verification status
-        switch (user.lawyer.verificationStatus) {
-            case 'approved':
-                return next();
-            case 'pending':
-                return res.status(403).json({
-                    message: 'Your verification is pending',
-                    status: 'error'
-                });
-            case 'rejected':
-                return res.status(403).json({
-                    message: 'Your verification was rejected',
-                    status: 'error'
-                });
-            default:
-                return res.status(403).json({
-                    message: 'Invalid verification status',
-                    status: 'error'
-                });
+        // Enhanced verification status handling
+        const verificationResponses = {
+            approved: () => next(),
+            pending: {
+                success: false,
+                error: {
+                    code: 'VERIFICATION_PENDING',
+                    message: 'Your lawyer account is pending verification',
+                    details: 'Please wait while our team reviews your credentials'
+                }
+            },
+            rejected: {
+                success: false,
+                error: {
+                    code: 'VERIFICATION_REJECTED',
+                    message: 'Your lawyer verification was unsuccessful',
+                    details: 'Please contact support for more information'
+                }
+            },
+            default: {
+                success: false,
+                error: {
+                    code: 'INVALID_STATUS',
+                    message: 'Invalid verification status detected',
+                    details: 'Please contact support to resolve this issue'
+                }
+            }
+        };
+
+        const status = user.lawyer.verificationStatus;
+        if (status === 'approved') {
+            return verificationResponses[status]();
         }
+        
+        return res.status(403).json(
+            verificationResponses[status] || verificationResponses.default
+        );
 
     } catch (error) {
         console.error('Lawyer verification middleware error:', error);
         return res.status(500).json({
-            message: 'Internal server error',
-            status: 'error'
+            success: false,
+            error: {
+                code: 'INTERNAL_SERVER_ERROR',
+                message: 'An unexpected error occurred',
+                details: 'Please try again later or contact support if the problem persists'
+            }
         });
     }
 };
