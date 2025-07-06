@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import "./globals.css";
 import NavbarWrapper from "@/components/NavbarWrapper";
 import { Toaster } from "@/components/ui/sonner";
+import ThemeProvider from "@/components/ThemeProvider";
 
 export const metadata = {
   title: "Know Your Rights",
@@ -12,11 +13,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <NavbarWrapper>
-          <Navbar />
-        </NavbarWrapper>
-        {children}
-         <Toaster />
+        <ThemeProvider>
+          <NavbarWrapper>
+            <Navbar />
+          </NavbarWrapper>
+          {children}
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

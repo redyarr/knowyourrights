@@ -32,6 +32,7 @@ import {
   Scale,
   Bell
 } from 'lucide-react'
+import ThemeToggle from './ThemeToggle'
 
 const Navbar = () => {
   const [userData, setUserData] = useState(null)
@@ -169,7 +170,7 @@ const Navbar = () => {
   return (
     <>
       {/* Mobile Top Header - LinkedIn Style */}
-      <div className="lg:hidden sticky top-0 left-0 right-0 z-50 bg-white border-b">
+      <div className="lg:hidden sticky top-0 left-0 right-0 z-50 bg-background border-b">
         <div className="flex items-center justify-between px-4 py-2.5">
           {/* Profile Picture - Opens Sidebar */}
           {userData ? (
@@ -188,18 +189,26 @@ const Navbar = () => {
                 <div className="flex flex-col h-full">
                   {/* Profile Header */}
                   <div className="p-6 border-b bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950 dark:to-indigo-950">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <Avatar className="h-16 w-16">
-                        <AvatarImage src={userData.profilePicture} alt="Profile" />
-                        <AvatarFallback className="bg-blue-600 text-white text-lg">
-                          {getUserInitials()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <h4 className="font-semibold text-foreground">{getUserDisplayName()}</h4>
-                        <p className="text-sm text-muted-foreground">{getUserRole()}</p>
-                      </div>
-                    </div>
+                     <div className='flex items-end justify-between gap-20 w-full'>
+                     {/* AVATAR WITH NAME AND ROLE */}
+                        <div className='flex items-center space-x-3 mb-4'>
+                              <Avatar className="h-16 w-16">
+                              <AvatarImage src={userData.profilePicture} alt="Profile" />
+                              <AvatarFallback className="bg-blue-600 text-white text-lg">
+                                {getUserInitials()}
+                              </AvatarFallback>
+                              </Avatar>
+                              <div>
+                                <h4 className="font-semibold text-foreground">{getUserDisplayName()}</h4>
+                                <p className="text-sm text-muted-foreground">{getUserRole()}</p>
+                              </div>
+                        </div>
+
+                          {/* THE THME TOGGLE! */}
+                          <div className='mb-4 flex-1'>
+                              <ThemeToggle />
+                          </div>
+                     </div>
                     <Button asChild className="w-full">
                       <Link href="/in" onClick={() => setProfileSidebarOpen(false)}>
                         View Profile
@@ -327,7 +336,7 @@ const Navbar = () => {
       </div>
 
       {/* Desktop Navigation */}
-      <nav className="hidden lg:block bg-white border-b sticky top-0 z-50">
+      <nav className="hidden lg:block bg-background border-b sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex justify-between h-14 items-center">
             {/* Left Section */}
@@ -408,6 +417,7 @@ const Navbar = () => {
 
             {/* Right Section */}
             <div className="flex items-center space-x-3">
+              <ThemeToggle />
               {userData ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
