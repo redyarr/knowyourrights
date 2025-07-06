@@ -25,7 +25,7 @@ const LeftSidebar = ({ userData }) => {
   }
 
   return (
-    <aside className="hidden lg:block space-y-4">
+    <aside className="hidden md:block space-y-4">
       {/* Profile Card */}
       {userData && (
         <Card className="overflow-hidden">
