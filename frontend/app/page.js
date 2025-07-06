@@ -135,9 +135,9 @@ const FeedPage = () => {
     return (
       <div className="min-h-screen bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Left Sidebar Skeleton */}
-            <div className="hidden lg:block lg:col-span-3 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 gap-4 lg:gap-6">
+            {/* Left Sidebar Skeleton - visible from md up */}
+            <div className="hidden md:block md:col-span-4 lg:col-span-3 space-y-4">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="bg-card rounded-lg border p-4 space-y-4">
                   <div className="h-4 bg-muted rounded animate-pulse"></div>
@@ -148,7 +148,7 @@ const FeedPage = () => {
             </div>
             
             {/* Main Content Skeleton */}
-            <div className="lg:col-span-6 space-y-6">
+            <div className="md:col-span-8 lg:col-span-6 space-y-6">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="bg-card rounded-lg border p-6 space-y-4">
                   <div className="flex items-center space-x-3">
@@ -168,7 +168,7 @@ const FeedPage = () => {
               ))}
             </div>
             
-            {/* Right Sidebar Skeleton */}
+            {/* Right Sidebar Skeleton - only visible on lg+ */}
             <div className="hidden lg:block lg:col-span-3 space-y-4">
               {[1, 2].map((i) => (
                 <div key={i} className="bg-card rounded-lg border p-4 space-y-4">
@@ -187,14 +187,14 @@ const FeedPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Left Sidebar */}
-          <div className="lg:col-span-3">
+        <div className="grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 gap-4 lg:gap-6">
+          {/* Left Sidebar - visible from md up, smaller on md */}
+          <div className="md:col-span-4 lg:col-span-3">
             <LeftSidebar userData={userData} />
           </div>
 
-          {/* Main Content */}
-          <main className="lg:col-span-6 space-y-6">
+          {/* Main Content - takes remaining space */}
+          <main className="md:col-span-8 lg:col-span-6 space-y-6">
             {/* Post Creation Form */}
             <PostCreateForm 
               userData={userData} 
@@ -249,8 +249,8 @@ const FeedPage = () => {
             </div>
           </main>
 
-          {/* Right Sidebar */}
-          <div className="lg:col-span-3">
+          {/* Right Sidebar - only visible on lg+ */}
+          <div className="hidden lg:block lg:col-span-3">
             <RightSidebar />
           </div>
         </div>

@@ -264,14 +264,14 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
                 key={cat.value}
                 variant="ghost"
                 size="sm"
-                className="flex items-center sm:space-x-2 lg:space-x-0 xl:space-x-2 hover:bg-muted/50"
+                className="flex items-center sm:space-x-2 md:space-x-0 xl:space-x-2 hover:bg-muted/50"
                 onClick={() => {
                   setCategory(cat.value)
                   setIsOpen(true)
                 }}
               >
                 <cat.icon className={`h-4 w-4 ${cat.color}`} />
-                <span className="sm:text-sm lg:text-xs xl:text-sm font-medium text-xs sm:inline">
+                <span className="sm:text-sm md:text-xs xl:text-sm font-medium text-xs sm:inline">
                   {cat.label}
                 </span>
               </Button>
