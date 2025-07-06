@@ -1,15 +1,18 @@
 const {User} = require('../models')
 
 const isAuthenticated = (req, res, next) => {
-  if (req.session && req.session.user_id) {
-    return next();
+  if (!req.session || !req.session.user_id) {
+    return res.status(401).json({
+      success: false,
+      error: {
+        code: 'UNAUTHORIZED',
+        message: 'Authentication required',
+        details: 'Please login to access this resource'
+      }
+    });
   }
-  res.send({
-    message: 'You are not authorized',
-    status: 'error'
-  });
+  return next();
 };
-
 const isVerifiedLawyer = async (req, res, next) => {
     try {
         // Check if user exists in database with lawyer details
