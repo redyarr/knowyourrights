@@ -72,7 +72,7 @@ const FeedPage = () => {
         }
       } else {
         toast("Failed to load posts", {
-          description: data.error || "Please try again later"
+          description:  "Please try again later"
         });
       }
     } catch (error) {
@@ -281,7 +281,7 @@ const FeedPage = () => {
                     <div className="flex flex-col sm:flex-row gap-3">
                       {userData?.lawyerVerivicationStatus === 'pending' ? (
                         <>
-                          <Button variant="ghost" className="text-amber-700 hover:text-amber-900 hover:bg-amber-100/50 dark:text-amber-300 dark:hover:text-amber-100 dark:hover:bg-amber-900/20" asChild>
+                          <Button variant="ghost" className="text-amber-700 hover:text-amber-900 hover:bg-amber-100/50 dark:text-amber-300 dark:hover:text-amber-100 dark:hover:bg-amber-900/20 w-fit" asChild>
                             <Link href="/help/verification" className="flex items-center">
                               <HelpCircle className="h-4 w-4 mr-2" />
                               Get Help

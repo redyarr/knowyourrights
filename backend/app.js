@@ -37,8 +37,8 @@ const io = new Server(server);
 const PORT = process.env.PORT || 3001;
 
 app.use(cors({
-  origin: 'http://localhost:3000',  // ✅ Your Next.js frontend origin
-  credentials: true                 // ✅ Allow cookies
+  origin: 'http://localhost:3000',  
+  credentials: true                 
 }));
 app.use(cookieParser());
 

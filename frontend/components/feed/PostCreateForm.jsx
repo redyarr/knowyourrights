@@ -131,6 +131,7 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
       })
 
       const data = await response.json()
+      console.log('Post creation response:', data);
       
       if (data.success) {
         toast("Post Created", {
@@ -150,7 +151,7 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
         }
       } else {
         toast("Post Failed", {
-          description: data.error || "Failed to create post"
+          description: data?.error?.message
         })
       }
     } catch (error) {
@@ -180,15 +181,15 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
             </Avatar>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
-                <div className="relative">
+                <div className="relative w-full">
                   <Button
                     variant="outline"
-                    className={`flex-1 justify-start text-muted-foreground hover:bg-muted/50 ${
+                    disabled={SessionData?.lawyerVerivicationStatus !== 'approved'}
+                    className={`w-full flex-1 justify-start text-muted-foreground hover:bg-muted/50 ${
                       SessionData?.lawyerVerivicationStatus !== 'approved' 
                         ? 'opacity-60 cursor-not-allowed bg-gray-50 dark:bg-gray-900' 
                         : ''
                     }`}
-                    disabled={SessionData?.lawyerVerivicationStatus !== 'approved'}
                   >
                     {SessionData?.lawyerVerivicationStatus !== 'approved' ? (
                       <div className="flex items-center">
