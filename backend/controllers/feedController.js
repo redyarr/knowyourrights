@@ -135,7 +135,7 @@ exports.getAllPosts = async (req, res) => {
         
         // Calculate reaction stats for each post
         const postsWithStats = posts.map(post => {
-            const reactions = post.Reacts || [];
+            const reactions = post.reacts || [];
             const reactionStats = {
                 like: reactions.filter(r => r.reaction === 'like').length,
                 love: reactions.filter(r => r.reaction === 'love').length,
@@ -148,7 +148,7 @@ exports.getAllPosts = async (req, res) => {
             // Find user's reaction if logged in
             const userId = req.session.user_id;
             const userReaction = userId ? reactions.find(r => r.userId === userId) : null;
-
+            
             return {
                 ...post.toJSON(),
                 reactionStats,
