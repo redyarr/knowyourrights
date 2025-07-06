@@ -7,6 +7,11 @@ import LeftSidebar from '../components/feed/LeftSidebar';
 import RightSidebar from '../components/feed/RightSidebar';
 import PostCard from '../components/feed/PostCard';
 import PostCreateForm from '../components/feed/PostCreateForm';
+import Link from 'next/link';
+import { X, AlertTriangle, Clock, Eye, HelpCircle, ShieldCheck } from 'lucide-react';
+import { Button } from '../components/ui/button';
+import { Badge } from '../components/ui/badge';
+
 
 const FeedPage = () => {
   const [userData, setUserData] = useState(null);
@@ -15,6 +20,7 @@ const FeedPage = () => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [showVerificationWarning, setShowVerificationWarning] = useState(true);
   const observerRef = useRef(null);
   const targetPostIndex = useRef(10); 
   
@@ -192,13 +198,132 @@ const FeedPage = () => {
 
           {/* Main Content - takes remaining space */}
           <main className="md:col-span-8 lg:col-span-6 space-y-6">
-            {/* Post Creation Form */}
-             { userData?.lawyerVerivicationStatus !== 'approved' &&
-              <div className='w-full bg-yellow-200 dark:bg-yellow-950 text-yellow-700 dark:text-yellow-300 rounded-xl p-2 mb-4'>
-                <h3 className="text-lg font-medium mb-2">Verification Required</h3>
-                
+            {/* Verification Warning */}
+            {userData?.role === 'lawyer' && 
+             userData?.lawyerVerivicationStatus !== 'approved' && 
+             showVerificationWarning && (
+              <div className="relative bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-6 shadow-sm">
+                {/* Dismiss Button */}
+                <button
+                  onClick={() => setShowVerificationWarning(false)}
+                  className="absolute top-4 right-4 p-1 text-amber-500 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/30 rounded-full transition-colors duration-200"
+                  aria-label="Dismiss notification"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+
+                <div className="flex items-start space-x-4">
+                  {/* Warning Icon */}
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center shadow-md">
+                      <AlertTriangle className="h-6 w-6 text-white" />
+                    </div>
+                  </div>
+
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <h3 className="text-lg font-semibold text-amber-900 dark:text-amber-100">
+                        Account Verification Pending
+                      </h3>
+                      <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
+                        {userData?.lawyerVerivicationStatus === 'pending' ? 'Under Review' : 'Verification Required'}
+                      </Badge>
+                    </div>
+                    
+                    <p className="text-amber-800 dark:text-amber-200 text-sm leading-relaxed mb-4">
+                      {userData?.lawyerVerivicationStatus === 'pending' 
+                        ? "Thank you for submitting your verification documents! Our team is currently reviewing your credentials to ensure the highest quality of legal professionals on our platform."
+                        : "To maintain the integrity of our legal community, we require all lawyers to complete verification before sharing content."
+                      }
+                    </p>
+
+                    <div className="bg-white/60 dark:bg-black/20 rounded-lg p-4 mb-4">
+                      <h4 className="font-medium text-amber-900 dark:text-amber-100 mb-2 flex items-center">
+                        <Clock className="h-4 w-4 mr-2" />
+                        What happens next?
+                      </h4>
+                      <ul className="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+                        {userData?.lawyerVerivicationStatus === 'pending' ? (
+                          <>
+                            <li className="flex items-center">
+                              <div className="w-1.5 h-1.5 bg-amber-500 rounded-full mr-2"></div>
+                              Our verification team will review your documents within 2-3 business days
+                            </li>
+                            <li className="flex items-center">
+                              <div className="w-1.5 h-1.5 bg-amber-500 rounded-full mr-2"></div>
+                              You'll receive an email notification once the review is complete
+                            </li>
+                            <li className="flex items-center">
+                              <div className="w-1.5 h-1.5 bg-amber-500 rounded-full mr-2"></div>
+                              Once approved, you'll be able to share legal insights and connect with the community
+                            </li>
+                          </>
+                        ) : (
+                          <>
+                            <li className="flex items-center">
+                              <div className="w-1.5 h-1.5 bg-amber-500 rounded-full mr-2"></div>
+                              Complete your profile with required legal credentials
+                            </li>
+                            <li className="flex items-center">
+                              <div className="w-1.5 h-1.5 bg-amber-500 rounded-full mr-2"></div>
+                              Upload verification documents (bar certification, license, etc.)
+                            </li>
+                            <li className="flex items-center">
+                              <div className="w-1.5 h-1.5 bg-amber-500 rounded-full mr-2"></div>
+                              Wait for our team to verify your credentials
+                            </li>
+                          </>
+                        )}
+                      </ul>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      {userData?.lawyerVerivicationStatus === 'pending' ? (
+                        <>
+                          <Button variant="ghost" className="text-amber-700 hover:text-amber-900 hover:bg-amber-100/50 dark:text-amber-300 dark:hover:text-amber-100 dark:hover:bg-amber-900/20" asChild>
+                            <Link href="/help/verification" className="flex items-center">
+                              <HelpCircle className="h-4 w-4 mr-2" />
+                              Get Help
+                            </Link>
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white shadow-md" asChild>
+                            <Link href="/profile/verification" className="flex items-center">
+                              <ShieldCheck className="h-4 w-4 mr-2" />
+                              Start Verification
+                            </Link>
+                          </Button>
+                          <Button variant="outline" className="bg-white/80 border-amber-300 text-amber-800 hover:bg-white hover:border-amber-400 dark:bg-amber-900/30 dark:border-amber-700 dark:text-amber-200" asChild>
+                            <Link href="/help/verification" className="flex items-center">
+                              <HelpCircle className="h-4 w-4 mr-2" />
+                              Learn More
+                            </Link>
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Progress indicator for pending status */}
+                {userData?.lawyerVerivicationStatus === 'pending' && (
+                  <div className="mt-4 pt-4 border-t border-amber-200 dark:border-amber-800">
+                    <div className="flex items-center justify-between text-xs text-amber-700 dark:text-amber-300 mb-2">
+                      <span>Verification Progress</span>
+                      <span>Under Review</span>
+                    </div>
+                    <div className="w-full bg-amber-200 dark:bg-amber-900 rounded-full h-2">
+                      <div className="bg-gradient-to-r from-amber-500 to-orange-500 h-2 rounded-full animate-pulse" style={{ width: '66%' }}></div>
+                    </div>
+                  </div>
+                )}
               </div>
-              }
+            )}
+
+            {/* Post Creation Form */}
             <PostCreateForm 
               userData={userData} 
               onPostCreated={handlePostCreated} 

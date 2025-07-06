@@ -30,7 +30,9 @@ import {
   XCircle,
   ShieldCheck,
   X,
-  AlertTriangle
+  AlertTriangle,
+  Eye,
+  HelpCircle
 } from 'lucide-react'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
 

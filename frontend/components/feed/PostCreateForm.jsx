@@ -17,7 +17,8 @@ import {
   Scale, 
   Handshake,
   Camera,
-  X
+  X,
+  AlertTriangle
 } from 'lucide-react'
 
 const PostCreateForm = ({ userData, onPostCreated }) => {
@@ -179,13 +180,36 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
             </Avatar>
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  className="flex-1 justify-start text-muted-foreground hover:bg-muted/50"
-                  disabled={SessionData?.lawyerVerivicationStatus !== 'approved'}
-                >
-                  Share legal insights...
-                </Button>
+                <div className="relative">
+                  <Button
+                    variant="outline"
+                    className={`flex-1 justify-start text-muted-foreground hover:bg-muted/50 ${
+                      SessionData?.lawyerVerivicationStatus !== 'approved' 
+                        ? 'opacity-60 cursor-not-allowed bg-gray-50 dark:bg-gray-900' 
+                        : ''
+                    }`}
+                    disabled={SessionData?.lawyerVerivicationStatus !== 'approved'}
+                  >
+                    {SessionData?.lawyerVerivicationStatus !== 'approved' ? (
+                      <div className="flex items-center">
+                        <AlertTriangle className="h-4 w-4 mr-2 text-amber-500" />
+                        Verification required to post...
+                      </div>
+                    ) : (
+                      'Share legal insights...'
+                    )}
+                  </Button>
+                  
+                  {/* Tooltip for disabled state */}
+                  {SessionData?.lawyerVerivicationStatus !== 'approved' && (
+                    <div className="absolute bottom-full left-0 mb-2 hidden group-hover:block">
+                      <div className="bg-gray-900 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap">
+                        Complete verification to start posting
+                        <div className="absolute top-full left-4 w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-4 border-t-gray-900"></div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </DialogTrigger>
               <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
@@ -300,10 +324,17 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
                 key={cat.value}
                 variant="ghost"
                 size="sm"
-                className="flex items-center sm:space-x-2 md:space-x-0 xl:space-x-2 hover:bg-muted/50"
+                className={`flex items-center sm:space-x-2 md:space-x-0 xl:space-x-2 hover:bg-muted/50 ${
+                  SessionData?.lawyerVerivicationStatus !== 'approved' 
+                    ? 'opacity-60 cursor-not-allowed' 
+                    : ''
+                }`}
+                disabled={SessionData?.lawyerVerivicationStatus !== 'approved'}
                 onClick={() => {
-                  setCategory(cat.value)
-                  setIsOpen(true)
+                  if (SessionData?.lawyerVerivicationStatus === 'approved') {
+                    setCategory(cat.value)
+                    setIsOpen(true)
+                  }
                 }}
               >
                 <cat.icon className={`h-4 w-4 ${cat.color}`} />
