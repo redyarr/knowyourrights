@@ -120,9 +120,6 @@ const FeedPage = () => {
     if (deletedPostId) {
       // Remove deleted post from the list
       setPosts(prev => prev.filter(post => post.id !== deletedPostId));
-      toast("Post Deleted", {
-        description: "The post has been removed from your feed"
-      });
     } else if (updatedPost) {
       // Update existing post
       setPosts(prev => prev.map(post => 
