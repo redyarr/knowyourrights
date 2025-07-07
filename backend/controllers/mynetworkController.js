@@ -169,7 +169,7 @@ exports.sendConnectionRequest = async (req, res) => {
         }
         
         // Create the connection request
-        await Connection.create({
+        const connection = await Connection.create({
             requester_id: requesterId,
             receiver_id: receiverId,
             status: 'pending',
@@ -189,7 +189,11 @@ exports.sendConnectionRequest = async (req, res) => {
             isRead: false
         });
         
-        return res.status(200).json({ success: true, message: 'Connection request sent successfully' });
+        return res.status(200).json({ 
+            success: true, 
+            message: 'Connection request sent successfully',
+            connectionId: connection.id 
+        });
     } catch (error) {
         console.error('Error sending connection request:', error);
         return res.status(500).json({ success: false, message: 'An error occurred while sending the request' });

@@ -73,20 +73,26 @@ const RightSidebar = () => {
           description: "Your connection request has been sent successfully"
         })
         
-        // Update UI to show cancel option
+        // Update UI to show cancel option with the actual connection ID
         button.textContent = 'Cancel'
         button.className = button.className.replace('border-blue-600 text-blue-600', 'border-orange-600 text-orange-600')
         button.setAttribute('data-action', 'cancel')
+        button.setAttribute('data-connection-id', data.connectionId) 
+        button.disabled = false
       } else {
         toast("Request Failed", {
           description: data.message || 'Failed to send connection request'
         })
+        button.textContent = 'Connect'
+        button.disabled = false
       }
     } catch (error) {
       console.error('Connection request error:', error)
       toast("Network Error", {
         description: 'Failed to send connection request. Please try again.'
       })
+      button.textContent = 'Connect'
+      button.disabled = false
     }
   }
 
@@ -107,21 +113,26 @@ const RightSidebar = () => {
           description: "Your connection request has been cancelled"
         })
         
-        // Update UI back to connect option
         button.textContent = 'Connect'
         button.className = button.className.replace('border-orange-600 text-orange-600', 'border-blue-600 text-blue-600')
         button.setAttribute('data-action', 'connect')
         button.removeAttribute('data-connection-id')
+        button.disabled = false
       } else {
         toast("Cancel Failed", {
           description: data.message || 'Failed to cancel connection request'
         })
+        button.textContent = 'Cancel'
+        button.disabled = false
       }
     } catch (error) {
       console.error('Cancel request error:', error)
       toast("Network Error", {
         description: 'Failed to cancel request. Please try again.'
       })
+      // Reset button state on error
+      button.textContent = 'Cancel'
+      button.disabled = false
     }
   }
 
@@ -130,13 +141,25 @@ const RightSidebar = () => {
     const userId = button.getAttribute('data-user-id')
     const connectionId = button.getAttribute('data-connection-id')
     
+    // Disable button and show loading state
     button.disabled = true
+    const originalText = button.textContent
     button.textContent = action === 'connect' ? 'Sending...' : 'Cancelling...'
     
+    // Helper function to reset button state
+    const resetButton = () => {
+      button.textContent = originalText
+      button.disabled = false
+    }
+    
     if (action === 'connect') {
-      sendConnectionRequest(userId, button)
+      sendConnectionRequest(userId, button).catch(() => {
+        resetButton()
+      })
     } else if (action === 'cancel') {
-      cancelConnectionRequest(connectionId, button)
+      cancelConnectionRequest(connectionId, button).catch(() => {
+        resetButton()
+      })
     }
   }
 
