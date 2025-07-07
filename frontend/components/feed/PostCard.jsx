@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Link from 'next/link'
 import { Card, CardContent, CardHeader } from "../ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
@@ -32,7 +32,10 @@ import {
   X,
   AlertTriangle,
   Eye,
-  HelpCircle
+  HelpCircle,
+  ChevronLeft,
+  ChevronRight,
+  Send
 } from 'lucide-react'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
 
@@ -48,7 +51,14 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
   const [editingCommentId, setEditingCommentId] = useState(null)
   const [editCommentContent, setEditCommentContent] = useState('')
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [showImageModal, setShowImageModal] = useState(false)
+  const [selectedImage, setSelectedImage] = useState(null)
+  const [newComment, setNewComment] = useState('')
+  const [isSubmittingComment, setIsSubmittingComment] = useState(false)
   
+  const modalRef = useRef(null)
+  const commentInputRef = useRef(null)
+
   const calculateReactionStats = (reactsArray) => {
     const stats = { like: 0, love: 0, haha: 0, wow: 0, sad: 0, angry: 0 }
     
@@ -70,7 +80,6 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
   const [userReaction, setUserReaction] = useState(post.userReaction)
   const [comments, setComments] = useState(post.comments || [])
   const [showReactionPicker, setShowReactionPicker] = useState(false)
-  const commentInputRef = useRef(null)
 
   const reactionEmojis = {
     like: { emoji: '👍', icon: ThumbsUp, label: 'Like' },
@@ -392,6 +401,76 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
     }
   }
 
+  const handleImageClick = (imageSrc) => {
+    setSelectedImage(imageSrc)
+    setShowImageModal(true)
+    setNewComment('')
+  }
+
+  const closeImageModal = () => {
+    setShowImageModal(false)
+    setSelectedImage(null)
+    setNewComment('')
+  }
+
+  // Handle click outside modal
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        closeImageModal()
+      }
+    }
+
+    if (showImageModal) {
+      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeImageModal()
+        }
+      })
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener('keydown', closeImageModal)
+    }
+  }, [showImageModal])
+
+  const handleModalComment = async (e) => {
+    e.preventDefault()
+    if (!newComment.trim() || isSubmittingComment) return
+
+    setIsSubmittingComment(true)
+
+    try {
+      const response = await fetch(`http://localhost:3001/feed/post/${post.id}/comment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ content: newComment.trim() }),
+        credentials: 'include'
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setComments([...comments, data.comment])
+        setNewComment('')
+      } else {
+        toast("Comment Failed", {
+          description: data.error || "Failed to post comment"
+        })
+      }
+    } catch (error) {
+      toast("Error", {
+        description: "Failed to post comment"
+      })
+    } finally {
+      setIsSubmittingComment(false)
+    }
+  }
+
   // Calculate total reactions - this should work immediately with seeded data
   const totalReactions = Object.values(reactions).reduce((sum, count) => sum + count, 0)
   const topReactions = Object.entries(reactions)
@@ -524,6 +603,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                     src={post.post_photos[0].photo.photoPath}
                     alt="Post image"
                     className="w-full max-h-96 object-cover rounded-lg"
+                    onClick={() => handleImageClick(post.post_photos[0].photo.photoPath)}
                   />
                 </div>
               ) : (
@@ -534,6 +614,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                       src={postPhoto.photo.photoPath}
                       alt="Post image"
                       className="w-full h-48 object-cover rounded-lg"
+                      onClick={() => handleImageClick(postPhoto.photo.photoPath)}
                     />
                   ))}
                 </div>
@@ -851,6 +932,348 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* LinkedIn-Style Image Modal with Dark Mode Support */}
+      {showImageModal && selectedImage && (
+        <div className="fixed inset-0 bg-black/75 dark:bg-black/85 z-[100] flex items-center justify-center p-4">
+          <div 
+            ref={modalRef}
+            className="w-full max-w-6xl h-[90vh] bg-background dark:bg-background rounded-xl shadow-2xl flex overflow-hidden border border-border dark:border-border"
+          >
+            {/* Close Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={closeImageModal}
+              className="absolute top-4 right-4 z-10 rounded-full bg-background/80 dark:bg-background/80 backdrop-blur-sm hover:bg-background dark:hover:bg-background border border-border dark:border-border shadow-lg"
+              aria-label="Close"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+
+            {/* Left Side - Image */}
+            <div className="flex-1 bg-muted/20 dark:bg-muted/10 flex items-center justify-center relative border-r border-border dark:border-border">
+              <img
+                src={selectedImage}
+                alt="Post image"
+                className="max-w-full max-h-full object-contain"
+                onClick={(e) => e.stopPropagation()}
+              />
+              
+              {/* Navigation Arrows for Multiple Images */}
+              {post.post_photos && post.post_photos.length > 1 && (
+                <>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      const currentIndex = post.post_photos.findIndex(photo => photo.photo.photoPath === selectedImage)
+                      const prevIndex = currentIndex > 0 ? currentIndex - 1 : post.post_photos.length - 1
+                      setSelectedImage(post.post_photos[prevIndex].photo.photoPath)
+                    }}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 dark:bg-background/80 backdrop-blur-sm hover:bg-background dark:hover:bg-background border border-border dark:border-border shadow-lg"
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </Button>
+                  
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      const currentIndex = post.post_photos.findIndex(photo => photo.photo.photoPath === selectedImage)
+                      const nextIndex = currentIndex < post.post_photos.length - 1 ? currentIndex + 1 : 0
+                      setSelectedImage(post.post_photos[nextIndex].photo.photoPath)
+                    }}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 dark:bg-background/80 backdrop-blur-sm hover:bg-background dark:hover:bg-background border border-border dark:border-border shadow-lg"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </Button>
+                </>
+              )}
+            </div>
+
+            {/* Right Side - Post Details */}
+            <div className="w-96 bg-background dark:bg-background flex flex-col">
+              {/* Post Header */}
+              <div className="p-4 flex-shrink-0">
+                <div className="flex items-center space-x-3">
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage src={post.user?.profilePicture} alt="Profile" />
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      {getUserInitials(post.user)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center space-x-2">
+                      <h3 className="font-semibold text-sm text-foreground dark:text-foreground">
+                        {getUserDisplayName(post.user)}
+                      </h3>
+                      {post?.user?.role === 'lawyer' && Authority && (
+                        <Badge variant="secondary" className={`text-xs ${Authority.color}`}>
+                          <Authority.icon className="h-3 w-3 mr-1" />
+                          {Authority.label}
+                        </Badge>
+                      )}
+                    </div>
+                    {post.user?.role === 'lawyer' && post.user?.lawyer?.lawFirm && (
+                      <p className="text-xs text-muted-foreground dark:text-muted-foreground">
+                        {post.user.lawyer.lawFirm}
+                      </p>
+                    )}
+                    <div className="flex items-center text-xs text-muted-foreground dark:text-muted-foreground mt-1">
+                      <Clock className="h-3 w-3 mr-1" />
+                      <time>{formatDate(post.createdAt)}</time>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Post Content */}
+              <div className="p-4 flex-shrink-0">
+                {post.title && (
+                  <h2 className="font-semibold text-base mb-2 text-foreground dark:text-foreground">
+                    {post.title}
+                  </h2>
+                )}
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground leading-relaxed">
+                  {post.content}
+                </p>
+              </div>
+
+              {/* Reactions and Stats */}
+              <div className="px-4 py-3 flex-shrink-0">
+                <div className="flex items-center justify-between">
+                  {/* Reactions Display */}
+                  {totalReactions > 0 && (
+                    <div className="flex items-center space-x-2">
+                      <div className="flex -space-x-1">
+                        {topReactions.map(([reaction]) => (
+                          <span
+                            key={reaction}
+                            className="inline-flex items-center justify-center w-6 h-6 text-sm bg-background dark:bg-background border-2 border-background dark:border-background rounded-full shadow-sm"
+                          >
+                            {reactionEmojis[reaction]?.emoji}
+                          </span>
+                        ))}
+                      </div>
+                      <span className="text-sm text-muted-foreground dark:text-muted-foreground font-medium">
+                        {totalReactions}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* Comment Count */}
+                  {comments.length > 0 && (
+                    <span className="text-sm text-muted-foreground dark:text-muted-foreground font-medium">
+                      {comments.length} comment{comments.length !== 1 ? 's' : ''}
+                    </span>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex items-center border-t border-border dark:border-border justify-around mt-3 pt-3">
+                  <div className="relative">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={`flex items-center space-x-1 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground ${userReaction ? 'text-primary dark:text-primary' : ''}`}
+                      onMouseEnter={() => setShowReactionPicker(true)}
+                      onMouseLeave={() => setShowReactionPicker(false)}
+                      onClick={() => handleReaction('like')}
+                    >
+                      <ThumbsUp className="h-4 w-4" />
+                      <span className="text-xs">
+                        {userReaction ? userReaction.charAt(0).toUpperCase() + userReaction.slice(1) : 'Like'}
+                      </span>
+                    </Button>
+                    
+                    {/* Reaction Picker */}
+                    {showReactionPicker && (
+                      <div
+                        className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-popover dark:bg-popover border border-border dark:border-border rounded-lg shadow-xl p-2 z-50"
+                        onMouseEnter={() => setShowReactionPicker(true)}
+                        onMouseLeave={() => setShowReactionPicker(false)}
+                      >
+                        <div className="flex space-x-1">
+                          {Object.entries(reactionEmojis).map(([key, { emoji, label }]) => (
+                            <Button
+                              key={key}
+                              variant="ghost"
+                              className="text-lg hover:scale-110 transition-transform p-1 h-auto"
+                              onClick={() => handleReaction(key)}
+                              title={label}
+                            >
+                              {emoji}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center space-x-1 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground"
+                    onClick={() => document.getElementById('modal-comment-input')?.focus()}
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    <span className="text-xs">Comment</span>
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center space-x-1 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground"
+                    onClick={handleShare}
+                  >
+                    <Share2 className="h-4 w-4" />
+                    <span className="text-xs">Share</span>
+                  </Button>
+                </div>
+              </div>
+
+              {/* Comment Input */}
+              <div className="px-4 flex-shrink-0">
+                <form onSubmit={handleModalComment} className="flex items-center space-x-3">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={userData?.profilePicture} alt="Your avatar" />
+                    <AvatarFallback className="bg-primary text-primary-foreground text-xs">
+                      {getUserInitials(userData)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 flex items-center space-x-2">
+                    <Input
+                      id="modal-comment-input"
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      placeholder="Add a comment..."
+                      className="flex-1 bg-background dark:bg-background border-input dark:border-input"
+                      disabled={isSubmittingComment}
+                    />
+                    <Button 
+                      type="submit" 
+                      size="sm"
+                      disabled={!newComment.trim() || isSubmittingComment}
+                      className="px-3"
+                    >
+                      {isSubmittingComment ? (
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground"></div>
+                      ) : (
+                        <Send className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </div>
+
+              {/* Comments Section */}
+              <div className="flex-1 overflow-y-auto">
+                <div className="p-4 space-y-3">
+                  {comments.length === 0 ? (
+                    <div className="text-center text-muted-foreground dark:text-muted-foreground text-sm py-8">
+                      No comments yet. Be the first to comment!
+                    </div>
+                  ) : (
+                    comments.map((comment) => (
+                      <div key={comment.id} className="flex items-start space-x-3">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage 
+                            src={comment.User?.profilePicture || comment.user?.profilePicture} 
+                            alt="Commenter" 
+                          />
+                          <AvatarFallback className="bg-muted text-muted-foreground text-xs">
+                            {getUserInitials(comment.User || comment.user)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          {editingCommentId === comment.id ? (
+                            // Edit comment form
+                            <div className="space-y-2">
+                              <Textarea
+                                value={editCommentContent}
+                                onChange={(e) => setEditCommentContent(e.target.value)}
+                                className="min-h-[60px] text-sm bg-background dark:bg-background border-input dark:border-input"
+                                placeholder="Edit your comment..."
+                              />
+                              <div className="flex space-x-2">
+                                <Button 
+                                  size="sm" 
+                                  onClick={() => handleEditComment(comment.id)}
+                                  disabled={!editCommentContent.trim()}
+                                >
+                                  Save
+                                </Button>
+                                <Button 
+                                  size="sm" 
+                                  variant="outline" 
+                                  onClick={cancelEditingComment}
+                                >
+                                  Cancel
+                                </Button>
+                              </div>
+                            </div>
+                          ) : (
+                            // Display comment
+                            <div className="bg-muted/50 dark:bg-muted/30 rounded-lg px-3 py-2">
+                              <div className="flex items-center justify-between">
+                                <div className="font-medium text-sm text-foreground dark:text-foreground">
+                                  {getUserDisplayName(comment.User || comment.user)}
+                                </div>
+                                {userData && comment.userId === userData.id && (
+                                  <div className="flex space-x-1">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-6 w-6 p-0 text-muted-foreground dark:text-muted-foreground hover:text-primary dark:hover:text-primary"
+                                      onClick={() => startEditingComment(comment.id, comment.content)}
+                                    >
+                                      <Edit3 className="h-3 w-3" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-6 w-6 p-0 text-muted-foreground dark:text-muted-foreground hover:text-destructive dark:hover:text-destructive"
+                                      onClick={() => handleDeleteComment(comment.id)}
+                                    >
+                                      <Trash2 className="h-3 w-3" />
+                                    </Button>
+                                  </div>
+                                )}
+                              </div>
+                              <p className="text-sm mt-1 text-foreground dark:text-foreground">{comment.content}</p>
+                            </div>
+                          )}
+                          <div className="flex items-center space-x-4 mt-1 text-xs text-muted-foreground dark:text-muted-foreground">
+                            <span>{formatDate(comment.createdAt)}</span>
+                            <Button variant="ghost" className="p-0 h-auto text-xs hover:text-primary dark:hover:text-primary">
+                              Like
+                            </Button>
+                            <Button variant="ghost" className="p-0 h-auto text-xs hover:text-primary dark:hover:text-primary">
+                              Reply
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Image Counter for Multiple Images */}
+              {post.post_photos && post.post_photos.length > 1 && (
+                <div className="p-3 border-t border-border dark:border-border bg-muted/30 dark:bg-muted/20 flex-shrink-0">
+                  <div className="text-center text-sm text-muted-foreground dark:text-muted-foreground">
+                    {post.post_photos.findIndex(photo => photo.photo.photoPath === selectedImage) + 1} of {post.post_photos.length}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
