@@ -8,7 +8,7 @@ export default async function middleware(req) {
   const refreshToken = req.cookies.get('refreshToken')?.value ;
 
   //IF THERE IS NO TOKEN...
-  if (!token ) {
+  if (!token || !refreshToken) {
 
     const { pathname } = req.nextUrl;
     const publicRoutes = ['/not-found', '/example'];
