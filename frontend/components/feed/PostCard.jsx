@@ -55,6 +55,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
   const [selectedImage, setSelectedImage] = useState(null)
   const [newComment, setNewComment] = useState('')
   const [isSubmittingComment, setIsSubmittingComment] = useState(false)
+  const [reactionPickerTimeout, setReactionPickerTimeout] = useState(null)
   
   const modalRef = useRef(null)
   const commentInputRef = useRef(null)
@@ -480,6 +481,48 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
 
   const Authority = getLawyerAuthority(post?.user?.lawyer?.badgeIssuingAuthority)
   
+  const handleReactionHover = (show) => {
+    if (reactionPickerTimeout) {
+      clearTimeout(reactionPickerTimeout)
+      setReactionPickerTimeout(null)
+    }
+    
+    if (show) {
+      setShowReactionPicker(true)
+    } else {
+      // Add 500ms delay before hiding the picker
+      const timeout = setTimeout(() => {
+        setShowReactionPicker(false)
+      }, 300) // Half a second delay
+      setReactionPickerTimeout(timeout)
+    }
+  }
+
+  const handleReactionPickerMouseEnter = () => {
+    // Clear any pending timeout when mouse enters the picker
+    if (reactionPickerTimeout) {
+      clearTimeout(reactionPickerTimeout)
+      setReactionPickerTimeout(null)
+    }
+  }
+
+  const handleReactionPickerMouseLeave = () => {
+    // Add delay when leaving the picker too
+    const timeout = setTimeout(() => {
+      setShowReactionPicker(false)
+    }, 300) // Half a second delay
+    setReactionPickerTimeout(timeout)
+  }
+
+  // Clean up timeout on component unmount
+  useEffect(() => {
+    return () => {
+      if (reactionPickerTimeout) {
+        clearTimeout(reactionPickerTimeout)
+      }
+    }
+  }, [reactionPickerTimeout])
+
   return (
     <>
       <Card className="w-full" ref={observerRef}>
@@ -659,8 +702,8 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
               <Button
                 variant="ghost"
                 className={`flex items-center space-x-2 ${userReaction ? 'text-blue-600' : ''}`}
-                onMouseEnter={() => setShowReactionPicker(true)}
-                onMouseLeave={() => setShowReactionPicker(false)}
+                onMouseEnter={() => handleReactionHover(true)}
+                onMouseLeave={() => handleReactionHover(false)}
                 onClick={() => handleReaction('like')}
               >
                 <ThumbsUp className="h-4 w-4" />
@@ -673,8 +716,8 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
               {showReactionPicker && (
                 <div
                   className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-popover border rounded-lg shadow-xl p-2 z-50"
-                  onMouseEnter={() => setShowReactionPicker(true)}
-                  onMouseLeave={() => setShowReactionPicker(false)}
+                  onMouseEnter={handleReactionPickerMouseEnter}
+                  onMouseLeave={handleReactionPickerMouseLeave}
                 >
                   <div className="flex space-x-1">
                     {Object.entries(reactionEmojis).map(([key, { emoji, label }]) => (
@@ -946,7 +989,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
             </Button>
 
             {/* Image Section - Top on mobile, Left on desktop */}
-            <div className="flex-1 bg-muted/20 dark:bg-muted/10 flex items-center justify-center relative border-b md:border-b-0 md:border-r border-border dark:border-border h-1/2 md:h-full">
+            <div className="flex-1 z-0 bg-muted/20 dark:bg-muted/10 flex items-center justify-center relative border-b md:border-b-0 md:border-r border-border dark:border-border h-1/2 md:h-full">
               <img
                 src={selectedImage}
                 alt="Post image"
@@ -1075,8 +1118,8 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                       variant="ghost"
                       size="sm"
                       className={`flex items-center space-x-1 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground ${userReaction ? 'text-primary dark:text-primary' : ''} px-2 md:px-3`}
-                      onMouseEnter={() => setShowReactionPicker(true)}
-                      onMouseLeave={() => setShowReactionPicker(false)}
+                      onMouseEnter={() => handleReactionHover(true)}
+                      onMouseLeave={() => handleReactionHover(false)}
                       onClick={() => handleReaction('like')}
                     >
                       <ThumbsUp className="h-3 w-3 md:h-4 md:w-4" />
@@ -1088,9 +1131,9 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                     {/* Reaction Picker */}
                     {showReactionPicker && (
                       <div
-                        className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-popover dark:bg-popover border border-border dark:border-border rounded-lg shadow-xl p-2 z-50"
-                        onMouseEnter={() => setShowReactionPicker(true)}
-                        onMouseLeave={() => setShowReactionPicker(false)}
+                        className="absolute bottom-full left-[86px] mb-2 transform -translate-x-1/2 bg-popover dark:bg-popover border border-border dark:border-border rounded-lg shadow-xl p-2 z-50"
+                        onMouseEnter={handleReactionPickerMouseEnter}
+                        onMouseLeave={handleReactionPickerMouseLeave}
                       >
                         <div className="flex space-x-1">
                           {Object.entries(reactionEmojis).map(([key, { emoji, label }]) => (
