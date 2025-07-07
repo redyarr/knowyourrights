@@ -581,17 +581,11 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
           )}
           
           <div className="text-sm leading-relaxed mb-4">
-            <p>
-              {post.content.length > 300 
-                ? `${post.content.substring(0, 300)}...` 
-                : post.content
-              }
-            </p>
-            {post.content.length > 300 && (
-              <Button variant="link" className="p-0 h-auto text-blue-600 font-medium">
-                ...see more
-              </Button>
-            )}
+            <div className="max-h-none">
+              <p className="whitespace-pre-wrap break-words">
+                {post.content}
+              </p>
+            </div>
           </div>
 
           {/* Post Images */}
@@ -935,24 +929,24 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
 
       {/* LinkedIn-Style Image Modal with Dark Mode Support */}
       {showImageModal && selectedImage && (
-        <div className="fixed inset-0 bg-black/75 dark:bg-black/85 z-[100] flex items-center justify-center p-4">
+        <div className="fixed overflow-auto inset-0 bg-black/75 dark:bg-black/85 z-[100] flex items-center justify-center p-2 md:p-4">
           <div 
             ref={modalRef}
-            className="w-full max-w-6xl h-[90vh] bg-background dark:bg-background rounded-xl shadow-2xl flex overflow-hidden border border-border dark:border-border"
+            className="w-full h-full max-w-6xl max-h-[95vh] md:h-[90vh] bg-background dark:bg-background rounded-xl shadow-2xl flex flex-col md:flex-row overflow-hidden border border-border dark:border-border"
           >
             {/* Close Button */}
             <Button
               variant="ghost"
               size="icon"
               onClick={closeImageModal}
-              className="absolute top-4 right-4 z-10 rounded-full bg-background/80 dark:bg-background/80 backdrop-blur-sm hover:bg-background dark:hover:bg-background border border-border dark:border-border shadow-lg"
+              className="absolute top-2 right-2 md:top-4 md:right-4 z-10 rounded-full bg-background/80 dark:bg-background/80 backdrop-blur-sm hover:bg-background dark:hover:bg-background border border-border dark:border-border shadow-lg"
               aria-label="Close"
             >
               <X className="h-5 w-5" />
             </Button>
 
-            {/* Left Side - Image */}
-            <div className="flex-1 bg-muted/20 dark:bg-muted/10 flex items-center justify-center relative border-r border-border dark:border-border">
+            {/* Image Section - Top on mobile, Left on desktop */}
+            <div className="flex-1 bg-muted/20 dark:bg-muted/10 flex items-center justify-center relative border-b md:border-b-0 md:border-r border-border dark:border-border h-1/2 md:h-full">
               <img
                 src={selectedImage}
                 alt="Post image"
@@ -972,9 +966,9 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                       const prevIndex = currentIndex > 0 ? currentIndex - 1 : post.post_photos.length - 1
                       setSelectedImage(post.post_photos[prevIndex].photo.photoPath)
                     }}
-                    className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 dark:bg-background/80 backdrop-blur-sm hover:bg-background dark:hover:bg-background border border-border dark:border-border shadow-lg"
+                    className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 dark:bg-background/80 backdrop-blur-sm hover:bg-background dark:hover:bg-background border border-border dark:border-border shadow-lg"
                   >
-                    <ChevronLeft className="h-5 w-5" />
+                    <ChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
                   </Button>
                   
                   <Button
@@ -986,20 +980,20 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                       const nextIndex = currentIndex < post.post_photos.length - 1 ? currentIndex + 1 : 0
                       setSelectedImage(post.post_photos[nextIndex].photo.photoPath)
                     }}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 dark:bg-background/80 backdrop-blur-sm hover:bg-background dark:hover:bg-background border border-border dark:border-border shadow-lg"
+                    className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 rounded-full bg-background/80 dark:bg-background/80 backdrop-blur-sm hover:bg-background dark:hover:bg-background border border-border dark:border-border shadow-lg"
                   >
-                    <ChevronRight className="h-5 w-5" />
+                    <ChevronRight className="h-4 w-4 md:h-5 md:w-5" />
                   </Button>
                 </>
               )}
             </div>
 
-            {/* Right Side - Post Details */}
-            <div className="w-96 bg-background dark:bg-background flex flex-col">
+            {/* Post Details Section - Bottom on mobile, Right on desktop */}
+            <div className="w-full overflow-auto md:w-96 bg-background dark:bg-background flex flex-col h-1/2 md:h-full">
               {/* Post Header */}
-              <div className="p-4 flex-shrink-0">
+              <div className="p-3 md:p-4 flex-shrink-0">
                 <div className="flex items-center space-x-3">
-                  <Avatar className="h-12 w-12">
+                  <Avatar className="h-10 w-10 md:h-12 md:w-12">
                     <AvatarImage src={post.user?.profilePicture} alt="Profile" />
                     <AvatarFallback className="bg-primary text-primary-foreground">
                       {getUserInitials(post.user)}
@@ -1030,20 +1024,22 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                 </div>
               </div>
 
-              {/* Post Content */}
-              <div className="p-4 flex-shrink-0">
+              {/* Post Content - Show full content on mobile too */}
+              <div className="hidden md:block p-3 md:p-4 flex-shrink-0">
                 {post.title && (
-                  <h2 className="font-semibold text-base mb-2 text-foreground dark:text-foreground">
+                  <h2 className="font-semibold text-sm md:text-base mb-2 text-foreground dark:text-foreground">
                     {post.title}
                   </h2>
                 )}
-                <p className="text-sm text-muted-foreground dark:text-muted-foreground leading-relaxed">
-                  {post.content}
-                </p>
+                <div className="text-xs md:text-sm text-muted-foreground dark:text-muted-foreground leading-relaxed max-h-32 md:max-h-40 overflow-y-auto">
+                  <p className="whitespace-pre-wrap break-words">
+                    {post.content}
+                  </p>
+                </div>
               </div>
 
               {/* Reactions and Stats */}
-              <div className="px-4 py-3 flex-shrink-0">
+              <div className="px-3 md:px-4 py-2 md:py-3 flex-shrink-0">
                 <div className="flex items-center justify-between">
                   {/* Reactions Display */}
                   {totalReactions > 0 && (
@@ -1052,13 +1048,13 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                         {topReactions.map(([reaction]) => (
                           <span
                             key={reaction}
-                            className="inline-flex items-center justify-center w-6 h-6 text-sm bg-background dark:bg-background border-2 border-background dark:border-background rounded-full shadow-sm"
+                            className="inline-flex items-center justify-center w-5 h-5 md:w-6 md:h-6 text-xs md:text-sm bg-background dark:bg-background border-2 border-background dark:border-background rounded-full shadow-sm"
                           >
                             {reactionEmojis[reaction]?.emoji}
                           </span>
                         ))}
                       </div>
-                      <span className="text-sm text-muted-foreground dark:text-muted-foreground font-medium">
+                      <span className="text-xs md:text-sm text-muted-foreground dark:text-muted-foreground font-medium">
                         {totalReactions}
                       </span>
                     </div>
@@ -1066,25 +1062,25 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                   
                   {/* Comment Count */}
                   {comments.length > 0 && (
-                    <span className="text-sm text-muted-foreground dark:text-muted-foreground font-medium">
+                    <span className="text-xs md:text-sm text-muted-foreground dark:text-muted-foreground font-medium">
                       {comments.length} comment{comments.length !== 1 ? 's' : ''}
                     </span>
                   )}
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex items-center border-t border-border dark:border-border justify-around mt-3 pt-3">
+                <div className="flex items-center border-t border-border dark:border-border justify-around mt-2 md:mt-3 pt-2 md:pt-3">
                   <div className="relative">
                     <Button
                       variant="ghost"
                       size="sm"
-                      className={`flex items-center space-x-1 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground ${userReaction ? 'text-primary dark:text-primary' : ''}`}
+                      className={`flex items-center space-x-1 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground ${userReaction ? 'text-primary dark:text-primary' : ''} px-2 md:px-3`}
                       onMouseEnter={() => setShowReactionPicker(true)}
                       onMouseLeave={() => setShowReactionPicker(false)}
                       onClick={() => handleReaction('like')}
                     >
-                      <ThumbsUp className="h-4 w-4" />
-                      <span className="text-xs">
+                      <ThumbsUp className="h-3 w-3 md:h-4 md:w-4" />
+                      <span className="text-xs hidden sm:inline">
                         {userReaction ? userReaction.charAt(0).toUpperCase() + userReaction.slice(1) : 'Like'}
                       </span>
                     </Button>
@@ -1101,7 +1097,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                             <Button
                               key={key}
                               variant="ghost"
-                              className="text-lg hover:scale-110 transition-transform p-1 h-auto"
+                              className="text-base md:text-lg hover:scale-110 transition-transform p-1 h-auto"
                               onClick={() => handleReaction(key)}
                               title={label}
                             >
@@ -1116,53 +1112,53 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="flex items-center space-x-1 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground"
+                    className="flex items-center space-x-1 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground px-2 md:px-3"
                     onClick={() => document.getElementById('modal-comment-input')?.focus()}
                   >
-                    <MessageCircle className="h-4 w-4" />
-                    <span className="text-xs">Comment</span>
+                    <MessageCircle className="h-3 w-3 md:h-4 md:w-4" />
+                    <span className="text-xs hidden sm:inline">Comment</span>
                   </Button>
 
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="flex items-center space-x-1 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground"
+                    className="flex items-center space-x-1 text-muted-foreground dark:text-muted-foreground hover:text-foreground dark:hover:text-foreground px-2 md:px-3"
                     onClick={handleShare}
                   >
-                    <Share2 className="h-4 w-4" />
-                    <span className="text-xs">Share</span>
+                    <Share2 className="h-3 w-3 md:h-4 md:w-4" />
+                    <span className="text-xs hidden sm:inline">Share</span>
                   </Button>
                 </div>
               </div>
 
               {/* Comment Input */}
-              <div className="px-4 flex-shrink-0">
-                <form onSubmit={handleModalComment} className="flex items-center space-x-3">
-                  <Avatar className="h-8 w-8">
+              <div className="px-3 md:px-4 flex-shrink-0">
+                <form onSubmit={handleModalComment} className="flex items-center space-x-2 md:space-x-3">
+                  <Avatar className="h-6 w-6 md:h-8 md:w-8">
                     <AvatarImage src={userData?.profilePicture} alt="Your avatar" />
                     <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                       {getUserInitials(userData)}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 flex items-center space-x-2">
+                  <div className="flex-1 flex items-center space-x-1 md:space-x-2">
                     <Input
                       id="modal-comment-input"
                       value={newComment}
                       onChange={(e) => setNewComment(e.target.value)}
                       placeholder="Add a comment..."
-                      className="flex-1 bg-background dark:bg-background border-input dark:border-input"
+                      className="flex-1 bg-background dark:bg-background border-input dark:border-input text-xs md:text-sm h-8 md:h-10"
                       disabled={isSubmittingComment}
                     />
                     <Button 
                       type="submit" 
                       size="sm"
                       disabled={!newComment.trim() || isSubmittingComment}
-                      className="px-3"
+                      className="px-2 md:px-3 h-8 md:h-10"
                     >
                       {isSubmittingComment ? (
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-foreground"></div>
+                        <div className="animate-spin rounded-full h-3 w-3 md:h-4 md:w-4 border-b-2 border-primary-foreground"></div>
                       ) : (
-                        <Send className="h-4 w-4" />
+                        <Send className="h-3 w-3 md:h-4 md:w-4" />
                       )}
                     </Button>
                   </div>
@@ -1170,16 +1166,16 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
               </div>
 
               {/* Comments Section */}
-              <div className="flex-1 overflow-y-auto">
-                <div className="p-4 space-y-3">
+              <div className="flex-1 overflow-y-auto min-h-0">
+                <div className="p-3 md:p-4 space-y-2 md:space-y-3">
                   {comments.length === 0 ? (
-                    <div className="text-center text-muted-foreground dark:text-muted-foreground text-sm py-8">
+                    <div className="text-center text-muted-foreground dark:text-muted-foreground text-xs md:text-sm py-4 md:py-8">
                       No comments yet. Be the first to comment!
                     </div>
                   ) : (
                     comments.map((comment) => (
-                      <div key={comment.id} className="flex items-start space-x-3">
-                        <Avatar className="h-8 w-8">
+                      <div key={comment.id} className="flex items-start space-x-2 md:space-x-3">
+                        <Avatar className="h-6 w-6 md:h-8 md:w-8">
                           <AvatarImage 
                             src={comment.User?.profilePicture || comment.user?.profilePicture} 
                             alt="Commenter" 
@@ -1195,7 +1191,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                               <Textarea
                                 value={editCommentContent}
                                 onChange={(e) => setEditCommentContent(e.target.value)}
-                                className="min-h-[60px] text-sm bg-background dark:bg-background border-input dark:border-input"
+                                className="min-h-[50px] md:min-h-[60px] text-xs md:text-sm bg-background dark:bg-background border-input dark:border-input"
                                 placeholder="Edit your comment..."
                               />
                               <div className="flex space-x-2">
@@ -1203,6 +1199,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                                   size="sm" 
                                   onClick={() => handleEditComment(comment.id)}
                                   disabled={!editCommentContent.trim()}
+                                  className="text-xs"
                                 >
                                   Save
                                 </Button>
@@ -1210,6 +1207,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                                   size="sm" 
                                   variant="outline" 
                                   onClick={cancelEditingComment}
+                                  className="text-xs"
                                 >
                                   Cancel
                                 </Button>
@@ -1217,9 +1215,9 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                             </div>
                           ) : (
                             // Display comment
-                            <div className="bg-muted/50 dark:bg-muted/30 rounded-lg px-3 py-2">
+                            <div className="bg-muted/50 dark:bg-muted/30 rounded-lg px-2 md:px-3 py-1.5 md:py-2">
                               <div className="flex items-center justify-between">
-                                <div className="font-medium text-sm text-foreground dark:text-foreground">
+                                <div className="font-medium text-xs md:text-sm text-foreground dark:text-foreground">
                                   {getUserDisplayName(comment.User || comment.user)}
                                 </div>
                                 {userData && comment.userId === userData.id && (
@@ -1227,26 +1225,26 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                                     <Button
                                       variant="ghost"
                                       size="sm"
-                                      className="h-6 w-6 p-0 text-muted-foreground dark:text-muted-foreground hover:text-primary dark:hover:text-primary"
+                                      className="h-5 w-5 md:h-6 md:w-6 p-0 text-muted-foreground dark:text-muted-foreground hover:text-primary dark:hover:text-primary"
                                       onClick={() => startEditingComment(comment.id, comment.content)}
                                     >
-                                      <Edit3 className="h-3 w-3" />
+                                      <Edit3 className="h-2.5 w-2.5 md:h-3 md:w-3" />
                                     </Button>
                                     <Button
                                       variant="ghost"
                                       size="sm"
-                                      className="h-6 w-6 p-0 text-muted-foreground dark:text-muted-foreground hover:text-destructive dark:hover:text-destructive"
+                                      className="h-5 w-5 md:h-6 md:w-6 p-0 text-muted-foreground dark:text-muted-foreground hover:text-destructive dark:hover:text-destructive"
                                       onClick={() => handleDeleteComment(comment.id)}
                                     >
-                                      <Trash2 className="h-3 w-3" />
+                                      <Trash2 className="h-2.5 w-2.5 md:h-3 md:w-3" />
                                     </Button>
                                   </div>
                                 )}
                               </div>
-                              <p className="text-sm mt-1 text-foreground dark:text-foreground">{comment.content}</p>
+                              <p className="text-xs md:text-sm mt-1 text-foreground dark:text-foreground">{comment.content}</p>
                             </div>
                           )}
-                          <div className="flex items-center space-x-4 mt-1 text-xs text-muted-foreground dark:text-muted-foreground">
+                          <div className="flex items-center space-x-3 md:space-x-4 mt-1 text-xs text-muted-foreground dark:text-muted-foreground">
                             <span>{formatDate(comment.createdAt)}</span>
                             <Button variant="ghost" className="p-0 h-auto text-xs hover:text-primary dark:hover:text-primary">
                               Like
@@ -1264,8 +1262,8 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
 
               {/* Image Counter for Multiple Images */}
               {post.post_photos && post.post_photos.length > 1 && (
-                <div className="p-3 border-t border-border dark:border-border bg-muted/30 dark:bg-muted/20 flex-shrink-0">
-                  <div className="text-center text-sm text-muted-foreground dark:text-muted-foreground">
+                <div className="p-2 md:p-3 border-t border-border dark:border-border bg-muted/30 dark:bg-muted/20 flex-shrink-0">
+                  <div className="text-center text-xs md:text-sm text-muted-foreground dark:text-muted-foreground">
                     {post.post_photos.findIndex(photo => photo.photo.photoPath === selectedImage) + 1} of {post.post_photos.length}
                   </div>
                 </div>
@@ -1277,5 +1275,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
     </>
   )
 }
+
+
 
 export default PostCard
