@@ -434,7 +434,7 @@ exports.refreshToken = async (req, res) => {
 
     const userData = {
       id: user.id,
-      firstName: "kerm",
+      firstName: user.firstName ,
       lastName: user.lastName,
       email: user.email,
       role: user.role,

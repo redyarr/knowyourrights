@@ -22,8 +22,6 @@ import {
 } from 'lucide-react'
 
 const PostCreateForm = ({ userData, onPostCreated }) => {
-  console.log('PostCreateForm userData:', userData);
-  
   const [isOpen, setIsOpen] = useState(false)
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')

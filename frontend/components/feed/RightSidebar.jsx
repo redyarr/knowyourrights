@@ -73,10 +73,10 @@ const RightSidebar = () => {
           description: "Your connection request has been sent successfully"
         })
         
-        // Update UI
-        button.textContent = 'Request Sent'
-        button.disabled = true
-        button.className = button.className.replace('border-blue-600 text-blue-600', 'border-gray-400 text-gray-400')
+        // Update UI to show cancel option
+        button.textContent = 'Cancel'
+        button.className = button.className.replace('border-blue-600 text-blue-600', 'border-orange-600 text-orange-600')
+        button.setAttribute('data-action', 'cancel')
       } else {
         toast("Request Failed", {
           description: data.message || 'Failed to send connection request'
@@ -87,6 +87,56 @@ const RightSidebar = () => {
       toast("Network Error", {
         description: 'Failed to send connection request. Please try again.'
       })
+    }
+  }
+
+  const cancelConnectionRequest = async (connectionId, button) => {
+    try {
+      const response = await fetch(`http://localhost:3001/mynetwork/cancel/${connectionId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      })
+      
+      const data = await response.json()
+      
+      if (data.success) {
+        toast("Request Cancelled", {
+          description: "Your connection request has been cancelled"
+        })
+        
+        // Update UI back to connect option
+        button.textContent = 'Connect'
+        button.className = button.className.replace('border-orange-600 text-orange-600', 'border-blue-600 text-blue-600')
+        button.setAttribute('data-action', 'connect')
+        button.removeAttribute('data-connection-id')
+      } else {
+        toast("Cancel Failed", {
+          description: data.message || 'Failed to cancel connection request'
+        })
+      }
+    } catch (error) {
+      console.error('Cancel request error:', error)
+      toast("Network Error", {
+        description: 'Failed to cancel request. Please try again.'
+      })
+    }
+  }
+
+  const handleButtonClick = (button) => {
+    const action = button.getAttribute('data-action')
+    const userId = button.getAttribute('data-user-id')
+    const connectionId = button.getAttribute('data-connection-id')
+    
+    button.disabled = true
+    button.textContent = action === 'connect' ? 'Sending...' : 'Cancelling...'
+    
+    if (action === 'connect') {
+      sendConnectionRequest(userId, button)
+    } else if (action === 'cancel') {
+      cancelConnectionRequest(connectionId, button)
     }
   }
 
@@ -155,35 +205,68 @@ const RightSidebar = () => {
             </p>
           ) : (
             <div className="space-y-3">
-              {suggestedLawyers.slice(0, 5).map((lawyer) => (
-                <div key={lawyer.id} className="flex items-center space-x-3">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage 
-                      src={lawyer.ProfileImage?.imagePath || lawyer.profilePicture} 
-                      alt={`${lawyer.firstName}'s Profile`}
-                    />
-                    <AvatarFallback className="bg-blue-600 text-white">
-                      {getUserInitials(lawyer)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-sm truncate">
-                      {lawyer.firstName} {lawyer.lastName}
-                    </h4>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {lawyer.Lawyer?.lawFirm || 'Legal Professional'}
-                    </p>
+              {suggestedLawyers.slice(0, 5).map((lawyer) => {
+                // Determine button state based on connection status
+                const getButtonConfig = () => {
+                  if (lawyer.connectionStatus === 'pending' && lawyer.connectionType === 'sent') {
+                    return {
+                      text: 'Cancel',
+                      className: 'border-orange-600 text-orange-600',
+                      action: 'cancel',
+                      connectionId: lawyer.connectionId
+                    }
+                  } else if (lawyer.connectionStatus === 'pending' && lawyer.connectionType === 'received') {
+                    return {
+                      text: 'Respond',
+                      className: 'border-green-600 text-green-600',
+                      action: 'respond',
+                      connectionId: lawyer.connectionId
+                    }
+                  } else {
+                    return {
+                      text: 'Connect',
+                      className: 'border-blue-600 text-blue-600',
+                      action: 'connect',
+                      connectionId: null
+                    }
+                  }
+                }
+
+                const buttonConfig = getButtonConfig()
+
+                return (
+                  <div key={lawyer.id} className="flex items-center space-x-3">
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage 
+                        src={lawyer.ProfileImage?.imagePath || lawyer.profilePicture} 
+                        alt={`${lawyer.firstName}'s Profile`}
+                      />
+                      <AvatarFallback className="bg-blue-600 text-white">
+                        {getUserInitials(lawyer)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold text-sm truncate">
+                        {lawyer.firstName} {lawyer.lastName}
+                      </h4>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {lawyer.Lawyer?.lawFirm || 'Legal Professional'}
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={`text-xs ${buttonConfig.className}`}
+                      data-user-id={lawyer.id}
+                      data-action={buttonConfig.action}
+                      data-connection-id={buttonConfig.connectionId}
+                      onClick={(e) => handleButtonClick(e.target)}
+                    >
+                      {buttonConfig.text}
+                    </Button>
                   </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-xs"
-                    onClick={(e) => sendConnectionRequest(lawyer.id, e.target)}
-                  >
-                    Connect
-                  </Button>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </CardContent>

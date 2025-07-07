@@ -321,15 +321,33 @@ exports.getSuggestedLawyers = async (req, res) => {
             }
         });
         
-        // Extract connected user IDs
-        const connectedUserIds = connections.map(conn => 
-            conn.requester_id === userId ? conn.receiver_id : conn.requester_id
-        );
+        // Extract connected user IDs and create a map for status tracking
+        const connectionMap = new Map();
+        connections.forEach(conn => {
+            if (conn.requester_id === userId) {
+                connectionMap.set(conn.receiver_id, {
+                    status: conn.status,
+                    connectionId: conn.id,
+                    type: 'sent' // User sent the request
+                });
+            } else {
+                connectionMap.set(conn.requester_id, {
+                    status: conn.status,
+                    connectionId: conn.id,
+                    type: 'received' // User received the request
+                });
+            }
+        });
+        
+        // Get connected user IDs to exclude from suggestions
+        const connectedUserIds = connections
+            .filter(conn => conn.status === 'accepted')
+            .map(conn => conn.requester_id === userId ? conn.receiver_id : conn.requester_id);
         
         // Add current user to exclude list
         connectedUserIds.push(userId);
         
-        // Find lawyers who are not connected with the user
+        // Find lawyers who are not already connected
         const suggestedLawyers = await User.findAll({
             where: {
                 role: 'lawyer',
@@ -344,12 +362,23 @@ exports.getSuggestedLawyers = async (req, res) => {
                     attributes: ['imagePath'],
                 }
             ],
-            limit: 3 // Limit to 3 suggestions for the feed sidebar
+            limit: 10 // Get more suggestions to filter later
         });
+        
+        // Add connection status to each suggested lawyer
+        const lawyersWithStatus = suggestedLawyers.map(lawyer => {
+            const connection = connectionMap.get(lawyer.id);
+            return {
+                ...lawyer.toJSON(),
+                connectionStatus: connection ? connection.status : null,
+                connectionType: connection ? connection.type : null,
+                connectionId: connection ? connection.connectionId : null
+            };
+        }).slice(0, 3); // Limit to 3 for the sidebar
         
         return res.status(200).json({ 
             success: true, 
-            lawyers: suggestedLawyers
+            lawyers: lawyersWithStatus
         });
     } catch (error) {
         console.error('Error fetching suggested lawyers:', error);

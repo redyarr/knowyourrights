@@ -8,14 +8,6 @@ export function useAuth() {
     // ✅ 1️⃣ On first mount: refresh immediately
     const refreshNow = async () => {
       try {
-        console.log('Refreshing token on mount...');
-        console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-        console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-        console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-        console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-        console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
-        
-        
         await fetch('http://localhost:3001/refresh-token', {
           method: 'POST',
           headers: {
@@ -30,7 +22,7 @@ export function useAuth() {
 
     refreshNow();
 
-    // ✅ 2️⃣ Then refresh every 50 mins
+    // ✅ 2️⃣ Then refresh every 30 mins
     const interval = setInterval(async () => {
       try {
         console.log('Refreshing token (interval)...');
@@ -44,7 +36,7 @@ export function useAuth() {
       } catch (error) {
         console.error('Error refreshing token (interval):', error);
       }
-    }, 30 * 60 * 1000); // every 50 mins
+    }, 30 * 60 * 1000); // every 30 mins
 
     return () => clearInterval(interval);
   }, []);
