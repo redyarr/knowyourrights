@@ -22,8 +22,9 @@ import {
 } from 'lucide-react'
 
 const PostCreateForm = ({ userData, onPostCreated }) => {
+  console.log('PostCreateForm userData:', userData);
+  
   const [isOpen, setIsOpen] = useState(false)
-  console.log('User Data:', userData);  
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [category, setCategory] = useState('General')
@@ -97,7 +98,6 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
       })
 
       const data = await response.json()
-      console.log('Post creation response:', data);
       
       if (data.success) {
         toast("Post Created", {

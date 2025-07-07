@@ -39,8 +39,12 @@ const RightSidebar = () => {
 
   const fetchSuggestedLawyers = async () => {
     try {
-      const response = await fetch('http://localhost:3001/mynetwork/suggested-lawyers')
+      const response = await fetch('http://localhost:3001/mynetwork/suggested-lawyers', {
+        method: 'GET',
+        credentials: 'include'
+      })
       const data = await response.json()
+      console.log('Suggested Lawyers:', data);
       
       if (data.success) {
         setSuggestedLawyers(data.lawyers || [])
@@ -59,7 +63,7 @@ const RightSidebar = () => {
         headers: {
           'Content-Type': 'application/json'
         },
-        credentials: 'include' // Important for session cookies
+        credentials: 'include' 
       })
       
       const data = await response.json()

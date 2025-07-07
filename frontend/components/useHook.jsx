@@ -8,6 +8,14 @@ export function useAuth() {
     // ✅ 1️⃣ On first mount: refresh immediately
     const refreshNow = async () => {
       try {
+        console.log('Refreshing token on mount...');
+        console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+        console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+        console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+        console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+        console.log('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
+        
+        
         await fetch('http://localhost:3001/refresh-token', {
           method: 'POST',
           headers: {

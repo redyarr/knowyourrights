@@ -428,16 +428,17 @@ exports.refreshToken = async (req, res) => {
     
 
     // Recreate a fresh JWT token
-    const user = await User.findByPk(payload.id);
-    
+    const user = await User.findByPk(payload.id, {
+      include: [{ model: Lawyer }]
+    });
+
     const userData = {
       id: user.id,
-      firstName: user.firstName,
+      firstName: "kerm",
       lastName: user.lastName,
       email: user.email,
       role: user.role,
       lawyerVerivicationStatus : user?.lawyer?.verificationStatus
-
     };
 
     const newAccessToken = jwt.sign(userData, JWT_SECRET, { expiresIn: '1h' });
