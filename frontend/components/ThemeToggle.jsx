@@ -15,19 +15,16 @@ export default function ThemeToggle() {
     setMounted(true);
     const savedTheme = localStorage.getItem('theme') || 'light';
     setCurrentTheme(savedTheme);
-    console.log("Initial theme from localStorage:", savedTheme);
   }, []);
 
   useEffect(() => {
     if (mounted && theme) {
       setCurrentTheme(theme);
-      console.log("Theme updated from provider:", theme);
     }
   }, [theme, mounted]);
 
   const toggleTheme = () => {
     const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-    console.log(`Toggling theme from ${currentTheme} to ${newTheme}`);
     
     setCurrentTheme(newTheme);
     

@@ -24,7 +24,6 @@ import {
 const PostCreateForm = ({ userData, onPostCreated }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [SessionData, setSessionData] = useState(null)  
-  console.log('SessionData:', SessionData);
   
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')

@@ -1,16 +1,21 @@
 "use client"
 
 import { useTheme } from "next-themes"
+import { useEffect, useState } from "react";
 import { Toaster as Sonner } from "sonner";
 
-const Toaster = ({
-  ...props
-}) => {
-  const { theme = "light" } = useTheme()
+const Toaster = ({...props}) => {
+  const { theme = "system" } = useTheme()
+  const [thm, setThm] = useState("system");
+
+  useEffect(() => {
+    const currentTheme = localStorage.getItem("theme") || "system";
+    setThm(currentTheme);
+  }, [theme]);
 
   return (
     (<Sonner
-      theme={theme}
+      theme={thm}
       className="toaster group"
       style={
         {
