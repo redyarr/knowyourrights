@@ -23,8 +23,7 @@ import {
 
 const PostCreateForm = ({ userData, onPostCreated }) => {
   const [isOpen, setIsOpen] = useState(false)
-  const [SessionData, setSessionData] = useState(null)  
-  
+  console.log('User Data:', userData);  
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [category, setCategory] = useState('General')
@@ -37,38 +36,6 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
     if (!userData) return 'U'
     return `${userData.firstName?.[0] || ''}${userData.lastName?.[0] || ''}`.toUpperCase()
   }
-
-  const getUserData = async () => {
-    try {
-      const response = await fetch('/api/getuserdata', {
-        method: 'GET',
-      });
-
-      const data = await response.json();
-      
-      if (data.success) {
-        setSessionData(data.payload);
-      } else {
-        toast("Error", {
-          description: "Error getting user data",
-          action: {
-            label: "Undo",
-          },
-        })
-      }
-    } catch (error) {
-     toast("Ntwork Error", {
-          description: "etwork error during data fetch",
-          action: {
-            label: "Undo",
-          },
-        })
-    }
-  };
-
-  useEffect(() => {
-      getUserData();
-    }, [])
 
   const categories = [
     { value: 'General', icon: Scale, label: 'General Legal', color: 'text-blue-600' },
@@ -183,14 +150,14 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
                 <div className="relative w-full">
                   <Button
                     variant="outline"
-                    disabled={SessionData?.lawyerVerivicationStatus !== 'approved'}
+                    disabled={userData?.lawyerVerivicationStatus !== 'approved'}
                     className={`w-full flex-1 justify-start text-muted-foreground hover:bg-muted/50 ${
-                      SessionData?.lawyerVerivicationStatus !== 'approved' 
+                      userData?.lawyerVerivicationStatus !== 'approved' 
                         ? 'opacity-60 cursor-not-allowed bg-gray-50 dark:bg-gray-900' 
                         : ''
                     }`}
                   >
-                    {SessionData?.lawyerVerivicationStatus !== 'approved' ? (
+                    {userData?.lawyerVerivicationStatus !== 'approved' ? (
                       <div className="flex items-center">
                         <AlertTriangle className="h-4 w-4 mr-2 text-amber-500" />
                         Verification required to post...
@@ -317,13 +284,13 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
                 variant="ghost"
                 size="sm"
                 className={`flex items-center sm:space-x-2 md:space-x-0 xl:space-x-2 hover:bg-muted/50 ${
-                  SessionData?.lawyerVerivicationStatus !== 'approved' 
+                  userData?.lawyerVerivicationStatus !== 'approved' 
                     ? 'opacity-60 cursor-not-allowed' 
                     : ''
                 }`}
-                disabled={SessionData?.lawyerVerivicationStatus !== 'approved'}
+                disabled={userData?.lawyerVerivicationStatus !== 'approved'}
                 onClick={() => {
-                  if (SessionData?.lawyerVerivicationStatus === 'approved') {
+                  if (userData?.lawyerVerivicationStatus === 'approved') {
                     setCategory(cat.value)
                     setIsOpen(true)
                   }

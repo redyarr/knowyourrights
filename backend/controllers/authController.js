@@ -228,7 +228,7 @@ exports.register = async (req, res) => {
       lastName: user.lastName,
       email: user.email,
       role: user.role,
-      lawyerVerivicationStatus : lawyer?.verificationStatus
+      lawyerVerivicationStatus : user?.lawyer?.verificationStatus
     } 
     //generate JWT token
     const token = jwt.sign(userData, JWT_SECRET, { expiresIn: '1h' });
@@ -359,7 +359,8 @@ if (!isValidPassword) {
       role: user.role
     };
 
-    
+
+  
     //this session cookie is for Next.js application : 
     const userData = {
       id: user.id,
@@ -428,13 +429,15 @@ exports.refreshToken = async (req, res) => {
 
     // Recreate a fresh JWT token
     const user = await User.findByPk(payload.id);
-
+    
     const userData = {
       id: user.id,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      role: user.role
+      role: user.role,
+      lawyerVerivicationStatus : user?.lawyer?.verificationStatus
+
     };
 
     const newAccessToken = jwt.sign(userData, JWT_SECRET, { expiresIn: '1h' });
