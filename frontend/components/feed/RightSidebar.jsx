@@ -75,7 +75,7 @@ const RightSidebar = () => {
         
         // Update UI to show cancel option with the actual connection ID
         button.textContent = 'Cancel'
-        button.className = button.className.replace('border-blue-600 text-blue-600', 'border-orange-600 text-orange-600')
+        button.className = button.className.replace('border-blue-600 text-blue-600', 'border-red-600 text-red-600')
         button.setAttribute('data-action', 'cancel')
         button.setAttribute('data-connection-id', data.connectionId) 
         button.disabled = false
@@ -114,7 +114,7 @@ const RightSidebar = () => {
         })
         
         button.textContent = 'Connect'
-        button.className = button.className.replace('border-orange-600 text-orange-600', 'border-blue-600 text-blue-600')
+        button.className = button.className.replace('border-red-600 text-red-600', 'border-blue-600 text-blue-600')
         button.setAttribute('data-action', 'connect')
         button.removeAttribute('data-connection-id')
         button.disabled = false
@@ -234,7 +234,7 @@ const RightSidebar = () => {
                   if (lawyer.connectionStatus === 'pending' && lawyer.connectionType === 'sent') {
                     return {
                       text: 'Cancel',
-                      className: 'border-orange-600 text-orange-600',
+                      className: 'border-red-600 text-red-600',
                       action: 'cancel',
                       connectionId: lawyer.connectionId
                     }
