@@ -77,7 +77,9 @@ const RightSidebar = () => {
       
       // Move the removed lawyer to the end of hidden lawyers and remove the shown one
       const removedLawyer = visibleLawyers.find(l => l.id === removedLawyerId)
-      setHiddenLawyers(prev => [...prev.slice(1), removedLawyer])
+      if (removedLawyer) {
+        setHiddenLawyers(prev => [...prev.slice(1), removedLawyer])
+      }
     } else {
       // If no hidden lawyers, just cycle from all lawyers
       const remainingLawyers = allLawyers.filter(lawyer => 
@@ -111,6 +113,28 @@ const RightSidebar = () => {
         toast("Connection Request Sent", {
           description: "Your connection request has been sent successfully"
         })
+        
+        // Update the lawyer's status in ALL arrays (visible, hidden, and all)
+        const updateLawyerStatus = (lawyer) => {
+          if (lawyer.id === userId) {
+            return {
+              ...lawyer,
+              connectionStatus: 'pending',
+              connectionType: 'sent',
+              connectionId: data.connectionId
+            }
+          }
+          return lawyer
+        }
+        
+        // Update visible lawyers
+        setVisibleLawyers(prev => prev.map(updateLawyerStatus))
+        
+        // Update hidden lawyers
+        setHiddenLawyers(prev => prev.map(updateLawyerStatus))
+        
+        // Update all lawyers
+        setAllLawyers(prev => prev.map(updateLawyerStatus))
         
         // Start the cycling animation after a short delay
         setTimeout(() => {
@@ -151,19 +175,29 @@ const RightSidebar = () => {
           description: "Your connection request has been cancelled"
         })
         
-        // Update the lawyer's status in visibleLawyers
-        setVisibleLawyers(prev =>
-          prev.map(lawyer =>
-            lawyer.id === parseInt(button.getAttribute('data-user-id'))
-              ? {
-                  ...lawyer,
-                  connectionStatus: null,
-                  connectionType: null,
-                  connectionId: null
-                }
-              : lawyer
-          )
-        )
+        const userId = parseInt(button.getAttribute('data-user-id'))
+        
+        // Update the lawyer's status in ALL arrays (visible, hidden, and all)
+        const updateLawyerStatus = (lawyer) => {
+          if (lawyer.id === userId) {
+            return {
+              ...lawyer,
+              connectionStatus: null,
+              connectionType: null,
+              connectionId: null
+            }
+          }
+          return lawyer
+        }
+        
+        // Update visible lawyers
+        setVisibleLawyers(prev => prev.map(updateLawyerStatus))
+        
+        // Update hidden lawyers  
+        setHiddenLawyers(prev => prev.map(updateLawyerStatus))
+        
+        // Update all lawyers
+        setAllLawyers(prev => prev.map(updateLawyerStatus))
         
         button.textContent = 'Connect'
         button.className = button.className.replace('border-red-600 text-red-600', 'border-blue-600 text-blue-600')
