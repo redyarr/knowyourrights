@@ -244,7 +244,7 @@ const Navbar = () => {
                         <span className="font-medium">Help Center</span>
                       </Link>
                       <Link 
-                        href="/about" 
+                        href="/aboutus" 
                         className="flex items-center space-x-3 px-3 py-3 rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
                         onClick={() => setProfileSidebarOpen(false)}
                       >
@@ -337,7 +337,7 @@ const Navbar = () => {
 
       {/* Desktop Navigation */}
       <nav className="hidden lg:block bg-background border-b sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-6">
+        <div className="max-w-7xl px-4 sm:px-6 lg:px-8 mx-auto">
           <div className="flex justify-between h-14 items-center">
             {/* Left Section */}
             <div className="flex items-center space-x-4">
@@ -469,7 +469,7 @@ const Navbar = () => {
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link href="/about" className="flex items-center text-sm">
+                        <Link href="/aboutus" className="flex items-center text-sm">
                           <Info className="mr-2 h-4 w-4" />
                           About Us
                         </Link>
