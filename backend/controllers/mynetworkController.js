@@ -366,8 +366,10 @@ exports.getSuggestedLawyers = async (req, res) => {
                     attributes: ['imagePath'],
                 }
             ],
-            limit: 10 // Get more suggestions to filter later
+            limit: 10
         });
+
+        
         
         // Add connection status to each suggested lawyer
         const lawyersWithStatus = suggestedLawyers.map(lawyer => {
@@ -378,8 +380,8 @@ exports.getSuggestedLawyers = async (req, res) => {
                 connectionType: connection ? connection.type : null,
                 connectionId: connection ? connection.connectionId : null
             };
-        }).slice(0, 3); // Limit to 3 for the sidebar
-        
+        })
+
         return res.status(200).json({ 
             success: true, 
             lawyers: lawyersWithStatus
