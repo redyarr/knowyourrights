@@ -366,7 +366,7 @@ exports.getSuggestedLawyers = async (req, res) => {
                     attributes: ['imagePath'],
                 }
             ],
-            limit: 10
+            limit: 20
         });
 
         
