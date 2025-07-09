@@ -134,7 +134,7 @@ const PostCreateForm = ({ userData, onPostCreated }) => {
 
   return (
     <>
-      <Card className="mb-6">
+      <Card className="mb-6 rounded-md">
         <CardContent className="p-4">
           <div className="flex items-center space-x-3">
             <Avatar className="h-12 w-12">

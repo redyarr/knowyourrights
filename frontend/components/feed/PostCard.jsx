@@ -525,8 +525,8 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
 
   return (
     <>
-      <Card className="w-full" ref={observerRef}>
-        <CardHeader className="pb-3">
+      <Card className="w-full pt-2 pb-1 rounded-md" ref={observerRef}>
+        <CardHeader className="">
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-3 flex-1">
               <Link href={`/in/${post.user?.id || '#'}`}>
@@ -615,15 +615,15 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
           </div>
         </CardHeader>
 
-        <CardContent className="pt-0">
+        <CardContent className="px-0">
           {/* Post Content */}
           {post.title && (
-            <h2 className="font-semibold text-lg mb-3 leading-tight">
+            <h2 className="font-semibold text-lg mb-3 leading-tight px-6">
               {post.title}
             </h2>
           )}
           
-          <div className="text-sm leading-relaxed mb-4">
+          <div className="text-sm leading-relaxed mb-4 px-6">
             <div className="max-h-none">
               <p className="whitespace-pre-wrap break-words">
                 {post.content}
@@ -633,13 +633,13 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
 
           {/* Post Images */}
           {post.post_photos && post.post_photos.length > 0 && (
-            <div className="mb-4">
+            <div className="">
               {post.post_photos.length === 1 ? (
                 <div className="relative">
                   <img
                     src={post.post_photos[0].photo.photoPath}
                     alt="Post image"
-                    className="w-full max-h-96 object-cover rounded-lg"
+                    className="w-full max-h-96 object-cover"
                     onClick={() => handleImageClick(post.post_photos[0].photo.photoPath)}
                   />
                 </div>
@@ -661,7 +661,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
 
           {/* ALWAYS show reaction stats section if there are ANY reactions or comments */}
           {(totalReactions > 0 || comments.length > 0) && (
-            <div className="flex items-center justify-between py-2">
+            <div className="flex items-center justify-between pt-2 px-6">
               {/* Reactions display */}
               {totalReactions > 0 && (
                 <div className="flex items-center space-x-2">
@@ -669,7 +669,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                     {topReactions.map(([reaction]) => (
                       <span
                         key={reaction}
-                        className="inline-flex items-center justify-center w-6 h-6 text-sm bg-white border-2 border-white rounded-full shadow-sm"
+                        className="inline-flex items-center justify-center w-4 h-4 text-sm  rounded-full shadow-sm"
                       >
                         {reactionEmojis[reaction]?.emoji}
                       </span>
@@ -694,7 +694,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
             </div>
           )}
 
-          <Separator className="my-3" />
+          <Separator className="my-2" />
 
           {/* Action Buttons */}
           <div className="flex items-center justify-around">
@@ -740,6 +740,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
               variant="ghost"
               className="flex items-center space-x-2"
               onClick={() => {
+                setShowComments(!showComments)
                 setShowCommentForm(!showCommentForm)
                 if (!showCommentForm) {
                   setTimeout(() => commentInputRef.current?.focus(), 100)
@@ -869,19 +870,6 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                   </div>
                 </div>
               ))}
-            </div>
-          )}
-
-          {/* Always show comment count if there are comments */}
-          {comments.length > 0 && !showComments && (
-            <div className="mt-4 pt-4 border-t">
-              <Button
-                variant="ghost"
-                className="text-sm text-muted-foreground p-0 h-auto"
-                onClick={() => setShowComments(true)}
-              >
-                View {comments.length} comment{comments.length !== 1 ? 's' : ''}
-              </Button>
             </div>
           )}
         </CardContent>
