@@ -577,11 +577,6 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                 <div className="flex items-center space-x-2 text-xs text-muted-foreground mt-1">
                   <Clock className="h-3 w-3" />
                   <time>{formatDate(post.createdAt)}</time>
-                  <span>•</span>
-                  <div className="flex items-center">
-                    <Globe className="h-3 w-3 mr-1" />
-                    <span>Public</span>
-                  </div>
                 </div>
               </div>
             </div>
@@ -797,7 +792,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
 
           {/* Comment Form */}
           {showCommentForm && (
-            <div className="mt-4 pt-4 border-t px-6">
+            <div className="mt-4 mb-2 pt-4 border-t px-6">
               <form onSubmit={handleComment} className="flex items-center space-x-3">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={userData?.profilePicture} alt="Your avatar" />

@@ -28,8 +28,8 @@ const LeftSidebar = ({ userData }) => {
     <aside className="hidden md:block space-y-4">
       {/* Profile Card */}
       {userData && (
-        <Card className="overflow-hidden">
-          <div className="h-12 md:h-14 lg:h-16 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
+        <Card className="overflow-hidden pt-0">
+          <div className="h-14 md:h-16 lg:h-18 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
           <CardContent className="pt-0 pb-4">
             <div className="flex flex-col items-center -mt-6 md:-mt-7 lg:-mt-8">
               <Avatar className="h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16 border-4 border-background">
