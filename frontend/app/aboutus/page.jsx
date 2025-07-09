@@ -58,7 +58,7 @@ const AboutUs = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background dark:bg-background">
       {/* Hero Section */}
       <HeroSection />
       
@@ -85,30 +85,30 @@ const AboutUs = () => {
 
 const HeroSection = () => {
   return (
-    <section className="relative w-full overflow-hidden bg-gradient-to-b from-blue-50 to-background pt-24 pb-12 lg:pt-32 lg:pb-20">
-      <div className="max-w-7xl mx-auto  px-4 sm:px-6 lg:px-8">
+    <section className="relative w-full overflow-hidden bg-gradient-to-b from-blue-50 to-background dark:from-blue-950/20 dark:to-background pt-16 sm:pt-20 md:pt-24 pb-8 sm:pb-12 lg:pt-32 lg:pb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="flex flex-col justify-center space-y-4"
+            className="flex flex-col justify-center space-y-4 text-center lg:text-left"
           >
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
-                Empowering Justice Through <span className="text-blue-600">Legal Innovation</span>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tighter leading-tight">
+                Empowering Justice Through <span className="text-blue-600 dark:text-blue-400">Legal Innovation</span>
               </h1>
-              <p className="max-w-[600px] text-muted-foreground md:text-xl">
+              <p className="max-w-[600px] text-muted-foreground dark:text-muted-foreground text-base sm:text-lg md:text-xl mx-auto lg:mx-0">
                 Connecting individuals with verified legal professionals, providing accessible legal guidance, and building a community where justice is within everyone's reach.
               </p>
             </div>
-            <div className="flex flex-col gap-2 min-[400px]:flex-row">
-              <Button className="px-6" size="lg" asChild>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
+              <Button className="px-4 sm:px-6 text-sm sm:text-base" size="lg" asChild>
                 <Link href="/">
                   Explore Legal Network <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              <Button variant="outline" size="lg" asChild>
+              <Button variant="outline" size="lg" className="text-sm sm:text-base" asChild>
                 <Link href="#for-lawyers">
                   Join as a Lawyer
                 </Link>
@@ -119,7 +119,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="mx-auto lg:mx-0 relative aspect-video w-full max-w-[600px] overflow-hidden rounded-xl"
+            className="mx-auto lg:mx-0 relative aspect-video w-full max-w-[600px] overflow-hidden rounded-xl shadow-2xl"
           >
             <Image 
               src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
@@ -144,7 +144,7 @@ const MissionSection = () => {
   })
 
   return (
-    <section ref={ref} className="py-12 md:py-20 bg-background w-full">
+    <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-background dark:bg-background w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -152,13 +152,13 @@ const MissionSection = () => {
           transition={{ duration: 0.6 }}
           className="flex flex-col items-center justify-center space-y-4 text-center"
         >
-          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Our Mission: Making Legal Help Accessible</h2>
-          <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">Our Mission: Making Legal Help Accessible</h2>
+          <p className="max-w-[900px] text-muted-foreground dark:text-muted-foreground text-base sm:text-lg md:text-xl leading-relaxed">
             We believe that everyone deserves access to quality legal guidance. Our platform bridges the gap between individuals seeking legal help and verified legal professionals, creating a trusted community where legal expertise meets real-world needs.
           </p>
         </motion.div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mt-8 sm:mt-12">
           {[{
             icon: ShieldCheck,
             title: "Verified Legal Professionals",
@@ -179,14 +179,15 @@ const MissionSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.1 * (index + 1) }}
+              className="w-full"
             >
-              <Card className="h-full border-l-4 border-l-blue-500">
-                <CardContent className="p-6">
-                  <div className="mb-4 rounded-full w-12 h-12 flex items-center justify-center bg-blue-50 text-blue-600">
-                    <item.icon className="h-6 w-6" />
+              <Card className="h-full border-l-4 border-l-blue-500 dark:border-l-blue-400 bg-card dark:bg-card hover:shadow-lg transition-shadow duration-300">
+                <CardContent className="p-4 sm:p-6">
+                  <div className="mb-4 rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400">
+                    <item.icon className="h-5 w-5 sm:h-6 sm:w-6" />
                   </div>
-                  <h3 className="text-lg font-bold mb-2">{item.title}</h3>
-                  <p className="text-muted-foreground">{item.description}</p>
+                  <h3 className="text-base sm:text-lg font-bold mb-2 text-foreground dark:text-foreground">{item.title}</h3>
+                  <p className="text-sm sm:text-base text-muted-foreground dark:text-muted-foreground leading-relaxed">{item.description}</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -209,21 +210,21 @@ const StatsSection = ({ stats }) => {
       label: "Active Users", 
       value: stats.totalUsers,
       suffix: "+",
-      color: "text-blue-500" 
+      color: "text-blue-500 dark:text-blue-400" 
     },
     { 
       icon: UserCheck, 
       label: "Verified Lawyers",
       value: stats.totalLawyers,
       suffix: "+",
-      color: "text-emerald-500" 
+      color: "text-emerald-500 dark:text-emerald-400" 
     },
     { 
       icon: MessageCircle, 
       label: "Legal Consultations",
       value: stats.legalConsultations,
       suffix: "+",
-      color: "text-amber-500" 
+      color: "text-amber-500 dark:text-amber-400" 
     },
     { 
       icon: Award, 
@@ -231,24 +232,24 @@ const StatsSection = ({ stats }) => {
       value: stats.successfulCases,
       suffix: "+",
       decimals: 0,
-      color: "text-green-500" 
+      color: "text-green-500 dark:text-green-400" 
     },
   ]
 
   return (
-    <section ref={ref} className="py-12 md:py-20 bg-muted/50 w-full">
+    <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-muted/50 dark:bg-muted/20 w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-10"
+          className="text-center mb-8 sm:mb-10"
         >
-          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Impact by Numbers</h2>
-          <p className="mt-4 text-xl text-muted-foreground">Building trust through transparency and proven results</p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">Impact by Numbers</h2>
+          <p className="mt-4 text-lg sm:text-xl text-muted-foreground dark:text-muted-foreground">Building trust through transparency and proven results</p>
         </motion.div>
 
-        <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 lg:grid-cols-4">
           {statsItems.map((item, index) => (
             <motion.div
               key={index}
@@ -256,14 +257,14 @@ const StatsSection = ({ stats }) => {
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.1 * (index + 1) }}
             >
-              <Card className="h-full border shadow-sm hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-center mb-4">
-                    <div className={`rounded-full p-3 ${item.color.replace('text', 'bg')}/10`}>
-                      <item.icon className={`h-6 w-6 ${item.color}`} />
+              <Card className="h-full border shadow-sm hover:shadow-lg transition-shadow duration-300 bg-card dark:bg-card">
+                <CardContent className="p-3 sm:p-4 md:p-6">
+                  <div className="flex items-center justify-center mb-3 sm:mb-4">
+                    <div className={`rounded-full p-2 sm:p-3 ${item.color.replace('text', 'bg')}/10 dark:${item.color.replace('text', 'bg')}/20`}>
+                      <item.icon className={`h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 ${item.color}`} />
                     </div>
                   </div>
-                  <h3 className="text-3xl font-bold text-center">
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-foreground dark:text-foreground">
                     {inView && (
                       <>
                         <CountUp
@@ -279,7 +280,7 @@ const StatsSection = ({ stats }) => {
                       </>
                     )}
                   </h3>
-                  <p className="text-sm text-muted-foreground text-center mt-2">{item.label}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground dark:text-muted-foreground text-center mt-2">{item.label}</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -287,17 +288,17 @@ const StatsSection = ({ stats }) => {
         </div>
 
         {/* Additional stats row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-6 sm:mt-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.5 }}
           >
-            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-              <CardContent className="p-6">
+            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-200 dark:border-blue-800">
+              <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-2xl font-bold text-blue-600">
+                    <h3 className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">
                       {inView && (
                         <>
                           <CountUp
@@ -309,9 +310,9 @@ const StatsSection = ({ stats }) => {
                         </>
                       )}
                     </h3>
-                    <p className="text-sm text-blue-700 font-medium">Daily Active Users</p>
+                    <p className="text-xs sm:text-sm text-blue-700 dark:text-blue-300 font-medium">Daily Active Users</p>
                   </div>
-                  <Globe className="h-8 w-8 text-blue-500" />
+                  <Globe className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500 dark:text-blue-400" />
                 </div>
               </CardContent>
             </Card>
@@ -322,11 +323,11 @@ const StatsSection = ({ stats }) => {
             animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.6 }}
           >
-            <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
-              <CardContent className="p-6">
+            <Card className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border-green-200 dark:border-green-800">
+              <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="text-2xl font-bold text-green-600">
+                    <h3 className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">
                       {inView && (
                         <>
                           <CountUp
@@ -339,9 +340,9 @@ const StatsSection = ({ stats }) => {
                         </>
                       )}
                     </h3>
-                    <p className="text-sm text-green-700 font-medium">Professional Connections Made</p>
+                    <p className="text-xs sm:text-sm text-green-700 dark:text-green-300 font-medium">Professional Connections Made</p>
                   </div>
-                  <Users className="h-8 w-8 text-green-500" />
+                  <Users className="h-6 w-6 sm:h-8 sm:w-8 text-green-500 dark:text-green-400" />
                 </div>
               </CardContent>
             </Card>
@@ -359,19 +360,19 @@ const ServicesSection = () => {
   })
 
   return (
-    <section ref={ref} className="py-12 md:py-20 bg-background w-full">
+    <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-background dark:bg-background w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-10"
+          className="text-center mb-8 sm:mb-10"
         >
-          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">How It Works</h2>
-          <p className="mt-4 text-xl text-muted-foreground">Get legal help in three simple steps</p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">How It Works</h2>
+          <p className="mt-4 text-lg sm:text-xl text-muted-foreground dark:text-muted-foreground">Get legal help in three simple steps</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mt-8 sm:mt-12">
           {[{
             step: "01",
             title: "Find Legal Experts",
@@ -392,14 +393,14 @@ const ServicesSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.1 * (index + 1) }}
-              className="relative"
+              className="relative w-full"
             >
-              <div className="border-t-4 border-blue-500 pt-10 px-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-                <div className="absolute top-0 -translate-y-1/2 left-6 bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center font-bold text-lg">
+              <div className="border-t-4 border-blue-500 dark:border-blue-400 pt-8 sm:pt-10 px-4 sm:px-6 bg-white dark:bg-card rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                <div className="absolute top-0 -translate-y-1/2 left-4 sm:left-6 bg-blue-500 dark:bg-blue-600 text-white rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center font-bold text-base sm:text-lg">
                   {item.step}
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-gray-900">{item.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">{item.description}</p>
+                <h3 className="text-lg sm:text-xl font-bold mb-3 text-gray-900 dark:text-foreground">{item.title}</h3>
+                <p className="text-muted-foreground dark:text-muted-foreground leading-relaxed text-sm sm:text-base">{item.description}</p>
               </div>
             </motion.div>
           ))}
@@ -409,9 +410,9 @@ const ServicesSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex justify-center mt-12"
+          className="flex justify-center mt-8 sm:mt-12"
         >
-          <Button size="lg" asChild>
+          <Button size="lg" className="text-sm sm:text-base" asChild>
             <Link href="/">
               Start Your Legal Journey <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
@@ -429,14 +430,14 @@ const LawyersSection = () => {
   })
 
   return (
-    <section id="for-lawyers" ref={ref} className="py-12 md:py-20 bg-muted/50 w-full">
+    <section id="for-lawyers" ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-muted/50 dark:bg-muted/20 w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.6 }}
-            className="mx-auto lg:mx-0 order-2 lg:order-1 relative aspect-video w-full max-w-[600px] overflow-hidden rounded-xl"
+            className="mx-auto lg:mx-0 order-2 lg:order-1 relative aspect-video w-full max-w-[600px] overflow-hidden rounded-xl shadow-2xl"
           >
             <Image 
               src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?q=80&w=2126&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
@@ -452,16 +453,16 @@ const LawyersSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex flex-col justify-center space-y-4 order-1 lg:order-2"
+            className="flex flex-col justify-center space-y-4 order-1 lg:order-2 text-center lg:text-left"
           >
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">For Legal Professionals</h2>
-              <p className="max-w-[600px] text-muted-foreground md:text-xl">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">For Legal Professionals</h2>
+              <p className="max-w-[600px] text-muted-foreground dark:text-muted-foreground text-base sm:text-lg md:text-xl mx-auto lg:mx-0">
                 Join our network of verified lawyers and expand your practice while helping those who need legal guidance most.
               </p>
             </div>
             
-            <ul className="space-y-3">
+            <ul className="space-y-3 max-w-[600px] mx-auto lg:mx-0">
               {[
                 "Expand your client base through our verified network",
                 "Share legal insights and build your professional reputation",
@@ -474,16 +475,16 @@ const LawyersSection = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
                   transition={{ duration: 0.4, delay: 0.3 + (index * 0.1) }}
-                  className="flex items-center gap-3"
+                  className="flex items-center gap-3 text-left"
                 >
-                  <Check className="h-5 w-5 text-blue-500 flex-shrink-0" />
-                  <span className="text-gray-700">{benefit}</span>
+                  <Check className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500 dark:text-blue-400 flex-shrink-0" />
+                  <span className="text-gray-700 dark:text-foreground text-sm sm:text-base">{benefit}</span>
                 </motion.li>
               ))}
             </ul>
             
-            <div className="pt-4">
-              <Button size="lg" asChild>
+            <div className="pt-4 flex justify-center lg:justify-start">
+              <Button size="lg" className="text-sm sm:text-base" asChild>
                 <Link href="/register">
                   Join Our Network <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
@@ -530,19 +531,19 @@ const TeamSection = () => {
   ]
 
   return (
-    <section ref={ref} className="py-12 md:py-20 bg-background w-full">
+    <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-background dark:bg-background w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-10"
+          className="text-center mb-8 sm:mb-10"
         >
-          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Meet Our Team</h2>
-          <p className="mt-4 text-xl text-muted-foreground">Passionate professionals dedicated to making legal help accessible</p>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">Meet Our Team</h2>
+          <p className="mt-4 text-lg sm:text-xl text-muted-foreground dark:text-muted-foreground">Passionate professionals dedicated to making legal help accessible</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {team.map((member, index) => (
             <motion.div
               key={index}
@@ -550,9 +551,9 @@ const TeamSection = () => {
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.1 * (index + 1) }}
             >
-              <Card className="h-full hover:shadow-lg transition-shadow">
-                <CardContent className="p-6 text-center">
-                  <div className="mb-4 overflow-hidden rounded-full aspect-square mx-auto relative w-24 h-24">
+              <Card className="h-full hover:shadow-lg transition-shadow duration-300 bg-card dark:bg-card">
+                <CardContent className="p-4 sm:p-6 text-center">
+                  <div className="mb-4 overflow-hidden rounded-full aspect-square mx-auto relative w-20 h-20 sm:w-24 sm:h-24">
                     <Image 
                       src={member.image} 
                       alt={member.name} 
@@ -561,9 +562,9 @@ const TeamSection = () => {
                       className="object-cover w-full h-full"
                     />
                   </div>
-                  <h3 className="text-lg font-bold mb-1">{member.name}</h3>
-                  <p className="text-sm text-blue-600 font-medium mb-2">{member.role}</p>
-                  <p className="text-xs text-muted-foreground">{member.description}</p>
+                  <h3 className="text-base sm:text-lg font-bold mb-1 text-foreground dark:text-foreground">{member.name}</h3>
+                  <p className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 font-medium mb-2">{member.role}</p>
+                  <p className="text-xs text-muted-foreground dark:text-muted-foreground leading-relaxed">{member.description}</p>
                 </CardContent>
               </Card>
             </motion.div>
@@ -581,7 +582,7 @@ const ContactCTASection = () => {
   })
 
   return (
-    <section ref={ref} className="py-12 md:py-20 bg-gradient-to-r from-blue-600 to-indigo-700 text-white w-full">
+    <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-r from-blue-600 to-indigo-700 dark:from-blue-700 dark:to-indigo-800 text-white w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -590,25 +591,25 @@ const ContactCTASection = () => {
           className="flex flex-col items-center justify-center space-y-6 text-center"
         >
           <div className="space-y-4">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Ready to Get Started?</h2>
-            <p className="max-w-[900px] text-blue-100 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">Ready to Get Started?</h2>
+            <p className="max-w-[900px] text-blue-100 dark:text-blue-100 text-base sm:text-lg md:text-xl leading-relaxed mx-auto">
               Join thousands of users who have found the legal help they need. Whether you're seeking legal advice or looking to expand your legal practice, we're here to help.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button size="lg" variant="secondary" asChild>
+            <Button size="lg" variant="secondary" className="text-sm sm:text-base" asChild>
               <Link href="/">
                 Find Legal Help Now
               </Link>
             </Button>
-            <Button variant="outline" size="lg" className="text-white border-white hover:bg-white hover:text-blue-600" asChild>
+            <Button variant="outline" size="lg" className="text-white border-white hover:bg-white hover:text-blue-600 dark:hover:text-blue-700 text-sm sm:text-base" asChild>
               <Link href="/contact">
                 Contact Our Team
               </Link>
             </Button>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 w-full max-w-4xl">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mt-8 sm:mt-12 w-full max-w-4xl">
             {[{
               icon: BookOpen,
               title: "Comprehensive Legal Resources",
@@ -631,11 +632,11 @@ const ContactCTASection = () => {
                 transition={{ duration: 0.6, delay: 0.2 + (index * 0.1) }}
                 className="text-center"
               >
-                <div className="mb-4 rounded-full w-12 h-12 flex items-center justify-center bg-white/20 text-white mx-auto">
-                  <feature.icon className="h-6 w-6" />
+                <div className="mb-4 rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white/20 dark:bg-white/20 text-white mx-auto">
+                  <feature.icon className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                <p className="text-sm text-blue-100">{feature.description}</p>
+                <h3 className="text-base sm:text-lg font-semibold mb-2">{feature.title}</h3>
+                <p className="text-xs sm:text-sm text-blue-100 dark:text-blue-100 leading-relaxed">{feature.description}</p>
               </motion.div>
             ))}
           </div>
