@@ -1238,8 +1238,30 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                 )}
                 <div className="text-xs md:text-sm text-muted-foreground dark:text-muted-foreground leading-relaxed max-h-32 md:max-h-40 overflow-y-auto">
                   <p className="whitespace-pre-wrap break-words">
-                    {post.content}
-                  </p>
+                    {showFullContent || !isContentLong 
+                  ? post.content 
+                  : `${post.content.substring(0, 200)} `
+                }
+                {isContentLong && !showFullContent && (
+                  <span className="text-gray-500">
+                     ...
+                    <button
+                      onClick={() => setShowFullContent(true)}
+                      className="text-gray-500 hover:text-gray-700 font-medium ml-1 transition-colors"
+                    >
+                      more
+                    </button>
+                  </span>
+                )}
+              </p>
+              {isContentLong && showFullContent && (
+                <button
+                  onClick={() => setShowFullContent(false)}
+                  className="text-gray-500 hover:text-gray-700 font-medium mt-2 text-sm transition-colors"
+                >
+                  show less
+                </button>
+              )}
                 </div>
               </div>
 
