@@ -85,7 +85,7 @@ const AboutUs = () => {
 
 const HeroSection = () => {
   return (
-    <section className="relative w-full overflow-hidden bg-gradient-to-b from-blue-50 to-background dark:from-blue-950/20 dark:to-background pt-16 sm:pt-20 md:pt-24 pb-8 sm:pb-12 lg:pt-32 lg:pb-20">
+    <section className="relative w-full overflow-hidden bg-gradient-to-b from-background to-blue-100 dark:from-background dark:to-blue-950/20  pt-16 sm:pt-20 md:pt-24 pb-8 sm:pb-12 lg:pt-32 lg:pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
           <motion.div 
@@ -104,13 +104,13 @@ const HeroSection = () => {
             </div>
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
               <Button className="px-4 sm:px-6 text-sm sm:text-base" size="lg" asChild>
-                <Link href="/">
+                <Link href="/mynetwork">
                   Explore Legal Network <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
               <Button variant="outline" size="lg" className="text-sm sm:text-base" asChild>
-                <Link href="#for-lawyers">
-                  Join as a Lawyer
+                <Link href="/jobs">
+                  Browse Legal Jobs
                 </Link>
               </Button>
             </div>
@@ -144,7 +144,7 @@ const MissionSection = () => {
   })
 
   return (
-    <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-background dark:bg-background w-full">
+    <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-b from-blue-100 to-background dark:from-blue-950/20 dark:to-background w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -181,9 +181,9 @@ const MissionSection = () => {
               transition={{ duration: 0.6, delay: 0.1 * (index + 1) }}
               className="w-full"
             >
-              <Card className="h-full border-l-4 border-l-blue-500 dark:border-l-blue-400 bg-card dark:bg-card hover:shadow-lg transition-shadow duration-300">
+              <Card className="h-full border-l-4 border-l-blue-1000 dark:border-l-blue-400 bg-card dark:bg-card hover:shadow-lg transition-shadow duration-300">
                 <CardContent className="p-4 sm:p-6">
-                  <div className="mb-4 rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400">
+                  <div className="mb-4 rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400">
                     <item.icon className="h-5 w-5 sm:h-6 sm:w-6" />
                   </div>
                   <h3 className="text-base sm:text-lg font-bold mb-2 text-foreground dark:text-foreground">{item.title}</h3>
@@ -210,7 +210,7 @@ const StatsSection = ({ stats }) => {
       label: "Active Users", 
       value: stats.totalUsers,
       suffix: "+",
-      color: "text-blue-500 dark:text-blue-400" 
+      color: "text-blue-1000 dark:text-blue-400" 
     },
     { 
       icon: UserCheck, 
@@ -237,7 +237,7 @@ const StatsSection = ({ stats }) => {
   ]
 
   return (
-    <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-muted/50 dark:bg-muted/20 w-full">
+    <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-b from-background to-blue-100 dark:from-background dark:to-blue-950/20 w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -294,7 +294,7 @@ const StatsSection = ({ stats }) => {
             animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.5 }}
           >
-            <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-200 dark:border-blue-800">
+            <Card className="bg-gradient-to-r from-blue-100 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-200 dark:border-blue-800">
               <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center justify-between">
                   <div>
@@ -312,7 +312,7 @@ const StatsSection = ({ stats }) => {
                     </h3>
                     <p className="text-xs sm:text-sm text-blue-700 dark:text-blue-300 font-medium">Daily Active Users</p>
                   </div>
-                  <Globe className="h-6 w-6 sm:h-8 sm:w-8 text-blue-500 dark:text-blue-400" />
+                  <Globe className="h-6 w-6 sm:h-8 sm:w-8 text-blue-1000 dark:text-blue-400" />
                 </div>
               </CardContent>
             </Card>
@@ -360,7 +360,7 @@ const ServicesSection = () => {
   })
 
   return (
-    <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-background dark:bg-background w-full">
+    <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-b from-blue-100 to-background dark:from-blue-950/20 dark:to-background w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -395,8 +395,8 @@ const ServicesSection = () => {
               transition={{ duration: 0.6, delay: 0.1 * (index + 1) }}
               className="relative w-full"
             >
-              <div className="border-t-4 border-blue-500 dark:border-blue-400 pt-8 sm:pt-10 px-4 sm:px-6 bg-white dark:bg-card rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
-                <div className="absolute top-0 -translate-y-1/2 left-4 sm:left-6 bg-blue-500 dark:bg-blue-600 text-white rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center font-bold text-base sm:text-lg">
+              <div className="border-t-4 border-blue-1000 dark:border-blue-400 pt-8 sm:pt-10 px-4 sm:px-6 bg-white dark:bg-card rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                <div className="absolute top-0 -translate-y-1/2 left-4 sm:left-6 bg-blue-1000 dark:bg-blue-600 text-white rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center font-bold text-base sm:text-lg">
                   {item.step}
                 </div>
                 <h3 className="text-lg sm:text-xl font-bold mb-3 text-gray-900 dark:text-foreground">{item.title}</h3>
@@ -430,7 +430,7 @@ const LawyersSection = () => {
   })
 
   return (
-    <section id="for-lawyers" ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-muted/50 dark:bg-muted/20 w-full">
+    <section id="for-lawyers" ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-b from-background to-blue-100 dark:from-background dark:to-blue-950/20 w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
           <motion.div
@@ -477,7 +477,7 @@ const LawyersSection = () => {
                   transition={{ duration: 0.4, delay: 0.3 + (index * 0.1) }}
                   className="flex items-center gap-3 text-left"
                 >
-                  <Check className="h-4 w-4 sm:h-5 sm:w-5 text-blue-500 dark:text-blue-400 flex-shrink-0" />
+                  <Check className="h-4 w-4 sm:h-5 sm:w-5 text-blue-1000 dark:text-blue-400 flex-shrink-0" />
                   <span className="text-gray-700 dark:text-foreground text-sm sm:text-base">{benefit}</span>
                 </motion.li>
               ))}
@@ -485,8 +485,8 @@ const LawyersSection = () => {
             
             <div className="pt-4 flex justify-center lg:justify-start">
               <Button size="lg" className="text-sm sm:text-base" asChild>
-                <Link href="/register">
-                  Join Our Network <ArrowRight className="ml-2 h-4 w-4" />
+                <Link href="/in/edit">
+                  Complete Your Profile <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>
@@ -531,7 +531,7 @@ const TeamSection = () => {
   ]
 
   return (
-    <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-background dark:bg-background w-full">
+    <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-b from-blue-100 via-blue-300 to-blue-600  dark:from-blue-950/20 dark:via-blue-900 dark:to-blue-700 w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -582,7 +582,7 @@ const ContactCTASection = () => {
   })
 
   return (
-    <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-r from-blue-600 to-indigo-700 dark:from-blue-700 dark:to-indigo-800 text-white w-full">
+    <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-b from-blue-600 to-indigo-700 dark:from-blue-700 dark:to-indigo-800 text-white w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -593,18 +593,18 @@ const ContactCTASection = () => {
           <div className="space-y-4">
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">Ready to Get Started?</h2>
             <p className="max-w-[900px] text-blue-100 dark:text-blue-100 text-base sm:text-lg md:text-xl leading-relaxed mx-auto">
-              Join thousands of users who have found the legal help they need. Whether you're seeking legal advice or looking to expand your legal practice, we're here to help.
+              Continue exploring our platform to connect with legal professionals, find opportunities, and expand your legal network.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button size="lg" variant="secondary" className="text-sm sm:text-base" asChild>
-              <Link href="/">
-                Find Legal Help Now
+              <Link href="/mynetwork">
+                Explore Network
               </Link>
             </Button>
             <Button variant="outline" size="lg" className="text-white border-white hover:bg-white hover:text-blue-600 dark:hover:text-blue-700 text-sm sm:text-base" asChild>
-              <Link href="/contact">
-                Contact Our Team
+              <Link href="/messaging">
+                Start Conversations
               </Link>
             </Button>
           </div>
