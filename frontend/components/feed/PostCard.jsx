@@ -56,6 +56,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
   const [newComment, setNewComment] = useState('')
   const [isSubmittingComment, setIsSubmittingComment] = useState(false)
   const [reactionPickerTimeout, setReactionPickerTimeout] = useState(null)
+  const [showFullContent, setShowFullContent] = useState(false)
   
   const modalRef = useRef(null)
   const commentInputRef = useRef(null)
@@ -523,6 +524,10 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
     }
   }, [reactionPickerTimeout])
 
+
+  
+  const isContentLong = post.content && post.content.length > 246 // Adjust threshold as needed
+
   return (
     <>
       <Card className="w-full pt-2 pb-1 rounded-md" ref={observerRef}>
@@ -626,8 +631,30 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
           <div className="text-sm leading-relaxed mb-4 px-6">
             <div className="max-h-none">
               <p className="whitespace-pre-wrap break-words">
-                {post.content}
+                {showFullContent || !isContentLong 
+                  ? post.content 
+                  : `${post.content.substring(0, 200)} `
+                }
+                {isContentLong && !showFullContent && (
+                  <span className="text-gray-500">
+                     ...
+                    <button
+                      onClick={() => setShowFullContent(true)}
+                      className="text-gray-500 hover:text-gray-700 font-medium ml-1 transition-colors"
+                    >
+                      more
+                    </button>
+                  </span>
+                )}
               </p>
+              {isContentLong && showFullContent && (
+                <button
+                  onClick={() => setShowFullContent(false)}
+                  className="text-gray-500 hover:text-gray-700 font-medium mt-2 text-sm transition-colors"
+                >
+                  show less
+                </button>
+              )}
             </div>
           </div>
 
@@ -639,7 +666,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                   <img
                     src={post.post_photos[0].photo.photoPath}
                     alt="Post image"
-                    className="w-full max-h-96 object-cover"
+                    className="w-full h-auto object-contain cursor-pointer"
                     onClick={() => handleImageClick(post.post_photos[0].photo.photoPath)}
                   />
                 </div>
@@ -650,7 +677,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                       key={index}
                       src={postPhoto.photo.photoPath}
                       alt="Post image"
-                      className="w-full h-48 object-cover rounded-lg"
+                      className="w-full h-48 object-cover rounded-lg cursor-pointer"
                       onClick={() => handleImageClick(postPhoto.photo.photoPath)}
                     />
                   ))}
@@ -660,7 +687,8 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
           )}
 
           {/* ALWAYS show reaction stats section if there are ANY reactions or comments */}
-          {(totalReactions > 0 || comments.length > 0) && (
+          {(totalReactions > 0 || comments.length > 0) ? 
+          (
             <div className="flex items-center justify-between pt-2 px-6">
               {/* Reactions display */}
               {totalReactions > 0 && (
@@ -692,7 +720,13 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                 </Button>
               )}
             </div>
-          )}
+          ) 
+          :
+           <div className='pt-2'>
+              <div className='w-4 h-4'>
+              </div>
+           </div>
+           }
 
           <Separator className="my-2" />
 
@@ -763,7 +797,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
 
           {/* Comment Form */}
           {showCommentForm && (
-            <div className="mt-4 pt-4 border-t">
+            <div className="mt-4 pt-4 border-t px-6">
               <form onSubmit={handleComment} className="flex items-center space-x-3">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={userData?.profilePicture} alt="Your avatar" />
@@ -787,7 +821,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
 
           {/* Comments */}
           {showComments && comments.length > 0 && (
-            <div className="mt-4 pt-4 border-t space-y-3">
+            <div className="mt-4 pb-1 pt-4 border-t space-y-3 px-6">
               {comments.map((comment) => (
                 <div key={comment.id} className="flex items-start space-x-3">
                   <Avatar className="h-8 w-8">
