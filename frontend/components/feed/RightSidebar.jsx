@@ -47,7 +47,6 @@ const RightSidebar = () => {
         credentials: 'include'
       })
       const data = await response.json()
-      console.log('Suggested Lawyers:', data.lawyers?.length || 0);
       
       if (data.success && data.lawyers) {
         const lawyers = data.lawyers

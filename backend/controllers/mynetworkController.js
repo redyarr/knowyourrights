@@ -119,19 +119,15 @@ exports.getNetwork = async (req, res) => {
             limit: 5
         });
 
-        console.log("step 9: Rendering mynetwork/index view");
-        res.render('mynetwork/index', {
-            title: 'My Network | Legal Network',
-            connectionRequests: connectionRequests, // Pass connection requests
-            pendingRequests: pendingRequests, // Pass pending requests sent by user
-            friends: friends, // Pass accepted friends
-            suggestedLawyers: suggestedLawyers, // Pass suggested lawyers
-            user: req.session.user,
-        });
-        console.log("step 10: Rendered mynetwork/index successfully");
+        res.status(200).json({
+            connectionRequests,
+            pendingRequests,
+            friends,
+            suggestedLawyers
+        })
     } catch (error) {
         console.error("Error fetching network:", error);
-        res.status(500).render('error', { error: "An unexpected error occurred while fetching your network." });
+        res.status(500).json({ success: false, error: "An unexpected error occurred while fetching your network." });
     }
 };
 

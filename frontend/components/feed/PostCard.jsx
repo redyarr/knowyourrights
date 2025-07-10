@@ -529,13 +529,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
     }
   }, [reactionPickerTimeout])
 
-  // Initialize connection status when component mounts
-  useEffect(() => {
-    if (post?.user?.connectionStatus) {
-      setConnectionStatus(post.user.connectionStatus)
-      setConnectionId(post.user.connectionId)
-    }
-  }, [post])
+  
 
   // Handle connection request
   const handleConnectionRequest = async () => {
@@ -579,7 +573,6 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
   // Handle cancel connection request
   const handleCancelRequest = async () => {
     if (!connectionId) return
-
     setIsConnecting(true)
 
     try {
@@ -614,6 +607,9 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
       setIsConnecting(false)
     }
   }
+
+  console.log('PostCard rendered for post:', post);
+  
 
   // Render connection button
   const renderConnectionButton = () => {
