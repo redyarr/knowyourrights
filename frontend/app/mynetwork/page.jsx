@@ -169,7 +169,7 @@ const MyNetworkPage = () => {
     return items.filter(item => {
       const user = item[searchKey]
       const name = getUserDisplayName(user).toLowerCase()
-      const firm = user.Lawyer?.lawFirm?.toLowerCase() || ''
+      const firm = (user.lawyer?.lawFirm)?.toLowerCase() || ''
       return name.includes(searchQuery.toLowerCase()) || firm.includes(searchQuery.toLowerCase())
     })
   }
@@ -278,10 +278,14 @@ const MyNetworkPage = () => {
           <div className="min-h-[400px]">
             {/* Connection Requests */}
             {activeTab === 'requests' && (
-              <div className="space-y-4">
-                {filteredRequests.length === 0 ? (
-                  <Card>
-                    <CardContent className="p-12 text-center">
+              <Card>
+                <CardHeader>
+                  <h2 className="text-lg font-semibold">Connection Requests</h2>
+                  <p className="text-sm text-muted-foreground">People who want to connect with you</p>
+                </CardHeader>
+                <CardContent className="p-0">
+                  {filteredRequests.length === 0 ? (
+                    <div className="p-12 text-center">
                       <Clock className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                       <h3 className="text-lg font-semibold mb-2">
                         {searchQuery ? 'No requests found' : 'No pending requests'}
@@ -292,82 +296,89 @@ const MyNetworkPage = () => {
                           : "You don't have any connection requests at the moment."
                         }
                       </p>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  filteredRequests.map((request) => {
-                    const user = request.requester
-                    const authority = user.Lawyer ? getLawyerAuthority(user.Lawyer.badgeIssuingAuthority) : null
-                    
-                    return (
-                      <Card key={request.id}>
-                        <CardContent className="p-6">
-                          <div className="flex items-start space-x-4">
-                            <Link href={`/in/${user.id}`}>
-                              <Avatar className="h-12 w-12 cursor-pointer">
-                                <AvatarImage src={user.ProfileImage?.imagePath} alt={getUserDisplayName(user)} />
-                                <AvatarFallback className="bg-blue-600 text-white">
-                                  {getUserInitials(user)}
-                                </AvatarFallback>
-                              </Avatar>
-                            </Link>
-                            
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center space-x-2 mb-1">
-                                <Link href={`/in/${user.id}`} className="hover:text-blue-600">
-                                  <h3 className="font-semibold">{getUserDisplayName(user)}</h3>
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-border">
+                      {filteredRequests.map((request) => {
+                        const user = request.requester
+                        const authority = user.lawyer ? getLawyerAuthority(user.lawyer.badgeIssuingAuthority) : null
+                        
+                        return (
+                          <div key={request.id} className="p-4 hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-3 flex-1 min-w-0">
+                                <Link href={`/in/${user.id}`}>
+                                  <Avatar className="h-10 w-10 cursor-pointer">
+                                    <AvatarImage src={user.ProfileImage?.imagePath} alt={getUserDisplayName(user)} />
+                                    <AvatarFallback className="bg-blue-600 text-white text-sm">
+                                      {getUserInitials(user)}
+                                    </AvatarFallback>
+                                  </Avatar>
                                 </Link>
                                 
-                                {authority && (
-                                  <Badge variant="secondary" className={`text-xs ${authority.color}`}>
-                                    <authority.icon className="h-3 w-3 mr-1" />
-                                    {authority.label}
-                                  </Badge>
-                                )}
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center space-x-2 mb-1">
+                                    <Link href={`/in/${user.id}`} className="hover:text-blue-600">
+                                      <span className="font-medium text-sm">{getUserDisplayName(user)}</span>
+                                    </Link>
+                                    
+                                    {authority && (
+                                      <Badge variant="secondary" className={`text-xs ${authority.color}`}>
+                                        <authority.icon className="h-3 w-3 mr-1" />
+                                        {authority.label}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  
+                                  <p className="text-xs text-muted-foreground">
+                                    
+                                    {user.lawyer?.lawFirm && `  ${user.lawyer.lawFirm}`}
+                                    <span className="ml-2"> Wants to connect</span>
+                                  </p>
+                                </div>
                               </div>
                               
-                              <p className="text-sm text-muted-foreground">
-                                {user.role}
-                                {user.Lawyer?.lawFirm && ` • ${user.Lawyer.lawFirm}`}
-                              </p>
-                              
-                              <p className="text-xs text-muted-foreground mt-1">Wants to connect</p>
-                            </div>
-                            
-                            <div className="flex space-x-2">
-                              <Button
-                                size="sm"
-                                onClick={() => handleConnectionRequest(request.id, 'accept')}
-                                disabled={processingRequest === request.id}
-                              >
-                                <Check className="h-4 w-4 mr-2" />
-                                {processingRequest === request.id ? 'Processing...' : 'Accept'}
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleConnectionRequest(request.id, 'decline')}
-                                disabled={processingRequest === request.id}
-                              >
-                                <X className="h-4 w-4 mr-2" />
-                                Decline
-                              </Button>
+                              <div className="flex space-x-2 ml-4">
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleConnectionRequest(request.id, 'accept')}
+                                  disabled={processingRequest === request.id}
+                                  className="h-8 px-3"
+                                >
+                                  <Check className="h-3 w-3 mr-1" />
+                                  {processingRequest === request.id ? 'Processing...' : 'Accept'}
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleConnectionRequest(request.id, 'decline')}
+                                  disabled={processingRequest === request.id}
+                                  className="h-8 px-3"
+                                >
+                                  <X className="h-3 w-3 mr-1" />
+                                  Decline
+                                </Button>
+                              </div>
                             </div>
                           </div>
-                        </CardContent>
-                      </Card>
-                    )
-                  })
-                )}
-              </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             )}
 
             {/* Pending Requests */}
             {activeTab === 'pending' && (
-              <div className="space-y-4">
-                {filteredPending.length === 0 ? (
-                  <Card>
-                    <CardContent className="p-12 text-center">
+              <Card>
+                <CardHeader>
+                  <h2 className="text-lg font-semibold">Pending Requests</h2>
+                  <p className="text-sm text-muted-foreground">Invitations you've sent</p>
+                </CardHeader>
+                <CardContent className="p-0">
+                  {filteredPending.length === 0 ? (
+                    <div className="p-12 text-center">
                       <UserX className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                       <h3 className="text-lg font-semibold mb-2">
                         {searchQuery ? 'No pending requests found' : 'No pending requests'}
@@ -378,74 +389,80 @@ const MyNetworkPage = () => {
                           : "You haven't sent any connection requests that are waiting for a response."
                         }
                       </p>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  filteredPending.map((request) => {
-                    const user = request.receiver
-                    const authority = user.Lawyer ? getLawyerAuthority(user.Lawyer.badgeIssuingAuthority) : null
-                    
-                    return (
-                      <Card key={request.id}>
-                        <CardContent className="p-6">
-                          <div className="flex items-start space-x-4">
-                            <Link href={`/in/${user.id}`}>
-                              <Avatar className="h-12 w-12 cursor-pointer">
-                                <AvatarImage src={user.ProfileImage?.imagePath} alt={getUserDisplayName(user)} />
-                                <AvatarFallback className="bg-blue-600 text-white">
-                                  {getUserInitials(user)}
-                                </AvatarFallback>
-                              </Avatar>
-                            </Link>
-                            
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center space-x-2 mb-1">
-                                <Link href={`/in/${user.id}`} className="hover:text-blue-600">
-                                  <h3 className="font-semibold">{getUserDisplayName(user)}</h3>
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-border">
+                      {filteredPending.map((request) => {
+                        const user = request.receiver
+                        const authority = (user.lawyer) ? getLawyerAuthority((user.lawyer?.badgeIssuingAuthority)) : null
+                        
+                        return (
+                          <div key={request.id} className="p-4 hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-3 flex-1 min-w-0">
+                                <Link href={`/in/${user.id}`}>
+                                  <Avatar className="h-10 w-10 cursor-pointer">
+                                    <AvatarImage src={user.profile_image?.imagePath} alt={getUserDisplayName(user)} />
+                                    <AvatarFallback className="bg-blue-600 text-white text-sm">
+                                      {getUserInitials(user)}
+                                    </AvatarFallback>
+                                  </Avatar>
                                 </Link>
                                 
-                                {authority && (
-                                  <Badge variant="secondary" className={`text-xs ${authority.color}`}>
-                                    <authority.icon className="h-3 w-3 mr-1" />
-                                    {authority.label}
-                                  </Badge>
-                                )}
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center space-x-2 mb-1">
+                                    <Link href={`/in/${user.id}`} className="hover:text-blue-600">
+                                      <span className="font-medium text-sm">{getUserDisplayName(user)}</span>
+                                    </Link>
+                                    
+                                    {authority && (
+                                      <Badge variant="secondary" className={`text-xs ${authority.color}`}>
+                                        <authority.icon className="h-3 w-3 mr-1" />
+                                        {authority.label}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  
+                                  <p className="text-xs text-muted-foreground">
+
+                                    {(user.lawyer?.lawFirm) &&<span className='mr-4'>{`${user.lawyer?.lawFirm}`}</span>}
+                                    <span className="">• Invitation sent</span>
+                                  </p>
+                                </div>
                               </div>
                               
-                              <p className="text-sm text-muted-foreground">
-                                {user.role}
-                                {user.Lawyer?.lawFirm && ` • ${user.Lawyer.lawFirm}`}
-                              </p>
-                              
-                              <p className="text-xs text-muted-foreground mt-1">Invitation sent</p>
-                            </div>
-                            
-                            <div>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleConnectionRequest(request.id, 'cancel')}
-                                disabled={processingRequest === request.id}
-                              >
-                                <X className="h-4 w-4 mr-2" />
-                                {processingRequest === request.id ? 'Cancelling...' : 'Withdraw'}
-                              </Button>
+                              <div className="ml-4">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleConnectionRequest(request.id, 'cancel')}
+                                  disabled={processingRequest === request.id}
+                                  className="h-8 px-3"
+                                >
+                                  <X className="h-3 w-3 mr-1" />
+                                  {processingRequest === request.id ? 'Cancelling...' : 'Withdraw'}
+                                </Button>
+                              </div>
                             </div>
                           </div>
-                        </CardContent>
-                      </Card>
-                    )
-                  })
-                )}
-              </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             )}
 
             {/* Connections */}
             {activeTab === 'connections' && (
-              <div className="space-y-4">
-                {filteredConnections.length === 0 ? (
-                  <Card>
-                    <CardContent className="p-12 text-center">
+              <Card>
+                <CardHeader>
+                  <h2 className="text-lg font-semibold">Your Connections</h2>
+                  <p className="text-sm text-muted-foreground">People you're connected with</p>
+                </CardHeader>
+                <CardContent className="p-0">
+                  {filteredConnections.length === 0 ? (
+                    <div className="p-12 text-center">
                       <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                       <h3 className="text-lg font-semibold mb-2">
                         {searchQuery ? 'No connections found' : 'No connections yet'}
@@ -464,66 +481,69 @@ const MyNetworkPage = () => {
                           </Link>
                         </Button>
                       )}
-                    </CardContent>
-                  </Card>
-                ) : (
-                  filteredConnections.map((connection) => {
-                    const user = connection.connectedUser
-                    const authority = user.Lawyer ? getLawyerAuthority(user.Lawyer.badgeIssuingAuthority) : null
-                    
-                    return (
-                      <Card key={connection.id}>
-                        <CardContent className="p-6">
-                          <div className="flex items-start space-x-4">
-                            <Link href={`/in/${user.id}`}>
-                              <Avatar className="h-12 w-12 cursor-pointer">
-                                <AvatarImage src={user.ProfileImage?.imagePath} alt={getUserDisplayName(user)} />
-                                <AvatarFallback className="bg-blue-600 text-white">
-                                  {getUserInitials(user)}
-                                </AvatarFallback>
-                              </Avatar>
-                            </Link>
-                            
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center space-x-2 mb-1">
-                                <Link href={`/in/${user.id}`} className="hover:text-blue-600">
-                                  <h3 className="font-semibold">{getUserDisplayName(user)}</h3>
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-border">
+                      {filteredConnections.map((connection) => {
+                        const user = connection.connectedUser
+                        const authority = user.lawyer ? getLawyerAuthority(user.lawyer.badgeIssuingAuthority) : null
+                        
+                        return (
+                          <div key={connection.id} className="p-4 hover:bg-muted/50 transition-colors">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-3 flex-1 min-w-0">
+                                <Link href={`/in/${user.id}`}>
+                                  <Avatar className="h-10 w-10 cursor-pointer">
+                                    <AvatarImage src={user.ProfileImage?.imagePath} alt={getUserDisplayName(user)} />
+                                    <AvatarFallback className="bg-blue-600 text-white text-sm">
+                                      {getUserInitials(user)}
+                                    </AvatarFallback>
+                                  </Avatar>
                                 </Link>
                                 
-                                {authority && (
-                                  <Badge variant="secondary" className={`text-xs ${authority.color}`}>
-                                    <authority.icon className="h-3 w-3 mr-1" />
-                                    {authority.label}
-                                  </Badge>
-                                )}
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center space-x-2 mb-1">
+                                    <Link href={`/in/${user.id}`} className="hover:text-blue-600">
+                                      <span className="font-medium text-sm">{getUserDisplayName(user)}</span>
+                                    </Link>
+                                    
+                                    {authority && (
+                                      <Badge variant="secondary" className={`text-xs ${authority.color}`}>
+                                        <authority.icon className="h-3 w-3 mr-1" />
+                                        {authority.label}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  
+                                  <div className="flex items-center text-xs text-muted-foreground">
+                                    <span>
+                                      
+                                      {user.lawyer?.lawFirm && `  ${user.lawyer.lawFirm}`}
+                                    </span>
+                                    <div className="flex items-center text-green-600 ml-2">
+                                      <UserCheck className="h-3 w-3 mr-1" />
+                                      Connected
+                                    </div>
+                                  </div>
+                                </div>
                               </div>
                               
-                              <p className="text-sm text-muted-foreground">
-                                {user.role}
-                                {user.Lawyer?.lawFirm && ` • ${user.Lawyer.lawFirm}`}
-                              </p>
-                              
-                              <div className="flex items-center text-green-600 text-sm mt-1">
-                                <UserCheck className="h-4 w-4 mr-2" />
-                                Connected
+                              <div className="ml-4">
+                                <Button size="sm" variant="outline" className="h-8 px-3" asChild>
+                                  <Link href={`/messaging/${user.id}`}>
+                                    <MessageCircle className="h-3 w-3 mr-1" />
+                                    Message
+                                  </Link>
+                                </Button>
                               </div>
-                            </div>
-                            
-                            <div>
-                              <Button size="sm" variant="outline" asChild>
-                                <Link href={`/messaging/${user.id}`}>
-                                  <MessageCircle className="h-4 w-4 mr-2" />
-                                  Message
-                                </Link>
-                              </Button>
                             </div>
                           </div>
-                        </CardContent>
-                      </Card>
-                    )
-                  })
-                )}
-              </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             )}
           </div>
 

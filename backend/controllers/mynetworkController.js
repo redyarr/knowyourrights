@@ -120,9 +120,12 @@ exports.getNetwork = async (req, res) => {
         });
 
         res.status(200).json({
-            connectionRequests,
-            pendingRequests,
-            friends,
+            success: true,
+            data: {
+                receivedRequests: connectionRequests,
+                pendingRequests: pendingRequests,
+                connections: friends
+            },
             suggestedLawyers
         })
     } catch (error) {

@@ -59,9 +59,6 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
   const [isSubmittingComment, setIsSubmittingComment] = useState(false)
   const [reactionPickerTimeout, setReactionPickerTimeout] = useState(null)
   const [showFullContent, setShowFullContent] = useState(false)
-  const [connectionStatus, setConnectionStatus] = useState(null)
-  const [connectionId, setConnectionId] = useState(null)
-  const [isConnecting, setIsConnecting] = useState(false)
   
   const modalRef = useRef(null)
   const commentInputRef = useRef(null)
@@ -531,136 +528,9 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
 
   
 
-  // Handle connection request
-  const handleConnectionRequest = async () => {
-    if (!userData || post.authorId === userData.id) return
 
-    setIsConnecting(true)
 
-    try {
-      const response = await fetch(`http://localhost:3001/mynetwork/connect/${post.authorId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      })
 
-      const data = await response.json()
-
-      if (data.success) {
-        toast("Connection Request Sent", {
-          description: `Your connection request has been sent to ${getUserDisplayName(post.user)}`
-        })
-        
-        setConnectionStatus('pending')
-        setConnectionId(data.connectionId)
-      } else {
-        toast("Request Failed", {
-          description: data.message || "Failed to send connection request"
-        })
-      }
-    } catch (error) {
-      console.error('Connection request error:', error)
-      toast("Network Error", {
-        description: "Failed to send connection request. Please try again."
-      })
-    } finally {
-      setIsConnecting(false)
-    }
-  }
-
-  // Handle cancel connection request
-  const handleCancelRequest = async () => {
-    if (!connectionId) return
-    setIsConnecting(true)
-
-    try {
-      const response = await fetch(`http://localhost:3001/mynetwork/cancel/${connectionId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        toast("Request Cancelled", {
-          description: "Your connection request has been cancelled"
-        })
-        
-        setConnectionStatus(null)
-        setConnectionId(null)
-      } else {
-        toast("Cancel Failed", {
-          description: data.message || "Failed to cancel connection request"
-        })
-      }
-    } catch (error) {
-      console.error('Cancel request error:', error)
-      toast("Network Error", {
-        description: "Failed to cancel request. Please try again."
-      })
-    } finally {
-      setIsConnecting(false)
-    }
-  }
-
-  console.log('PostCard rendered for post:', post);
-  
-
-  // Render connection button
-  const renderConnectionButton = () => {
-    // Don't show connect button for own posts or if user not logged in
-    if (!userData || post.authorId === userData.id) return null
-
-    // Check if already connected
-    if (connectionStatus === 'accepted') {
-      return (
-        <Button
-          variant="outline"
-          size="sm"
-          className="text-green-600 border-green-600 hover:bg-green-50"
-          disabled
-        >
-          <UserCheck className="h-4 w-4 mr-2" />
-          Connected
-        </Button>
-      )
-    }
-
-    // If pending request sent by current user
-    if (connectionStatus === 'pending') {
-      return (
-        <Button
-          variant="outline"
-          size="sm"
-          className="text-red-600 border-red-600 hover:bg-red-50 hover:text-red-700"
-          onClick={handleCancelRequest}
-          disabled={isConnecting}
-        >
-          <X className="h-4 w-4 mr-2" />
-          {isConnecting ? 'Cancelling...' : 'Cancel'}
-        </Button>
-      )
-    }
-
-    // Default connect button
-    return (
-      <Button
-        variant="outline"
-        size="sm"
-        className="text-blue-600 border-blue-600 hover:bg-blue-50 hover:text-blue-700"
-        onClick={handleConnectionRequest}
-        disabled={isConnecting}
-      >
-        <UserPlus className="h-4 w-4 mr-2" />
-        {isConnecting ? 'Connecting...' : 'Connect'}
-      </Button>
-    )
-  }
 
   const isContentLong = post.content && post.content.length > 246 // Adjust threshold as needed
 
@@ -718,7 +588,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
             </div>
             
             {/* Three-dot menu for post owner */}
-            {userData && post.authorId === userData.id ?
+            {userData && post.authorId === userData.id &&
              (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -749,10 +619,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                 </DropdownMenuContent>
               </DropdownMenu>
             )
-            :
-            (
-              renderConnectionButton()
-            )}
+            }
           </div>
         </CardHeader>
 
