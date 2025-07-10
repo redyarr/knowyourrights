@@ -122,13 +122,13 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
         return {
           label: 'Approved',
           icon: ShieldCheck,
-          color: 'text-purple-600 text-purple-100'
+          color: 'text-yellow-600 bg-yellow-100'
         }
       case 'consultant':
         return {
           label: 'Consultant',
           icon: Clock,
-          color: 'text-yellow-600 bg-yellow-100'
+          color: 'text-purple-600 text-purple-100'
         }
       case 'training':
         return {
