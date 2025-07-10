@@ -115,19 +115,13 @@ const Navbar = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
-  const isActive = (path) => pathname === path || pathname.startsWith(path)
+  const isActive = (path) => pathname === path 
 
   const navigationItems = [
     { href: '/', icon: Home, label: 'Home', paths: ['/', '/blog'] },
     { href: '/mynetwork', icon: Users, label: 'Network', paths: ['/mynetwork'] },
     { href: '/jobs', icon: Briefcase, label: 'Jobs', paths: ['/jobs'] },
-    { 
-      href: '/messaging', 
-      icon: MessageCircle, 
-      label: 'Messages', 
-      paths: ['/messaging'],
-      badge: unreadMessageCount > 0 ? unreadMessageCount : null
-    },
+    { href: '/messaging', icon: MessageCircle, label: 'Messages', paths: ['/messaging'], badge: unreadMessageCount > 0 ? unreadMessageCount : null},
   ]
 
   const searchSuggestions = [
@@ -418,7 +412,7 @@ const Navbar = () => {
             {/* Right Section */}
             <div className="flex items-center space-x-3">
               <ThemeToggle />
-              {userData ? (
+              {userData && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="flex items-center space-x-2 h-auto p-1.5">
@@ -486,16 +480,7 @@ const Navbar = () => {
                     </div>
                   </DropdownMenuContent>
                 </DropdownMenu>
-              ) : (
-                <div className="flex items-center space-x-3">
-                  <Button variant="ghost" size="sm" asChild>
-                    <Link href="/signin">Sign in</Link>
-                  </Button>
-                  <Button size="sm" asChild>
-                    <Link href="/signup">Join now</Link>
-                  </Button>
-                </div>
-              )}
+              ) }
             </div>
           </div>
         </div>
