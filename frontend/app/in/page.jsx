@@ -81,7 +81,7 @@ const UserProfile = () => {
         console.log('Fetched user profile data:', data);
         
         setProfileData(data.user)
-        setPost(data.user.posts)
+        setConnectionsCount(data?.connectionsCount)
     }catch(err){
         console.error('Error fetching user profile:', err)
         toast("Error fetching profile", {
@@ -512,7 +512,7 @@ const UserProfile = () => {
       <div className="min-h-screen bg-background">
         <div className="max-w-5xl mx-auto px-4 py-8">
           {/* Profile Header Skeleton */}
-          <Card className="mb-6 overflow-hidden">
+          <Card className="mb-6 overflow-hidden py-0">
             <div className="h-32 sm:h-48 bg-gradient-to-r from-blue-600 to-indigo-600 relative rounded-t-lg animate-pulse"></div>
             <CardContent className="p-6">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start -mt-12 sm:-mt-16 mb-6">
@@ -573,7 +573,7 @@ const UserProfile = () => {
             <XCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Error Loading Profile</h3>
             <p className="text-muted-foreground mb-4">{error}</p>
-            <Button onClick={fetchProfile}>Try Again</Button>
+            <Button onClick={fetchUserProfile}>Try Again</Button>
           </CardContent>
         </Card>
       </div>
@@ -588,7 +588,7 @@ const UserProfile = () => {
             <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Profile Not Found</h3>
             <p className="text-muted-foreground mb-4">Unable to load your profile data</p>
-            <Button onClick={fetchProfile}>Retry</Button>
+            <Button onClick={fetchUserProfile}>Retry</Button>
           </CardContent>
         </Card>
       </div>

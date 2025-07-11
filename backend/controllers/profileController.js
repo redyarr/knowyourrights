@@ -6,6 +6,7 @@ const imagekit = require('../config/imagekit');
 
 exports.findProfile = async (req, res) => {
     const userId = req.session.user_id;
+    const { Op } = require('sequelize');
     
     try{
         const user = await User.findOne({
@@ -53,7 +54,17 @@ exports.findProfile = async (req, res) => {
             ]
         });
 
-        return res.status(200).json({success : true, user: user})
+         const connectionsCount = await Connection.count({
+            where: {
+                [Op.or]: [
+                    { requester_id: userId, status: 'accepted' },
+                    { receiver_id: userId, status: 'accepted' }
+                ]
+            }
+        });
+
+
+        return res.status(200).json({success : true, user: user, connectionsCount: connectionsCount});
         
     }catch(err){
         res.status(500).json({success: false, message: "Error geting user profile"})
