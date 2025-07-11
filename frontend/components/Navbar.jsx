@@ -35,7 +35,7 @@ import {
 import ThemeToggle from './ThemeToggle'
 
 const Navbar = () => {
-  const [userData, setUserData] = useState(null)  
+  const [userData, setUserData] = useState(null)    
   const [loading, setLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [showSearchResults, setShowSearchResults] = useState(false)
@@ -172,7 +172,7 @@ const Navbar = () => {
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="h-9 w-9 p-0">
                   <Avatar className="h-9 w-9">
-                    <AvatarImage src={userData.profilePicture} alt="Profile" />
+                    <AvatarImage src={userData?.profileImage} alt="Profile" />
                     <AvatarFallback className="bg-blue-600 text-white text-sm">
                       {getUserInitials()}
                     </AvatarFallback>
@@ -187,7 +187,7 @@ const Navbar = () => {
                      {/* AVATAR WITH NAME AND ROLE */}
                         <div className='flex items-center space-x-3 mb-4'>
                               <Avatar className="h-16 w-16">
-                              <AvatarImage src={userData.profilePicture} alt="Profile" />
+                              <AvatarImage src={userData?.profileImage} alt="Profile" />
                               <AvatarFallback className="bg-blue-600 text-white text-lg">
                                 {getUserInitials()}
                               </AvatarFallback>
@@ -417,7 +417,7 @@ const Navbar = () => {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="flex items-center space-x-2 h-auto p-1.5">
                       <Avatar className="h-6 w-6">
-                        <AvatarImage src={userData.profilePicture} alt="Profile" />
+                        <AvatarImage src={userData?.profileImage} alt="Profile" />
                         <AvatarFallback className="bg-blue-600 text-white text-xs">
                           {getUserInitials()}
                         </AvatarFallback>
@@ -429,7 +429,7 @@ const Navbar = () => {
                     <div className="p-3 border-b">
                       <div className="flex items-center space-x-3 mb-2">
                         <Avatar className="h-12 w-12">
-                          <AvatarImage src={userData.profilePicture} alt="Profile" />
+                          <AvatarImage src={userData?.profileImage} alt="Profile" />
                           <AvatarFallback className="bg-blue-600 text-white text-sm">
                             {getUserInitials()}
                           </AvatarFallback>

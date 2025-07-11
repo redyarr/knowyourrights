@@ -1,5 +1,5 @@
 const session = require('express-session');
-const { User, Lawyer, Education, Contact, LawyerEducation } = require('../models');
+const { User, Lawyer, Education, Contact, LawyerEducation, ProfileImage } = require('../models');
 const bcrypt = require('bcrypt');
 const fs = require('fs');
 const jwt = require('jsonwebtoken');
@@ -220,6 +220,9 @@ exports.register = async (req, res) => {
     };
     console.log("9. Session set for user", req.session);
     
+    const profileImage = await ProfileImage.findOne({
+      where : { userId: user.id }
+    })
     
     //this session cookie is for Next.js application : 
     const userData = {
@@ -228,7 +231,8 @@ exports.register = async (req, res) => {
       lastName: user.lastName,
       email: user.email,
       role: user.role,
-      lawyerVerivicationStatus : user?.lawyer?.verificationStatus
+      lawyerVerivicationStatus : user?.lawyer?.verificationStatus,
+      profileImage: profileImage?.imagePath
     } 
     //generate JWT token
     const token = jwt.sign(userData, JWT_SECRET, { expiresIn: '1h' });
@@ -360,6 +364,9 @@ if (!isValidPassword) {
     };
 
 
+    const profileImage = await ProfileImage.findOne({
+      where : { userId: user.id }
+    })
   
     //this session cookie is for Next.js application : 
     const userData = {
@@ -368,7 +375,8 @@ if (!isValidPassword) {
       lastName: user.lastName,
       email: user.email,
       role: user.role,
-      lawyerVerivicationStatus : user?.lawyer?.verificationStatus
+      lawyerVerivicationStatus : user?.lawyer?.verificationStatus,
+      profileImage: profileImage?.imagePath
     } 
 
     // Generate JWT token
@@ -432,13 +440,20 @@ exports.refreshToken = async (req, res) => {
       include: [{ model: Lawyer }]
     });
 
+    const profileImage = await ProfileImage.findOne({
+      where : { userId: user.id }
+    })
+
+  
+
     const userData = {
       id: user.id,
       firstName: user.firstName ,
       lastName: user.lastName,
       email: user.email,
       role: user.role,
-      lawyerVerivicationStatus : user?.lawyer?.verificationStatus
+      lawyerVerivicationStatus : user?.lawyer?.verificationStatus,
+      profileImage: profileImage?.imagePath
     };
 
     const newAccessToken = jwt.sign(userData, JWT_SECRET, { expiresIn: '1h' });

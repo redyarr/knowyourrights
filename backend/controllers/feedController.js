@@ -1,4 +1,4 @@
-const { Post, User, Lawyer, React, Comment, Share, Photo, PostPhoto } = require('../models');
+const { Post, User, Lawyer, React, Comment, Share, Photo, PostPhoto, ProfileImage } = require('../models');
 const { Op } = require('sequelize');
 const imagekit = require('../config/imagekit');
 
@@ -103,8 +103,11 @@ exports.getAllPosts = async (req, res) => {
                     model: User,
                     attributes: ['id', 'firstName', 'lastName', 'role'],
                     include: [{
-                        model: Lawyer,
-                    }]
+                        model: ProfileImage
+                    },
+                {
+                    model: Lawyer
+                }]
                 },
                 {
                     model: React,
@@ -114,7 +117,12 @@ exports.getAllPosts = async (req, res) => {
                     model: Comment,
                     include: [{
                         model: User,
-                        attributes: ['id', 'firstName', 'lastName', 'role']
+                        attributes: ['id', 'firstName', 'lastName', 'role'],
+                        include: [
+                            {
+                                model: ProfileImage
+                            }
+                        ]
                     }],
                     order: [['createdAt', 'ASC']]
                 },
@@ -323,10 +331,16 @@ exports.commentOnPost = async (req, res) => {
 
         // Get the comment with user information
         const commentWithUser = await Comment.findByPk(comment.id, {
-            include: [{
-                model: User,
-                attributes: ['id', 'firstName', 'lastName', 'role']
-            }]
+            include: [
+                {   model: User,
+                    attributes: ['id', 'firstName', 'lastName', 'role'],
+                    include: [
+                        {
+                          model: ProfileImage
+                        },
+                             ]
+                },
+            ]
         });
 
         return res.json({ success: true, comment: commentWithUser });

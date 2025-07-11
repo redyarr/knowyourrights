@@ -41,8 +41,10 @@ import {
 } from 'lucide-react'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "../ui/alert-dialog"
 
-const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
-  
+const PostCard = ({ post, userData, onPostUpdate, observerRef }) => { 
+
+
+
   const [showComments, setShowComments] = useState(false)
   const [showCommentForm, setShowCommentForm] = useState(false)
   const [showEditDialog, setShowEditDialog] = useState(false)
@@ -79,10 +81,14 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
   
   // Initialize reactions by calculating from reacts array
   const initialReactionStats = calculateReactionStats(post.reacts || [])
+ 
+  
+  
   
   const [reactions, setReactions] = useState(initialReactionStats)
   const [userReaction, setUserReaction] = useState(post.userReaction)
   const [comments, setComments] = useState(post.comments || [])
+  
   const [showReactionPicker, setShowReactionPicker] = useState(false)
 
   const reactionEmojis = {
@@ -457,6 +463,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
       })
 
       const data = await response.json()
+      
 
       if (data.success) {
         setComments([...comments, data.comment])
@@ -542,7 +549,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
             <div className="flex items-center space-x-3 flex-1">
               <Link href={`/in/${post.user?.id || '#'}`}>
                 <Avatar className="h-12 w-12">
-                  <AvatarImage src={post.user?.profilePicture} alt="Profile" />
+                  <AvatarImage src={post.user?.profile_image?.imagePath} alt="Profile" />
                   <AvatarFallback className="bg-blue-600 text-white">
                     {getUserInitials(post.user)}
                   </AvatarFallback>
@@ -803,7 +810,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
             <div className="mt-4 mb-2 pt-4 border-t px-6">
               <form onSubmit={handleComment} className="flex items-center space-x-3">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={userData?.profilePicture} alt="Your avatar" />
+                  <AvatarImage src={userData?.profileImage} alt="Your avatar" />
                   <AvatarFallback className="bg-blue-600 text-white text-xs">
                     {getUserInitials(userData)}
                   </AvatarFallback>
@@ -829,7 +836,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                 <div key={comment.id} className="flex items-start space-x-3">
                   <Avatar className="h-8 w-8">
                     <AvatarImage 
-                      src={comment.User?.profilePicture || comment.user?.profilePicture} 
+                      src={comment.User?.profile_image?.imagePath || comment.user?.profile_image?.imagePath} 
                       alt="Commenter" 
                     />
                     <AvatarFallback className="bg-gray-500 text-white text-xs">
@@ -1062,7 +1069,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
               <div className="p-3 md:p-4 flex-shrink-0">
                 <div className="flex items-center space-x-3">
                   <Avatar className="h-10 w-10 md:h-12 md:w-12">
-                    <AvatarImage src={post.user?.profilePicture} alt="Profile" />
+                    <AvatarImage src={post.user?.profile_image?.imagePath} alt="Profile" />
                     <AvatarFallback className="bg-primary text-primary-foreground">
                       {getUserInitials(post.user)}
                     </AvatarFallback>
@@ -1225,7 +1232,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
               <div className="px-3 md:px-4 flex-shrink-0">
                 <form onSubmit={handleModalComment} className="flex items-center space-x-2 md:space-x-3">
                   <Avatar className="h-6 w-6 md:h-8 md:w-8">
-                    <AvatarImage src={userData?.profilePicture} alt="Your avatar" />
+                    <AvatarImage src={userData?.profileImage} alt="Your avatar" />
                     <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                       {getUserInitials(userData)}
                     </AvatarFallback>
@@ -1267,7 +1274,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                       <div key={comment.id} className="flex items-start space-x-2 md:space-x-3">
                         <Avatar className="h-6 w-6 md:h-8 md:w-8">
                           <AvatarImage 
-                            src={comment.User?.profilePicture || comment.user?.profilePicture} 
+                            src={comment.User?.profile_image?.imagePath || comment.user?.profile_image?.imagePath} 
                             alt="Commenter" 
                           />
                           <AvatarFallback className="bg-muted text-muted-foreground text-xs">
