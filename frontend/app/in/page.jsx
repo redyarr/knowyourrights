@@ -1034,7 +1034,13 @@ const UserProfile = () => {
                                   )}
                                 </div>
                                 {post.comments && post.comments.length > 0 && (
-                                  <span className="font-medium">{post.comments.length} comments</span>
+                                  <Button
+                                    variant="ghost"
+                                    className="p-0 h-auto font-medium hover:text-blue-600"
+                                    onClick={() => setShowComments(showComments === post.id ? null : post.id)}
+                                  >
+                                    {post.comments.length} comment{post.comments.length !== 1 ? 's' : ''}
+                                  </Button>
                                 )}
                               </div>
                               
@@ -1080,7 +1086,14 @@ const UserProfile = () => {
                                 <Button
                                   variant="ghost"
                                   className="flex items-center space-x-2 text-muted-foreground hover:text-blue-600"
-                                  onClick={() => toggleCommentForm(post.id)}
+                                  onClick={() => {
+                                    // Toggle both comment form and comments visibility
+                                    toggleCommentForm(post.id)
+                                    // If opening comment form, also show comments if they exist
+                                    if (showCommentForm !== post.id && post.comments && post.comments.length > 0) {
+                                      setShowComments(post.id)
+                                    }
+                                  }}
                                 >
                                   <MessageCircle className="h-4 w-4" />
                                   <span className="text-sm font-medium">Comment</span>
@@ -1122,27 +1135,13 @@ const UserProfile = () => {
                               </div>
                             )}
 
-                            {/* Comments Section - Show existing comments */}
-                            {post.comments && post.comments.length > 0 && (
+                            {/* Comments Section - Show existing comments only when expanded */}
+                            {showComments === post.id && post.comments && post.comments.length > 0 && (
                               <div className="px-4 py-3 border-t border-border">
                                 <div className="space-y-3">
-                                  <div className="flex items-center justify-between mb-3">
-                                    <h4 className="text-sm font-medium text-foreground">
-                                      Comments ({post.comments.length})
-                                    </h4>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => setShowComments(prev => prev === post.id ? null : post.id)}
-                                      className="text-xs"
-                                    >
-                                      {showComments === post.id ? 'Hide' : 'Show all'}
-                                    </Button>
-                                  </div>
-                                  
-                                  {/* Show comments (limit to 3 by default, show all if expanded) */}
+                                  {/* Show all comments when expanded */}
                                   <div className="space-y-3">
-                                    {(showComments === post.id ? post.comments : post.comments.slice(0, 3)).map((comment) => (
+                                    {post.comments.map((comment) => (
                                       <div key={comment.id} className="flex items-start space-x-3">
                                         <Avatar className="h-8 w-8">
                                           <AvatarImage 
@@ -1196,18 +1195,6 @@ const UserProfile = () => {
                                       </div>
                                     ))}
                                   </div>
-                                  
-                                  {/* Show "View more comments" if there are more than 3 */}
-                                  {post.comments.length > 3 && showComments !== post.id && (
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => setShowComments(post.id)}
-                                      className="text-xs text-blue-600 hover:text-blue-700"
-                                    >
-                                      View {post.comments.length - 3} more comments
-                                    </Button>
-                                  )}
                                 </div>
                               </div>
                             )}
