@@ -26,9 +26,7 @@ import {
   Plus,
   Camera,
   Clock,
-  CheckCircle,
   XCircle,
-  AlertTriangle,
   UserPlus,
   UserCheck,
   UserX,
@@ -69,6 +67,9 @@ const SingleUserProfile = () => {
   const [showCommentForm, setShowCommentForm] = useState(null)
   const [reactionPickerTimeout, setReactionPickerTimeout] = useState(null)
   const [selectedImage, setSelectedImage] = useState(null)
+  const [showComments, setShowComments] = useState(null)
+  const [editingCommentId, setEditingCommentId] = useState(null)
+  const [editCommentContent, setEditCommentContent] = useState('')
 
   const reactionEmojis = {
     like: { emoji: '👍', icon: ThumbsUp, label: 'Like' },
@@ -1073,6 +1074,125 @@ const SingleUserProfile = () => {
                                     </Button>
                                   </div>
                                 </form>
+                              </div>
+                            )}
+
+                            {/* Comments Section - Show existing comments */}
+                            {post.comments && post.comments.length > 0 && (
+                              <div className="px-4 py-3 border-t border-border">
+                                <div className="space-y-3">
+                                  <div className="flex items-center justify-between mb-3">
+                                    <h4 className="text-sm font-medium text-foreground">
+                                      Comments ({post.comments.length})
+                                    </h4>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => setShowComments(prev => prev === post.id ? null : post.id)}
+                                      className="text-xs"
+                                    >
+                                      {showComments === post.id ? 'Hide' : 'Show all'}
+                                    </Button>
+                                  </div>
+                                  
+                                  {/* Show comments (limit to 3 by default, show all if expanded) */}
+                                  <div className="space-y-3">
+                                    {(showComments === post.id ? post.comments : post.comments.slice(0, 3)).map((comment) => (
+                                      <div key={comment.id} className="flex items-start space-x-3">
+                                        <Avatar className="h-8 w-8">
+                                          <AvatarImage 
+                                            src={comment.user?.profile_image?.imagePath} 
+                                            alt="Commenter" 
+                                          />
+                                          <AvatarFallback className="bg-gray-500 text-white text-xs">
+                                            {comment.user ? `${comment.user.firstName?.[0] || ''}${comment.user.lastName?.[0] || ''}`.toUpperCase() : 'U'}
+                                          </AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex-1 min-w-0">
+                                          {editingCommentId === comment.id ? (
+                                            // Edit comment form
+                                            <div className="space-y-2">
+                                              <Textarea
+                                                value={editCommentContent}
+                                                onChange={(e) => setEditCommentContent(e.target.value)}
+                                                className="min-h-[60px] text-sm"
+                                                placeholder="Edit your comment..."
+                                              />
+                                              <div className="flex space-x-2">
+                                                <Button 
+                                                  size="sm" 
+                                                  onClick={() => handleEditComment(comment.id)}
+                                                  disabled={!editCommentContent.trim()}
+                                                >
+                                                  Save
+                                                </Button>
+                                                <Button 
+                                                  size="sm" 
+                                                  variant="outline" 
+                                                  onClick={cancelEditingComment}
+                                                >
+                                                  Cancel
+                                                </Button>
+                                              </div>
+                                            </div>
+                                          ) : (
+                                            // Display comment
+                                            <div className="bg-muted rounded-lg px-3 py-2">
+                                              <div className="flex items-center justify-between">
+                                                <div className="font-medium text-sm">
+                                                  {comment.user ? `${comment.user.firstName} ${comment.user.lastName}` : 'Unknown User'}
+                                                </div>
+                                                {/* Show edit/delete options if it's current user's comment */}
+                                                {currentUser && comment.userId === currentUser.id && (
+                                                  <div className="flex space-x-1">
+                                                    <Button
+                                                      variant="ghost"
+                                                      size="sm"
+                                                      className="h-6 w-6 p-0 text-gray-400 hover:text-blue-600"
+                                                      onClick={() => startEditingComment(comment.id, comment.content)}
+                                                    >
+                                                      <Edit3 className="h-3 w-3" />
+                                                    </Button>
+                                                    <Button
+                                                      variant="ghost"
+                                                      size="sm"
+                                                      className="h-6 w-6 p-0 text-gray-400 hover:text-red-600"
+                                                      onClick={() => handleDeleteComment(comment.id)}
+                                                    >
+                                                      <Trash2 className="h-3 w-3" />
+                                                    </Button>
+                                                  </div>
+                                                )}
+                                              </div>
+                                              <p className="text-sm mt-1">{comment.content}</p>
+                                            </div>
+                                          )}
+                                          <div className="flex items-center space-x-4 mt-1 text-xs text-muted-foreground">
+                                            <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
+                                            <Button variant="ghost" className="p-0 h-auto text-xs hover:text-blue-600">
+                                              Like
+                                            </Button>
+                                            <Button variant="ghost" className="p-0 h-auto text-xs hover:text-blue-600">
+                                              Reply
+                                            </Button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                  
+                                  {/* Show "View more comments" if there are more than 3 */}
+                                  {post.comments.length > 3 && showComments !== post.id && (
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => setShowComments(post.id)}
+                                      className="text-xs text-blue-600 hover:text-blue-700"
+                                    >
+                                      View {post.comments.length - 3} more comments
+                                    </Button>
+                                  )}
+                                </div>
                               </div>
                             )}
                           </div>

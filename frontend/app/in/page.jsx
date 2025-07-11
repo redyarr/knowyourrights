@@ -31,8 +31,7 @@ import {
   TrendingUp,
   Eye,
   Crown,
-  Hash,
-  MoreHorizontal,
+  Trash2,
   X,
   ThumbsUp,
   MessageCircle,
@@ -60,6 +59,9 @@ const UserProfile = () => {
   const [showReactionPicker, setShowReactionPicker] = useState(null)
   const [showCommentForm, setShowCommentForm] = useState(null)
   const [reactionPickerTimeout, setReactionPickerTimeout] = useState(null)
+  const [showComments, setShowComments] = useState(null)
+  const [editingCommentId, setEditingCommentId] = useState(null)
+  const [editCommentContent, setEditCommentContent] = useState('')
 
   
   const fetchUserProfile = async () => {
@@ -397,6 +399,100 @@ const UserProfile = () => {
       setShowReactionPicker(null)
     }, 300)
     setReactionPickerTimeout(timeout)
+  }
+
+  const handleDeleteComment = async (commentId) => {
+    try {
+      const response = await fetch(`http://localhost:3001/feed/comment/${commentId}/delete`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Update posts to remove the deleted comment
+        setProfileData(prev => ({
+          ...prev,
+          posts: prev.posts.map(post => ({
+            ...post,
+            comments: post.comments.filter(comment => comment.id !== commentId)
+          }))
+        }))
+        
+        toast("Comment Deleted", {
+          description: "Your comment has been deleted successfully"
+        })
+      } else {
+        toast("Delete Failed", {
+          description: data.error || "Failed to delete comment"
+        })
+      }
+    } catch (error) {
+      toast("Error", {
+        description: "Failed to delete comment"
+      })
+    }
+  }
+
+  const startEditingComment = (commentId, content) => {
+    setEditingCommentId(commentId)
+    setEditCommentContent(content)
+  }
+
+  const handleEditComment = async (commentId) => {
+    if (!editCommentContent.trim()) return
+
+    try {
+      const response = await fetch(`http://localhost:3001/feed/comment/${commentId}/edit`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ content: editCommentContent.trim() }),
+        credentials: 'include'
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Update posts to reflect the edited comment
+        setProfileData(prev => ({
+          ...prev,
+          posts: prev.posts.map(post => ({
+            ...post,
+            comments: post.comments.map(comment => 
+              comment.id === commentId 
+                ? { ...comment, content: editCommentContent.trim() }
+                : comment
+            )
+          }))
+        }))
+        
+        setEditingCommentId(null)
+        setEditCommentContent('')
+        
+        toast("Comment Updated", {
+          description: "Your comment has been updated successfully"
+        })
+      } else {
+        toast("Edit Failed", {
+          description: data.error || "Failed to edit comment"
+        })
+      }
+    } catch (error) {
+      toast("Error", {
+        description: "Failed to edit comment"
+      })
+    }
+  }
+
+  const cancelEditingComment = () => {
+    setEditingCommentId(null)
+    setEditCommentContent('')
   }
 
   if (loading) {
@@ -1023,6 +1119,96 @@ const UserProfile = () => {
                                     </Button>
                                   </div>
                                 </form>
+                              </div>
+                            )}
+
+                            {/* Comments Section - Show existing comments */}
+                            {post.comments && post.comments.length > 0 && (
+                              <div className="px-4 py-3 border-t border-border">
+                                <div className="space-y-3">
+                                  <div className="flex items-center justify-between mb-3">
+                                    <h4 className="text-sm font-medium text-foreground">
+                                      Comments ({post.comments.length})
+                                    </h4>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => setShowComments(prev => prev === post.id ? null : post.id)}
+                                      className="text-xs"
+                                    >
+                                      {showComments === post.id ? 'Hide' : 'Show all'}
+                                    </Button>
+                                  </div>
+                                  
+                                  {/* Show comments (limit to 3 by default, show all if expanded) */}
+                                  <div className="space-y-3">
+                                    {(showComments === post.id ? post.comments : post.comments.slice(0, 3)).map((comment) => (
+                                      <div key={comment.id} className="flex items-start space-x-3">
+                                        <Avatar className="h-8 w-8">
+                                          <AvatarImage 
+                                            src={comment.user?.profile_image?.imagePath} 
+                                            alt="Commenter" 
+                                          />
+                                          <AvatarFallback className="bg-gray-500 text-white text-xs">
+                                            {comment.user ? `${comment.user.firstName?.[0] || ''}${comment.user.lastName?.[0] || ''}`.toUpperCase() : 'U'}
+                                          </AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex-1 min-w-0">
+                                          <div className="bg-muted rounded-lg px-3 py-2">
+                                            <div className="flex items-center justify-between">
+                                              <div className="font-medium text-sm">
+                                                {comment.user ? `${comment.user.firstName} ${comment.user.lastName}` : 'Unknown User'}
+                                              </div>
+                                              {/* Show edit/delete options if it's user's own comment */}
+                                              {profileData && comment.userId === profileData.id && (
+                                                <div className="flex space-x-1">
+                                                  <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="h-6 w-6 p-0 text-gray-400 hover:text-blue-600"
+                                                    onClick={() => startEditingComment(comment.id, comment.content)}
+                                                  >
+                                                    <Edit3 className="h-3 w-3" />
+                                                  </Button>
+                                                  <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="h-6 w-6 p-0 text-gray-400 hover:text-red-600"
+                                                    onClick={() => handleDeleteComment(comment.id)}
+                                                  >
+                                                    <Trash2 className="h-3 w-3" />
+                                                  </Button>
+                                                </div>
+                                              )}
+                                            </div>
+                                            <p className="text-sm mt-1">{comment.content}</p>
+                                          </div>
+                                          <div className="flex items-center space-x-4 mt-1 text-xs text-muted-foreground">
+                                            <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
+                                            <Button variant="ghost" className="p-0 h-auto text-xs hover:text-blue-600">
+                                              Like
+                                            </Button>
+                                            <Button variant="ghost" className="p-0 h-auto text-xs hover:text-blue-600">
+                                              Reply
+                                            </Button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                  
+                                  {/* Show "View more comments" if there are more than 3 */}
+                                  {post.comments.length > 3 && showComments !== post.id && (
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => setShowComments(post.id)}
+                                      className="text-xs text-blue-600 hover:text-blue-700"
+                                    >
+                                      View {post.comments.length - 3} more comments
+                                    </Button>
+                                  )}
+                                </div>
                               </div>
                             )}
                           </div>
