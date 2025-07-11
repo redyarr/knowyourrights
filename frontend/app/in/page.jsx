@@ -259,29 +259,40 @@ const UserProfile = () => {
       const data = await response.json()
 
       if (data.success) {
-        // Update the specific post in the profile data
+        // Update the specific post with the COMPLETE reaction data from backend
         setProfileData(prev => ({
           ...prev,
           posts: prev.posts.map(post => 
             post.id === postId 
               ? { 
                   ...post, 
-                  reacts: data.reactions,
-                  userReaction: data.userReaction 
+                  // Use the complete reactions array from backend
+                  reacts: data.reactions || [],
+                  // Set user's current reaction (null if removed, reaction type if added/changed)
+                  userReaction: data.userReaction || null
                 } 
               : post
           )
         }))
+        
         setShowReactionPicker(null)
-        toast("Reaction Added", {
-          description: `You ${data.userReaction || 'removed your reaction on'} this post`
-        })
+        
+        if (data.userReaction) {
+          toast("Reaction Added", {
+            description: `You ${data.userReaction} this post`
+          })
+        } else {
+          toast("Reaction Removed", {
+            description: "You removed your reaction"
+          })
+        }
       } else {
         toast("Reaction Failed", {
           description: data.error || "Failed to react to post"
         })
       }
     } catch (error) {
+      console.error('Reaction error:', error)
       toast("Error", {
         description: "Failed to react to post"
       })
@@ -1023,11 +1034,21 @@ const UserProfile = () => {
                             <div className="px-4 py-3 border-t border-border">
                               <div className="flex items-center justify-between text-sm text-muted-foreground mb-3">
                                 <div className="flex items-center space-x-4">
+                                  {/* Show reactions properly using post.reacts array */}
                                   {post.reacts && post.reacts.length > 0 && (
                                     <div className="flex items-center space-x-2">
                                       <div className="flex -space-x-1">
-                                        <span className="text-sm">👍</span>
-                                        <span className="text-sm">❤️</span>
+                                        {/* Get unique reactions from the reacts array */}
+                                        {[...new Set(post.reacts.map(r => r.reaction))].slice(0, 3).map((reaction, index) => (
+                                          <span key={index} className="text-sm">
+                                            {reaction === 'like' && '👍'}
+                                            {reaction === 'love' && '❤️'}
+                                            {reaction === 'haha' && '😂'}
+                                            {reaction === 'wow' && '😮'}
+                                            {reaction === 'sad' && '😢'}
+                                            {reaction === 'angry' && '😠'}
+                                          </span>
+                                        ))}
                                       </div>
                                       <span className="font-medium">{post.reacts.length}</span>
                                     </div>
@@ -1048,14 +1069,21 @@ const UserProfile = () => {
                                 <div className="relative">
                                   <Button
                                     variant="ghost"
-                                    className={`flex items-center space-x-2 text-muted-foreground hover:text-blue-600 ${post.userReaction ? 'text-blue-600' : ''}`}
+                                    className={`flex items-center space-x-2 text-muted-foreground hover:text-blue-600 ${
+                                      // Check if user has reacted by looking in the post.reacts array
+                                      post.reacts && post.reacts.some(r => r.userId === profileData?.id) ? 'text-blue-600' : ''
+                                    }`}
                                     onMouseEnter={() => handleReactionHover(post.id, true)}
                                     onMouseLeave={() => handleReactionHover(post.id, false)}
                                     onClick={() => handleReaction(post.id, 'like')}
                                   >
                                     <ThumbsUp className="h-4 w-4" />
                                     <span className="text-sm font-medium">
-                                      {post.userReaction ? post.userReaction.charAt(0).toUpperCase() + post.userReaction.slice(1) : 'Like'}
+                                      {/* Show the user's actual reaction from the reacts array */}
+                                      {(() => {
+                                        const userReact = post.reacts?.find(r => r.userId === profileData?.id);
+                                        return userReact ? userReact.reaction.charAt(0).toUpperCase() + userReact.reaction.slice(1) : 'Like';
+                                      })()}
                                     </span>
                                   </Button>
                                   
