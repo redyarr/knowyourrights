@@ -1,4 +1,4 @@
-const { User, Lawyer, Education, Contact, Post, Connection, ProfileImage } = require('../models');
+const { User, Lawyer, Education, Contact, Post, Connection, ProfileImage, Comment, React } = require('../models');
 const multer = require('multer');
 const path = require('path');
 const { PostPhoto, Photo } = require('../models');
@@ -31,6 +31,12 @@ exports.findProfile = async (req, res) => {
                                     model: Photo,
                                 }
                             ]
+                        },
+                        {
+                            model: Comment
+                        },
+                        {
+                            model: React
                         }
                     ]
                 }
