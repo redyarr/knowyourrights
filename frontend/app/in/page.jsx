@@ -36,7 +36,12 @@ import {
   X,
   ThumbsUp,
   MessageCircle,
-  Share2
+  Share2,
+  Heart,
+  Laugh,
+  Frown,
+  Angry,
+  Sparkles
 } from 'lucide-react'
 import Link from 'next/link'
 import { Label } from '@/components/ui/label'
@@ -52,6 +57,9 @@ const UserProfile = () => {
   const [uploadingImage, setUploadingImage] = useState(false)
   const [selectedImageFile, setSelectedImageFile] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
+  const [showReactionPicker, setShowReactionPicker] = useState(null)
+  const [showCommentForm, setShowCommentForm] = useState(null)
+  const [reactionPickerTimeout, setReactionPickerTimeout] = useState(null)
 
   
   const fetchUserProfile = async () => {
@@ -224,6 +232,171 @@ const UserProfile = () => {
     if (fileInput) {
       fileInput.value = ''
     }
+  }
+
+  const reactionEmojis = {
+    like: { emoji: '👍', icon: ThumbsUp, label: 'Like' },
+    love: { emoji: '❤️', icon: Heart, label: 'Love' },
+    haha: { emoji: '😂', icon: Laugh, label: 'Haha' },
+    wow: { emoji: '😮', icon: Sparkles, label: 'Wow' },
+    sad: { emoji: '😢', icon: Frown, label: 'Sad' },
+    angry: { emoji: '😠', icon: Angry, label: 'Angry' }
+  }
+
+  const handleReaction = async (postId, reactionType) => {
+    try {
+      const response = await fetch(`http://localhost:3001/feed/post/${postId}/react`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ reaction: reactionType }),
+        credentials: 'include'
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Update the specific post in the profile data
+        setProfileData(prev => ({
+          ...prev,
+          posts: prev.posts.map(post => 
+            post.id === postId 
+              ? { 
+                  ...post, 
+                  reacts: data.reactions,
+                  userReaction: data.userReaction 
+                } 
+              : post
+          )
+        }))
+        setShowReactionPicker(null)
+        toast("Reaction Added", {
+          description: `You ${data.userReaction || 'removed your reaction on'} this post`
+        })
+      } else {
+        toast("Reaction Failed", {
+          description: data.error || "Failed to react to post"
+        })
+      }
+    } catch (error) {
+      toast("Error", {
+        description: "Failed to react to post"
+      })
+    }
+  }
+
+  const handleComment = async (e, postId) => {
+    e.preventDefault()
+    const formData = new FormData(e.target)
+    const content = formData.get('content')?.trim()
+    
+    if (!content) return
+
+    try {
+      const response = await fetch(`http://localhost:3001/feed/post/${postId}/comment`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ content }),
+        credentials: 'include'
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Update the specific post in the profile data
+        setProfileData(prev => ({
+          ...prev,
+          posts: prev.posts.map(post => 
+            post.id === postId 
+              ? { 
+                  ...post, 
+                  comments: [...(post.comments || []), data.comment]
+                } 
+              : post
+          )
+        }))
+        
+        // Reset form
+        e.target.reset()
+        setShowCommentForm(null)
+        toast("Comment Posted", {
+          description: "Your comment has been added successfully"
+        })
+      } else {
+        toast("Comment Failed", {
+          description: data.error || "Failed to post comment"
+        })
+      }
+    } catch (error) {
+      toast("Error", {
+        description: "Failed to post comment"
+      })
+    }
+  }
+
+  const handleShare = async (postId) => {
+    try {
+      const response = await fetch(`http://localhost:3001/feed/post/${postId}/share`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        toast("Post Shared", {
+          description: "Post has been shared successfully"
+        })
+      } else {
+        toast("Share Failed", {
+          description: data.error || "Failed to share post"
+        })
+      }
+    } catch (error) {
+      toast("Error", {
+        description: "Failed to share post"
+      })
+    }
+  }
+
+  const toggleCommentForm = (postId) => {
+    setShowCommentForm(prev => prev === postId ? null : postId)
+  }
+
+  const handleReactionHover = (postId, show) => {
+    if (reactionPickerTimeout) {
+      clearTimeout(reactionPickerTimeout)
+      setReactionPickerTimeout(null)
+    }
+    
+    if (show) {
+      setShowReactionPicker(postId)
+    } else {
+      const timeout = setTimeout(() => {
+        setShowReactionPicker(null)
+      }, 300)
+      setReactionPickerTimeout(timeout)
+    }
+  }
+
+  const handleReactionPickerMouseEnter = (postId) => {
+    if (reactionPickerTimeout) {
+      clearTimeout(reactionPickerTimeout)
+      setReactionPickerTimeout(null)
+    }
+  }
+
+  const handleReactionPickerMouseLeave = (postId) => {
+    const timeout = setTimeout(() => {
+      setShowReactionPicker(null)
+    }, 300)
+    setReactionPickerTimeout(timeout)
   }
 
   if (loading) {
@@ -770,20 +943,88 @@ const UserProfile = () => {
                               </div>
                               
                               <div className="flex items-center justify-around">
-                                <Button variant="ghost" className="flex items-center space-x-2 text-muted-foreground">
-                                  <ThumbsUp className="h-4 w-4" />
-                                  <span className="text-sm font-medium">Like</span>
-                                </Button>
-                                <Button variant="ghost" className="flex items-center space-x-2 text-muted-foreground">
+                                <div className="relative">
+                                  <Button
+                                    variant="ghost"
+                                    className={`flex items-center space-x-2 text-muted-foreground hover:text-blue-600 ${post.userReaction ? 'text-blue-600' : ''}`}
+                                    onMouseEnter={() => handleReactionHover(post.id, true)}
+                                    onMouseLeave={() => handleReactionHover(post.id, false)}
+                                    onClick={() => handleReaction(post.id, 'like')}
+                                  >
+                                    <ThumbsUp className="h-4 w-4" />
+                                    <span className="text-sm font-medium">
+                                      {post.userReaction ? post.userReaction.charAt(0).toUpperCase() + post.userReaction.slice(1) : 'Like'}
+                                    </span>
+                                  </Button>
+                                  
+                                  {/* Reaction Picker */}
+                                  {showReactionPicker === post.id && (
+                                    <div
+                                      className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-popover border rounded-lg shadow-xl p-2 z-50"
+                                      onMouseEnter={() => handleReactionPickerMouseEnter(post.id)}
+                                      onMouseLeave={() => handleReactionPickerMouseLeave(post.id)}
+                                    >
+                                      <div className="flex space-x-1">
+                                        {Object.entries(reactionEmojis).map(([key, { emoji, label }]) => (
+                                          <Button
+                                            key={key}
+                                            variant="ghost"
+                                            className="text-lg hover:scale-110 transition-transform p-1 h-auto"
+                                            onClick={() => handleReaction(post.id, key)}
+                                            title={label}
+                                          >
+                                            {emoji}
+                                          </Button>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+
+                                <Button
+                                  variant="ghost"
+                                  className="flex items-center space-x-2 text-muted-foreground hover:text-blue-600"
+                                  onClick={() => toggleCommentForm(post.id)}
+                                >
                                   <MessageCircle className="h-4 w-4" />
                                   <span className="text-sm font-medium">Comment</span>
                                 </Button>
-                                <Button variant="ghost" className="flex items-center space-x-2 text-muted-foreground">
+
+                                <Button
+                                  variant="ghost"
+                                  className="flex items-center space-x-2 text-muted-foreground hover:text-blue-600"
+                                  onClick={() => handleShare(post.id)}
+                                >
                                   <Share2 className="h-4 w-4" />
                                   <span className="text-sm font-medium">Share</span>
                                 </Button>
                               </div>
                             </div>
+
+                            {/* Comment Form */}
+                            {showCommentForm === post.id && (
+                              <div className="px-4 py-3 border-t border-border">
+                                <form onSubmit={(e) => handleComment(e, post.id)} className="flex items-center space-x-3">
+                                  <Avatar className="h-8 w-8">
+                                    <AvatarImage src={profileData?.profile_image?.imagePath} alt="Your avatar" />
+                                    <AvatarFallback className="bg-blue-600 text-white text-xs">
+                                      {getUserInitials()}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div className="flex-1 flex space-x-2">
+                                    <Input
+                                      placeholder="Write a comment..."
+                                      className="flex-1"
+                                      name="content"
+                                      required
+                                    />
+                                    <Button type="submit" size="sm">
+                                      Post
+                                    </Button>
+                                  </div>
+                                </form>
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>

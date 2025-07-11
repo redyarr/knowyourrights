@@ -29,7 +29,6 @@ import {
   CheckCircle,
   XCircle,
   AlertTriangle,
-  MessageCircle,
   UserPlus,
   UserCheck,
   UserX,
@@ -38,7 +37,15 @@ import {
   Eye,
   Crown,
   Hash,
-  MoreHorizontal
+  MoreHorizontal,
+  ThumbsUp, 
+  MessageCircle, 
+  Share2, 
+  Heart, 
+  Laugh, 
+  Frown, 
+  Angry,
+  Sparkles
 } from 'lucide-react'
 import Link from 'next/link'
 import { Label } from '@/components/ui/label'
@@ -58,6 +65,19 @@ const SingleUserProfile = () => {
   const [uploadingImage, setUploadingImage] = useState(false)
   const [selectedImageFile, setSelectedImageFile] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
+  const [showReactionPicker, setShowReactionPicker] = useState(null)
+  const [showCommentForm, setShowCommentForm] = useState(null)
+  const [reactionPickerTimeout, setReactionPickerTimeout] = useState(null)
+  const [selectedImage, setSelectedImage] = useState(null)
+
+  const reactionEmojis = {
+    like: { emoji: '👍', icon: ThumbsUp, label: 'Like' },
+    love: { emoji: '❤️', icon: Heart, label: 'Love' },
+    haha: { emoji: '😂', icon: Laugh, label: 'Haha' },
+    wow: { emoji: '😮', icon: Sparkles, label: 'Wow' },
+    sad: { emoji: '😢', icon: Frown, label: 'Sad' },
+    angry: { emoji: '😠', icon: Angry, label: 'Angry' }
+  }
 
   useEffect(() => {
     if (userId) {
@@ -973,20 +993,88 @@ const SingleUserProfile = () => {
                             {/* Post Actions */}
                             <div className="px-4 py-3 border-t border-border">
                               <div className="flex items-center justify-around">
-                                <Button variant="ghost" className="flex items-center space-x-2 text-muted-foreground hover:text-blue-600">
-                                  <ThumbsUp className="h-4 w-4" />
-                                  <span className="text-sm font-medium">Like</span>
-                                </Button>
-                                <Button variant="ghost" className="flex items-center space-x-2 text-muted-foreground hover:text-blue-600">
+                                <div className="relative">
+                                  <Button
+                                    variant="ghost"
+                                    className={`flex items-center space-x-2 text-muted-foreground hover:text-blue-600 ${post.userReaction ? 'text-blue-600' : ''}`}
+                                    onMouseEnter={() => handleReactionHover(post.id, true)}
+                                    onMouseLeave={() => handleReactionHover(post.id, false)}
+                                    onClick={() => handleReaction(post.id, 'like')}
+                                  >
+                                    <ThumbsUp className="h-4 w-4" />
+                                    <span className="text-sm font-medium">
+                                      {post.userReaction ? post.userReaction.charAt(0).toUpperCase() + post.userReaction.slice(1) : 'Like'}
+                                    </span>
+                                  </Button>
+                                  
+                                  {/* Reaction Picker */}
+                                  {showReactionPicker === post.id && (
+                                    <div
+                                      className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-popover border rounded-lg shadow-xl p-2 z-50"
+                                      onMouseEnter={() => handleReactionPickerMouseEnter(post.id)}
+                                      onMouseLeave={() => handleReactionPickerMouseLeave(post.id)}
+                                    >
+                                      <div className="flex space-x-1">
+                                        {Object.entries(reactionEmojis).map(([key, { emoji, label }]) => (
+                                          <Button
+                                            key={key}
+                                            variant="ghost"
+                                            className="text-lg hover:scale-110 transition-transform p-1 h-auto"
+                                            onClick={() => handleReaction(post.id, key)}
+                                            title={label}
+                                          >
+                                            {emoji}
+                                          </Button>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+
+                                <Button
+                                  variant="ghost"
+                                  className="flex items-center space-x-2 text-muted-foreground hover:text-blue-600"
+                                  onClick={() => toggleCommentForm(post.id)}
+                                >
                                   <MessageCircle className="h-4 w-4" />
                                   <span className="text-sm font-medium">Comment</span>
                                 </Button>
-                                <Button variant="ghost" className="flex items-center space-x-2 text-muted-foreground hover:text-blue-600">
+
+                                <Button
+                                  variant="ghost"
+                                  className="flex items-center space-x-2 text-muted-foreground hover:text-blue-600"
+                                  onClick={() => handleShare(post.id)}
+                                >
                                   <Share2 className="h-4 w-4" />
                                   <span className="text-sm font-medium">Share</span>
                                 </Button>
                               </div>
                             </div>
+
+                            {/* Comment Form */}
+                            {showCommentForm === post.id && (
+                              <div className="px-4 py-3 border-t border-border">
+                                <form onSubmit={(e) => handleComment(e, post.id)} className="flex items-center space-x-3">
+                                  <Avatar className="h-8 w-8">
+                                    <AvatarImage src={currentUser?.profilePicture} alt="Your avatar" />
+                                    <AvatarFallback className="bg-blue-600 text-white text-xs">
+                                      {currentUser ? `${currentUser.firstName?.[0] || ''}${currentUser.lastName?.[0] || ''}`.toUpperCase() : 'U'}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div className="flex-1 flex space-x-2">
+                                    <Input
+                                      placeholder="Write a comment..."
+                                      className="flex-1"
+                                      name="content"
+                                      required
+                                    />
+                                    <Button type="submit" size="sm">
+                                      Post
+                                    </Button>
+                                  </div>
+                                </form>
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>

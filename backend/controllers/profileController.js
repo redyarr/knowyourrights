@@ -33,7 +33,17 @@ exports.findProfile = async (req, res) => {
                             ]
                         },
                         {
-                            model: Comment
+                            model: Comment,
+                            include: [{
+                                model: User,
+                                attributes: ['id', 'firstName', 'lastName', 'role'],
+                                include: [
+                                    {
+                                        model: ProfileImage
+                                    }
+                                ]
+                            }],
+                            order: [['createdAt', 'ASC']]
                         },
                         {
                             model: React
