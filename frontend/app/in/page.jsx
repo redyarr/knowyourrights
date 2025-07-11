@@ -45,6 +45,7 @@ import {
 import Link from 'next/link'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 
 const UserProfile = () => {
   const [profileData, setProfileData] = useState(null)
@@ -454,6 +455,11 @@ const UserProfile = () => {
     setEditCommentContent(content)
   }
 
+  const cancelEditingComment = () => {
+    setEditingCommentId(null)
+    setEditCommentContent('')
+  }
+
   const handleEditComment = async (commentId) => {
     if (!editCommentContent.trim()) return
 
@@ -475,7 +481,7 @@ const UserProfile = () => {
           ...prev,
           posts: prev.posts.map(post => ({
             ...post,
-            comments: post.comments.map(comment => 
+            comments: post.comments?.map(comment => 
               comment.id === commentId 
                 ? { ...comment, content: editCommentContent.trim() }
                 : comment
@@ -499,11 +505,6 @@ const UserProfile = () => {
         description: "Failed to edit comment"
       })
     }
-  }
-
-  const cancelEditingComment = () => {
-    setEditingCommentId(null)
-    setEditCommentContent('')
   }
 
   if (loading) {
@@ -600,7 +601,7 @@ const UserProfile = () => {
     <div className="min-h-screen bg-background">
       <div className="max-w-5xl mx-auto px-4 py-8">
         {/* Profile Header */}
-        <Card className="mb-6 overflow-hidden">
+        <Card className="mb-6 overflow-hidden py-0">
           {/* Cover Photo */}
           <div className="h-32 sm:h-48 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 relative">
             <div className="absolute top-4 end-4">
@@ -1181,35 +1182,64 @@ const UserProfile = () => {
                                           </AvatarFallback>
                                         </Avatar>
                                         <div className="flex-1 min-w-0">
-                                          <div className="bg-muted rounded-lg px-3 py-2">
-                                            <div className="flex items-center justify-between">
-                                              <div className="font-medium text-sm">
-                                                {comment.user ? `${comment.user.firstName} ${comment.user.lastName}` : 'Unknown User'}
+                                          {editingCommentId === comment.id ? (
+                                            // Edit comment form
+                                            <div className="space-y-2">
+                                              <Textarea
+                                                value={editCommentContent}
+                                                onChange={(e) => setEditCommentContent(e.target.value)}
+                                                className="min-h-[60px] text-sm"
+                                                placeholder="Edit your comment..."
+                                              />
+                                              <div className="flex space-x-2">
+                                                <Button 
+                                                  size="sm" 
+                                                  onClick={() => handleEditComment(comment.id)}
+                                                  disabled={!editCommentContent.trim()}
+                                                >
+                                                  Save
+                                                </Button>
+                                                <Button 
+                                                  size="sm" 
+                                                  variant="outline" 
+                                                  onClick={cancelEditingComment}
+                                                >
+                                                  Cancel
+                                                </Button>
                                               </div>
-                                              {/* Show edit/delete options if it's user's own comment */}
-                                              {profileData && comment.userId === profileData.id && (
-                                                <div className="flex space-x-1">
-                                                  <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="h-6 w-6 p-0 text-gray-400 hover:text-blue-600"
-                                                    onClick={() => startEditingComment(comment.id, comment.content)}
-                                                  >
-                                                    <Edit3 className="h-3 w-3" />
-                                                  </Button>
-                                                  <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="h-6 w-6 p-0 text-gray-400 hover:text-red-600"
-                                                    onClick={() => handleDeleteComment(comment.id)}
-                                                  >
-                                                    <Trash2 className="h-3 w-3" />
-                                                  </Button>
-                                                </div>
-                                              )}
                                             </div>
-                                            <p className="text-sm mt-1">{comment.content}</p>
-                                          </div>
+                                          ) : (
+                                            // Display comment
+                                            <div className="bg-muted rounded-lg px-3 py-2">
+                                              <div className="flex items-center justify-between">
+                                                <div className="font-medium text-sm">
+                                                  {comment.user ? `${comment.user.firstName} ${comment.user.lastName}` : 'Unknown User'}
+                                                </div>
+                                                {/* Show edit/delete options if it's user's own comment */}
+                                                {profileData && comment.userId === profileData.id && (
+                                                  <div className="flex space-x-1">
+                                                    <Button
+                                                      variant="ghost"
+                                                      size="sm"
+                                                      className="h-6 w-6 p-0 text-gray-400 hover:text-blue-600"
+                                                      onClick={() => startEditingComment(comment.id, comment.content)}
+                                                    >
+                                                      <Edit3 className="h-3 w-3" />
+                                                    </Button>
+                                                    <Button
+                                                      variant="ghost"
+                                                      size="sm"
+                                                      className="h-6 w-6 p-0 text-gray-400 hover:text-red-600"
+                                                      onClick={() => handleDeleteComment(comment.id)}
+                                                    >
+                                                      <Trash2 className="h-3 w-3" />
+                                                    </Button>
+                                                  </div>
+                                                )}
+                                              </div>
+                                              <p className="text-sm mt-1">{comment.content}</p>
+                                            </div>
+                                          )}
                                           <div className="flex items-center space-x-4 mt-1 text-xs text-muted-foreground">
                                             <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
                                             <Button variant="ghost" className="p-0 h-auto text-xs hover:text-blue-600">
