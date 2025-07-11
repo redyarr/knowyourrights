@@ -6,7 +6,37 @@ const imagekit = require('../config/imagekit');
 
 exports.findProfile = async (req, res) => {
     const userId = req.session.user_id;
-    res.redirect(`/in/${userId}`)
+    
+    try{
+        const user = await User.findOne({
+            where: { id: userId },
+            include: [
+                {
+                    model: Lawyer,
+                },
+                {
+                    model: ProfileImage
+                },
+                {
+                    model: Contact,
+                },
+                {
+                    model: Post,
+                    order: [['createdAt', 'DESC']],
+                    include: [
+                        {
+                            model: PostPhoto,
+                        }
+                    ]
+                }
+            ]
+        });
+
+        return res.status(200).json({success : true, user: user})
+        
+    }catch(err){
+        res.status(500).json({success: false, message: "Error geting user profile"})
+    }
 };
 
 exports.getProfile = async (req, res) => {

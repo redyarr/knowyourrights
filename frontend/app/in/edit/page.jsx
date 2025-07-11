@@ -52,34 +52,38 @@ const EditProfile = () => {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch('/api/getuserdata', {
+      // Get the current user data from the session
+      const userResponse = await fetch('/api/getuserdata', {
         credentials: 'include'
       })
       
-      if (!response.ok) {
-        throw new Error('Failed to fetch user data')
+      if (!userResponse.ok) {
+        throw new Error('Failed to get user session')
       }
       
-      const data = await response.json()
+      const sessionData = await userResponse.json()
       
-      if (data.success && data.payload) {
-        const user = data.payload
-        setUserData(user)
-        
-        // Populate form with existing data
-        setFormData({
-          firstName: user.firstName || '',
-          lastName: user.lastName || '',
-          country: user.country || '',
-          city: user.city || '',
-          interests: user.interests || '',
-          // Lawyer specific fields
-          lawFirm: user.lawyer?.lawFirm || '',
-          licenseNumber: user.lawyer?.licenseNumber || '',
-          summary: user.lawyer?.summary || '',
-          legalAreas: user.lawyer?.legalAreas || ''
-        })
+      if (!sessionData.success || !sessionData.payload) {
+        throw new Error('No user session found')
       }
+      
+      const user = sessionData?.payload?.id
+      setUserData(user)
+      
+      // Populate form with existing data from session
+      setFormData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        country: user.country || '',
+        city: user.city || '',
+        interests: user.interests || '',
+        // Lawyer specific fields (if available in session)
+        lawFirm: user.lawyer?.lawFirm || '',
+        licenseNumber: user.lawyer?.badgeNumber || '',
+        summary: user.lawyer?.summary || '',
+        legalAreas: user.lawyer?.legalAreas || ''
+      })
+      
     } catch (error) {
       console.error('Error fetching user data:', error)
       toast("Error", {
@@ -143,7 +147,7 @@ const EditProfile = () => {
   const getVerificationBadge = () => {
     if (userData?.role !== 'lawyer' || !userData.lawyer) return null
     
-    const status = userData.lawyer.verificationStatus
+    const status = userData.lawyer.verificationStatus || userData.lawyer.badgeIssuingAuthority
     
     switch (status) {
       case 'approved':
@@ -163,6 +167,18 @@ const EditProfile = () => {
           label: 'Verification Rejected',
           icon: XCircle,
           color: 'text-red-600 bg-red-100 border-red-200'
+        }
+      case 'consultant':
+        return {
+          label: 'Legal Consultant',
+          icon: Award,
+          color: 'text-purple-600 bg-purple-100 border-purple-200'
+        }
+      case 'training':
+        return {
+          label: 'Training Lawyer',
+          icon: GraduationCap,
+          color: 'text-blue-600 bg-blue-100 border-blue-200'
         }
       default:
         return {

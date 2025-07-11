@@ -32,9 +32,12 @@ import {
   Eye,
   Crown,
   Hash,
-  MoreHorizontal
+  MoreHorizontal,
+  X
 } from 'lucide-react'
 import Link from 'next/link'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
 
 const UserProfile = () => {
   const [profileData, setProfileData] = useState(null)
@@ -42,82 +45,40 @@ const UserProfile = () => {
   const [error, setError] = useState(null)
   const [connectionsCount, setConnectionsCount] = useState(0)
   const [showImageUpload, setShowImageUpload] = useState(false)
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const [selectedImageFile, setSelectedImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
 
-  useEffect(() => {
-    fetchProfile()
-  }, [])
+  
+  const fetchUserProfile = async () => {
+    setLoading(true)
+    setError(null)
+    try{
+        const response = await fetch("http://localhost:3001/in", {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
 
-  const fetchProfile = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      
-      // First get the current user data from the cookie/session
-      const userResponse = await fetch('/api/getuserdata', {
-        credentials: 'include'
-      })
-      
-      if (!userResponse.ok) {
-        throw new Error('Failed to get user session')
-      }
-      
-      const userData = await userResponse.json()
-      
-      if (!userData.success || !userData.payload) {
-        throw new Error('No user session found')
-      }
-      
-      const userId = userData.payload.id
-      
-      // Now fetch the full profile data from the backend using the profile route
-      const profileResponse = await fetch(`http://localhost:3001/in/${userId}`, {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      })
-      
-      // Since the backend route renders a view, we need to fetch profile data differently
-      // Let's use the user data we already have and enhance it
-      const currentUserData = userData.payload
-      
-      // Create a complete profile object from the user data
-      const enhancedProfile = {
-        id: currentUserData.id,
-        firstName: currentUserData.firstName,
-        lastName: currentUserData.lastName,
-        email: currentUserData.email,
-        role: currentUserData.role,
-        country: currentUserData.country,
-        city: currentUserData.city,
-        interests: currentUserData.interests,
-        profilePicture: currentUserData.profilePicture,
-        headline: currentUserData.headline,
-        createdAt: currentUserData.createdAt,
-        // Add lawyer data if user is a lawyer
-        lawyer: currentUserData.lawyer || null,
-        // Add mock data for demonstration
-        posts: [],
-        connectionsCount: 156,
-        profileViews: 12,
-        postImpressions: 1204
-      }
-      
-      setProfileData(enhancedProfile)
-      setConnectionsCount(enhancedProfile.connectionsCount)
-      
-    } catch (error) {
-      console.error('Error fetching profile:', error)
-      setError(error.message)
-      toast("Error Loading Profile", {
-        description: error.message || "Failed to load your profile"
-      })
-    } finally {
-      setLoading(false)
+        const data = await response.json()
+        console.log('Fetched user profile data:', data);
+        
+        setProfileData(data.user)
+    }catch(err){
+        console.error('Error fetching user profile:', err)
+        toast("Error fetching profile", {
+          description: "Unable to load your profile data. Please try again later."}
+        )
+    }finally{
+        setLoading(false)
     }
   }
+
+  useEffect(()=>{
+    fetchUserProfile();
+  },[])
 
   const getUserInitials = () => {
     if (!profileData) return 'U'
@@ -171,6 +132,104 @@ const UserProfile = () => {
           icon: GraduationCap,
           color: 'text-blue-600 bg-blue-100 border-blue-200'
         }
+    }
+  }
+
+  const handleImageFileSelect = (event) => {
+    const file = event.target.files[0]
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast("File Too Large", {
+          description: "Please select an image smaller than 5MB"
+        })
+        return
+      }
+
+      if (!file.type.startsWith('image/')) {
+        toast("Invalid File Type", {
+          description: "Please select an image file"
+        })
+        return
+      }
+
+      setSelectedImageFile(file)
+      
+      // Create preview URL
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setImagePreview(e.target.result)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleImageUpload = async () => {
+    if (!selectedImageFile) {
+      toast("No Image Selected", {
+        description: "Please select an image to upload"
+      })
+      return
+    }
+
+    setUploadingImage(true)
+
+    try {
+      const formData = new FormData()
+      formData.append('profileImage', selectedImageFile)
+
+      const response = await fetch('http://localhost:3001/in/upload-profile-image', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include'
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        toast("Profile Picture Updated", {
+          description: "Your profile picture has been updated successfully"
+        })
+        
+        // Update the profile data with new image
+        setProfileData(prev => ({
+          ...prev,
+          profilePicture: data.imagePath
+        }))
+        
+        // Close the dialog and reset states
+        setShowImageUpload(false)
+        setSelectedImageFile(null)
+        setImagePreview(null)
+        
+        // Reset file input
+        const fileInput = document.getElementById('profile-upload')
+        if (fileInput) {
+          fileInput.value = ''
+        }
+      } else {
+        toast("Upload Failed", {
+          description: data.error || "Failed to upload profile picture"
+        })
+      }
+    } catch (error) {
+      console.error('Profile image upload error:', error)
+      toast("Network Error", {
+        description: "Failed to upload image. Please try again."
+      })
+    } finally {
+      setUploadingImage(false)
+    }
+  }
+
+  const cancelImageUpload = () => {
+    setShowImageUpload(false)
+    setSelectedImageFile(null)
+    setImagePreview(null)
+    
+    // Reset file input
+    const fileInput = document.getElementById('profile-upload')
+    if (fileInput) {
+      fileInput.value = ''
     }
   }
 
@@ -298,18 +357,109 @@ const UserProfile = () => {
                       <Camera className="h-4 w-4" />
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="sm:max-w-md">
                     <DialogHeader>
-                      <DialogTitle>Update Profile Picture</DialogTitle>
+                      <DialogTitle className="flex items-center">
+                        <Camera className="h-5 w-5 me-2 text-blue-600" />
+                        Update Profile Picture
+                      </DialogTitle>
                     </DialogHeader>
-                    <div className="text-center py-4">
-                      <p className="text-muted-foreground mb-4">Upload a new profile picture</p>
-                      <input type="file" accept="image/*" className="hidden" id="profile-upload" />
-                      <Button asChild>
-                        <label htmlFor="profile-upload" className="cursor-pointer">
-                          Choose File
-                        </label>
-                      </Button>
+                    
+                    <div className="space-y-4">
+                      {/* Current Profile Picture */}
+                      <div className="text-center">
+                        <div className="relative inline-block">
+                          <Avatar className="w-24 h-24 mx-auto border-4 border-gray-200">
+                            <AvatarImage 
+                              src={imagePreview || profileData?.profilePicture} 
+                              alt="Profile Preview" 
+                            />
+                            <AvatarFallback className="bg-blue-600 text-white text-xl">
+                              {getUserInitials()}
+                            </AvatarFallback>
+                          </Avatar>
+                          {imagePreview && (
+                            <div className="absolute -top-2 -right-2">
+                              <Badge variant="secondary" className="bg-green-100 text-green-800">
+                                New
+                              </Badge>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* File Input */}
+                      <div className="space-y-2">
+                        <Label htmlFor="profile-upload">Choose New Picture</Label>
+                        <Input
+                          id="profile-upload"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageFileSelect}
+                          disabled={uploadingImage}
+                          className="cursor-pointer"
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          Supported formats: JPG, PNG, GIF. Max size: 5MB
+                        </p>
+                      </div>
+
+                      {/* Selected File Info */}
+                      {selectedImageFile && (
+                        <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-3">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                                {selectedImageFile.name}
+                              </p>
+                              <p className="text-xs text-blue-600 dark:text-blue-300">
+                                {(selectedImageFile.size / 1024 / 1024).toFixed(2)} MB
+                              </p>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedImageFile(null)
+                                setImagePreview(null)
+                                const fileInput = document.getElementById('profile-upload')
+                                if (fileInput) fileInput.value = ''
+                              }}
+                              disabled={uploadingImage}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-2 pt-4">
+                        <Button 
+                          onClick={handleImageUpload}
+                          disabled={!selectedImageFile || uploadingImage}
+                          className="flex-1"
+                        >
+                          {uploadingImage ? (
+                            <>
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                              Uploading...
+                            </>
+                          ) : (
+                            <>
+                              <Camera className="h-4 w-4 mr-2" />
+                              Update Picture
+                            </>
+                          )}
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          onClick={cancelImageUpload}
+                          disabled={uploadingImage}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
                     </div>
                   </DialogContent>
                 </Dialog>
