@@ -13,7 +13,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 // view profile routes
-router.get('/', isAuthenticated, isVerifiedLawyer, ProfileController.findProfile);
+router.get('/', isAuthenticated, ProfileController.findProfile);
 router.get('/edit', isAuthenticated, ProfileController.getEditProfile);
 router.post('/upload-profile-image', isAuthenticated, ProfileController.uploadProfileImage);
 
