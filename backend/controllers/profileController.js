@@ -26,6 +26,11 @@ exports.findProfile = async (req, res) => {
                     include: [
                         {
                             model: PostPhoto,
+                            include: [
+                                {
+                                    model: Photo,
+                                }
+                            ]
                         }
                     ]
                 }

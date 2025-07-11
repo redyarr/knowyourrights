@@ -70,14 +70,14 @@ const EditProfile = () => {
       const user = sessionData?.payload?.id
       setUserData(user)
       
-      // Populate form with existing data from session
+      // Populate form with existing data
       setFormData({
         firstName: user.firstName || '',
         lastName: user.lastName || '',
         country: user.country || '',
         city: user.city || '',
         interests: user.interests || '',
-        // Lawyer specific fields (if available in session)
+        // Lawyer specific fields
         lawFirm: user.lawyer?.lawFirm || '',
         licenseNumber: user.lawyer?.badgeNumber || '',
         summary: user.lawyer?.summary || '',
@@ -147,7 +147,7 @@ const EditProfile = () => {
   const getVerificationBadge = () => {
     if (userData?.role !== 'lawyer' || !userData.lawyer) return null
     
-    const status = userData.lawyer.verificationStatus || userData.lawyer.badgeIssuingAuthority
+    const status = userData.lawyer.verificationStatus
     
     switch (status) {
       case 'approved':
@@ -167,18 +167,6 @@ const EditProfile = () => {
           label: 'Verification Rejected',
           icon: XCircle,
           color: 'text-red-600 bg-red-100 border-red-200'
-        }
-      case 'consultant':
-        return {
-          label: 'Legal Consultant',
-          icon: Award,
-          color: 'text-purple-600 bg-purple-100 border-purple-200'
-        }
-      case 'training':
-        return {
-          label: 'Training Lawyer',
-          icon: GraduationCap,
-          color: 'text-blue-600 bg-blue-100 border-blue-200'
         }
       default:
         return {
@@ -347,7 +335,7 @@ const EditProfile = () => {
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="licenseNumber">License Number</Label>
+                      <Label htmlFor="licenseNumber">License/Badge Number</Label>
                       <Input
                         id="licenseNumber"
                         value={formData.licenseNumber}

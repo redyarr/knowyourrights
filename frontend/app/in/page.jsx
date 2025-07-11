@@ -33,7 +33,10 @@ import {
   Crown,
   Hash,
   MoreHorizontal,
-  X
+  X,
+  ThumbsUp,
+  MessageCircle,
+  Share2
 } from 'lucide-react'
 import Link from 'next/link'
 import { Label } from '@/components/ui/label'
@@ -41,6 +44,7 @@ import { Input } from '@/components/ui/input'
 
 const UserProfile = () => {
   const [profileData, setProfileData] = useState(null)
+  const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [connectionsCount, setConnectionsCount] = useState(0)
@@ -66,6 +70,7 @@ const UserProfile = () => {
         console.log('Fetched user profile data:', data);
         
         setProfileData(data.user)
+        setPost(data.user.posts)
     }catch(err){
         console.error('Error fetching user profile:', err)
         toast("Error fetching profile", {
@@ -93,7 +98,7 @@ const UserProfile = () => {
   const getVerificationBadge = () => {
     if (profileData?.role !== 'lawyer' || !profileData.lawyer) return null
     
-    const status = profileData.lawyer.verificationStatus || profileData.lawyer.badgeIssuingAuthority
+    const status = profileData.lawyer.verificationStatus
     
     switch (status) {
       case 'approved':
@@ -113,18 +118,6 @@ const UserProfile = () => {
           label: 'Verification Rejected',
           icon: XCircle,
           color: 'text-red-600 bg-red-100 border-red-200'
-        }
-      case 'consultant':
-        return {
-          label: 'Legal Consultant',
-          icon: Award,
-          color: 'text-purple-600 bg-purple-100 border-purple-200'
-        }
-      case 'training':
-        return {
-          label: 'Training Lawyer',
-          icon: GraduationCap,
-          color: 'text-blue-600 bg-blue-100 border-blue-200'
         }
       default:
         return {
@@ -342,7 +335,7 @@ const UserProfile = () => {
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start -mt-12 sm:-mt-16 mb-6">
               <div className="relative self-center sm:self-start">
                 <Avatar className="w-24 h-24 sm:w-32 sm:h-32 border-4 border-white shadow-lg">
-                  <AvatarImage src={profileData?.profilePicture} alt={getUserDisplayName()} />
+                  <AvatarImage src={profileData?.profile_image?.imagePath || profileData?.profilePicture} alt={getUserDisplayName()} />
                   <AvatarFallback className="bg-blue-600 text-white text-2xl">
                     {getUserInitials()}
                   </AvatarFallback>
@@ -503,9 +496,10 @@ const UserProfile = () => {
                   </p>
                 )}
                 
-                {profileData?.headline && (
-                  <p className="text-muted-foreground mt-1">
-                    {profileData.headline}
+                {profileData.lawyer?.badgeNumber && (
+                  <p className="text-sm text-muted-foreground flex items-center justify-center sm:justify-start mt-1">
+                    <Shield className="h-4 w-4 me-2" />
+                    License: {profileData.lawyer.badgeNumber}
                   </p>
                 )}
               </div>
@@ -517,6 +511,14 @@ const UserProfile = () => {
                 </div>
               )}
               
+              {/* Contact Information */}
+              {profileData?.contacts && profileData.contacts.length > 0 && (
+                <div className="flex items-center justify-center sm:justify-start text-muted-foreground mb-4">
+                  <Phone className="h-4 w-4 me-2" />
+                  <span>{profileData.contacts[0].number}</span>
+                </div>
+              )}
+              
               {/* Stats */}
               <div className="grid grid-cols-3 gap-4 mt-6">
                 <div className="text-center p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
@@ -524,12 +526,12 @@ const UserProfile = () => {
                   <div className="text-sm text-muted-foreground">Connections</div>
                 </div>
                 <div className="text-center p-4 bg-green-50 dark:bg-green-950/20 rounded-lg">
-                  <div className="text-2xl font-bold text-green-600">{profileData?.profileViews || 0}</div>
-                  <div className="text-sm text-muted-foreground">Profile Views</div>
+                  <div className="text-2xl font-bold text-green-600">{profileData?.posts?.length || 0}</div>
+                  <div className="text-sm text-muted-foreground">Posts</div>
                 </div>
                 <div className="text-center p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
-                  <div className="text-2xl font-bold text-purple-600">{profileData?.postImpressions || 0}</div>
-                  <div className="text-sm text-muted-foreground">Post Views</div>
+                  <div className="text-2xl font-bold text-purple-600">{profileData?.profileViews || 0}</div>
+                  <div className="text-sm text-muted-foreground">Profile Views</div>
                 </div>
               </div>
             </div>
@@ -586,9 +588,25 @@ const UserProfile = () => {
                           </div>
                         )}
                         
-                        <div className="flex items-center text-muted-foreground">
-                          <Building className="h-4 w-4 me-2" />
-                          <span>{profileData.lawyer.lawFirm}</span>
+                        <div className="space-y-2">
+                          <div className="flex items-center text-muted-foreground">
+                            <Building className="h-4 w-4 me-2" />
+                            <span>{profileData.lawyer.lawFirm}</span>
+                          </div>
+                          
+                          {profileData.lawyer.badgeNumber && (
+                            <div className="flex items-center text-muted-foreground">
+                              <Shield className="h-4 w-4 me-2" />
+                              <span>License: {profileData.lawyer.badgeNumber}</span>
+                            </div>
+                          )}
+                          
+                          {profileData.lawyer.badgeIssueDate && (
+                            <div className="flex items-center text-muted-foreground">
+                              <Calendar className="h-4 w-4 me-2" />
+                              <span>Licensed since: {new Date(profileData.lawyer.badgeIssueDate).toLocaleDateString()}</span>
+                            </div>
+                          )}
                         </div>
                       </>
                     ) : (
@@ -642,19 +660,144 @@ const UserProfile = () => {
                   <CardHeader>
                     <h3 className="text-xl font-semibold flex items-center">
                       <FileText className="h-5 w-5 me-2 text-blue-600" />
-                      My Posts
+                      My Posts ({profileData?.posts?.length || 0})
                     </h3>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-center py-8">
-                      <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <p className="text-muted-foreground">No posts yet.</p>
-                      {profileData?.role === 'lawyer' && (
-                        <Button asChild className="mt-4">
-                          <Link href="/">Create your first post</Link>
-                        </Button>
-                      )}
-                    </div>
+                    {profileData?.posts?.length > 0 ? (
+                      <div className="space-y-6">
+                        {profileData.posts.map((post) => (
+                          <div key={post.id} className="border border-border rounded-lg overflow-hidden bg-card">
+                            {/* Post Header */}
+                            <div className="p-4">
+                              <div className="flex items-start space-x-3">
+                                <Avatar className="h-12 w-12">
+                                  <AvatarImage src={profileData?.profile_image?.imagePath || profileData?.profilePicture} alt={getUserDisplayName()} />
+                                  <AvatarFallback className="bg-blue-600 text-white">
+                                    {getUserInitials()}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center space-x-2">
+                                    <h4 className="font-semibold text-foreground">
+                                      {getUserDisplayName()}
+                                    </h4>
+                                    {verificationBadge && (
+                                      <Badge variant="secondary" className={`text-xs ${verificationBadge.color}`}>
+                                        <verificationBadge.icon className="h-3 w-3 me-1" />
+                                        {verificationBadge.label}
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  {profileData?.role === 'lawyer' && profileData.lawyer?.lawFirm && (
+                                    <p className="text-sm text-muted-foreground font-medium">
+                                      {profileData.lawyer.lawFirm}
+                                    </p>
+                                  )}
+                                  <div className="flex items-center text-xs text-muted-foreground mt-1">
+                                    <Clock className="h-3 w-3 me-1" />
+                                    <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Post Content */}
+                            <div className="px-4">
+                              {post.title && (
+                                <h3 className="font-semibold text-lg mb-3 leading-tight">
+                                  {post.title}
+                                </h3>
+                              )}
+                              <div className="text-sm leading-relaxed mb-4">
+                                <p className="whitespace-pre-wrap break-words">
+                                  {post.content.length > 200 ? `${post.content.substring(0, 200)}...` : post.content}
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Post Images */}
+                            {post.post_photos && post.post_photos.length > 0 && (
+                              <div className="mb-4">
+                                {post.post_photos.length === 1 ? (
+                                  <div className="relative">
+                                    <img
+                                      src={post.post_photos[0].photo?.photoPath || post.post_photos[0].photoPath}
+                                      alt="Post image"
+                                      className="w-full h-auto object-contain max-h-96"
+                                    />
+                                  </div>
+                                ) : (
+                                  <div className="grid grid-cols-2 gap-2 px-4">
+                                    {post.post_photos.slice(0, 4).map((postPhoto, index) => (
+                                      <div key={index} className="relative">
+                                        <img
+                                          src={postPhoto.photo?.photoPath || postPhoto.photoPath}
+                                          alt="Post image"
+                                          className="w-full h-48 object-cover rounded-lg"
+                                        />
+                                        {post.post_photos.length > 4 && index === 3 && (
+                                          <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
+                                            <span className="text-white font-semibold text-lg">
+                                              +{post.post_photos.length - 4}
+                                            </span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Post Stats and Actions */}
+                            <div className="px-4 py-3 border-t border-border">
+                              <div className="flex items-center justify-between text-sm text-muted-foreground mb-3">
+                                <div className="flex items-center space-x-4">
+                                  {post.reacts && post.reacts.length > 0 && (
+                                    <div className="flex items-center space-x-2">
+                                      <div className="flex -space-x-1">
+                                        <span className="text-sm">👍</span>
+                                        <span className="text-sm">❤️</span>
+                                      </div>
+                                      <span className="font-medium">{post.reacts.length}</span>
+                                    </div>
+                                  )}
+                                </div>
+                                {post.comments && post.comments.length > 0 && (
+                                  <span className="font-medium">{post.comments.length} comments</span>
+                                )}
+                              </div>
+                              
+                              <div className="flex items-center justify-around">
+                                <Button variant="ghost" className="flex items-center space-x-2 text-muted-foreground">
+                                  <ThumbsUp className="h-4 w-4" />
+                                  <span className="text-sm font-medium">Like</span>
+                                </Button>
+                                <Button variant="ghost" className="flex items-center space-x-2 text-muted-foreground">
+                                  <MessageCircle className="h-4 w-4" />
+                                  <span className="text-sm font-medium">Comment</span>
+                                </Button>
+                                <Button variant="ghost" className="flex items-center space-x-2 text-muted-foreground">
+                                  <Share2 className="h-4 w-4" />
+                                  <span className="text-sm font-medium">Share</span>
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                        <p className="text-muted-foreground">No posts yet.</p>
+                        {profileData?.role === 'lawyer' && (
+                          <Button asChild className="mt-4">
+                            <Link href="/">Create your first post</Link>
+                          </Button>
+                        )}
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -682,6 +825,16 @@ const UserProfile = () => {
                     <span className="text-sm">{profileData.city}, {profileData.country}</span>
                   </div>
                 )}
+                {profileData?.contacts && profileData.contacts.length > 0 && (
+                  <div className="flex items-center">
+                    <Phone className="h-4 w-4 text-muted-foreground me-3" />
+                    <span className="text-sm">{profileData.contacts[0].number}</span>
+                  </div>
+                )}
+                <div className="flex items-center">
+                  <Calendar className="h-4 w-4 text-muted-foreground me-3" />
+                  <span className="text-sm">Joined {new Date(profileData?.createdAt).toLocaleDateString()}</span>
+                </div>
               </CardContent>
             </Card>
             
@@ -737,14 +890,34 @@ const UserProfile = () => {
                     </div>
                   </div>
                   
-                  {profileData.lawyer?.badgeNumber && (
-                    <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-                      <p className="text-sm font-medium">Badge Number</p>
-                      <p className="text-sm font-mono bg-background px-2 py-1 rounded mt-1">
-                        {profileData.lawyer.badgeNumber}
-                      </p>
-                    </div>
-                  )}
+                  <div className="mt-4 space-y-3">
+                    {profileData.lawyer?.badgeNumber && (
+                      <div className="p-3 bg-muted/50 rounded-lg">
+                        <p className="text-sm font-medium">License Number</p>
+                        <p className="text-sm font-mono bg-background px-2 py-1 rounded mt-1">
+                          {profileData.lawyer.badgeNumber}
+                        </p>
+                      </div>
+                    )}
+                    
+                    {profileData.lawyer?.badgeIssueDate && (
+                      <div className="p-3 bg-muted/50 rounded-lg">
+                        <p className="text-sm font-medium">License Issue Date</p>
+                        <p className="text-sm bg-background px-2 py-1 rounded mt-1">
+                          {new Date(profileData.lawyer.badgeIssueDate).toLocaleDateString()}
+                        </p>
+                      </div>
+                    )}
+                    
+                    {profileData.lawyer?.badgeIssuingAuthority && (
+                      <div className="p-3 bg-muted/50 rounded-lg">
+                        <p className="text-sm font-medium">Authority Level</p>
+                        <p className="text-sm bg-background px-2 py-1 rounded mt-1 capitalize">
+                          {profileData.lawyer.badgeIssuingAuthority}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             )}
