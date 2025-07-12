@@ -518,6 +518,7 @@ const TeamSection = () => {
       LinkedIn: "https://www.linkedin.com/in/aland-s-othman/",
       GitHub: "https://github.com/Alandkf",
       email: "alandsothman@gmail.com",
+      WhatsApp: "+9647712503636"
     },
     {
       name: "Rekar Jamal",
@@ -526,7 +527,8 @@ const TeamSection = () => {
       description: "Frontend developer crafting intuitive user experiences and accessible legal interfaces.",
       LinkedIn: "https://www.linkedin.com/in/rekar-jamal",
       GitHub: "https://github.com/Rekarrr", 
-      email: "rekarjamal3@gmil.con",
+      email: "rekarjamal3@gmail.com",
+      WhatsApp: "+9647714256565"
     },
     {
       name: "Redyar Hawzhin",
@@ -536,6 +538,7 @@ const TeamSection = () => {
       LinkedIn: "https://www.linkedin.com/in/redyar-hawzhin/",
       GitHub: "https://github.com/redyarr",
       email: "Redyarh@gmail.com",
+      WhatsApp: "+9647735315101"
     }
   ]
 
@@ -595,7 +598,7 @@ const TeamSection = () => {
                         GitHub
                       </Link>
                     )}
-                    {member.email && (
+                    { member.email && (
                       <Link
                         href={`mailto:${member.email}`}
                         className="text-xs px-2 py-1 rounded-full bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-800 transition-colors"
@@ -603,6 +606,15 @@ const TeamSection = () => {
                         rel="noopener noreferrer"
                       >
                         Email
+                      </Link>
+                    )}
+                    { member.WhatsApp && (
+                      <Link
+                        href={`tel:${member.WhatsApp}`}
+                        className="text-xs px-2 py-1 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-800 transition-colors"
+                        rel="noopener noreferrer"
+                      >
+                        WhatsApp
                       </Link>
                     )}
                   </div>
