@@ -81,12 +81,17 @@ const ProfilePage = () => {
         })
       const data = await response.json()
       
+      console.log('Profile data received:', data) // Debug log
+      
       if (data.success) {
         setProfileData(data?.data?.user)
         setCurrentUserId(data?.data?.loggedInUserId)
         setConnectionsCount(data?.data?.connectionsCount)
         setConnectionStatus(data?.data?.connectionStatus || null)
         setConnectionId(data?.data?.connectionId || null)
+        
+        console.log('Connection status set to:', data?.data?.connectionStatus) // Debug log
+        console.log('Connection ID set to:', data?.data?.connectionId) // Debug log
       } else {
         toast("Error", {
           description: "Failed to load profile"
@@ -423,6 +428,11 @@ const ProfilePage = () => {
     if (isConnecting) return
 
     setIsConnecting(true)
+    
+    console.log('Connection request - Current status:', connectionStatus) // Debug log
+    console.log('Connection request - Connection ID:', connectionId) // Debug log
+    console.log('Connection request - User ID:', userId) // Debug log
+    console.log('Connection request - Current User ID:', currentUserId) // Debug log
 
     try {
       let response
@@ -430,6 +440,8 @@ const ProfilePage = () => {
       
       if (connectionStatus === null) {
         // Send connection request using userId from URL params
+        console.log('Sending connection request to user:', userId)
+        
         response = await fetch(`http://localhost:3001/mynetwork/connect/${userId}`, {
           method: 'POST',
           credentials: 'include',
@@ -439,6 +451,7 @@ const ProfilePage = () => {
         })
         
         const data = await response.json()
+        console.log('Connect response:', data) // Debug log
         
         if (data.success) {
           setConnectionStatus('pending')
@@ -451,14 +464,19 @@ const ProfilePage = () => {
       } else if (connectionStatus === 'pending') {
         // Cancel connection request - make sure connectionId exists and is valid
         if (!connectionId) {
+          console.error('No connection ID available for cancellation')
           throw new Error("Connection ID not found. Please refresh the page and try again.")
         }
         
-        console.log('Attempting to cancel connection:', {
-          connectionId,
-          currentUserId,
-          profileUserId: userId
-        })
+        console.log('Cancelling connection with ID:', connectionId)
+        console.log('Current user ID:', currentUserId)
+        console.log('Profile user ID:', userId)
+        
+        // Add explicit validation before making the request
+        if (typeof connectionId !== 'number' && typeof connectionId !== 'string') {
+          console.error('Invalid connection ID type:', typeof connectionId, connectionId)
+          throw new Error("Invalid connection ID. Please refresh the page and try again.")
+        }
         
         response = await fetch(`http://localhost:3001/mynetwork/cancel/${connectionId}`, {
           method: 'POST',
@@ -469,15 +487,32 @@ const ProfilePage = () => {
         })
         
         const data = await response.json()
+        console.log('Cancel response:', data) // Debug log
+        console.log('Cancel response status:', response.status) // Debug log
         
         if (data.success) {
           setConnectionStatus(null)
           setConnectionId(null)
           successMessage = "Connection request cancelled successfully!"
         } else {
-          // Log the error for debugging
-          console.error('Cancel connection failed:', data)
-          throw new Error(data.message || "Failed to cancel connection request")
+          // Log the detailed error for debugging
+          console.error('Cancel connection failed - Full response:', {
+            status: response.status,
+            data: data,
+            connectionId: connectionId,
+            url: `http://localhost:3001/mynetwork/cancel/${connectionId}`
+          })
+          
+          // More specific error handling
+          if (data.message && data.message.includes("not found")) {
+            // The connection might have been cancelled by the other user or expired
+            // Reset the state and refresh
+            setConnectionStatus(null)
+            setConnectionId(null)
+            throw new Error("This connection request is no longer available. The page will refresh.")
+          } else {
+            throw new Error(data.message || "Failed to cancel connection request")
+          }
         }
       }
       
@@ -494,7 +529,10 @@ const ProfilePage = () => {
       // If there's an error with canceling, refresh the profile data to get current status
       if (connectionStatus === 'pending') {
         console.log('Refreshing profile data due to error...')
-        fetchProfileData()
+        // Add a small delay before refreshing to prevent race conditions
+        setTimeout(() => {
+          fetchProfileData()
+        }, 1000)
       }
     } finally {
       setIsConnecting(false)
