@@ -48,6 +48,7 @@ const ProfilePage = () => {
   const [editingCommentId, setEditingCommentId] = useState(null)
   const [editCommentContent, setEditCommentContent] = useState('')
   const [reactionPickerTimeout, setReactionPickerTimeout] = useState(null)
+  const [currentUserId, setCurrentUserId] = useState(null)
   
   const reactionEmojis = {
     like: { emoji: '👍', icon: ThumbsUp, label: 'Like' },
@@ -70,11 +71,10 @@ const ProfilePage = () => {
           }
         })
       const data = await response.json()
-      console.log('Fetched data:', data);
       
       if (data.success) {
         setProfileData(data?.data?.user)
-        console.log('Fetched profile data:', {data: data?.data?.user})
+        setCurrentUserId(data?.data?.loggedInUserId)
       } else {
         toast("Error", {
           description: "Failed to load profile"
@@ -159,8 +159,8 @@ const ProfilePage = () => {
             post.id === postId 
               ? { 
                   ...post, 
-                  reacts: data.reactions || [],
-                  userReaction: data.userReaction || null
+                  reacts: data.reactions || [], // Use the complete reactions array from backend
+                  // Remove the separate userReaction field since we'll get it from reacts array
                 } 
               : post
           )
@@ -731,7 +731,7 @@ const ProfilePage = () => {
                                   <Button
                                     variant="ghost"
                                     className={`flex items-center space-x-2 text-muted-foreground hover:text-blue-600 ${
-                                      post.reacts && post.reacts.some(r => r.userId === profileData?.id) ? 'text-blue-600' : ''
+                                      post.reacts && post.reacts.some(r => r.userId === currentUserId) ? 'text-blue-600' : ''
                                     }`}
                                     onMouseEnter={() => handleReactionHover(post.id, true)}
                                     onMouseLeave={() => handleReactionHover(post.id, false)}
@@ -740,7 +740,7 @@ const ProfilePage = () => {
                                     <ThumbsUp className="h-4 w-4" />
                                     <span className="text-sm font-medium">
                                       {(() => {
-                                        const userReact = post.reacts?.find(r => r.userId === profileData?.id);
+                                        const userReact = post.reacts?.find(r => r.userId === currentUserId);
                                         return userReact ? userReact.reaction.charAt(0).toUpperCase() + userReact.reaction.slice(1) : 'Like';
                                       })()}
                                     </span>
