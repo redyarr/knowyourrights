@@ -79,20 +79,46 @@ exports.getProfile = async (req, res) => {
     try {
         const user = await User.findOne({
             where: { id: userId },
-            attributes: { exclude: ['password', 'emailVerifiedAt'] },
             include: [
                 {
                     model: Lawyer,
-                    as: 'lawyer',
-                    attributes: ['legalAreas', 'summary', 'lawFirm', 'badgeNumber', 'badgeIssueDate', 'verificationStatus'],
-                    include: [
-                        { model: Education, as: 'Educations' },
-                        { model: require('../models/lawwyerDoc'), as:'lawyer_docs' }
-                    ]
                 },
-                { model: Contact },
-                { model: Post },
-                { model: ProfileImage }
+                {
+                    model: ProfileImage
+                },
+                {
+                    model: Contact,
+                },
+                {
+                    model: Post,
+                    order: [['createdAt', 'DESC']],
+                    include: [
+                        {
+                            model: PostPhoto,
+                            include: [
+                                {
+                                    model: Photo,
+                                }
+                            ]
+                        },
+                        {
+                            model: Comment,
+                            include: [{
+                                model: User,
+                                attributes: ['id', 'firstName', 'lastName', 'role'],
+                                include: [
+                                    {
+                                        model: ProfileImage
+                                    }
+                                ]
+                            }],
+                            order: [['createdAt', 'ASC']]
+                        },
+                        {
+                            model: React
+                        }
+                    ]
+                }
             ]
         });
         
@@ -125,13 +151,12 @@ exports.getProfile = async (req, res) => {
             connectionStatus = connection ? connection.status : null;
         }
 
-        res.render('in/index', {
-            title: 'Profile | Legal Network',
-            profile: user,
+        res.status(200).json({success: true, data :{
+            user: user,
             loggedInUserId: loggedInUserId,
             connectionStatus: connectionStatus,
             connectionsCount: connectionsCount
-        });
+        }});
 
     } catch (error) {
         console.error("Error fetching profile:", error);
