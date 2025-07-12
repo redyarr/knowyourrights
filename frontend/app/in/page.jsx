@@ -601,7 +601,7 @@ const UserProfile = () => {
     <div className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
         {/* Profile Header */}
-        <Card className="mb-4 sm:mb-6 overflow-hidden">
+        <Card className="mb-4 sm:mb-6 overflow-hidden py-0">
           {/* Cover Photo */}
           <div className="h-24 sm:h-32 md:h-48 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 relative">
             <div className="absolute top-2 sm:top-4 end-2 sm:end-4">
