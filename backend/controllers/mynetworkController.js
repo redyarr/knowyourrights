@@ -305,6 +305,59 @@ exports.cancelConnectionRequest = async (req, res) => {
     }
 };
 
+// Unfriend a connection (remove an accepted connection)
+exports.unfriendConnection = async (req, res) => {
+    try {
+        const userId = req.session.user_id;
+        const connectionId = req.params.connectionId;
+        
+        // Find the connection that is already accepted
+        const connection = await Connection.findOne({
+            where: {
+                id: connectionId,
+                status: 'accepted',
+                [Op.or]: [
+                    { requester_id: userId },
+                    { receiver_id: userId }
+                ]
+            }
+        });
+        
+        if (!connection) {
+            return res.status(404).json({ success: false, message: 'Connection not found or not accepted' });
+        }
+        
+        // Delete the connection
+        await connection.destroy();
+        
+        // Create notifications for both users
+        const otherUserId = connection.requester_id === userId ? connection.receiver_id : connection.requester_id;
+        
+        // Get user information for notification
+        const user = await User.findByPk(userId, {
+            attributes: ['firstName', 'lastName']
+        });
+        
+        // Create a notification for the other user
+        const notification = await Notification.create({
+            userId: otherUserId,
+            title: 'Connection Removed',
+            message: `${user.firstName} ${user.lastName} has removed the connection with you.`
+        });
+        
+        await UserNotification.create({
+            userId: otherUserId,
+            notification_id: notification.id,
+            isRead: false
+        });
+        
+        return res.status(200).json({ success: true, message: 'Connection removed successfully' });
+    } catch (error) {
+        console.error('Error removing connection:', error);
+        return res.status(500).json({ success: false, message: 'An error occurred while removing the connection' });
+    }
+};
+
 // Get suggested lawyers for the feed page
 exports.getSuggestedLawyers = async (req, res) => {
     try {
