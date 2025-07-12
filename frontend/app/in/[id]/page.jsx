@@ -49,8 +49,9 @@ const ProfilePage = () => {
   const [editCommentContent, setEditCommentContent] = useState('')
   const [reactionPickerTimeout, setReactionPickerTimeout] = useState(null)
   const [currentUserId, setCurrentUserId] = useState(null)
-  // Add state for current user data
   const [currentUser, setCurrentUser] = useState(null)
+  const [connectionsCount, setConnectionsCount] = useState(0)
+  const [connectionStatus, setConnectionStatus] = useState(null)
   
   const reactionEmojis = {
     like: { emoji: '👍', icon: ThumbsUp, label: 'Like' },
@@ -77,6 +78,8 @@ const ProfilePage = () => {
       if (data.success) {
         setProfileData(data?.data?.user)
         setCurrentUserId(data?.data?.loggedInUserId)
+        setConnectionsCount(data?.data?.connectionsCount)
+        setConnectionStatus(data?.data?.connectionStatus || null)
       } else {
         toast("Error", {
           description: "Failed to load profile"
@@ -513,7 +516,7 @@ const ProfilePage = () => {
                 {/* Stats */}
                 <div className="grid grid-cols-3 gap-4 mt-6">
                   <div className="text-center p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600">{profileData?.connectionsCount || 0}</div>
+                    <div className="text-2xl font-bold text-blue-600">{connectionsCount || 0}</div>
                     <div className="text-sm text-muted-foreground">Connections</div>
                   </div>
                   <div className="text-center p-4 bg-green-50 dark:bg-green-950/20 rounded-lg">
