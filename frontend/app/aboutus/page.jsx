@@ -514,19 +514,28 @@ const TeamSection = () => {
       name: "Aland S. Othman",
       role: "Backend Developer",
       image: "/images/about/AlandPhoto.jpg",
-      description: "Software engineer specializing in secure, scalable legal platforms."
+      description: "Software engineer specializing in secure, scalable legal platforms.",
+      LinkedIn: "https://www.linkedin.com/in/aland-s-othman/",
+      GitHub: "https://github.com/Alandkf",
+      email: "alandsothman@gmail.com",
     },
     {
       name: "Rekar Jamal",
       role: "Frontend Developer & UI Designer",
       image: "/images/about/RekarPhoto.jpg",
-      description: "Constitutional law expert ensuring platform compliance and user protection."
+      description: "Frontend developer crafting intuitive user experiences and accessible legal interfaces.",
+      LinkedIn: "https://www.linkedin.com/in/rekar-jamal",
+      GitHub: "https://github.com/Rekarrr", 
+      email: "rekarjamal3@gmil.con",
     },
     {
       name: "Redyar Hawzhin",
       role: "Backend Developer",
       image: "/images/about/RedyarPhoto.jpg",
-      description: "Building bridges between legal professionals and those seeking help."
+      description: "Building secure APIs and backend systems to connect legal professionals with clients.",
+      LinkedIn: "https://www.linkedin.com/in/redyar-hawzhin/",
+      GitHub: "https://github.com/redyarr",
+      email: "Redyarh@gmail.com",
     }
   ]
 
@@ -565,6 +574,38 @@ const TeamSection = () => {
                   <h3 className="text-base sm:text-lg font-bold mb-1 text-foreground dark:text-foreground">{member.name}</h3>
                   <p className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 font-medium mb-2">{member.role}</p>
                   <p className="text-xs text-muted-foreground dark:text-muted-foreground leading-relaxed">{member.description}</p>
+                  <div className="flex gap-2 mt-2 justify-center">
+                    {member.LinkedIn && (
+                      <Link 
+                        href={member.LinkedIn}
+                        className="text-xs px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        LinkedIn
+                      </Link>
+                    )}
+                    {member.GitHub && (
+                      <Link
+                        href={member.GitHub}
+                        className="text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        GitHub
+                      </Link>
+                    )}
+                    {member.email && (
+                      <Link
+                        href={`mailto:${member.email}`}
+                        className="text-xs px-2 py-1 rounded-full bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-800 transition-colors"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Email
+                      </Link>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             </motion.div>
