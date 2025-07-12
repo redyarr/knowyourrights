@@ -505,27 +505,27 @@ const TeamSection = () => {
 
   const team = [
     {
-      name: "Sarah Chen",
+      name: "Beshwar",
       role: "Founder & CEO",
       image: "https://images.unsplash.com/photo-1494790108755-2616b612b04b?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       description: "Former corporate lawyer with 15 years of experience in legal technology."
     },
     {
-      name: "Michael Rodriguez",
-      role: "Chief Technology Officer",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      name: "Aland S. Othman",
+      role: "Backend Developer",
+      image: "/images/about/AlandPhoto.jpg",
       description: "Software engineer specializing in secure, scalable legal platforms."
     },
     {
-      name: "Dr. Emily Watson",
-      role: "Head of Legal Affairs",
-      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      name: "Rekar Jamal",
+      role: "Frontend Developer & UI Designer",
+      image: "/images/about/RekarPhoto.jpg",
       description: "Constitutional law expert ensuring platform compliance and user protection."
     },
     {
-      name: "James Thompson",
-      role: "Community Manager",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      name: "Redyar Hawzhin",
+      role: "Backend Developer",
+      image: "/images/about/RedyarPhoto.jpg",
       description: "Building bridges between legal professionals and those seeking help."
     }
   ]
