@@ -432,20 +432,13 @@ const ProfilePage = () => {
     if (isConnecting) return
 
     setIsConnecting(true)
-    
-    console.log('Connection request - Current status:', connectionStatus)
-    console.log('Connection request - Connection ID:', connectionId)
-    console.log('Connection request - Profile User ID:', userId)
-    console.log('Connection request - Current User ID:', currentUserId)
-    console.log('Connection request - Sender or Receiver:', senderOrReceiver)
+  
 
     try {
       let response
       let successMessage
       
       if (connectionStatus === null) {
-        // Send connection request using userId from URL params
-        console.log('Sending connection request to profile user:', userId)
         
         response = await fetch(`http://localhost:3001/mynetwork/connect/${userId}`, {
           method: 'POST',
@@ -456,19 +449,17 @@ const ProfilePage = () => {
         })
         
         const data = await response.json()
-        console.log('Connect response:', data)
         
         if (data.success) {
           setConnectionStatus('pending')
           setConnectionId(data.connectionId)
-          setSenderOrReceiver('sender') // I sent the request, so I'm the sender
+          setSenderOrReceiver('sender') 
           successMessage = "Connection request sent successfully!"
         } else {
           throw new Error(data.message || "Failed to send connection request")
         }
         
       } else if (connectionStatus === 'pending' && senderOrReceiver === 'sender') {
-        // Cancel connection request - I sent the request, so I can cancel it
         if (!connectionId) {
           console.error('No connection ID available for cancellation')
           throw new Error("Connection ID not found. Please refresh the page and try again.")
@@ -485,7 +476,6 @@ const ProfilePage = () => {
         })
         
         const data = await response.json()
-        console.log('Cancel response:', data)
         
         if (data.success) {
           setConnectionStatus(null)
@@ -498,13 +488,10 @@ const ProfilePage = () => {
         }
         
       } else if (connectionStatus === 'pending' && senderOrReceiver === 'receiver') {
-        // Accept connection request - I received the request, so I can accept it
         if (!connectionId) {
-          console.error('No connection ID available for accepting')
           throw new Error("Connection ID not found. Please refresh the page and try again.")
         }
         
-        console.log('Accepting connection request with ID:', connectionId)
         
         response = await fetch(`http://localhost:3001/mynetwork/accept/${connectionId}`, {
           method: 'POST',
@@ -515,11 +502,10 @@ const ProfilePage = () => {
         })
         
         const data = await response.json()
-        console.log('Accept response:', data)
         
         if (data.success) {
           setConnectionStatus('accepted')
-          setSenderOrReceiver(null) // Clear since it's now accepted
+          setSenderOrReceiver(null)
           successMessage = "Connection request accepted successfully!"
         } else {
           console.error('Accept connection failed:', data)
@@ -527,9 +513,13 @@ const ProfilePage = () => {
         }
       }
       
+      if(connectionStatus !== 'accepted'){
       toast("Success", {
         description: successMessage
       })
+    }else{
+      return
+    }
       
     } catch (error) {
       console.error('Connection request error:', error)
@@ -549,6 +539,51 @@ const ProfilePage = () => {
     }
   }
 
+  const handleDeclineRequest = async () => {
+    if (isConnecting) return
+
+    setIsConnecting(true)
+
+    try {
+      if (!connectionId) {
+        throw new Error("Connection ID not found. Please refresh the page and try again.")
+      }
+
+      console.log('Declining connection request with ID:', connectionId)
+
+      const response = await fetch(`http://localhost:3001/mynetwork/decline/${connectionId}`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+
+      const data = await response.json()
+      console.log('Decline response:', data)
+
+      if (data.success) {
+        setConnectionStatus(null)
+        setConnectionId(null)
+        setSenderOrReceiver(null)
+        
+        toast("Success", {
+          description: "Connection request declined successfully!"
+        })
+      } else {
+        console.error('Decline connection failed:', data)
+        throw new Error(data.message || "Failed to decline connection request")
+      }
+    } catch (error) {
+      console.error('Decline request error:', error)
+      toast("Error", {
+        description: error.message || "An error occurred while declining the request"
+      })
+    } finally {
+      setIsConnecting(false)
+    }
+  }
+
   const getConnectionButton = () => {
     // Don't show connection button if viewing own profile
     if (currentUserId === userId) {
@@ -559,11 +594,12 @@ const ProfilePage = () => {
       // If connection is accepted
       if (connectionStatus === 'accepted') {
         return {
+          type: 'single',
           text: 'Friends',
           icon: UserCheck,
           variant: 'default',
-          className: 'bg-green-600 hover:bg-green-700 text-white',
-          disabled: true
+          className: 'bg-green-600 hover:bg-green-700 text-white pointer-default',
+          disabled: false
         }
       }
       
@@ -572,6 +608,7 @@ const ProfilePage = () => {
         if (senderOrReceiver === 'sender') {
           // I sent the request - show Cancel button
           return {
+            type: 'single',
             text: isConnecting ? 'Cancelling...' : 'Cancel Request',
             icon: isConnecting ? Loader2 : UserX,
             variant: 'outline',
@@ -579,12 +616,13 @@ const ProfilePage = () => {
             disabled: isConnecting
           }
         } else if (senderOrReceiver === 'receiver') {
-          // I received the request - show Accept button
+          // I received the request - show Accept and Decline buttons
           return {
-            text: isConnecting ? 'Accepting...' : 'Accept Request',
-            icon: isConnecting ? Loader2 : UserCheck,
-            variant: 'default',
-            className: 'bg-green-600 hover:bg-green-700 text-white',
+            type: 'dual',
+            acceptText: isConnecting ? 'Accepting...' : 'Accept',
+            declineText: isConnecting ? 'Declining...' : 'Decline',
+            acceptIcon: isConnecting ? Loader2 : UserCheck,
+            declineIcon: isConnecting ? Loader2 : UserX,
             disabled: isConnecting
           }
         }
@@ -592,6 +630,7 @@ const ProfilePage = () => {
       
       // No connection - show Connect button
       return {
+        type: 'single',
         text: isConnecting ? 'Connecting...' : 'Connect',
         icon: isConnecting ? Loader2 : UserPlus,
         variant: 'default',
@@ -601,19 +640,49 @@ const ProfilePage = () => {
     }
 
     const config = getButtonConfig()
-    const IconComponent = config.icon
 
-    return (
-      <Button
-        onClick={handleConnectionRequest}
-        disabled={config.disabled}
-        variant={config.variant}
-        className={config.className}
-      >
-        <IconComponent className={`h-4 w-4 me-2 ${isConnecting ? 'animate-spin' : ''}`} />
-        {config.text}
-      </Button>
-    )
+    if (config.type === 'dual') {
+      // Show Accept and Decline buttons side by side
+      const AcceptIcon = config.acceptIcon
+      const DeclineIcon = config.declineIcon
+
+      return (
+        <div className="flex gap-2">
+          <Button
+            onClick={handleConnectionRequest}
+            disabled={config.disabled}
+            className="bg-green-600 hover:bg-green-700 text-white"
+          >
+            <AcceptIcon className={`h-4 w-4 me-2 ${isConnecting ? 'animate-spin' : ''}`} />
+            {config.acceptText}
+          </Button>
+          <Button
+            onClick={handleDeclineRequest}
+            disabled={config.disabled}
+            variant="outline"
+            className="border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700"
+          >
+            <DeclineIcon className={`h-4 w-4 me-2 ${isConnecting ? 'animate-spin' : ''}`} />
+            {config.declineText}
+          </Button>
+        </div>
+      )
+    } else {
+      // Show single button
+      const IconComponent = config.icon
+
+      return (
+        <Button
+          onClick={handleConnectionRequest}
+          disabled={config.disabled}
+          variant={config.variant}
+          className={config.className}
+        >
+          <IconComponent className={`h-4 w-4 me-2 ${isConnecting ? 'animate-spin' : ''}`} />
+          {config.text}
+        </Button>
+      )
+    }
   }
 
   const verificationBadge = getVerificationBadge()
