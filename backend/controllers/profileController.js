@@ -138,6 +138,8 @@ exports.getProfile = async (req, res) => {
         
         // Check if logged-in user has a connection with this profile
         let connectionStatus = null;
+        let connectionId = null;
+        
         if (loggedInUserId && loggedInUserId !== userId) {
             const connection = await Connection.findOne({
                 where: {
@@ -148,13 +150,17 @@ exports.getProfile = async (req, res) => {
                 }
             });
             
-            connectionStatus = connection ? connection.status : null;
+            if (connection) {
+                connectionStatus = connection.status;
+                connectionId = connection.id;
+            }
         }
 
         res.status(200).json({success: true, data :{
             user: user,
             loggedInUserId: loggedInUserId,
             connectionStatus: connectionStatus,
+            connectionId: connectionId,
             connectionsCount: connectionsCount
         }});
 

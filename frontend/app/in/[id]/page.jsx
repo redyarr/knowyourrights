@@ -32,7 +32,11 @@ import {
   Angry,
   Sparkles,
   Edit3,
-  Trash2
+  Trash2,
+  UserPlus,
+  UserCheck,
+  UserX,
+  Loader2
 } from 'lucide-react'
 
 const ProfilePage = () => {
@@ -52,6 +56,8 @@ const ProfilePage = () => {
   const [currentUser, setCurrentUser] = useState(null)
   const [connectionsCount, setConnectionsCount] = useState(0)
   const [connectionStatus, setConnectionStatus] = useState(null)
+  const [connectionId, setConnectionId] = useState(null)
+  const [isConnecting, setIsConnecting] = useState(false)
   
   const reactionEmojis = {
     like: { emoji: '👍', icon: ThumbsUp, label: 'Like' },
@@ -80,6 +86,7 @@ const ProfilePage = () => {
         setCurrentUserId(data?.data?.loggedInUserId)
         setConnectionsCount(data?.data?.connectionsCount)
         setConnectionStatus(data?.data?.connectionStatus || null)
+        setConnectionId(data?.data?.connectionId || null)
       } else {
         toast("Error", {
           description: "Failed to load profile"
@@ -412,6 +419,139 @@ const ProfilePage = () => {
     }
   }
 
+  const handleConnectionRequest = async () => {
+    if (isConnecting) return
+
+    setIsConnecting(true)
+
+    try {
+      let response
+      let successMessage
+      
+      if (connectionStatus === null) {
+        // Send connection request using userId from URL params
+        response = await fetch(`http://localhost:3001/mynetwork/connect/${userId}`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
+        
+        const data = await response.json()
+        
+        if (data.success) {
+          setConnectionStatus('pending')
+          setConnectionId(data.connectionId)
+          successMessage = "Connection request sent successfully!"
+        } else {
+          throw new Error(data.message || "Failed to send connection request")
+        }
+        
+      } else if (connectionStatus === 'pending') {
+        // Cancel connection request - make sure connectionId exists and is valid
+        if (!connectionId) {
+          throw new Error("Connection ID not found. Please refresh the page and try again.")
+        }
+        
+        console.log('Attempting to cancel connection:', {
+          connectionId,
+          currentUserId,
+          profileUserId: userId
+        })
+        
+        response = await fetch(`http://localhost:3001/mynetwork/cancel/${connectionId}`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        })
+        
+        const data = await response.json()
+        
+        if (data.success) {
+          setConnectionStatus(null)
+          setConnectionId(null)
+          successMessage = "Connection request cancelled successfully!"
+        } else {
+          // Log the error for debugging
+          console.error('Cancel connection failed:', data)
+          throw new Error(data.message || "Failed to cancel connection request")
+        }
+      }
+      
+      toast("Success", {
+        description: successMessage
+      })
+      
+    } catch (error) {
+      console.error('Connection request error:', error)
+      toast("Error", {
+        description: error.message || "An error occurred with the connection request"
+      })
+      
+      // If there's an error with canceling, refresh the profile data to get current status
+      if (connectionStatus === 'pending') {
+        console.log('Refreshing profile data due to error...')
+        fetchProfileData()
+      }
+    } finally {
+      setIsConnecting(false)
+    }
+  }
+
+  const getConnectionButton = () => {
+    // Don't show connection button if viewing own profile
+    if (currentUserId === userId) {
+      return null
+    }
+
+    const getButtonConfig = () => {
+      switch (connectionStatus) {
+        case 'accepted':
+          return {
+            text: 'Friends',
+            icon: UserCheck,
+            variant: 'default',
+            className: 'bg-green-600 hover:bg-green-700 text-white',
+            disabled: true
+          }
+        case 'pending':
+          return {
+            text: isConnecting ? 'Cancelling...' : 'Cancel Request',
+            icon: isConnecting ? Loader2 : UserX,
+            variant: 'outline',
+            className: 'border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700',
+            disabled: isConnecting
+          }
+        default:
+          return {
+            text: isConnecting ? 'Connecting...' : 'Connect',
+            icon: isConnecting ? Loader2 : UserPlus,
+            variant: 'default',
+            className: 'bg-blue-600 hover:bg-blue-700',
+            disabled: isConnecting
+          }
+      }
+    }
+
+    const config = getButtonConfig()
+    const IconComponent = config.icon
+
+    return (
+      <Button
+        onClick={handleConnectionRequest}
+        disabled={config.disabled}
+        variant={config.variant}
+        className={config.className}
+      >
+        <IconComponent className={`h-4 w-4 me-2 ${isConnecting ? 'animate-spin' : ''}`} />
+        {config.text}
+      </Button>
+    )
+  }
+
   const verificationBadge = getVerificationBadge()
 
   if (loading) {
@@ -469,8 +609,8 @@ const ProfilePage = () => {
                 </Avatar>
               </div>
               
-              {/* Profile Info */}
-              <div className="text-center sm:text-start">
+              {/* Profile Info and Action Buttons */}
+              <div className="flex-1 text-center sm:text-start">
                 <div className="mb-4">
                   <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
                     {getUserDisplayName()}
@@ -512,6 +652,27 @@ const ProfilePage = () => {
                     <span>{profileData.contacts[0].number}</span>
                   </div>
                 )}
+
+                {/* Action Buttons Section */}
+                <div className="flex justify-center sm:justify-start mb-6">
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    {getConnectionButton()}
+                    {currentUserId === userId && (
+                      <>
+                        <Button asChild>
+                          <Link href="/in/edit">
+                            <Edit3 className="h-4 w-4 me-2" />
+                            Edit Profile
+                          </Link>
+                        </Button>
+                        <Button variant="outline">
+                          <Plus className="h-4 w-4 me-2" />
+                          Add Section
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </div>
                 
                 {/* Stats */}
                 <div className="grid grid-cols-3 gap-4 mt-6">
@@ -1061,38 +1222,59 @@ const ProfilePage = () => {
                         <p className="text-sm opacity-80">Current Status</p>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="mt-4 space-y-3">
-                    {profileData.lawyer?.badgeNumber && (
-                      <div className="p-3 bg-muted/50 rounded-lg">
-                        <p className="text-sm font-medium">License Number</p>
-                        <p className="text-sm font-mono bg-background px-2 py-1 rounded mt-1">
-                          {profileData.lawyer.badgeNumber}
-                        </p>
-                      </div>
-                    )}
                     
-                    {profileData.lawyer?.badgeIssueDate && (
-                      <div className="p-3 bg-muted/50 rounded-lg">
-                        <p className="text-sm font-medium">License Issue Date</p>
-                        <p className="text-sm bg-background px-2 py-1 rounded mt-1">
-                          {new Date(profileData.lawyer.badgeIssueDate).toLocaleDateString()}
-                        </p>
-                      </div>
-                    )}
-                    
-                    {profileData.lawyer?.badgeIssuingAuthority && (
-                      <div className="p-3 bg-muted/50 rounded-lg">
-                        <p className="text-sm font-medium">Authority Level</p>
-                        <p className="text-sm bg-background px-2 py-1 rounded mt-1 capitalize">
-                          {profileData.lawyer.badgeIssuingAuthority}
-                        </p>
-                      </div>
-                    )}
+                    <div className="mt-4 space-y-3">
+                      {profileData.lawyer?.badgeNumber && (
+                        <div className="p-3 bg-muted/50 rounded-lg">
+                          <p className="text-sm font-medium">License Number</p>
+                          <p className="text-sm font-mono bg-background px-2 py-1 rounded mt-1">
+                            {profileData.lawyer.badgeNumber}
+                          </p>
+                        </div>
+                      )}
+                      
+                      {profileData.lawyer?.badgeIssueDate && (
+                        <div className="p-3 bg-muted/50 rounded-lg">
+                          <p className="text-sm font-medium">License Issue Date</p>
+                          <p className="text-sm bg-background px-2 py-1 rounded mt-1">
+                            {new Date(profileData.lawyer.badgeIssueDate).toLocaleDateString()}
+                          </p>
+                        </div>
+                      )}
+                      
+                      {profileData.lawyer?.badgeIssuingAuthority && (
+                        <div className="p-3 bg-muted/50 rounded-lg">
+                          <p className="text-sm font-medium">Authority Level</p>
+                          <p className="text-sm bg-background px-2 py-1 rounded mt-1 capitalize">
+                            {profileData.lawyer.badgeIssuingAuthority}
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
+            )}
+          </div>
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="mt-4 sm:mt-16 flex justify-center sm:justify-end">
+          <div className="flex flex-col sm:flex-row gap-2">
+            {getConnectionButton()}
+            {currentUserId === userId && (
+              <>
+                <Button asChild>
+                  <Link href="/in/edit">
+                    <Edit3 className="h-4 w-4 me-2" />
+                    Edit Profile
+                  </Link>
+                </Button>
+                <Button variant="outline">
+                  <Plus className="h-4 w-4 me-2" />
+                  Add Section
+                </Button>
+              </>
             )}
           </div>
         </div>
