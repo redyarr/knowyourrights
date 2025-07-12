@@ -49,6 +49,8 @@ const ProfilePage = () => {
   const [editCommentContent, setEditCommentContent] = useState('')
   const [reactionPickerTimeout, setReactionPickerTimeout] = useState(null)
   const [currentUserId, setCurrentUserId] = useState(null)
+  // Add state for current user data
+  const [currentUser, setCurrentUser] = useState(null)
   
   const reactionEmojis = {
     like: { emoji: '👍', icon: ThumbsUp, label: 'Like' },
@@ -90,8 +92,23 @@ const ProfilePage = () => {
     }
   }
 
+  // Fetch current user data from session/cookies
+  const fetchCurrentUser = async () => {
+    try {
+      const response = await fetch('/api/getuserdata')
+      const data = await response.json()
+      
+      if (data.success) {
+        setCurrentUser(data.payload)
+      }
+    } catch (error) {
+      console.error('Error fetching current user:', error)
+    }
+  }
+
   useEffect(() => {
     if (userId) {
+      fetchCurrentUser() // Add this line
       fetchProfileData()
     }
   }, [userId])
@@ -868,7 +885,8 @@ const ProfilePage = () => {
                                                 <div className="font-medium text-sm">
                                                   {comment.user ? `${comment.user.firstName} ${comment.user.lastName}` : 'Unknown User'}
                                                 </div>
-                                                {profileData && comment.userId === profileData.id && (
+                                                {/* Show edit/delete options only if current logged-in user owns this comment */}
+                                                {currentUser && comment.userId === currentUser.id && (
                                                   <div className="flex space-x-1">
                                                     <Button
                                                       variant="ghost"
