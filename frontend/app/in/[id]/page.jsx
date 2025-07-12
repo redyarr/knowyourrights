@@ -687,23 +687,57 @@ const ProfilePage = () => {
 
   const verificationBadge = getVerificationBadge()
 
-  if (loading) {
+ if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="animate-pulse">
-            <div className="h-48 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-t-lg"></div>
-            <div className="bg-card p-6 rounded-b-lg border-x border-b">
-              <div className="flex flex-col sm:flex-row sm:items-end sm:space-x-6">
+        <div className="max-w-5xl mx-auto px-4 py-8">
+          {/* Profile Header Skeleton */}
+          <Card className="mb-6 overflow-hidden py-0">
+            <div className="h-32 sm:h-48 bg-gradient-to-r from-blue-600 to-indigo-600 relative rounded-t-lg animate-pulse"></div>
+            <CardContent className="p-6">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start -mt-12 sm:-mt-16 mb-6">
                 <div className="relative self-center sm:self-start">
-                  <div className="w-24 h-24 sm:w-32 sm:h-32 bg-muted rounded-full"></div>
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white bg-muted animate-pulse"></div>
                 </div>
-                <div className="flex-1 space-y-4">
-                  <div className="h-8 bg-muted rounded w-48"></div>
-                  <div className="h-4 bg-muted rounded w-32"></div>
-                  <div className="h-4 bg-muted rounded w-24"></div>
+                <div className="mt-4 sm:mt-16 flex justify-center sm:justify-end space-x-2">
+                  <div className="w-24 h-10 bg-muted rounded-full animate-pulse"></div>
+                  <div className="w-24 h-10 bg-muted rounded-full animate-pulse"></div>
                 </div>
               </div>
+              <div className="space-y-3">
+                <div className="h-6 bg-muted rounded w-1/3 animate-pulse"></div>
+                <div className="h-4 bg-muted rounded w-1/2 animate-pulse"></div>
+                <div className="h-4 bg-muted rounded w-1/4 animate-pulse"></div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Content Skeleton */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              {[1, 2, 3].map((i) => (
+                <Card key={i}>
+                  <CardContent className="p-6 space-y-4">
+                    <div className="h-4 bg-muted rounded w-1/4 animate-pulse"></div>
+                    <div className="space-y-2">
+                      <div className="h-4 bg-muted rounded animate-pulse"></div>
+                      <div className="h-4 bg-muted rounded w-5/6 animate-pulse"></div>
+                      <div className="h-4 bg-muted rounded w-4/6 animate-pulse"></div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+            <div className="space-y-6">
+              {[1, 2].map((i) => (
+                <Card key={i}>
+                  <CardContent className="p-6 space-y-4">
+                    <div className="h-4 bg-muted rounded w-1/3 animate-pulse"></div>
+                    <div className="h-4 bg-muted rounded w-2/3 animate-pulse"></div>
+                    <div className="h-4 bg-muted rounded w-1/2 animate-pulse"></div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
           </div>
         </div>
