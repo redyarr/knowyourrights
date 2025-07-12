@@ -510,51 +510,51 @@ const UserProfile = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="max-w-5xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
           {/* Profile Header Skeleton */}
-          <Card className="mb-6 overflow-hidden py-0">
-            <div className="h-32 sm:h-48 bg-gradient-to-r from-blue-600 to-indigo-600 relative rounded-t-lg animate-pulse"></div>
-            <CardContent className="p-6">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start -mt-12 sm:-mt-16 mb-6">
+          <Card className="mb-4 sm:mb-6 overflow-hidden">
+            <div className="h-24 sm:h-32 md:h-48 bg-gradient-to-r from-blue-600 to-indigo-600 relative animate-pulse"></div>
+            <CardContent className="p-3 sm:p-6">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start -mt-8 sm:-mt-12 md:-mt-16 mb-4 sm:mb-6">
                 <div className="relative self-center sm:self-start">
-                  <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full border-4 border-white bg-muted animate-pulse"></div>
+                  <div className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 rounded-full border-2 sm:border-4 border-white bg-muted animate-pulse"></div>
                 </div>
-                <div className="mt-4 sm:mt-16 flex justify-center sm:justify-end space-x-2">
-                  <div className="w-24 h-10 bg-muted rounded-full animate-pulse"></div>
-                  <div className="w-24 h-10 bg-muted rounded-full animate-pulse"></div>
+                <div className="mt-3 sm:mt-4 md:mt-16 flex justify-center sm:justify-end space-x-2">
+                  <div className="w-20 h-8 sm:w-24 sm:h-10 bg-muted rounded-md animate-pulse"></div>
+                  <div className="w-20 h-8 sm:w-24 sm:h-10 bg-muted rounded-md animate-pulse"></div>
                 </div>
               </div>
-              <div className="space-y-3">
-                <div className="h-6 bg-muted rounded w-1/3 animate-pulse"></div>
-                <div className="h-4 bg-muted rounded w-1/2 animate-pulse"></div>
-                <div className="h-4 bg-muted rounded w-1/4 animate-pulse"></div>
+              <div className="space-y-2 sm:space-y-3 text-center sm:text-start">
+                <div className="h-5 sm:h-6 bg-muted rounded w-1/2 sm:w-1/3 mx-auto sm:mx-0 animate-pulse"></div>
+                <div className="h-3 sm:h-4 bg-muted rounded w-2/3 sm:w-1/2 mx-auto sm:mx-0 animate-pulse"></div>
+                <div className="h-3 sm:h-4 bg-muted rounded w-1/2 sm:w-1/4 mx-auto sm:mx-0 animate-pulse"></div>
               </div>
             </CardContent>
           </Card>
 
           {/* Content Skeleton */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-6">
+            <div className="lg:col-span-2 space-y-3 sm:space-y-6">
               {[1, 2, 3].map((i) => (
                 <Card key={i}>
-                  <CardContent className="p-6 space-y-4">
-                    <div className="h-4 bg-muted rounded w-1/4 animate-pulse"></div>
+                  <CardContent className="p-3 sm:p-6 space-y-3 sm:space-y-4">
+                    <div className="h-3 sm:h-4 bg-muted rounded w-1/3 sm:w-1/4 animate-pulse"></div>
                     <div className="space-y-2">
-                      <div className="h-4 bg-muted rounded animate-pulse"></div>
-                      <div className="h-4 bg-muted rounded w-5/6 animate-pulse"></div>
-                      <div className="h-4 bg-muted rounded w-4/6 animate-pulse"></div>
+                      <div className="h-3 sm:h-4 bg-muted rounded animate-pulse"></div>
+                      <div className="h-3 sm:h-4 bg-muted rounded w-5/6 animate-pulse"></div>
+                      <div className="h-3 sm:h-4 bg-muted rounded w-4/6 animate-pulse"></div>
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
-            <div className="space-y-6">
+            <div className="space-y-3 sm:space-y-6">
               {[1, 2].map((i) => (
                 <Card key={i}>
-                  <CardContent className="p-6 space-y-4">
-                    <div className="h-4 bg-muted rounded w-1/3 animate-pulse"></div>
-                    <div className="h-4 bg-muted rounded w-2/3 animate-pulse"></div>
-                    <div className="h-4 bg-muted rounded w-1/2 animate-pulse"></div>
+                  <CardContent className="p-3 sm:p-6 space-y-3 sm:space-y-4">
+                    <div className="h-3 sm:h-4 bg-muted rounded w-1/2 sm:w-1/3 animate-pulse"></div>
+                    <div className="h-3 sm:h-4 bg-muted rounded w-3/4 sm:w-2/3 animate-pulse"></div>
+                    <div className="h-3 sm:h-4 bg-muted rounded w-2/3 sm:w-1/2 animate-pulse"></div>
                   </CardContent>
                 </Card>
               ))}
@@ -567,13 +567,13 @@ const UserProfile = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
-          <CardContent className="p-6 text-center">
-            <XCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Error Loading Profile</h3>
-            <p className="text-muted-foreground mb-4">{error}</p>
-            <Button onClick={fetchUserProfile}>Try Again</Button>
+          <CardContent className="p-4 sm:p-6 text-center">
+            <XCircle className="h-10 w-10 sm:h-12 sm:w-12 text-red-500 mx-auto mb-3 sm:mb-4" />
+            <h3 className="text-base sm:text-lg font-semibold mb-2">Error Loading Profile</h3>
+            <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">{error}</p>
+            <Button onClick={fetchUserProfile} className="w-full sm:w-auto">Try Again</Button>
           </CardContent>
         </Card>
       </div>
@@ -582,13 +582,13 @@ const UserProfile = () => {
 
   if (!profileData) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
-          <CardContent className="p-6 text-center">
-            <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Profile Not Found</h3>
-            <p className="text-muted-foreground mb-4">Unable to load your profile data</p>
-            <Button onClick={fetchUserProfile}>Retry</Button>
+          <CardContent className="p-4 sm:p-6 text-center">
+            <AlertTriangle className="h-10 w-10 sm:h-12 sm:w-12 text-yellow-500 mx-auto mb-3 sm:mb-4" />
+            <h3 className="text-base sm:text-lg font-semibold mb-2">Profile Not Found</h3>
+            <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">Unable to load your profile data</p>
+            <Button onClick={fetchUserProfile} className="w-full sm:w-auto">Retry</Button>
           </CardContent>
         </Card>
       </div>
@@ -599,25 +599,26 @@ const UserProfile = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
         {/* Profile Header */}
-        <Card className="mb-6 overflow-hidden py-0">
+        <Card className="mb-4 sm:mb-6 overflow-hidden">
           {/* Cover Photo */}
-          <div className="h-32 sm:h-48 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 relative">
-            <div className="absolute top-4 end-4">
-              <Button variant="secondary" size="sm" className="bg-white/20 hover:bg-white/30 text-white border-white/20">
-                <Camera className="h-4 w-4" />
+          <div className="h-24 sm:h-32 md:h-48 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 relative">
+            <div className="absolute top-2 sm:top-4 end-2 sm:end-4">
+              <Button variant="secondary" size="sm" className="bg-white/20 hover:bg-white/30 text-white border-white/20 h-8 w-8 sm:h-auto sm:w-auto p-1 sm:p-2">
+                <Camera className="h-3 w-3 sm:h-4 sm:w-4" />
+                <span className="hidden sm:inline ml-2">Edit Cover</span>
               </Button>
             </div>
           </div>
           
-          <CardContent className="p-6">
+          <CardContent className="p-3 sm:p-6">
             {/* Profile Photo & Actions */}
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start -mt-12 sm:-mt-16 mb-6">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start -mt-8 sm:-mt-12 md:-mt-16 mb-4 sm:mb-6">
               <div className="relative self-center sm:self-start">
-                <Avatar className="w-24 h-24 sm:w-32 sm:h-32 border-4 border-white shadow-lg">
+                <Avatar className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 border-2 sm:border-4 border-white shadow-lg">
                   <AvatarImage src={profileData?.profile_image?.imagePath || profileData?.profilePicture} alt={getUserDisplayName()} />
-                  <AvatarFallback className="bg-blue-600 text-white text-2xl">
+                  <AvatarFallback className="bg-blue-600 text-white text-lg sm:text-xl md:text-2xl">
                     {getUserInitials()}
                   </AvatarFallback>
                 </Avatar>
@@ -626,15 +627,15 @@ const UserProfile = () => {
                     <Button
                       variant="secondary"
                       size="sm"
-                      className="absolute bottom-0 end-0 rounded-full w-8 h-8 p-0 bg-white border border-gray-300 hover:bg-gray-50"
+                      className="absolute bottom-0 end-0 rounded-full w-6 h-6 sm:w-8 sm:h-8 p-0 bg-white border border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700"
                     >
-                      <Camera className="h-4 w-4" />
+                      <Camera className="h-3 w-3 sm:h-4 sm:w-4" />
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-md">
+                  <DialogContent className="sm:max-w-md mx-2">
                     <DialogHeader>
-                      <DialogTitle className="flex items-center">
-                        <Camera className="h-5 w-5 me-2 text-blue-600" />
+                      <DialogTitle className="flex items-center text-base sm:text-lg">
+                        <Camera className="h-4 w-4 sm:h-5 sm:w-5 me-2 text-blue-600" />
                         Update Profile Picture
                       </DialogTitle>
                     </DialogHeader>
@@ -643,18 +644,18 @@ const UserProfile = () => {
                       {/* Current Profile Picture */}
                       <div className="text-center">
                         <div className="relative inline-block">
-                          <Avatar className="w-24 h-24 mx-auto border-4 border-gray-200">
+                          <Avatar className="w-20 h-20 sm:w-24 sm:h-24 mx-auto border-4 border-gray-200 dark:border-gray-700">
                             <AvatarImage 
                               src={imagePreview || profileData?.profilePicture} 
                               alt="Profile Preview" 
                             />
-                            <AvatarFallback className="bg-blue-600 text-white text-xl">
+                            <AvatarFallback className="bg-blue-600 text-white text-lg sm:text-xl">
                               {getUserInitials()}
                             </AvatarFallback>
                           </Avatar>
                           {imagePreview && (
                             <div className="absolute -top-2 -right-2">
-                              <Badge variant="secondary" className="bg-green-100 text-green-800">
+                              <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 text-xs">
                                 New
                               </Badge>
                             </div>
@@ -664,14 +665,14 @@ const UserProfile = () => {
 
                       {/* File Input */}
                       <div className="space-y-2">
-                        <Label htmlFor="profile-upload">Choose New Picture</Label>
+                        <Label htmlFor="profile-upload" className="text-sm">Choose New Picture</Label>
                         <Input
                           id="profile-upload"
                           type="file"
                           accept="image/*"
                           onChange={handleImageFileSelect}
                           disabled={uploadingImage}
-                          className="cursor-pointer"
+                          className="cursor-pointer text-sm"
                         />
                         <p className="text-xs text-muted-foreground">
                           Supported formats: JPG, PNG, GIF. Max size: 5MB
@@ -680,7 +681,7 @@ const UserProfile = () => {
 
                       {/* Selected File Info */}
                       {selectedImageFile && (
-                        <div className="bg-blue-50 dark:bg-blue-950/20 rounded-lg p-3">
+                        <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3">
                           <div className="flex items-center justify-between">
                             <div>
                               <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
@@ -700,6 +701,7 @@ const UserProfile = () => {
                                 if (fileInput) fileInput.value = ''
                               }}
                               disabled={uploadingImage}
+                              className="h-8 w-8 p-0"
                             >
                               <X className="h-4 w-4" />
                             </Button>
@@ -712,7 +714,7 @@ const UserProfile = () => {
                         <Button 
                           onClick={handleImageUpload}
                           disabled={!selectedImageFile || uploadingImage}
-                          className="flex-1"
+                          className="flex-1 text-sm"
                         >
                           {uploadingImage ? (
                             <>
@@ -730,6 +732,7 @@ const UserProfile = () => {
                           variant="outline" 
                           onClick={cancelImageUpload}
                           disabled={uploadingImage}
+                          className="text-sm"
                         >
                           Cancel
                         </Button>
@@ -740,17 +743,18 @@ const UserProfile = () => {
               </div>
               
               {/* Action Buttons */}
-              <div className="mt-4 sm:mt-16 flex justify-center sm:justify-end">
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <Button asChild>
+              <div className="mt-3 sm:mt-4 md:mt-16 flex justify-center sm:justify-end">
+                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                  <Button asChild className="text-sm">
                     <Link href="/in/edit">
-                      <Edit3 className="h-4 w-4 me-2" />
+                      <Edit3 className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
                       Edit Profile
                     </Link>
                   </Button>
-                  <Button variant="outline">
-                    <Plus className="h-4 w-4 me-2" />
-                    Add Section
+                  <Button variant="outline" className="text-sm">
+                    <Plus className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
+                    <span className="hidden sm:inline">Add Section</span>
+                    <span className="sm:hidden">Add</span>
                   </Button>
                 </div>
               </div>
@@ -759,27 +763,27 @@ const UserProfile = () => {
             {/* Profile Info */}
             <div className="text-center sm:text-start">
               <div className="mb-4">
-                <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-2">
                   {getUserDisplayName()}
                 </h1>
                 
                 {verificationBadge && (
-                  <Badge variant="secondary" className={`text-sm ${verificationBadge.color} mb-2`}>
-                    <verificationBadge.icon className="h-4 w-4 me-2" />
+                  <Badge variant="secondary" className={`text-xs sm:text-sm mb-2 ${verificationBadge.color.replace('bg-green-100', 'bg-green-100 dark:bg-green-900').replace('text-green-600', 'text-green-600 dark:text-green-100').replace('bg-yellow-100', 'bg-yellow-100 dark:bg-yellow-900').replace('text-yellow-600', 'text-yellow-600 dark:text-yellow-100').replace('bg-blue-100', 'bg-blue-100 dark:bg-blue-900').replace('text-blue-600', 'text-blue-600 dark:text-blue-100')}`}>
+                    <verificationBadge.icon className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
                     {verificationBadge.label}
                   </Badge>
                 )}
                 
                 {profileData?.role === 'lawyer' && profileData.lawyer?.lawFirm && (
-                  <p className="text-lg font-medium text-muted-foreground flex items-center justify-center sm:justify-start">
-                    <Building className="h-4 w-4 me-2" />
-                    {profileData.lawyer.lawFirm}
+                  <p className="text-base sm:text-lg font-medium text-muted-foreground flex items-center justify-center sm:justify-start">
+                    <Building className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
+                    <span className="text-sm sm:text-base">{profileData.lawyer.lawFirm}</span>
                   </p>
                 )}
                 
                 {profileData.lawyer?.badgeNumber && (
-                  <p className="text-sm text-muted-foreground flex items-center justify-center sm:justify-start mt-1">
-                    <Shield className="h-4 w-4 me-2" />
+                  <p className="text-xs sm:text-sm text-muted-foreground flex items-center justify-center sm:justify-start mt-1">
+                    <Shield className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
                     License: {profileData.lawyer.badgeNumber}
                   </p>
                 )}
@@ -787,32 +791,32 @@ const UserProfile = () => {
               
               {profileData?.city && profileData?.country && (
                 <div className="flex items-center justify-center sm:justify-start text-muted-foreground mb-4">
-                  <MapPin className="h-4 w-4 me-2" />
-                  <span>{profileData.city}, {profileData.country}</span>
+                  <MapPin className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
+                  <span className="text-sm">{profileData.city}, {profileData.country}</span>
                 </div>
               )}
               
               {/* Contact Information */}
               {profileData?.contacts && profileData.contacts.length > 0 && (
                 <div className="flex items-center justify-center sm:justify-start text-muted-foreground mb-4">
-                  <Phone className="h-4 w-4 me-2" />
-                  <span>{profileData.contacts[0].number}</span>
+                  <Phone className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
+                  <span className="text-sm">{profileData.contacts[0].number}</span>
                 </div>
               )}
               
               {/* Stats */}
-              <div className="grid grid-cols-3 gap-4 mt-6">
-                <div className="text-center p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
-                  <div className="text-2xl font-bold text-blue-600">{connectionsCount}</div>
-                  <div className="text-sm text-muted-foreground">Connections</div>
+              <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-4 sm:mt-6">
+                <div className="text-center p-2 sm:p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
+                  <div className="text-lg sm:text-2xl font-bold text-blue-600 dark:text-blue-400">{connectionsCount}</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground">Connections</div>
                 </div>
-                <div className="text-center p-4 bg-green-50 dark:bg-green-950/20 rounded-lg">
-                  <div className="text-2xl font-bold text-green-600">{profileData?.posts?.length || 0}</div>
-                  <div className="text-sm text-muted-foreground">Posts</div>
+                <div className="text-center p-2 sm:p-4 bg-green-50 dark:bg-green-950/30 rounded-lg">
+                  <div className="text-lg sm:text-2xl font-bold text-green-600 dark:text-green-400">{profileData?.posts?.length || 0}</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground">Posts</div>
                 </div>
-                <div className="text-center p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
-                  <div className="text-2xl font-bold text-purple-600">{profileData?.profileViews || 0}</div>
-                  <div className="text-sm text-muted-foreground">Profile Views</div>
+                <div className="text-center p-2 sm:p-4 bg-purple-50 dark:bg-purple-950/30 rounded-lg">
+                  <div className="text-lg sm:text-2xl font-bold text-purple-600 dark:text-purple-400">{profileData?.profileViews || 0}</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground">Profile Views</div>
                 </div>
               </div>
             </div>
@@ -820,48 +824,48 @@ const UserProfile = () => {
         </Card>
 
         {/* Profile Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-6">
           {/* Main Content */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="about" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="about" className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  <span className="hidden sm:inline">About</span>
+                <TabsTrigger value="about" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                  <Users className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span>About</span>
                 </TabsTrigger>
-                <TabsTrigger value="activity" className="flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4" />
-                  <span className="hidden sm:inline">Activity</span>
+                <TabsTrigger value="activity" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                  <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span>Activity</span>
                 </TabsTrigger>
-                <TabsTrigger value="posts" className="flex items-center gap-2">
-                  <FileText className="h-4 w-4" />
-                  <span className="hidden sm:inline">Posts</span>
+                <TabsTrigger value="posts" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
+                  <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span>Posts</span>
                 </TabsTrigger>
               </TabsList>
               
-              <TabsContent value="about" className="mt-6">
+              <TabsContent value="about" className="mt-3 sm:mt-6">
                 <Card>
-                  <CardHeader>
-                    <h3 className="text-xl font-semibold flex items-center">
-                      <Users className="h-5 w-5 me-2 text-blue-600" />
+                  <CardHeader className="p-3 sm:p-6">
+                    <h3 className="text-lg sm:text-xl font-semibold flex items-center">
+                      <Users className="h-4 w-4 sm:h-5 sm:w-5 me-2 text-blue-600" />
                       About
                     </h3>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-3 sm:space-y-4 p-3 sm:p-6 pt-0">
                     {profileData?.role === 'lawyer' && profileData.lawyer ? (
                       <>
                         {profileData.lawyer.summary && (
-                          <p className="text-muted-foreground leading-relaxed">
+                          <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
                             {profileData.lawyer.summary}
                           </p>
                         )}
                         
                         {profileData.lawyer.legalAreas && (
                           <div>
-                            <h4 className="font-semibold mb-2">Legal Specializations</h4>
-                            <div className="flex flex-wrap gap-2">
+                            <h4 className="font-semibold mb-2 text-sm sm:text-base">Legal Specializations</h4>
+                            <div className="flex flex-wrap gap-1 sm:gap-2">
                               {profileData.lawyer.legalAreas.split(',').map((area, index) => (
-                                <Badge key={index} variant="secondary" className="bg-blue-100 text-blue-800">
+                                <Badge key={index} variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100 text-xs">
                                   {area.trim()}
                                 </Badge>
                               ))}
@@ -871,34 +875,34 @@ const UserProfile = () => {
                         
                         <div className="space-y-2">
                           <div className="flex items-center text-muted-foreground">
-                            <Building className="h-4 w-4 me-2" />
-                            <span>{profileData.lawyer.lawFirm}</span>
+                            <Building className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
+                            <span className="text-sm sm:text-base">{profileData.lawyer.lawFirm}</span>
                           </div>
                           
                           {profileData.lawyer.badgeNumber && (
                             <div className="flex items-center text-muted-foreground">
-                              <Shield className="h-4 w-4 me-2" />
-                              <span>License: {profileData.lawyer.badgeNumber}</span>
+                              <Shield className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
+                              <span className="text-sm sm:text-base">License: {profileData.lawyer.badgeNumber}</span>
                             </div>
                           )}
                           
                           {profileData.lawyer.badgeIssueDate && (
                             <div className="flex items-center text-muted-foreground">
-                              <Calendar className="h-4 w-4 me-2" />
-                              <span>Licensed since: {new Date(profileData.lawyer.badgeIssueDate).toLocaleDateString()}</span>
+                              <Calendar className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
+                              <span className="text-sm sm:text-base">Licensed since: {new Date(profileData.lawyer.badgeIssueDate).toLocaleDateString()}</span>
                             </div>
                           )}
                         </div>
                       </>
                     ) : (
                       <>
-                        <p className="text-muted-foreground">
+                        <p className="text-muted-foreground text-sm sm:text-base">
                           Welcome to my profile! I'm a {profileData?.role} on LegalNet, connecting with legal professionals.
                         </p>
                         {profileData?.interests && (
                           <div>
-                            <h4 className="font-semibold mb-2">Interests</h4>
-                            <p className="text-muted-foreground">{profileData.interests}</p>
+                            <h4 className="font-semibold mb-2 text-sm sm:text-base">Interests</h4>
+                            <p className="text-muted-foreground text-sm sm:text-base">{profileData.interests}</p>
                           </div>
                         )}
                       </>
@@ -907,11 +911,11 @@ const UserProfile = () => {
                 </Card>
               </TabsContent>
               
-              <TabsContent value="activity" className="mt-6">
+              <TabsContent value="activity" className="mt-3 sm:mt-6">
                 <Card>
-                  <CardHeader>
-                    <h3 className="text-xl font-semibold flex items-center">
-                      <TrendingUp className="h-5 w-5 me-2 text-blue-600" />
+                  <CardHeader className="p-3 sm:p-6">
+                    <h3 className="text-lg sm:text-xl font-semibold flex items-center">
+                      <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 me-2 text-blue-600" />
                       Recent Activity
                     </h3>
                   </CardHeader>
@@ -936,15 +940,15 @@ const UserProfile = () => {
                 </Card>
               </TabsContent>
               
-              <TabsContent value="posts" className="mt-6">
+              <TabsContent value="posts" className="mt-3 sm:mt-6">
                 <Card>
-                  <CardHeader>
-                    <h3 className="text-xl font-semibold flex items-center">
-                      <FileText className="h-5 w-5 me-2 text-blue-600" />
+                  <CardHeader className="p-3 sm:p-6">
+                    <h3 className="text-lg sm:text-xl font-semibold flex items-center">
+                      <FileText className="h-4 w-4 sm:h-5 sm:w-5 me-2 text-blue-600" />
                       My Posts ({profileData?.posts?.length || 0})
                     </h3>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-3 sm:p-6 pt-0">
                     {profileData?.posts?.length > 0 ? (
                       <div className="space-y-6">
                         {profileData.posts.map((post) => (
@@ -1277,63 +1281,63 @@ const UserProfile = () => {
           </div>
           
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-3 sm:space-y-6">
             {/* Contact Info */}
             <Card>
-              <CardHeader>
-                <h3 className="text-lg font-semibold flex items-center">
-                  <Mail className="h-5 w-5 me-2 text-blue-600" />
+              <CardHeader className="p-3 sm:p-6">
+                <h3 className="text-base sm:text-lg font-semibold flex items-center">
+                  <Mail className="h-4 w-4 sm:h-5 sm:w-5 me-2 text-blue-600" />
                   Contact Info
                 </h3>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-2 sm:space-y-3 p-3 sm:p-6 pt-0">
                 <div className="flex items-center">
-                  <Mail className="h-4 w-4 text-muted-foreground me-3" />
-                  <span className="text-sm">{profileData?.email}</span>
+                  <Mail className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground me-2 sm:me-3" />
+                  <span className="text-xs sm:text-sm break-all">{profileData?.email}</span>
                 </div>
                 {profileData?.city && profileData?.country && (
                   <div className="flex items-center">
-                    <MapPin className="h-4 w-4 text-muted-foreground me-3" />
-                    <span className="text-sm">{profileData.city}, {profileData.country}</span>
+                    <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground me-2 sm:me-3" />
+                    <span className="text-xs sm:text-sm">{profileData.city}, {profileData.country}</span>
                   </div>
                 )}
                 {profileData?.contacts && profileData.contacts.length > 0 && (
                   <div className="flex items-center">
-                    <Phone className="h-4 w-4 text-muted-foreground me-3" />
-                    <span className="text-sm">{profileData.contacts[0].number}</span>
+                    <Phone className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground me-2 sm:me-3" />
+                    <span className="text-xs sm:text-sm">{profileData.contacts[0].number}</span>
                   </div>
                 )}
                 <div className="flex items-center">
-                  <Calendar className="h-4 w-4 text-muted-foreground me-3" />
-                  <span className="text-sm">Joined {new Date(profileData?.createdAt).toLocaleDateString()}</span>
+                  <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground me-2 sm:me-3" />
+                  <span className="text-xs sm:text-sm">Joined {new Date(profileData?.createdAt).toLocaleDateString()}</span>
                 </div>
               </CardContent>
             </Card>
             
             {/* Quick Actions */}
             <Card>
-              <CardHeader>
-                <h3 className="text-lg font-semibold flex items-center">
-                  <Crown className="h-5 w-5 me-2 text-blue-600" />
+              <CardHeader className="p-3 sm:p-6">
+                <h3 className="text-base sm:text-lg font-semibold flex items-center">
+                  <Crown className="h-4 w-4 sm:h-5 sm:w-5 me-2 text-blue-600" />
                   Quick Actions
                 </h3>
               </CardHeader>
-              <CardContent className="space-y-3">
-                <Button asChild className="w-full">
+              <CardContent className="space-y-2 sm:space-y-3 p-3 sm:p-6 pt-0">
+                <Button asChild className="w-full text-xs sm:text-sm h-8 sm:h-10">
                   <Link href="/">
-                    <FileText className="h-4 w-4 me-2" />
+                    <FileText className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
                     View Feed
                   </Link>
                 </Button>
-                <Button asChild variant="outline" className="w-full">
+                <Button asChild variant="outline" className="w-full text-xs sm:text-sm h-8 sm:h-10">
                   <Link href="/mynetwork">
-                    <Users className="h-4 w-4 me-2" />
+                    <Users className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
                     My Network
                   </Link>
                 </Button>
-                <Button asChild variant="outline" className="w-full">
+                <Button asChild variant="outline" className="w-full text-xs sm:text-sm h-8 sm:h-10">
                   <Link href="/in/edit">
-                    <Edit3 className="h-4 w-4 me-2" />
+                    <Edit3 className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
                     Edit Profile
                   </Link>
                 </Button>
@@ -1343,48 +1347,48 @@ const UserProfile = () => {
             {/* Professional Status - Only for lawyers */}
             {profileData?.role === 'lawyer' && verificationBadge && (
               <Card>
-                <CardHeader>
-                  <h3 className="text-lg font-semibold flex items-center">
-                    <Award className="h-5 w-5 me-2 text-blue-600" />
+                <CardHeader className="p-3 sm:p-6">
+                  <h3 className="text-base sm:text-lg font-semibold flex items-center">
+                    <Award className="h-4 w-4 sm:h-5 sm:w-5 me-2 text-blue-600" />
                     Professional Status
                   </h3>
                 </CardHeader>
-                <CardContent>
-                  <div className={`rounded-xl p-4 border-2 ${verificationBadge.color}`}>
+                <CardContent className="p-3 sm:p-6 pt-0">
+                  <div className={`rounded-xl p-3 sm:p-4 border-2 ${verificationBadge.color.replace('bg-green-100', 'bg-green-100 dark:bg-green-900').replace('text-green-600', 'text-green-600 dark:text-green-100').replace('bg-yellow-100', 'bg-yellow-100 dark:bg-yellow-900').replace('text-yellow-600', 'text-yellow-600 dark:text-yellow-100').replace('bg-blue-100', 'bg-blue-100 dark:bg-blue-900').replace('text-blue-600', 'text-blue-600 dark:text-blue-100')}`}>
                     <div className="flex items-center mb-2">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center me-3 ${verificationBadge.color.replace('text-', 'bg-').replace('bg-', 'bg-').replace('-100', '-600')}`}>
-                        <verificationBadge.icon className="h-5 w-5 text-white" />
+                      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center me-2 sm:me-3 ${verificationBadge.color.replace('text-', 'bg-').replace('bg-', 'bg-').replace('-100', '-600')}`}>
+                        <verificationBadge.icon className="h-3 w-3 sm:h-5 sm:w-5 text-white" />
                       </div>
                       <div>
-                        <h4 className="font-bold">{verificationBadge.label}</h4>
-                        <p className="text-sm opacity-80">Current Status</p>
+                        <h4 className="font-bold text-sm sm:text-base">{verificationBadge.label}</h4>
+                        <p className="text-xs sm:text-sm opacity-80">Current Status</p>
                       </div>
                     </div>
                   </div>
                   
-                  <div className="mt-4 space-y-3">
+                  <div className="mt-3 sm:mt-4 space-y-2 sm:space-y-3">
                     {profileData.lawyer?.badgeNumber && (
-                      <div className="p-3 bg-muted/50 rounded-lg">
-                        <p className="text-sm font-medium">License Number</p>
-                        <p className="text-sm font-mono bg-background px-2 py-1 rounded mt-1">
+                      <div className="p-2 sm:p-3 bg-muted/50 rounded-lg">
+                        <p className="text-xs sm:text-sm font-medium">License Number</p>
+                        <p className="text-xs sm:text-sm font-mono bg-background px-2 py-1 rounded mt-1">
                           {profileData.lawyer.badgeNumber}
                         </p>
                       </div>
                     )}
                     
                     {profileData.lawyer?.badgeIssueDate && (
-                      <div className="p-3 bg-muted/50 rounded-lg">
-                        <p className="text-sm font-medium">License Issue Date</p>
-                        <p className="text-sm bg-background px-2 py-1 rounded mt-1">
+                      <div className="p-2 sm:p-3 bg-muted/50 rounded-lg">
+                        <p className="text-xs sm:text-sm font-medium">License Issue Date</p>
+                        <p className="text-xs sm:text-sm bg-background px-2 py-1 rounded mt-1">
                           {new Date(profileData.lawyer.badgeIssueDate).toLocaleDateString()}
                         </p>
                       </div>
                     )}
                     
                     {profileData.lawyer?.badgeIssuingAuthority && (
-                      <div className="p-3 bg-muted/50 rounded-lg">
-                        <p className="text-sm font-medium">Authority Level</p>
-                        <p className="text-sm bg-background px-2 py-1 rounded mt-1 capitalize">
+                      <div className="p-2 sm:p-3 bg-muted/50 rounded-lg">
+                        <p className="text-xs sm:text-sm font-medium">Authority Level</p>
+                        <p className="text-xs sm:text-sm bg-background px-2 py-1 rounded mt-1 capitalize">
                           {profileData.lawyer.badgeIssuingAuthority}
                         </p>
                       </div>
