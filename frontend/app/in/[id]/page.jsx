@@ -1,5 +1,6 @@
 "use client"
 
+import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { toast } from "sonner"
@@ -36,15 +37,16 @@ import {
   UserPlus,
   UserCheck,
   UserX,
+  Plus,
   Loader2
 } from 'lucide-react'
 
 const ProfilePage = () => {
   const params = useParams()
-  const userId = params.id
-  const [profileData, setProfileData] = useState({})
-  console.log('ProfilePage userId:', profileData);
+  const id = params.id
+  const userId = parseInt(id);
   
+  const [profileData, setProfileData] = useState({})  
   const [loading, setLoading] = useState(true)
   const [showReactionPicker, setShowReactionPicker] = useState(null)
   const [showCommentForm, setShowCommentForm] = useState(null)
@@ -52,12 +54,13 @@ const ProfilePage = () => {
   const [editingCommentId, setEditingCommentId] = useState(null)
   const [editCommentContent, setEditCommentContent] = useState('')
   const [reactionPickerTimeout, setReactionPickerTimeout] = useState(null)
-  const [currentUserId, setCurrentUserId] = useState(null)
+  const [currentUserId, setCurrentUserId] = useState(null)  
   const [currentUser, setCurrentUser] = useState(null)
   const [connectionsCount, setConnectionsCount] = useState(0)
   const [connectionStatus, setConnectionStatus] = useState(null)
   const [connectionId, setConnectionId] = useState(null)
   const [isConnecting, setIsConnecting] = useState(false)
+  const [senderOrReceiver, setSenderOrReceiver] = useState(null) // Add senderOrReceiver state
   
   const reactionEmojis = {
     like: { emoji: '👍', icon: ThumbsUp, label: 'Like' },
@@ -71,7 +74,6 @@ const ProfilePage = () => {
   const fetchProfileData = async () => {
     try {
       setLoading(true)
-      // Use the correct route: router.get('/:id', ProfileController.getProfile)
       const response = await fetch(`http://localhost:3001/in/${userId}`, {
         method: 'GET',
           credentials: 'include',
@@ -81,7 +83,7 @@ const ProfilePage = () => {
         })
       const data = await response.json()
       
-      console.log('Profile data received:', data) // Debug log
+      console.log('Profile data received:', data)
       
       if (data.success) {
         setProfileData(data?.data?.user)
@@ -89,9 +91,11 @@ const ProfilePage = () => {
         setConnectionsCount(data?.data?.connectionsCount)
         setConnectionStatus(data?.data?.connectionStatus || null)
         setConnectionId(data?.data?.connectionId || null)
+        setSenderOrReceiver(data?.data?.senderOrReceiver || null) // Add this line
         
-        console.log('Connection status set to:', data?.data?.connectionStatus) // Debug log
-        console.log('Connection ID set to:', data?.data?.connectionId) // Debug log
+        console.log('Connection status set to:', data?.data?.connectionStatus)
+        console.log('Connection ID set to:', data?.data?.connectionId)
+        console.log('Sender or Receiver:', data?.data?.senderOrReceiver) // Add this line
       } else {
         toast("Error", {
           description: "Failed to load profile"
@@ -429,10 +433,11 @@ const ProfilePage = () => {
 
     setIsConnecting(true)
     
-    console.log('Connection request - Current status:', connectionStatus) // Debug log
-    console.log('Connection request - Connection ID:', connectionId) // Debug log
-    console.log('Connection request - User ID:', userId) // Debug log
-    console.log('Connection request - Current User ID:', currentUserId) // Debug log
+    console.log('Connection request - Current status:', connectionStatus)
+    console.log('Connection request - Connection ID:', connectionId)
+    console.log('Connection request - Profile User ID:', userId)
+    console.log('Connection request - Current User ID:', currentUserId)
+    console.log('Connection request - Sender or Receiver:', senderOrReceiver)
 
     try {
       let response
@@ -440,7 +445,7 @@ const ProfilePage = () => {
       
       if (connectionStatus === null) {
         // Send connection request using userId from URL params
-        console.log('Sending connection request to user:', userId)
+        console.log('Sending connection request to profile user:', userId)
         
         response = await fetch(`http://localhost:3001/mynetwork/connect/${userId}`, {
           method: 'POST',
@@ -451,32 +456,25 @@ const ProfilePage = () => {
         })
         
         const data = await response.json()
-        console.log('Connect response:', data) // Debug log
+        console.log('Connect response:', data)
         
         if (data.success) {
           setConnectionStatus('pending')
           setConnectionId(data.connectionId)
+          setSenderOrReceiver('sender') // I sent the request, so I'm the sender
           successMessage = "Connection request sent successfully!"
         } else {
           throw new Error(data.message || "Failed to send connection request")
         }
         
-      } else if (connectionStatus === 'pending') {
-        // Cancel connection request - make sure connectionId exists and is valid
+      } else if (connectionStatus === 'pending' && senderOrReceiver === 'sender') {
+        // Cancel connection request - I sent the request, so I can cancel it
         if (!connectionId) {
           console.error('No connection ID available for cancellation')
           throw new Error("Connection ID not found. Please refresh the page and try again.")
         }
         
-        console.log('Cancelling connection with ID:', connectionId)
-        console.log('Current user ID:', currentUserId)
-        console.log('Profile user ID:', userId)
-        
-        // Add explicit validation before making the request
-        if (typeof connectionId !== 'number' && typeof connectionId !== 'string') {
-          console.error('Invalid connection ID type:', typeof connectionId, connectionId)
-          throw new Error("Invalid connection ID. Please refresh the page and try again.")
-        }
+        console.log('Cancelling connection request with ID:', connectionId)
         
         response = await fetch(`http://localhost:3001/mynetwork/cancel/${connectionId}`, {
           method: 'POST',
@@ -487,32 +485,45 @@ const ProfilePage = () => {
         })
         
         const data = await response.json()
-        console.log('Cancel response:', data) // Debug log
-        console.log('Cancel response status:', response.status) // Debug log
+        console.log('Cancel response:', data)
         
         if (data.success) {
           setConnectionStatus(null)
           setConnectionId(null)
+          setSenderOrReceiver(null)
           successMessage = "Connection request cancelled successfully!"
         } else {
-          // Log the detailed error for debugging
-          console.error('Cancel connection failed - Full response:', {
-            status: response.status,
-            data: data,
-            connectionId: connectionId,
-            url: `http://localhost:3001/mynetwork/cancel/${connectionId}`
-          })
-          
-          // More specific error handling
-          if (data.message && data.message.includes("not found")) {
-            // The connection might have been cancelled by the other user or expired
-            // Reset the state and refresh
-            setConnectionStatus(null)
-            setConnectionId(null)
-            throw new Error("This connection request is no longer available. The page will refresh.")
-          } else {
-            throw new Error(data.message || "Failed to cancel connection request")
+          console.error('Cancel connection failed:', data)
+          throw new Error(data.message || "Failed to cancel connection request")
+        }
+        
+      } else if (connectionStatus === 'pending' && senderOrReceiver === 'receiver') {
+        // Accept connection request - I received the request, so I can accept it
+        if (!connectionId) {
+          console.error('No connection ID available for accepting')
+          throw new Error("Connection ID not found. Please refresh the page and try again.")
+        }
+        
+        console.log('Accepting connection request with ID:', connectionId)
+        
+        response = await fetch(`http://localhost:3001/mynetwork/accept/${connectionId}`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
           }
+        })
+        
+        const data = await response.json()
+        console.log('Accept response:', data)
+        
+        if (data.success) {
+          setConnectionStatus('accepted')
+          setSenderOrReceiver(null) // Clear since it's now accepted
+          successMessage = "Connection request accepted successfully!"
+        } else {
+          console.error('Accept connection failed:', data)
+          throw new Error(data.message || "Failed to accept connection request")
         }
       }
       
@@ -526,13 +537,12 @@ const ProfilePage = () => {
         description: error.message || "An error occurred with the connection request"
       })
       
-      // If there's an error with canceling, refresh the profile data to get current status
+      // If there's an error, refresh the profile data to get current status
       if (connectionStatus === 'pending') {
         console.log('Refreshing profile data due to error...')
-        // Add a small delay before refreshing to prevent race conditions
         setTimeout(() => {
           fetchProfileData()
-        }, 1000)
+        }, 1500)
       }
     } finally {
       setIsConnecting(false)
@@ -546,16 +556,21 @@ const ProfilePage = () => {
     }
 
     const getButtonConfig = () => {
-      switch (connectionStatus) {
-        case 'accepted':
-          return {
-            text: 'Friends',
-            icon: UserCheck,
-            variant: 'default',
-            className: 'bg-green-600 hover:bg-green-700 text-white',
-            disabled: true
-          }
-        case 'pending':
+      // If connection is accepted
+      if (connectionStatus === 'accepted') {
+        return {
+          text: 'Friends',
+          icon: UserCheck,
+          variant: 'default',
+          className: 'bg-green-600 hover:bg-green-700 text-white',
+          disabled: true
+        }
+      }
+      
+      // If connection is pending
+      if (connectionStatus === 'pending') {
+        if (senderOrReceiver === 'sender') {
+          // I sent the request - show Cancel button
           return {
             text: isConnecting ? 'Cancelling...' : 'Cancel Request',
             icon: isConnecting ? Loader2 : UserX,
@@ -563,14 +578,25 @@ const ProfilePage = () => {
             className: 'border-red-500 text-red-600 hover:bg-red-50 hover:text-red-700',
             disabled: isConnecting
           }
-        default:
+        } else if (senderOrReceiver === 'receiver') {
+          // I received the request - show Accept button
           return {
-            text: isConnecting ? 'Connecting...' : 'Connect',
-            icon: isConnecting ? Loader2 : UserPlus,
+            text: isConnecting ? 'Accepting...' : 'Accept Request',
+            icon: isConnecting ? Loader2 : UserCheck,
             variant: 'default',
-            className: 'bg-blue-600 hover:bg-blue-700',
+            className: 'bg-green-600 hover:bg-green-700 text-white',
             disabled: isConnecting
           }
+        }
+      }
+      
+      // No connection - show Connect button
+      return {
+        text: isConnecting ? 'Connecting...' : 'Connect',
+        icon: isConnecting ? Loader2 : UserPlus,
+        variant: 'default',
+        className: 'bg-blue-600 hover:bg-blue-700',
+        disabled: isConnecting
       }
     }
 
@@ -647,56 +673,68 @@ const ProfilePage = () => {
                 </Avatar>
               </div>
               
-              {/* Profile Info and Action Buttons */}
-              <div className="flex-1 text-center sm:text-start">
-                <div className="mb-4">
-                  <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
-                    {getUserDisplayName()}
-                  </h1>
-                  
-                  {verificationBadge && (
-                    <Badge variant="secondary" className={`text-sm ${verificationBadge.color} mb-2`}>
-                      <verificationBadge.icon className="h-4 w-4 me-2" />
-                      {verificationBadge.label}
-                    </Badge>
-                  )}
-                  
-                  {profileData?.role === 'lawyer' && profileData.lawyer?.lawFirm && (
-                    <p className="text-lg font-medium text-muted-foreground flex items-center justify-center sm:justify-start">
-                      <Building className="h-4 w-4 me-2" />
-                      {profileData.lawyer.lawFirm}
-                    </p>
-                  )}
-                  
-                  {profileData?.lawyer?.badgeNumber && (
-                    <p className="text-sm text-muted-foreground flex items-center justify-center sm:justify-start mt-1">
-                      <Shield className="h-4 w-4 me-2" />
-                      License: {profileData.lawyer.badgeNumber}
-                    </p>
-                  )}
-                </div>
-                
-                {profileData?.city && profileData?.country && (
-                  <div className="flex items-center justify-center sm:justify-start text-muted-foreground mb-4">
-                    <MapPin className="h-4 w-4 me-2" />
-                    <span>{profileData.city}, {profileData.country}</span>
+              {/* Profile Info and Connection Button Container */}
+              <div className="flex-1 flex flex-col sm:flex-row sm:items-start sm:justify-between text-center sm:text-start">
+                {/* Left Side - Profile Info */}
+                <div className="flex-1">
+                  <div className="mb-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between sm:mb-2">
+                      <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 sm:mb-0">
+                        {getUserDisplayName()}
+                      </h1>
+                      
+                      {/* Connection Button - Desktop (next to name) */}
+                      <div className="hidden sm:block">
+                        {getConnectionButton()}
+                      </div>
+                    </div>
+                    
+                    {verificationBadge && (
+                      <Badge variant="secondary" className={`text-sm ${verificationBadge.color} mb-2`}>
+                        <verificationBadge.icon className="h-4 w-4 me-2" />
+                        {verificationBadge.label}
+                      </Badge>
+                    )}
+                    
+                    {profileData?.role === 'lawyer' && profileData.lawyer?.lawFirm && (
+                      <p className="text-lg font-medium text-muted-foreground flex items-center justify-center sm:justify-start">
+                        <Building className="h-4 w-4 me-2" />
+                        {profileData.lawyer.lawFirm}
+                      </p>
+                    )}
+                    
+                    {profileData?.lawyer?.badgeNumber && (
+                      <p className="text-sm text-muted-foreground flex items-center justify-center sm:justify-start mt-1">
+                        <Shield className="h-4 w-4 me-2" />
+                        License: {profileData.lawyer.badgeNumber}
+                      </p>
+                    )}
                   </div>
-                )}
-                
-                {/* Contact Information */}
-                {profileData?.contacts && profileData.contacts.length > 0 && (
-                  <div className="flex items-center justify-center sm:justify-start text-muted-foreground mb-4">
-                    <Phone className="h-4 w-4 me-2" />
-                    <span>{profileData.contacts[0].number}</span>
-                  </div>
-                )}
+                  
+                  {profileData?.city && profileData?.country && (
+                    <div className="flex items-center justify-center sm:justify-start text-muted-foreground mb-4">
+                      <MapPin className="h-4 w-4 me-2" />
+                      <span>{profileData.city}, {profileData.country}</span>
+                    </div>
+                  )}
+                  
+                  {/* Contact Information */}
+                  {profileData?.contacts && profileData.contacts.length > 0 && (
+                    <div className="flex items-center justify-center sm:justify-start text-muted-foreground mb-4">
+                      <Phone className="h-4 w-4 me-2" />
+                      <span>{profileData.contacts[0].number}</span>
+                    </div>
+                  )}
 
-                {/* Action Buttons Section */}
-                <div className="flex justify-center sm:justify-start mb-6">
-                  <div className="flex flex-col sm:flex-row gap-2">
+                  {/* Connection Button - Mobile (below contact info) */}
+                  <div className="flex justify-center sm:hidden mb-6">
                     {getConnectionButton()}
-                    {currentUserId === userId && (
-                      <>
+                  </div>
+
+                  {/* Edit Profile Buttons - Mobile */}
+                  {currentUserId === userId && (
+                    <div className="flex justify-center sm:hidden mb-6">
+                      <div className="flex flex-col gap-2">
                         <Button asChild>
                           <Link href="/in/edit">
                             <Edit3 className="h-4 w-4 me-2" />
@@ -707,26 +745,42 @@ const ProfilePage = () => {
                           <Plus className="h-4 w-4 me-2" />
                           Add Section
                         </Button>
-                      </>
-                    )}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Stats */}
+                  <div className="grid grid-cols-3 gap-4 mt-6">
+                    <div className="text-center p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-600">{connectionsCount || 0}</div>
+                      <div className="text-sm text-muted-foreground">Connections</div>
+                    </div>
+                    <div className="text-center p-4 bg-green-50 dark:bg-green-950/20 rounded-lg">
+                      <div className="text-2xl font-bold text-green-600">{profileData?.posts?.length || 0}</div>
+                      <div className="text-sm text-muted-foreground">Posts</div>
+                    </div>
+                    <div className="text-center p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
+                      <div className="text-2xl font-bold text-purple-600">{profileData?.profileViews || 0}</div>
+                      <div className="text-sm text-muted-foreground">Profile Views</div>
+                    </div>
                   </div>
                 </div>
-                
-                {/* Stats */}
-                <div className="grid grid-cols-3 gap-4 mt-6">
-                  <div className="text-center p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
-                    <div className="text-2xl font-bold text-blue-600">{connectionsCount || 0}</div>
-                    <div className="text-sm text-muted-foreground">Connections</div>
+
+                {/* Right Side - Edit Profile Buttons (Desktop only) */}
+                {currentUserId === userId && (
+                  <div className="hidden sm:flex gap-2 sm:ml-6">
+                    <Button asChild>
+                      <Link href="/in/edit">
+                        <Edit3 className="h-4 w-4 me-2" />
+                        Edit Profile
+                      </Link>
+                    </Button>
+                    <Button variant="outline">
+                      <Plus className="h-4 w-4 me-2" />
+                      Add Section
+                    </Button>
                   </div>
-                  <div className="text-center p-4 bg-green-50 dark:bg-green-950/20 rounded-lg">
-                    <div className="text-2xl font-bold text-green-600">{profileData?.posts?.length || 0}</div>
-                    <div className="text-sm text-muted-foreground">Posts</div>
-                  </div>
-                  <div className="text-center p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
-                    <div className="text-2xl font-bold text-purple-600">{profileData?.profileViews || 0}</div>
-                    <div className="text-sm text-muted-foreground">Profile Views</div>
-                  </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
@@ -904,6 +958,22 @@ const ProfilePage = () => {
                                         )}
                                       </div>
                                     ))}
+
+                                    {/* Show "See More" button if there are more than 4 photos */}
+                                    {post.post_photos.length > 4 && (
+                                      <div className="col-span-2 text-center">
+                                        <Button
+                                          variant="outline"
+                                          className="w-full"
+                                          onClick={() => {
+                                            // Open a modal or navigate to a new page to show all photos
+                                            console.log('Show all photos for post:', post.id);
+                                          }}
+                                        >
+                                          See all photos
+                                        </Button>
+                                      </div>
+                                    )}
                                   </div>
                                 )}
                               </div>
@@ -1124,12 +1194,44 @@ const ProfilePage = () => {
                                         </div>
                                       </div>
                                     ))}
+
+                                    {/* Show "Load more comments" button if there are more than 3 comments */}
+                                    {post.comments.length > 3 && (
+                                      <div className="text-center">
+                                        <Button
+                                          variant="outline"
+                                          className="mt-2"
+                                          onClick={() => {
+                                            // Load more comments logic
+                                            console.log('Load more comments for post:', post.id);
+                                          }}
+                                        >
+                                          Load more comments
+                                        </Button>
+                                      </div>
+                                    )}
                                   </div>
                                 </div>
                               </div>
                             )}
                           </div>
                         ))}
+
+                        {/* Show "Load more posts" button if there are more than 3 posts */}
+                        {profileData.posts.length > 3 && (
+                          <div className="text-center">
+                            <Button
+                              variant="outline"
+                              className="mt-4"
+                              onClick={() => {
+                                // Load more posts logic
+                                console.log('Load more posts');
+                              }}
+                            >
+                              Load more posts
+                            </Button>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <div className="text-center py-8">
@@ -1296,26 +1398,6 @@ const ProfilePage = () => {
           </div>
         </div>
         
-        {/* Action Buttons */}
-        <div className="mt-4 sm:mt-16 flex justify-center sm:justify-end">
-          <div className="flex flex-col sm:flex-row gap-2">
-            {getConnectionButton()}
-            {currentUserId === userId && (
-              <>
-                <Button asChild>
-                  <Link href="/in/edit">
-                    <Edit3 className="h-4 w-4 me-2" />
-                    Edit Profile
-                  </Link>
-                </Button>
-                <Button variant="outline">
-                  <Plus className="h-4 w-4 me-2" />
-                  Add Section
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
       </div>
     </div>
   )

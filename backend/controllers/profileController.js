@@ -139,8 +139,9 @@ exports.getProfile = async (req, res) => {
         // Check if logged-in user has a connection with this profile
         let connectionStatus = null;
         let connectionId = null;
+        let senderOrReceiver = null;
         
-        if (loggedInUserId && loggedInUserId !== userId) {
+        if (loggedInUserId && loggedInUserId !== parseInt(userId)) {
             const connection = await Connection.findOne({
                 where: {
                     [Op.or]: [
@@ -153,7 +154,15 @@ exports.getProfile = async (req, res) => {
             if (connection) {
                 connectionStatus = connection.status;
                 connectionId = connection.id;
-            }
+                
+                // Determine if logged-in user is sender or receiver
+                if (connection.requester_id === loggedInUserId) {
+                    senderOrReceiver = 'sender'; // Logged-in user sent the request
+                } else {
+                    senderOrReceiver = 'receiver'; // Logged-in user received the request
+                }
+
+            } 
         }
 
         res.status(200).json({success: true, data :{
@@ -161,6 +170,7 @@ exports.getProfile = async (req, res) => {
             loggedInUserId: loggedInUserId,
             connectionStatus: connectionStatus,
             connectionId: connectionId,
+            senderOrReceiver: senderOrReceiver, 
             connectionsCount: connectionsCount
         }});
 
