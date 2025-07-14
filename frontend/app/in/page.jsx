@@ -46,10 +46,12 @@ import Link from 'next/link'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import PostCard from '../../components/feed/PostCard'
 
 const UserProfile = () => {
   const [profileData, setProfileData] = useState(null)
-  const [post, setPost] = useState(null);
+  console.log('profile: ', profileData);
+  
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [connectionsCount, setConnectionsCount] = useState(0)
@@ -63,8 +65,14 @@ const UserProfile = () => {
   const [showComments, setShowComments] = useState(null)
   const [editingCommentId, setEditingCommentId] = useState(null)
   const [editCommentContent, setEditCommentContent] = useState('')
-
+  const [showCreatePost, setShowCreatePost] = useState(false)
+  const [allLawyers, setAllLawyers] = useState([])
+  const [visibleLawyers, setVisibleLawyers] = useState([])
+  const [hiddenLawyers, setHiddenLawyers] = useState([])
+  const [lawyersLoading, setLawyersLoading] = useState(true)
   
+  const [posts, setPosts] = useState([])
+
   const fetchUserProfile = async () => {
     setLoading(true)
     setError(null)
@@ -92,8 +100,51 @@ const UserProfile = () => {
     }
   }
 
+  const fetchSuggestedLawyers = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/mynetwork/suggested-lawyers', {
+        method: 'GET',
+        credentials: 'include'
+      })
+      const data = await response.json()
+      
+      if (data.success && data.lawyers) {
+        const lawyers = data.lawyers
+        setAllLawyers(lawyers)
+        setVisibleLawyers(lawyers.slice(0, 3))
+        setHiddenLawyers(lawyers.slice(3))
+      }
+    } catch (error) {
+      console.error('Error fetching suggested lawyers:', error)
+    } finally {
+      setLawyersLoading(false)
+    }
+  }
+
+  // Add function to fetch posts from feed
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/feed?page=1', {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      const data = await response.json()
+      
+      if (data.success) {
+        setPosts(data.posts || [])
+      }
+    } catch (error) {
+      console.error('Error fetching posts:', error)
+    }
+  }
+
   useEffect(()=>{
     fetchUserProfile();
+    fetchSuggestedLawyers();
+    fetchPosts(); // Add this to fetch posts
   },[])
 
   const getUserInitials = () => {
@@ -507,57 +558,32 @@ const UserProfile = () => {
     }
   }
 
+  const handlePostUpdate = (updatedPost, deletedPostId = null) => {
+    if (deletedPostId) {
+      setPosts(prev => prev.filter(post => post.id !== deletedPostId))
+    } else if (updatedPost) {
+      setPosts(prev => prev.map(post => 
+        post.id === updatedPost.id ? updatedPost : post
+      ))
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="max-w-6xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
-          {/* Profile Header Skeleton */}
-          <Card className="mb-4 sm:mb-6 overflow-hidden">
-            <div className="h-24 sm:h-32 md:h-48 bg-gradient-to-r from-blue-600 to-indigo-600 relative animate-pulse"></div>
-            <CardContent className="p-3 sm:p-6">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start -mt-8 sm:-mt-12 md:-mt-16 mb-4 sm:mb-6">
-                <div className="relative self-center sm:self-start">
-                  <div className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 rounded-full border-2 sm:border-4 border-white bg-muted animate-pulse"></div>
-                </div>
-                <div className="mt-3 sm:mt-4 md:mt-16 flex justify-center sm:justify-end space-x-2">
-                  <div className="w-20 h-8 sm:w-24 sm:h-10 bg-muted rounded-md animate-pulse"></div>
-                  <div className="w-20 h-8 sm:w-24 sm:h-10 bg-muted rounded-md animate-pulse"></div>
-                </div>
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3">
+              <div className="animate-pulse space-y-6">
+                <div className="h-64 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg"></div>
+                <div className="h-48 bg-muted rounded-lg"></div>
+                <div className="h-64 bg-muted rounded-lg"></div>
               </div>
-              <div className="space-y-2 sm:space-y-3 text-center sm:text-start">
-                <div className="h-5 sm:h-6 bg-muted rounded w-1/2 sm:w-1/3 mx-auto sm:mx-0 animate-pulse"></div>
-                <div className="h-3 sm:h-4 bg-muted rounded w-2/3 sm:w-1/2 mx-auto sm:mx-0 animate-pulse"></div>
-                <div className="h-3 sm:h-4 bg-muted rounded w-1/2 sm:w-1/4 mx-auto sm:mx-0 animate-pulse"></div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Content Skeleton */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-6">
-            <div className="lg:col-span-2 space-y-3 sm:space-y-6">
-              {[1, 2, 3].map((i) => (
-                <Card key={i}>
-                  <CardContent className="p-3 sm:p-6 space-y-3 sm:space-y-4">
-                    <div className="h-3 sm:h-4 bg-muted rounded w-1/3 sm:w-1/4 animate-pulse"></div>
-                    <div className="space-y-2">
-                      <div className="h-3 sm:h-4 bg-muted rounded animate-pulse"></div>
-                      <div className="h-3 sm:h-4 bg-muted rounded w-5/6 animate-pulse"></div>
-                      <div className="h-3 sm:h-4 bg-muted rounded w-4/6 animate-pulse"></div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
             </div>
-            <div className="space-y-3 sm:space-y-6">
-              {[1, 2].map((i) => (
-                <Card key={i}>
-                  <CardContent className="p-3 sm:p-6 space-y-3 sm:space-y-4">
-                    <div className="h-3 sm:h-4 bg-muted rounded w-1/2 sm:w-1/3 animate-pulse"></div>
-                    <div className="h-3 sm:h-4 bg-muted rounded w-3/4 sm:w-2/3 animate-pulse"></div>
-                    <div className="h-3 sm:h-4 bg-muted rounded w-2/3 sm:w-1/2 animate-pulse"></div>
-                  </CardContent>
-                </Card>
-              ))}
+            <div className="lg:col-span-1">
+              <div className="animate-pulse space-y-4">
+                <div className="h-64 bg-muted rounded-lg"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -569,11 +595,11 @@ const UserProfile = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
-          <CardContent className="p-4 sm:p-6 text-center">
-            <XCircle className="h-10 w-10 sm:h-12 sm:w-12 text-red-500 mx-auto mb-3 sm:mb-4" />
-            <h3 className="text-base sm:text-lg font-semibold mb-2">Error Loading Profile</h3>
-            <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">{error}</p>
-            <Button onClick={fetchUserProfile} className="w-full sm:w-auto">Try Again</Button>
+          <CardContent className="p-6 text-center">
+            <XCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Error Loading Profile</h3>
+            <p className="text-muted-foreground mb-4">{error}</p>
+            <Button onClick={fetchUserProfile}>Try Again</Button>
           </CardContent>
         </Card>
       </div>
@@ -584,11 +610,11 @@ const UserProfile = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
-          <CardContent className="p-4 sm:p-6 text-center">
-            <AlertTriangle className="h-10 w-10 sm:h-12 sm:w-12 text-yellow-500 mx-auto mb-3 sm:mb-4" />
-            <h3 className="text-base sm:text-lg font-semibold mb-2">Profile Not Found</h3>
-            <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4">Unable to load your profile data</p>
-            <Button onClick={fetchUserProfile} className="w-full sm:w-auto">Retry</Button>
+          <CardContent className="p-6 text-center">
+            <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Profile Not Found</h3>
+            <p className="text-muted-foreground mb-4">Unable to load your profile data</p>
+            <Button onClick={fetchUserProfile}>Retry</Button>
           </CardContent>
         </Card>
       </div>
@@ -599,804 +625,507 @@ const UserProfile = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
-        {/* Profile Header */}
-        <Card className="mb-4 sm:mb-6 overflow-hidden py-0">
-          {/* Cover Photo */}
-          <div className="h-24 sm:h-32 md:h-48 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 relative">
-            <div className="absolute top-2 sm:top-4 end-2 sm:end-4">
-              <Button variant="secondary" size="sm" className="bg-white/20 hover:bg-white/30 text-white border-white/20 h-8 w-8 sm:h-auto sm:w-auto p-1 sm:p-2">
-                <Camera className="h-3 w-3 sm:h-4 sm:w-4" />
-                <span className="hidden sm:inline ml-2">Edit Cover</span>
-              </Button>
-            </div>
-          </div>
-          
-          <CardContent className="p-3 sm:p-6">
-            {/* Profile Photo & Actions */}
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start -mt-8 sm:-mt-12 md:-mt-16 mb-4 sm:mb-6">
-              <div className="relative self-center sm:self-start">
-                <Avatar className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 border-2 sm:border-4 border-white shadow-lg">
-                  <AvatarImage src={profileData?.profile_image?.imagePath || profileData?.profilePicture} alt={getUserDisplayName()} />
-                  <AvatarFallback className="bg-blue-600 text-white text-lg sm:text-xl md:text-2xl">
-                    {getUserInitials()}
-                  </AvatarFallback>
-                </Avatar>
-                <Dialog open={showImageUpload} onOpenChange={setShowImageUpload}>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      className="absolute bottom-0 end-0 rounded-full w-6 h-6 sm:w-8 sm:h-8 p-0 bg-white border border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700"
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Main Left Side */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* Profile Header Section */}
+            <Card className="overflow-hidden border border-border">
+              {/* Cover Image */}
+              <div className="h-64 bg-gradient-to-r from-blue-600 to-indigo-600 relative">
+                <Button 
+                  variant="secondary" 
+                  size="sm" 
+                  className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 text-white border-white/20 dark:bg-black/20 dark:hover:bg-black/30"
+                >
+                  <Camera className="h-4 w-4 mr-2" />
+                  Edit Cover
+                </Button>
+              </div>
+              
+              <CardContent className="p-6">
+                <div className="flex justify-between items-start">
+                  {/* Left Side - Profile Info */}
+                  <div className="flex-1">
+                    {/* Profile Image */}
+                    <div className="relative -mt-16 mb-6">
+                      <Avatar className="w-32 h-32 border-4 border-background shadow-lg">
+                        <AvatarImage src={profileData?.profile_image?.imagePath || profileData?.profilePicture} alt={getUserDisplayName()} />
+                        <AvatarFallback className="bg-blue-600 text-white text-2xl font-bold">
+                          {getUserInitials()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <Dialog open={showImageUpload} onOpenChange={setShowImageUpload}>
+                        <DialogTrigger asChild>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            className="absolute bottom-0 right-0 rounded-full w-8 h-8 p-0 bg-white border-2 border-white shadow-md hover:bg-gray-50"
+                          >
+                            <Camera className="h-4 w-4 text-gray-600" />
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-md">
+                          <DialogHeader>
+                            <DialogTitle className="flex items-center">
+                              <Camera className="h-5 w-5 me-2 text-blue-600" />
+                              Update Profile Picture
+                            </DialogTitle>
+                          </DialogHeader>
+                          
+                          <div className="space-y-4">
+                            {/* Current Profile Picture */}
+                            <div className="text-center">
+                              <div className="relative inline-block">
+                                <Avatar className="w-24 h-24 mx-auto border-4 border-gray-200">
+                                  <AvatarImage 
+                                    src={imagePreview || profileData?.profilePicture} 
+                                    alt="Profile Preview" 
+                                  />
+                                  <AvatarFallback className="bg-blue-600 text-white text-xl">
+                                    {getUserInitials()}
+                                  </AvatarFallback>
+                                </Avatar>
+                                {imagePreview && (
+                                  <div className="absolute -top-2 -right-2">
+                                    <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
+                                      New
+                                    </Badge>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* File Input */}
+                            <div className="space-y-2">
+                              <Label htmlFor="profile-upload">Choose New Picture</Label>
+                              <Input
+                                id="profile-upload"
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageFileSelect}
+                                disabled={uploadingImage}
+                                className="cursor-pointer"
+                              />
+                              <p className="text-xs text-muted-foreground">
+                                Supported formats: JPG, PNG, GIF. Max size: 5MB
+                              </p>
+                            </div>
+
+                            {/* Selected File Info */}
+                            {selectedImageFile && (
+                              <div className="bg-blue-50 rounded-lg p-3">
+                                <div className="flex items-center justify-between">
+                                  <div>
+                                    <p className="text-sm font-medium text-blue-900">
+                                      {selectedImageFile.name}
+                                    </p>
+                                    <p className="text-xs text-blue-600">
+                                      {(selectedImageFile.size / 1024 / 1024).toFixed(2)} MB
+                                    </p>
+                                  </div>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                      setSelectedImageFile(null)
+                                      setImagePreview(null)
+                                      const fileInput = document.getElementById('profile-upload')
+                                      if (fileInput) fileInput.value = ''
+                                    }}
+                                    disabled={uploadingImage}
+                                    className="h-8 w-8 p-0"
+                                  >
+                                    <X className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Action Buttons */}
+                            <div className="flex gap-2 pt-4">
+                              <Button 
+                                onClick={handleImageUpload}
+                                disabled={!selectedImageFile || uploadingImage}
+                                className="flex-1"
+                              >
+                                {uploadingImage ? (
+                                  <>
+                                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                    Uploading...
+                                  </>
+                                ) : (
+                                  <>
+                                    <Camera className="h-4 w-4 mr-2" />
+                                    Update Picture
+                                  </>
+                                )}
+                              </Button>
+                              <Button 
+                                variant="outline" 
+                                onClick={cancelImageUpload}
+                                disabled={uploadingImage}
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
+                    
+                    {/* Name and Badge */}
+                    <div className="flex items-center gap-3 mb-2">
+                      <h1 className="text-3xl font-bold text-foreground">
+                        {getUserDisplayName()}
+                      </h1>
+                      {profileData?.role === 'lawyer' && profileData.lawyer?.badgeIssuingAuthority && (
+                        <Badge variant="secondary" className="text-sm font-medium bg-muted text-foreground">
+                          {profileData.lawyer.badgeIssuingAuthority}
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    {/* Location */}
+                    {profileData?.city && profileData?.country && (
+                      <div className="flex items-center text-muted-foreground mb-3">
+                        <MapPin className="h-4 w-4 mr-2" />
+                        <span>{profileData.city}, {profileData.country}</span>
+                      </div>
+                    )}
+                    
+                    {/* Connections Link */}
+                    <Link 
+                      href="/mynetwork" 
+                      className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium"
                     >
-                      <Camera className="h-3 w-3 sm:h-4 sm:w-4" />
+                      {connectionsCount || 0} connections
+                    </Link>
+                  </div>
+                  
+                  {/* Right Side - Edit Button */}
+                  <div className="flex items-center gap-2">
+                    <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
+                      <Link href="/in/edit">
+                        <Edit3 className="h-4 w-4 mr-2" />
+                        Edit Profile
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* About Section */}
+            <Card className="border border-border">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <h2 className="text-xl font-semibold text-foreground">About</h2>
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                  <Edit3 className="h-4 w-4" />
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {profileData?.role === 'lawyer' && profileData.lawyer?.summary ? (
+                  <p className="text-muted-foreground leading-relaxed">
+                    {profileData.lawyer.summary}
+                  </p>
+                ) : (
+                  <p className="text-muted-foreground leading-relaxed">
+                    Welcome to my profile! I'm a {profileData?.role === 'admin' ? 'Administrator' : 'Member'} on LegalNet.
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Activity Section */}
+            <Card className="border border-border">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <h2 className="text-xl font-semibold text-foreground">Activity</h2>
+                <Dialog open={showCreatePost} onOpenChange={setShowCreatePost}>
+                  <DialogTrigger asChild>
+                    <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create Post
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-md mx-2">
+                  <DialogContent className="sm:max-w-md bg-background border border-border">
                     <DialogHeader>
-                      <DialogTitle className="flex items-center text-base sm:text-lg">
-                        <Camera className="h-4 w-4 sm:h-5 sm:w-5 me-2 text-blue-600" />
-                        Update Profile Picture
-                      </DialogTitle>
+                      <DialogTitle className="text-foreground">Create a new post</DialogTitle>
                     </DialogHeader>
-                    
                     <div className="space-y-4">
-                      {/* Current Profile Picture */}
-                      <div className="text-center">
-                        <div className="relative inline-block">
-                          <Avatar className="w-20 h-20 sm:w-24 sm:h-24 mx-auto border-4 border-gray-200 dark:border-gray-700">
-                            <AvatarImage 
-                              src={imagePreview || profileData?.profilePicture} 
-                              alt="Profile Preview" 
-                            />
-                            <AvatarFallback className="bg-blue-600 text-white text-lg sm:text-xl">
-                              {getUserInitials()}
-                            </AvatarFallback>
-                          </Avatar>
-                          {imagePreview && (
-                            <div className="absolute -top-2 -right-2">
-                              <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100 text-xs">
-                                New
-                              </Badge>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* File Input */}
-                      <div className="space-y-2">
-                        <Label htmlFor="profile-upload" className="text-sm">Choose New Picture</Label>
-                        <Input
-                          id="profile-upload"
-                          type="file"
-                          accept="image/*"
-                          onChange={handleImageFileSelect}
-                          disabled={uploadingImage}
-                          className="cursor-pointer text-sm"
-                        />
-                        <p className="text-xs text-muted-foreground">
-                          Supported formats: JPG, PNG, GIF. Max size: 5MB
-                        </p>
-                      </div>
-
-                      {/* Selected File Info */}
-                      {selectedImageFile && (
-                        <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
-                                {selectedImageFile.name}
-                              </p>
-                              <p className="text-xs text-blue-600 dark:text-blue-300">
-                                {(selectedImageFile.size / 1024 / 1024).toFixed(2)} MB
-                              </p>
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                setSelectedImageFile(null)
-                                setImagePreview(null)
-                                const fileInput = document.getElementById('profile-upload')
-                                if (fileInput) fileInput.value = ''
-                              }}
-                              disabled={uploadingImage}
-                              className="h-8 w-8 p-0"
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Action Buttons */}
-                      <div className="flex gap-2 pt-4">
-                        <Button 
-                          onClick={handleImageUpload}
-                          disabled={!selectedImageFile || uploadingImage}
-                          className="flex-1 text-sm"
-                        >
-                          {uploadingImage ? (
-                            <>
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                              Uploading...
-                            </>
-                          ) : (
-                            <>
-                              <Camera className="h-4 w-4 mr-2" />
-                              Update Picture
-                            </>
-                          )}
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          onClick={cancelImageUpload}
-                          disabled={uploadingImage}
-                          className="text-sm"
-                        >
+                      <Input placeholder="Post title..." className="bg-background border-input text-foreground" />
+                      <Textarea placeholder="What's on your mind?" rows={4} className="bg-background border-input text-foreground" />
+                      <div className="flex justify-end space-x-2">
+                        <Button variant="outline" onClick={() => setShowCreatePost(false)} className="border-input text-foreground hover:bg-muted">
                           Cancel
                         </Button>
+                        <Button className="bg-primary text-primary-foreground hover:bg-primary/90">Post</Button>
                       </div>
                     </div>
                   </DialogContent>
                 </Dialog>
-              </div>
-              
-              {/* Action Buttons */}
-              <div className="mt-3 sm:mt-4 md:mt-16 flex justify-center sm:justify-end">
-                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                  <Button asChild className="text-sm">
-                    <Link href="/in/edit">
-                      <Edit3 className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                      Edit Profile
-                    </Link>
-                  </Button>
-                  <Button variant="outline" className="text-sm">
-                    <Plus className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                    <span className="hidden sm:inline">Add Section</span>
-                    <span className="sm:hidden">Add</span>
-                  </Button>
-                </div>
-              </div>
-            </div>
-            
-            {/* Profile Info */}
-            <div className="text-center sm:text-start">
-              <div className="mb-4">
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-2">
-                  {getUserDisplayName()}
-                </h1>
-                
-                {verificationBadge && (
-                  <Badge variant="secondary" className={`text-xs sm:text-sm mb-2 ${verificationBadge.color.replace('bg-green-100', 'bg-green-100 dark:bg-green-900').replace('text-green-600', 'text-green-600 dark:text-green-100').replace('bg-yellow-100', 'bg-yellow-100 dark:bg-yellow-900').replace('text-yellow-600', 'text-yellow-600 dark:text-yellow-100').replace('bg-blue-100', 'bg-blue-100 dark:bg-blue-900').replace('text-blue-600', 'text-blue-600 dark:text-blue-100')}`}>
-                    <verificationBadge.icon className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                    {verificationBadge.label}
-                  </Badge>
-                )}
-                
-                {profileData?.role === 'lawyer' && profileData.lawyer?.lawFirm && (
-                  <p className="text-base sm:text-lg font-medium text-muted-foreground flex items-center justify-center sm:justify-start">
-                    <Building className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                    <span className="text-sm sm:text-base">{profileData.lawyer.lawFirm}</span>
-                  </p>
-                )}
-                
-                {profileData.lawyer?.badgeNumber && (
-                  <p className="text-xs sm:text-sm text-muted-foreground flex items-center justify-center sm:justify-start mt-1">
-                    <Shield className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                    License: {profileData.lawyer.badgeNumber}
-                  </p>
-                )}
-              </div>
-              
-              {profileData?.city && profileData?.country && (
-                <div className="flex items-center justify-center sm:justify-start text-muted-foreground mb-4">
-                  <MapPin className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                  <span className="text-sm">{profileData.city}, {profileData.country}</span>
-                </div>
-              )}
-              
-              {/* Contact Information */}
-              {profileData?.contacts && profileData.contacts.length > 0 && (
-                <div className="flex items-center justify-center sm:justify-start text-muted-foreground mb-4">
-                  <Phone className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                  <span className="text-sm">{profileData.contacts[0].number}</span>
-                </div>
-              )}
-              
-              {/* Stats */}
-              <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-4 sm:mt-6">
-                <div className="text-center p-2 sm:p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
-                  <div className="text-lg sm:text-2xl font-bold text-blue-600 dark:text-blue-400">{connectionsCount}</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground">Connections</div>
-                </div>
-                <div className="text-center p-2 sm:p-4 bg-green-50 dark:bg-green-950/30 rounded-lg">
-                  <div className="text-lg sm:text-2xl font-bold text-green-600 dark:text-green-400">{profileData?.posts?.length || 0}</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground">Posts</div>
-                </div>
-                <div className="text-center p-2 sm:p-4 bg-purple-50 dark:bg-purple-950/30 rounded-lg">
-                  <div className="text-lg sm:text-2xl font-bold text-purple-600 dark:text-purple-400">{profileData?.profileViews || 0}</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground">Profile Views</div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Profile Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-6">
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            <Tabs defaultValue="about" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="about" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                  <Users className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span>About</span>
-                </TabsTrigger>
-                <TabsTrigger value="activity" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                  <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span>Activity</span>
-                </TabsTrigger>
-                <TabsTrigger value="posts" className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm">
-                  <FileText className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span>Posts</span>
-                </TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="about" className="mt-3 sm:mt-6">
-                <Card>
-                  <CardHeader className="p-3 sm:p-6">
-                    <h3 className="text-lg sm:text-xl font-semibold flex items-center">
-                      <Users className="h-4 w-4 sm:h-5 sm:w-5 me-2 text-blue-600" />
-                      About
-                    </h3>
-                  </CardHeader>
-                  <CardContent className="space-y-3 sm:space-y-4 p-3 sm:p-6 pt-0">
-                    {profileData?.role === 'lawyer' && profileData.lawyer ? (
+              </CardHeader>
+              <CardContent>
+                <Tabs defaultValue="posts" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted">
+                    <TabsTrigger value="posts" className="data-[state=active]:bg-background data-[state=active]:text-foreground">Posts</TabsTrigger>
+                    <TabsTrigger value="comments" className="data-[state=active]:bg-background data-[state=active]:text-foreground">Comments</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="posts" className="space-y-6">
+                    {posts?.length > 0 ? (
                       <>
-                        {profileData.lawyer.summary && (
-                          <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
-                            {profileData.lawyer.summary}
-                          </p>
-                        )}
-                        
-                        {profileData.lawyer.legalAreas && (
-                          <div>
-                            <h4 className="font-semibold mb-2 text-sm sm:text-base">Legal Specializations</h4>
-                            <div className="flex flex-wrap gap-1 sm:gap-2">
-                              {profileData.lawyer.legalAreas.split(',').map((area, index) => (
-                                <Badge key={index} variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100 text-xs">
-                                  {area.trim()}
-                                </Badge>
-                              ))}
+                        {/* Posts in Flexible Row - Side by Side */}
+                        <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
+                          {posts.slice(0, 2).map((post) => (
+                            <div key={post.id} className="flex-1 min-w-0">
+                              <PostCard
+                                post={post}
+                                userData={profileData}
+                                onPostUpdate={handlePostUpdate}
+                              />
                             </div>
-                          </div>
-                        )}
-                        
-                        <div className="space-y-2">
-                          <div className="flex items-center text-muted-foreground">
-                            <Building className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                            <span className="text-sm sm:text-base">{profileData.lawyer.lawFirm}</span>
-                          </div>
+                          ))}
                           
-                          {profileData.lawyer.badgeNumber && (
-                            <div className="flex items-center text-muted-foreground">
-                              <Shield className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                              <span className="text-sm sm:text-base">License: {profileData.lawyer.badgeNumber}</span>
-                            </div>
-                          )}
-                          
-                          {profileData.lawyer.badgeIssueDate && (
-                            <div className="flex items-center text-muted-foreground">
-                              <Calendar className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                              <span className="text-sm sm:text-base">Licensed since: {new Date(profileData.lawyer.badgeIssueDate).toLocaleDateString()}</span>
-                            </div>
+                          {/* If only 1 post exists, add empty div to maintain flex layout */}
+                          {posts.length === 1 && (
+                            <div className="flex-1 min-w-0 hidden lg:block"></div>
                           )}
                         </div>
-                      </>
-                    ) : (
-                      <>
-                        <p className="text-muted-foreground text-sm sm:text-base">
-                          Welcome to my profile! I'm a {profileData?.role} on LegalNet, connecting with legal professionals.
-                        </p>
-                        {profileData?.interests && (
-                          <div>
-                            <h4 className="font-semibold mb-2 text-sm sm:text-base">Interests</h4>
-                            <p className="text-muted-foreground text-sm sm:text-base">{profileData.interests}</p>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              <TabsContent value="activity" className="mt-3 sm:mt-6">
-                <Card>
-                  <CardHeader className="p-3 sm:p-6">
-                    <h3 className="text-lg sm:text-xl font-semibold flex items-center">
-                      <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 me-2 text-blue-600" />
-                      Recent Activity
-                    </h3>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between p-3 border border-border rounded-lg">
-                        <div>
-                          <p className="font-medium">Updated profile information</p>
-                          <p className="text-sm text-muted-foreground">2 hours ago</p>
+                        
+                        {/* Show All Posts Button */}
+                        <div className="border-t border-border pt-6 text-center">
+                          <Button variant="outline" className="w-full border-input text-foreground hover:bg-muted">
+                            Show all posts ({posts.length})
+                          </Button>
                         </div>
-                        <Edit3 className="h-5 w-5 text-blue-600" />
-                      </div>
-                      <div className="flex items-center justify-between p-3 border border-border rounded-lg">
-                        <div>
-                          <p className="font-medium">Connected with new professionals</p>
-                          <p className="text-sm text-muted-foreground">1 day ago</p>
-                        </div>
-                        <Users className="h-5 w-5 text-green-600" />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-              
-              <TabsContent value="posts" className="mt-3 sm:mt-6">
-                <Card>
-                  <CardHeader className="p-3 sm:p-6">
-                    <h3 className="text-lg sm:text-xl font-semibold flex items-center">
-                      <FileText className="h-4 w-4 sm:h-5 sm:w-5 me-2 text-blue-600" />
-                      My Posts ({profileData?.posts?.length || 0})
-                    </h3>
-                  </CardHeader>
-                  <CardContent className="p-3 sm:p-6 pt-0">
-                    {profileData?.posts?.length > 0 ? (
-                      <div className="space-y-6">
-                        {profileData.posts.map((post) => (
-                          <div key={post.id} className="border border-border rounded-lg overflow-hidden bg-card">
-                            {/* Post Header */}
-                            <div className="p-4">
-                              <div className="flex items-start space-x-3">
-                                <Avatar className="h-12 w-12">
-                                  <AvatarImage src={profileData?.profile_image?.imagePath || profileData?.profilePicture} alt={getUserDisplayName()} />
-                                  <AvatarFallback className="bg-blue-600 text-white">
-                                    {getUserInitials()}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center space-x-2">
-                                    <h4 className="font-semibold text-foreground">
-                                      {getUserDisplayName()}
-                                    </h4>
-                                    {verificationBadge && (
-                                      <Badge variant="secondary" className={`text-xs ${verificationBadge.color}`}>
-                                        <verificationBadge.icon className="h-3 w-3 me-1" />
-                                        {verificationBadge.label}
-                                      </Badge>
-                                    )}
-                                  </div>
-                                  {profileData?.role === 'lawyer' && profileData.lawyer?.lawFirm && (
-                                    <p className="text-sm text-muted-foreground font-medium">
-                                      {profileData.lawyer.lawFirm}
-                                    </p>
-                                  )}
-                                  <div className="flex items-center text-xs text-muted-foreground mt-1">
-                                    <Clock className="h-3 w-3 me-1" />
-                                    <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Post Content */}
-                            <div className="px-4">
-                              {post.title && (
-                                <h3 className="font-semibold text-lg mb-3 leading-tight">
-                                  {post.title}
-                                </h3>
-                              )}
-                              <div className="text-sm leading-relaxed mb-4">
-                                <p className="whitespace-pre-wrap break-words">
-                                  {post.content.length > 200 ? `${post.content.substring(0, 200)}...` : post.content}
-                                </p>
-                              </div>
-                            </div>
-
-                            {/* Post Images */}
-                            {post.post_photos && post.post_photos.length > 0 && (
-                              <div className="mb-4">
-                                {post.post_photos.length === 1 ? (
-                                  <div className="relative">
-                                    <img
-                                      src={post.post_photos[0].photo?.photoPath || post.post_photos[0].photoPath}
-                                      alt="Post image"
-                                      className="w-full h-auto object-contain max-h-96"
-                                    />
-                                  </div>
-                                ) : (
-                                  <div className="grid grid-cols-2 gap-2 px-4">
-                                    {post.post_photos.slice(0, 4).map((postPhoto, index) => (
-                                      <div key={index} className="relative">
-                                        <img
-                                          src={postPhoto.photo?.photoPath || postPhoto.photoPath}
-                                          alt="Post image"
-                                          className="w-full h-48 object-cover rounded-lg"
-                                        />
-                                        {post.post_photos.length > 4 && index === 3 && (
-                                          <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
-                                            <span className="text-white font-semibold text-lg">
-                                              +{post.post_photos.length - 4}
-                                            </span>
-                                          </div>
-                                        )}
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                            )}
-
-                            {/* Post Stats and Actions */}
-                            <div className="px-4 py-3 border-t border-border">
-                              <div className="flex items-center justify-between text-sm text-muted-foreground mb-3">
-                                <div className="flex items-center space-x-4">
-                                  {/* Show reactions properly using post.reacts array */}
-                                  {post.reacts && post.reacts.length > 0 && (
-                                    <div className="flex items-center space-x-2">
-                                      <div className="flex -space-x-1">
-                                        {/* Get unique reactions from the reacts array */}
-                                        {[...new Set(post.reacts.map(r => r.reaction))].slice(0, 3).map((reaction, index) => (
-                                          <span key={index} className="text-sm">
-                                            {reaction === 'like' && '👍'}
-                                            {reaction === 'love' && '❤️'}
-                                            {reaction === 'haha' && '😂'}
-                                            {reaction === 'wow' && '😮'}
-                                            {reaction === 'sad' && '😢'}
-                                            {reaction === 'angry' && '😠'}
-                                          </span>
-                                        ))}
-                                      </div>
-                                      <span className="font-medium">{post.reacts.length}</span>
-                                    </div>
-                                  )}
-                                </div>
-                                {post.comments && post.comments.length > 0 && (
-                                  <Button
-                                    variant="ghost"
-                                    className="p-0 h-auto font-medium hover:text-blue-600"
-                                    onClick={() => setShowComments(showComments === post.id ? null : post.id)}
-                                  >
-                                    {post.comments.length} comment{post.comments.length !== 1 ? 's' : ''}
-                                  </Button>
-                                )}
-                              </div>
-                              
-                              <div className="flex items-center justify-around">
-                                <div className="relative">
-                                  <Button
-                                    variant="ghost"
-                                    className={`flex items-center space-x-2 text-muted-foreground hover:text-blue-600 ${
-                                      // Check if user has reacted by looking in the post.reacts array
-                                      post.reacts && post.reacts.some(r => r.userId === profileData?.id) ? 'text-blue-600' : ''
-                                    }`}
-                                    onMouseEnter={() => handleReactionHover(post.id, true)}
-                                    onMouseLeave={() => handleReactionHover(post.id, false)}
-                                    onClick={() => handleReaction(post.id, 'like')}
-                                  >
-                                    <ThumbsUp className="h-4 w-4" />
-                                    <span className="text-sm font-medium">
-                                      {/* Show the user's actual reaction from the reacts array */}
-                                      {(() => {
-                                        const userReact = post.reacts?.find(r => r.userId === profileData?.id);
-                                        return userReact ? userReact.reaction.charAt(0).toUpperCase() + userReact.reaction.slice(1) : 'Like';
-                                      })()}
-                                    </span>
-                                  </Button>
-                                  
-                                  {/* Reaction Picker */}
-                                  {showReactionPicker === post.id && (
-                                    <div
-                                      className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-popover border rounded-lg shadow-xl p-2 z-50"
-                                      onMouseEnter={() => handleReactionPickerMouseEnter(post.id)}
-                                      onMouseLeave={() => handleReactionPickerMouseLeave(post.id)}
-                                    >
-                                      <div className="flex space-x-1">
-                                        {Object.entries(reactionEmojis).map(([key, { emoji, label }]) => (
-                                          <Button
-                                            key={key}
-                                            variant="ghost"
-                                            className="text-lg hover:scale-110 transition-transform p-1 h-auto"
-                                            onClick={() => handleReaction(post.id, key)}
-                                            title={label}
-                                          >
-                                            {emoji}
-                                          </Button>
-                                        ))}
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-
-                                <Button
-                                  variant="ghost"
-                                  className="flex items-center space-x-2 text-muted-foreground hover:text-blue-600"
-                                  onClick={() => {
-                                    // Toggle both comment form and comments visibility
-                                    toggleCommentForm(post.id)
-                                    // If opening comment form, also show comments if they exist
-                                    if (showCommentForm !== post.id && post.comments && post.comments.length > 0) {
-                                      setShowComments(post.id)
-                                    }
-                                  }}
-                                >
-                                  <MessageCircle className="h-4 w-4" />
-                                  <span className="text-sm font-medium">Comment</span>
-                                </Button>
-
-                                <Button
-                                  variant="ghost"
-                                  className="flex items-center space-x-2 text-muted-foreground hover:text-blue-600"
-                                  onClick={() => handleShare(post.id)}
-                                >
-                                  <Share2 className="h-4 w-4" />
-                                  <span className="text-sm font-medium">Share</span>
-                                </Button>
-                              </div>
-                            </div>
-
-                            {/* Comment Form */}
-                            {showCommentForm === post.id && (
-                              <div className="px-4 py-3 border-t border-border">
-                                <form onSubmit={(e) => handleComment(e, post.id)} className="flex items-center space-x-3">
-                                  <Avatar className="h-8 w-8">
-                                    <AvatarImage src={profileData?.profile_image?.imagePath} alt="Your avatar" />
-                                    <AvatarFallback className="bg-blue-600 text-white text-xs">
-                                      {getUserInitials()}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <div className="flex-1 flex space-x-2">
-                                    <Input
-                                      placeholder="Write a comment..."
-                                      className="flex-1"
-                                      name="content"
-                                      required
-                                    />
-                                    <Button type="submit" size="sm">
-                                      Post
-                                    </Button>
-                                  </div>
-                                </form>
-                              </div>
-                            )}
-
-                            {/* Comments Section - Show existing comments only when expanded */}
-                            {showComments === post.id && post.comments && post.comments.length > 0 && (
-                              <div className="px-4 py-3 border-t border-border">
-                                <div className="space-y-3">
-                                  {/* Show all comments when expanded */}
-                                  <div className="space-y-3">
-                                    {post.comments.map((comment) => (
-                                      <div key={comment.id} className="flex items-start space-x-3">
-                                        <Avatar className="h-8 w-8">
-                                          <AvatarImage 
-                                            src={comment.user?.profile_image?.imagePath} 
-                                            alt="Commenter" 
-                                          />
-                                          <AvatarFallback className="bg-gray-500 text-white text-xs">
-                                            {comment.user ? `${comment.user.firstName?.[0] || ''}${comment.user.lastName?.[0] || ''}`.toUpperCase() : 'U'}
-                                          </AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex-1 min-w-0">
-                                          {editingCommentId === comment.id ? (
-                                            // Edit comment form
-                                            <div className="space-y-2">
-                                              <Textarea
-                                                value={editCommentContent}
-                                                onChange={(e) => setEditCommentContent(e.target.value)}
-                                                className="min-h-[60px] text-sm"
-                                                placeholder="Edit your comment..."
-                                              />
-                                              <div className="flex space-x-2">
-                                                <Button 
-                                                  size="sm" 
-                                                  onClick={() => handleEditComment(comment.id)}
-                                                  disabled={!editCommentContent.trim()}
-                                                >
-                                                  Save
-                                                </Button>
-                                                <Button 
-                                                  size="sm" 
-                                                  variant="outline" 
-                                                  onClick={cancelEditingComment}
-                                                >
-                                                  Cancel
-                                                </Button>
-                                              </div>
-                                            </div>
-                                          ) : (
-                                            // Display comment
-                                            <div className="bg-muted rounded-lg px-3 py-2">
-                                              <div className="flex items-center justify-between">
-                                                <div className="font-medium text-sm">
-                                                  {comment.user ? `${comment.user.firstName} ${comment.user.lastName}` : 'Unknown User'}
-                                                </div>
-                                                {/* Show edit/delete options if it's user's own comment */}
-                                                {profileData && comment.userId === profileData.id && (
-                                                  <div className="flex space-x-1">
-                                                    <Button
-                                                      variant="ghost"
-                                                      size="sm"
-                                                      className="h-6 w-6 p-0 text-gray-400 hover:text-blue-600"
-                                                      onClick={() => startEditingComment(comment.id, comment.content)}
-                                                    >
-                                                      <Edit3 className="h-3 w-3" />
-                                                    </Button>
-                                                    <Button
-                                                      variant="ghost"
-                                                      size="sm"
-                                                      className="h-6 w-6 p-0 text-gray-400 hover:text-red-600"
-                                                      onClick={() => handleDeleteComment(comment.id)}
-                                                    >
-                                                      <Trash2 className="h-3 w-3" />
-                                                    </Button>
-                                                  </div>
-                                                )}
-                                              </div>
-                                              <p className="text-sm mt-1">{comment.content}</p>
-                                            </div>
-                                          )}
-                                          <div className="flex items-center space-x-4 mt-1 text-xs text-muted-foreground">
-                                            <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
-                                            <Button variant="ghost" className="p-0 h-auto text-xs hover:text-blue-600">
-                                              Like
-                                            </Button>
-                                            <Button variant="ghost" className="p-0 h-auto text-xs hover:text-blue-600">
-                                              Reply
-                                            </Button>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
+                      </>
                     ) : (
                       <div className="text-center py-8">
                         <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                         <p className="text-muted-foreground">No posts yet.</p>
-                        {profileData?.role === 'lawyer' && (
-                          <Button asChild className="mt-4">
-                            <Link href="/">Create your first post</Link>
-                          </Button>
-                        )}
                       </div>
                     )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
-          
-          {/* Sidebar */}
-          <div className="space-y-3 sm:space-y-6">
-            {/* Contact Info */}
-            <Card>
-              <CardHeader className="p-3 sm:p-6">
-                <h3 className="text-base sm:text-lg font-semibold flex items-center">
-                  <Mail className="h-4 w-4 sm:h-5 sm:w-5 me-2 text-blue-600" />
-                  Contact Info
-                </h3>
-              </CardHeader>
-              <CardContent className="space-y-2 sm:space-y-3 p-3 sm:p-6 pt-0">
-                <div className="flex items-center">
-                  <Mail className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground me-2 sm:me-3" />
-                  <span className="text-xs sm:text-sm break-all">{profileData?.email}</span>
-                </div>
-                {profileData?.city && profileData?.country && (
-                  <div className="flex items-center">
-                    <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground me-2 sm:me-3" />
-                    <span className="text-xs sm:text-sm">{profileData.city}, {profileData.country}</span>
-                  </div>
-                )}
-                {profileData?.contacts && profileData.contacts.length > 0 && (
-                  <div className="flex items-center">
-                    <Phone className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground me-2 sm:me-3" />
-                    <span className="text-xs sm:text-sm">{profileData.contacts[0].number}</span>
-                  </div>
-                )}
-                <div className="flex items-center">
-                  <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground me-2 sm:me-3" />
-                  <span className="text-xs sm:text-sm">Joined {new Date(profileData?.createdAt).toLocaleDateString()}</span>
-                </div>
-              </CardContent>
-            </Card>
-            
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader className="p-3 sm:p-6">
-                <h3 className="text-base sm:text-lg font-semibold flex items-center">
-                  <Crown className="h-4 w-4 sm:h-5 sm:w-5 me-2 text-blue-600" />
-                  Quick Actions
-                </h3>
-              </CardHeader>
-              <CardContent className="space-y-2 sm:space-y-3 p-3 sm:p-6 pt-0">
-                <Button asChild className="w-full text-xs sm:text-sm h-8 sm:h-10">
-                  <Link href="/">
-                    <FileText className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                    View Feed
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" className="w-full text-xs sm:text-sm h-8 sm:h-10">
-                  <Link href="/mynetwork">
-                    <Users className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                    My Network
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" className="w-full text-xs sm:text-sm h-8 sm:h-10">
-                  <Link href="/in/edit">
-                    <Edit3 className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                    Edit Profile
-                  </Link>
-                </Button>
+                  </TabsContent>
+                  
+                  <TabsContent value="comments" className="space-y-4">
+                    {posts?.length > 0 && posts.some(post => post.comments?.length > 0) ? (
+                      <>
+                        {/* Comments in a single column - more compact */}
+                        <div className="space-y-4">
+                          {posts
+                            .flatMap(post => post.comments || [])
+                            .slice(0, 5)
+                            .map((comment) => (
+                              <div key={comment.id} className="border border-border rounded-lg p-4 bg-card">
+                                <div className="flex items-start space-x-3">
+                                  <Avatar className="h-8 w-8">
+                                    <AvatarImage src={comment.user?.profile_image?.imagePath} />
+                                    <AvatarFallback className="bg-muted text-muted-foreground text-xs">
+                                      {comment.user ? `${comment.user.firstName?.[0]}${comment.user.lastName?.[0]}` : 'U'}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div className="flex-1">
+                                    <div className="flex items-center space-x-2 mb-1">
+                                      <span className="font-medium text-sm text-foreground">
+                                        {comment.user ? `${comment.user.firstName} ${comment.user.lastName}` : 'Unknown User'}
+                                      </span>
+                                      <span className="text-xs text-muted-foreground">
+                                        {new Date(comment.createdAt).toLocaleDateString()}
+                                      </span>
+                                    </div>
+                                    <p className="text-sm text-foreground">{comment.content}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                        </div>
+                        
+                        {/* Show All Comments Button */}
+                        <div className="border-t border-border pt-4 text-center">
+                          <Button variant="outline" className="w-full border-input text-foreground hover:bg-muted">
+                            Show all comments
+                          </Button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-center py-8">
+                        <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                        <p className="text-muted-foreground">No comments yet.</p>
+                      </div>
+                    )}
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
 
-            {/* Professional Status - Only for lawyers */}
+            {/* Professional Status - For Lawyers */}
             {profileData?.role === 'lawyer' && verificationBadge && (
-              <Card>
-                <CardHeader className="p-3 sm:p-6">
-                  <h3 className="text-base sm:text-lg font-semibold flex items-center">
-                    <Award className="h-4 w-4 sm:h-5 sm:w-5 me-2 text-blue-600" />
+              <Card className="border border-border">
+                <CardHeader>
+                  <h3 className="text-xl font-semibold flex items-center text-foreground">
+                    <Award className="h-5 w-5 mr-2 text-blue-600 dark:text-blue-400" />
                     Professional Status
                   </h3>
                 </CardHeader>
-                <CardContent className="p-3 sm:p-6 pt-0">
-                  <div className={`rounded-xl p-3 sm:p-4 border-2 ${verificationBadge.color.replace('bg-green-100', 'bg-green-100 dark:bg-green-900').replace('text-green-600', 'text-green-600 dark:text-green-100').replace('bg-yellow-100', 'bg-yellow-100 dark:bg-yellow-900').replace('text-yellow-600', 'text-yellow-600 dark:text-yellow-100').replace('bg-blue-100', 'bg-blue-100 dark:bg-blue-900').replace('text-blue-600', 'text-blue-600 dark:text-blue-100')}`}>
-                    <div className="flex items-center mb-2">
-                      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center me-2 sm:me-3 ${verificationBadge.color.replace('text-', 'bg-').replace('bg-', 'bg-').replace('-100', '-600')}`}>
-                        <verificationBadge.icon className="h-3 w-3 sm:h-5 sm:w-5 text-white" />
+                <CardContent>
+                  <div className={`rounded-xl p-6 border-2 ${
+                    verificationBadge.color.includes('green') 
+                      ? 'bg-green-50 border-green-200 dark:bg-green-950/30 dark:border-green-800' 
+                      : verificationBadge.color.includes('yellow') 
+                      ? 'bg-yellow-50 border-yellow-200 dark:bg-yellow-950/30 dark:border-yellow-800' 
+                      : 'bg-blue-50 border-blue-200 dark:bg-blue-950/30 dark:border-blue-800'
+                  }`}>
+                    <div className="flex items-center mb-4">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-4 ${
+                        verificationBadge.color.includes('green') 
+                          ? 'bg-green-600' 
+                          : verificationBadge.color.includes('yellow') 
+                          ? 'bg-yellow-600' 
+                          : 'bg-blue-600'
+                      }`}>
+                        <verificationBadge.icon className="h-6 w-6 text-white" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-sm sm:text-base">{verificationBadge.label}</h4>
-                        <p className="text-xs sm:text-sm opacity-80">Current Status</p>
+                        <h4 className="font-bold text-lg text-foreground">{verificationBadge.label}</h4>
+                        <p className="text-sm text-muted-foreground">Current Status</p>
                       </div>
                     </div>
-                  </div>
-                  
-                  <div className="mt-3 sm:mt-4 space-y-2 sm:space-y-3">
-                    {profileData.lawyer?.badgeNumber && (
-                      <div className="p-2 sm:p-3 bg-muted/50 rounded-lg">
-                        <p className="text-xs sm:text-sm font-medium">License Number</p>
-                        <p className="text-xs sm:text-sm font-mono bg-background px-2 py-1 rounded mt-1">
-                          {profileData.lawyer.badgeNumber}
-                        </p>
-                      </div>
-                    )}
                     
-                    {profileData.lawyer?.badgeIssueDate && (
-                      <div className="p-2 sm:p-3 bg-muted/50 rounded-lg">
-                        <p className="text-xs sm:text-sm font-medium">License Issue Date</p>
-                        <p className="text-xs sm:text-sm bg-background px-2 py-1 rounded mt-1">
-                          {new Date(profileData.lawyer.badgeIssueDate).toLocaleDateString()}
-                        </p>
-                      </div>
-                    )}
-                    
-                    {profileData.lawyer?.badgeIssuingAuthority && (
-                      <div className="p-2 sm:p-3 bg-muted/50 rounded-lg">
-                        <p className="text-xs sm:text-sm font-medium">Authority Level</p>
-                        <p className="text-xs sm:text-sm bg-background px-2 py-1 rounded mt-1 capitalize">
-                          {profileData.lawyer.badgeIssuingAuthority}
-                        </p>
-                      </div>
-                    )}
+                    <div className="grid grid-cols-1 gap-4">
+                      {profileData.lawyer?.badgeNumber && (
+                        <div className="bg-background/50 dark:bg-background/20 rounded-lg p-4 border border-border/50">
+                          <p className="text-sm font-medium text-foreground mb-1">License Number</p>
+                          <p className="font-mono text-sm bg-background border border-border px-3 py-2 rounded">
+                            {profileData.lawyer.badgeNumber}
+                          </p>
+                        </div>
+                      )}
+                      
+                      {profileData.lawyer?.badgeIssueDate && (
+                        <div className="bg-background/50 dark:bg-background/20 rounded-lg p-4 border border-border/50">
+                          <p className="text-sm font-medium text-foreground mb-1">License Issue Date</p>
+                          <p className="text-sm bg-background border border-border px-3 py-2 rounded">
+                            {new Date(profileData.lawyer.badgeIssueDate).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </p>
+                        </div>
+                      )}
+                      
+                      {profileData.lawyer?.badgeIssuingAuthority && (
+                        <div className="bg-background/50 dark:bg-background/20 rounded-lg p-4 border border-border/50">
+                          <p className="text-sm font-medium text-foreground mb-1">Authority Level</p>
+                          <p className="text-sm bg-background border border-border px-3 py-2 rounded capitalize">
+                            {profileData.lawyer.badgeIssuingAuthority}
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
             )}
+
+            {/* Experience Section - Placeholder */}
+            <Card className="border border-border">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <h2 className="text-xl font-semibold text-foreground">Experience</h2>
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground text-center py-8">
+                  Experience section coming soon...
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Education Section - Placeholder */}
+            <Card className="border border-border">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <h2 className="text-xl font-semibold text-foreground">Education</h2>
+                <div className="flex gap-2">
+                  <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                    <Edit3 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground text-center py-8">
+                  Education section coming soon...
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Sidebar - People You May Know */}
+          <div className="lg:col-span-1">
+            <Card className="border border-border">
+              <CardHeader>
+                <h3 className="font-semibold flex items-center text-foreground">
+                  <Users className="h-5 w-5 mr-2" />
+                  People you may know
+                </h3>
+              </CardHeader>
+              <CardContent>
+                {lawyersLoading ? (
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-muted rounded-full animate-pulse"></div>
+                        <div className="flex-1 space-y-2">
+                          <div className="h-4 bg-muted rounded animate-pulse"></div>
+                          <div className="h-3 bg-muted rounded w-2/3 animate-pulse"></div>
+                        </div>
+                        <div className="w-16 h-8 bg-muted rounded animate-pulse"></div>
+                      </div>
+                    ))}
+                  </div>
+                ) : visibleLawyers.length === 0 ? (
+                  <div className="text-center text-muted-foreground py-4">
+                    <p className="text-sm">No suggestions available</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {visibleLawyers.map((lawyer) => (
+                      <div key={lawyer.id} className="flex items-center space-x-3">
+                        <Avatar className="h-12 w-12">
+                          <AvatarImage 
+                            src={lawyer.ProfileImage?.imagePath || lawyer.profilePicture} 
+                            alt={`${lawyer.firstName}'s Profile`}
+                          />
+                          <AvatarFallback className="bg-blue-600 text-white">
+                            {`${lawyer.firstName?.[0] || ''}${lawyer.lastName?.[0] || ''}`.toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-sm truncate text-foreground">
+                            {lawyer.firstName} {lawyer.lastName}
+                          </h4>
+                          <p className="text-xs text-muted-foreground truncate">
+                            {lawyer.Lawyer?.lawFirm || 'Legal Professional'}
+                          </p>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-xs border-blue-600 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-950/30"
+                        >
+                          Connect
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
