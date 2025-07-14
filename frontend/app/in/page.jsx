@@ -571,7 +571,7 @@ const UserProfile = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-3">
               <div className="animate-pulse space-y-6">
@@ -594,7 +594,7 @@ const UserProfile = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
+        <Card className="w-full rounded-md max-w-md">
           <CardContent className="p-6 text-center">
             <XCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Error Loading Profile</h3>
@@ -609,7 +609,7 @@ const UserProfile = () => {
   if (!profileData) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
+        <Card className="w-full rounded-md max-w-md">
           <CardContent className="p-6 text-center">
             <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
             <h3 className="text-lg font-semibold mb-2">Profile Not Found</h3>
@@ -625,14 +625,14 @@ const UserProfile = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Main Left Side */}
           <div className="lg:col-span-3 space-y-6">
             {/* Profile Header Section */}
-            <Card className="overflow-hidden border border-border">
+            <Card className="overflow-hidden rounded-md border border-border py-0">
               {/* Cover Image */}
-              <div className="h-64 bg-gradient-to-r from-blue-600 to-indigo-600 relative">
+              <div className="h-44 bg-gradient-to-r from-blue-600 to-indigo-600 relative">
                 <Button 
                   variant="secondary" 
                   size="sm" 
@@ -648,8 +648,8 @@ const UserProfile = () => {
                   {/* Left Side - Profile Info */}
                   <div className="flex-1">
                     {/* Profile Image */}
-                    <div className="relative -mt-16 mb-6">
-                      <Avatar className="w-32 h-32 border-4 border-background shadow-lg">
+                    <div className="relative w-fit -mt-32 mb-6">
+                      <Avatar className="w-40 h-40 border-4 border-background shadow-lg">
                         <AvatarImage src={profileData?.profile_image?.imagePath || profileData?.profilePicture} alt={getUserDisplayName()} />
                         <AvatarFallback className="bg-blue-600 text-white text-2xl font-bold">
                           {getUserInitials()}
@@ -660,12 +660,12 @@ const UserProfile = () => {
                           <Button
                             variant="secondary"
                             size="sm"
-                            className="absolute bottom-0 right-0 rounded-full w-8 h-8 p-0 bg-white border-2 border-white shadow-md hover:bg-gray-50"
+                            className="absolute bottom-2 right-2 rounded-full w-8 h-8 p-0 bg-white border-2 border-white shadow-md hover:bg-gray-50"
                           >
                             <Camera className="h-4 w-4 text-gray-600" />
                           </Button>
                         </DialogTrigger>
-                        <DialogContent className="sm:max-w-md">
+                        <DialogContent className="sm:max-w-2xl sm:h-full sm:max-h-[500px]">
                           <DialogHeader>
                             <DialogTitle className="flex items-center">
                               <Camera className="h-5 w-5 me-2 text-blue-600" />
@@ -677,9 +677,9 @@ const UserProfile = () => {
                             {/* Current Profile Picture */}
                             <div className="text-center">
                               <div className="relative inline-block">
-                                <Avatar className="w-24 h-24 mx-auto border-4 border-gray-200">
+                                <Avatar className="w-64 h-64 mx-auto border-4 border-gray-200">
                                   <AvatarImage 
-                                    src={imagePreview || profileData?.profilePicture} 
+                                    src={profileData?.profile_image?.imagePath || profileData?.profilePicture} 
                                     alt="Profile Preview" 
                                   />
                                   <AvatarFallback className="bg-blue-600 text-white text-xl">
@@ -817,7 +817,7 @@ const UserProfile = () => {
             </Card>
 
             {/* About Section */}
-            <Card className="border border-border">
+            <Card className="border rounded-md border-border">
               <CardHeader className="flex flex-row items-center justify-between">
                 <h2 className="text-xl font-semibold text-foreground">About</h2>
                 <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
@@ -838,7 +838,7 @@ const UserProfile = () => {
             </Card>
 
             {/* Activity Section */}
-            <Card className="border border-border">
+            <Card className="border rounded-md border-border">
               <CardHeader className="flex flex-row items-center justify-between">
                 <h2 className="text-xl font-semibold text-foreground">Activity</h2>
                 <Dialog open={showCreatePost} onOpenChange={setShowCreatePost}>
@@ -961,7 +961,7 @@ const UserProfile = () => {
 
             {/* Professional Status - For Lawyers */}
             {profileData?.role === 'lawyer' && verificationBadge && (
-              <Card className="border border-border">
+              <Card className="border rounded-md border-border">
                 <CardHeader>
                   <h3 className="text-xl font-semibold flex items-center text-foreground">
                     <Award className="h-5 w-5 mr-2 text-blue-600 dark:text-blue-400" />
@@ -1030,7 +1030,7 @@ const UserProfile = () => {
             )}
 
             {/* Experience Section - Placeholder */}
-            <Card className="border border-border">
+            <Card className="border rounded-md border-border">
               <CardHeader className="flex flex-row items-center justify-between">
                 <h2 className="text-xl font-semibold text-foreground">Experience</h2>
                 <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
@@ -1045,7 +1045,7 @@ const UserProfile = () => {
             </Card>
 
             {/* Education Section - Placeholder */}
-            <Card className="border border-border">
+            <Card className="border rounded-md border-border">
               <CardHeader className="flex flex-row items-center justify-between">
                 <h2 className="text-xl font-semibold text-foreground">Education</h2>
                 <div className="flex gap-2">
@@ -1067,7 +1067,7 @@ const UserProfile = () => {
 
           {/* Right Sidebar - People You May Know */}
           <div className="lg:col-span-1">
-            <Card className="border border-border">
+            <Card className="border rounded-md border-border">
               <CardHeader>
                 <h3 className="font-semibold flex items-center text-foreground">
                   <Users className="h-5 w-5 mr-2" />
