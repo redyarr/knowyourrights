@@ -14,19 +14,19 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
 // Import routes
-const AuthRouter = require('./routes/auth.js')
-const FeedRouter = require('./routes/feed.js');
-const MyNetwork = require('./routes/mynetwork.js');
-const ProfileRouter = require('./routes/profile.js');
-const JobsRouter = require('./routes/jobs.js');
-const MessaginRouter = require('./routes/messagin.js');
-const NotificationsRouter = require('./routes/notifications.js');
-const AdminRouter = require('./routes/admin.js'); // Add this line for the admi
-const FeedbackRouter = require('./routes/feedback.js');
-const SearchRouter = require('./routes/search.js');
-const ResourcesRouter = require('./routes/resources.js');
 const AboutRouter = require('./routes/about.js');
-const storeRouter = require('./util/seed.js');
+const AdminRouter = require('./routes/admin.js');
+const AuthRouter = require('./routes/auth.js');
+const FeedbackRouter = require('./routes/feedback.js');
+const FeedRouter = require('./routes/feed.js');
+const JobsRouter = require('./routes/jobs.js');
+const MessagingRouter = require('./routes/messaging.js');
+const MyNetworkRouter = require('./routes/mynetwork.js');
+const NotificationsRouter = require('./routes/notifications.js');
+const ProfileRouter = require('./routes/profile.js');
+const ResourcesRouter = require('./routes/resources.js');
+const SearchRouter = require('./routes/search.js');
+const SeedRouter = require('./util/seed.js');
 
 // Import session configuration
 const { sessionMiddleware, setLoggedInUser } = require('./middlewares/session');
@@ -81,19 +81,19 @@ app.use(expressLayouts); // Enable layouts
 app.set('layout', 'layouts/main'); // Set default layout
 
 // Using routes
-app.use('/', AuthRouter); // authenticate the user and redirect tp route '/feed'
-app.use('/feed', FeedRouter); // show all posts as feed
-app.use('/search', SearchRouter); // search for users
-app.use('/in', ProfileRouter); // redirect route '/in/:user_id'
-app.use('/mynetwork', MyNetwork);
-app.use('/jobs', JobsRouter)
-app.use('/messaging', MessaginRouter)  // Handles all messaging routes including conversations
-app.use('/notifications', NotificationsRouter)
-app.use('/feedback', FeedbackRouter); // lawyer feedback system
-app.use('/resources', ResourcesRouter); // legal resource pages
-app.use('/about', AboutRouter); // about us page
-app.use('/admin', AdminRouter );
-app.use('/seed', storeRouter);
+app.use('/', AuthRouter); // Authenticate the user and redirect to route '/feed'
+app.use('/about', AboutRouter); // About us page
+app.use('/admin', AdminRouter);
+app.use('/feed', FeedRouter); // Show all posts as feed
+app.use('/feedback', FeedbackRouter); // Lawyer feedback system
+app.use('/jobs', JobsRouter);
+app.use('/messaging', MessagingRouter); // Handles all messaging routes including conversations
+app.use('/mynetwork', MyNetworkRouter);
+app.use('/notifications', NotificationsRouter);
+app.use('/in', ProfileRouter); // Redirect route '/in/:user_id'
+app.use('/resources', ResourcesRouter); // Legal resource pages
+app.use('/search', SearchRouter); // Search for users
+app.use('/seed', SeedRouter);
 
 // { force: true }
 sequelize.sync({ force: false })
