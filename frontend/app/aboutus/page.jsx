@@ -6,14 +6,14 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import CountUp from 'react-countup'
-
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { 
   Users, Scale, Gavel, Globe, 
   ArrowRight, Check, 
   ShieldCheck, Heart, Award,
-  UserCheck, BookOpen, MessageCircle
+  UserCheck, BookOpen, MessageCircle,
+  Search
 } from 'lucide-react'
 
 const AboutUs = () => {
@@ -33,16 +33,11 @@ const AboutUs = () => {
           method: 'GET',
           cache: 'no-store'
         });
-        
-        if (!response.ok) {
-          throw new Error(`API responded with status: ${response.status}`);
-        }
-        
+        if (!response.ok) throw new Error(`API responded with status: ${response.status}`);
         const data = await response.json();
         setStats(data);
       } catch (error) {
         console.error('Error fetching stats:', error);
-        // Set fallback stats for demo
         setStats({
           totalUsers: 2547,
           totalLawyers: 342,
@@ -53,31 +48,17 @@ const AboutUs = () => {
         });
       }
     };
-
     fetchStats();
   }, []);
 
   return (
     <div className="min-h-screen bg-background dark:bg-background">
-      {/* Hero Section */}
       <HeroSection />
-      
-      {/* Mission Section */}
       <MissionSection />
-      
-      {/* Stats Section */}
       <StatsSection stats={stats} />
-      
-      {/* Services Section */}
       <ServicesSection />
-
-      {/* For Lawyers Section */}
       <LawyersSection />
-      
-      {/* Team Section */}
       <TeamSection />
-      
-      {/* Contact CTA Section */}
       <ContactCTASection />
     </div>
   )
@@ -85,7 +66,7 @@ const AboutUs = () => {
 
 const HeroSection = () => {
   return (
-    <section className="relative w-full overflow-hidden bg-gradient-to-b from-background to-blue-100 dark:from-background dark:to-blue-950/20  pt-16 sm:pt-20 md:pt-24 pb-8 sm:pb-12 lg:pt-32 lg:pb-20">
+    <section className="relative w-full overflow-hidden bg-gradient-to-b from-background to-blue-100 dark:from-background dark:to-blue-950/20 pt-16 sm:pt-20 md:pt-24 pb-8 sm:pb-12 lg:pt-32 lg:pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
           <motion.div 
@@ -96,10 +77,10 @@ const HeroSection = () => {
           >
             <div className="space-y-2">
               <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tighter leading-tight">
-                Empowering Justice Through <span className="text-blue-600 dark:text-blue-400">Legal Innovation</span>
+                Justice Made Accessible: <span className="text-blue-600 dark:text-blue-400">Your Legal Network Awaits</span>
               </h1>
               <p className="max-w-[600px] text-muted-foreground dark:text-muted-foreground text-base sm:text-lg md:text-xl mx-auto lg:mx-0">
-                Connecting individuals with verified legal professionals, providing accessible legal guidance, and building a community where justice is within everyone's reach.
+                We’re here to connect you with trusted legal experts who care about your case as much as you do. Explore our platform to find the right help, right when you need it.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
@@ -123,7 +104,7 @@ const HeroSection = () => {
           >
             <Image 
               src="https://images.unsplash.com/photo-1589829545856-d10d557cf95f?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
-              alt="Legal professionals collaborating" 
+              alt="Diverse group interacting in a modern legal setting" 
               width={600}
               height={400}
               quality={100}
@@ -138,11 +119,7 @@ const HeroSection = () => {
 }
 
 const MissionSection = () => {
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true
-  })
-
+  const { ref, inView } = useInView({ threshold: 0.1, triggerOnce: true })
   return (
     <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-b from-blue-100 to-background dark:from-blue-950/20 dark:to-background w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -154,25 +131,24 @@ const MissionSection = () => {
         >
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">Our Mission: Making Legal Help Accessible</h2>
           <p className="max-w-[900px] text-muted-foreground dark:text-muted-foreground text-base sm:text-lg md:text-xl leading-relaxed">
-            We believe that everyone deserves access to quality legal guidance. Our platform bridges the gap between individuals seeking legal help and verified legal professionals, creating a trusted community where legal expertise meets real-world needs.
+            We believe legal help should be a right, not a privilege. Our platform connects you with verified experts, fostering a community where justice is within reach.
           </p>
         </motion.div>
-        
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mt-8 sm:mt-12">
           {[{
             icon: ShieldCheck,
             title: "Verified Legal Professionals",
-            description: "Every lawyer on our platform is thoroughly verified and certified, ensuring you receive advice from qualified legal experts you can trust."
+            description: "Connect with thoroughly vetted lawyers you can trust for expert advice."
           },
           {
             icon: Heart,
             title: "Community-Driven Support",
-            description: "Building a supportive legal community where knowledge is shared, connections are made, and justice becomes more accessible to everyone."
+            description: "Join a network where knowledge is shared and justice is prioritized."
           },
           {
             icon: Scale,
             title: "Equal Access to Justice",
-            description: "Breaking down barriers to legal services by providing affordable, accessible, and transparent legal guidance for individuals and businesses."
+            description: "Affordable, transparent legal guidance for all, breaking down barriers."
           }].map((item, index) => (
             <motion.div
               key={index}
@@ -181,10 +157,10 @@ const MissionSection = () => {
               transition={{ duration: 0.6, delay: 0.1 * (index + 1) }}
               className="w-full"
             >
-              <Card className="h-full border-l-4 border-l-blue-1000 dark:border-l-blue-400 bg-card dark:bg-card hover:shadow-lg transition-shadow duration-300">
+              <Card className="group h-full border-l-4 border-l-blue-600 dark:border-l-blue-400 bg-card dark:bg-card hover:shadow-lg transition-shadow duration-300">
                 <CardContent className="p-4 sm:p-6">
-                  <div className="mb-4 rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400">
-                    <item.icon className="h-5 w-5 sm:h-6 sm:w-6" />
+                  <div className="mb-4 rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 group-hover:bg-blue-200 dark:group-hover:bg-blue-900 transition-colors">
+                    <item.icon className="h-5 w-5 sm:h-6 sm:w-6 group-hover:rotate-12 transition-transform" />
                   </div>
                   <h3 className="text-base sm:text-lg font-bold mb-2 text-foreground dark:text-foreground">{item.title}</h3>
                   <p className="text-sm sm:text-base text-muted-foreground dark:text-muted-foreground leading-relaxed">{item.description}</p>
@@ -199,43 +175,13 @@ const MissionSection = () => {
 }
 
 const StatsSection = ({ stats }) => {
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true
-  })
-
+  const { ref, inView } = useInView({ threshold: 0.1, triggerOnce: true })
   const statsItems = [
-    { 
-      icon: Users, 
-      label: "Active Users", 
-      value: stats.totalUsers,
-      suffix: "+",
-      color: "text-blue-1000 dark:text-blue-400" 
-    },
-    { 
-      icon: UserCheck, 
-      label: "Verified Lawyers",
-      value: stats.totalLawyers,
-      suffix: "+",
-      color: "text-emerald-500 dark:text-emerald-400" 
-    },
-    { 
-      icon: MessageCircle, 
-      label: "Legal Consultations",
-      value: stats.legalConsultations,
-      suffix: "+",
-      color: "text-amber-500 dark:text-amber-400" 
-    },
-    { 
-      icon: Award, 
-      label: "Successful Cases",
-      value: stats.successfulCases,
-      suffix: "+",
-      decimals: 0,
-      color: "text-green-500 dark:text-green-400" 
-    },
+    { icon: Users, label: "Active Users", value: stats.totalUsers, suffix: "+", color: "text-blue-600 dark:text-blue-400" },
+    { icon: UserCheck, label: "Verified Lawyers", value: stats.totalLawyers, suffix: "+", color: "text-emerald-500 dark:text-emerald-400" },
+    { icon: MessageCircle, label: "Legal Consultations", value: stats.legalConsultations, suffix: "+", color: "text-amber-500 dark:text-amber-400" },
+    { icon: Award, label: "Successful Cases", value: stats.successfulCases, suffix: "+", decimals: 0, color: "text-green-500 dark:text-green-400" },
   ]
-
   return (
     <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-b from-background to-blue-100 dark:from-background dark:to-blue-950/20 w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -246,9 +192,8 @@ const StatsSection = ({ stats }) => {
           className="text-center mb-8 sm:mb-10"
         >
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">Impact by Numbers</h2>
-          <p className="mt-4 text-lg sm:text-xl text-muted-foreground dark:text-muted-foreground">Building trust through transparency and proven results</p>
+          <p className="mt-4 text-lg sm:text-xl text-muted-foreground dark:text-muted-foreground">Real results, real trust</p>
         </motion.div>
-
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6 lg:grid-cols-4">
           {statsItems.map((item, index) => (
             <motion.div
@@ -257,7 +202,7 @@ const StatsSection = ({ stats }) => {
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.1 * (index + 1) }}
             >
-              <Card className="h-full border shadow-sm hover:shadow-lg transition-shadow duration-300 bg-card dark:bg-card">
+              <Card className="group h-full border shadow-sm hover:shadow-xl transition-shadow duration-300 bg-card dark:bg-card">
                 <CardContent className="p-3 sm:p-4 md:p-6">
                   <div className="flex items-center justify-center mb-3 sm:mb-4">
                     <div className={`rounded-full p-2 sm:p-3 ${item.color.replace('text', 'bg')}/10 dark:${item.color.replace('text', 'bg')}/20`}>
@@ -266,18 +211,7 @@ const StatsSection = ({ stats }) => {
                   </div>
                   <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-center text-foreground dark:text-foreground">
                     {inView && (
-                      <>
-                        <CountUp
-                          start={0}
-                          end={item.value || 0}
-                          duration={2.5}
-                          separator=","
-                          decimals={item.decimals || 0}
-                          decimal="."
-                          useEasing={true}
-                        />
-                        {item.suffix}
-                      </>
+                      <><CountUp start={0} end={item.value || 0} duration={2.5} separator="," decimals={item.decimals || 0} useEasing={true} />{item.suffix}</>
                     )}
                   </h3>
                   <p className="text-xs sm:text-sm text-muted-foreground dark:text-muted-foreground text-center mt-2">{item.label}</p>
@@ -286,61 +220,31 @@ const StatsSection = ({ stats }) => {
             </motion.div>
           ))}
         </div>
-
-        {/* Additional stats row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-6 sm:mt-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }} transition={{ duration: 0.6, delay: 0.5 }}>
             <Card className="bg-gradient-to-r from-blue-100 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-200 dark:border-blue-800">
               <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-xl sm:text-2xl font-bold text-blue-600 dark:text-blue-400">
-                      {inView && (
-                        <>
-                          <CountUp
-                            start={0}
-                            end={stats.dailyActiveUsers || 0}
-                            duration={2.5}
-                            separator=","
-                          />
-                        </>
-                      )}
+                      {inView && <CountUp start={0} end={stats.dailyActiveUsers || 0} duration={2.5} separator="," />}
                     </h3>
                     <p className="text-xs sm:text-sm text-blue-700 dark:text-blue-300 font-medium">Daily Active Users</p>
                   </div>
-                  <Globe className="h-6 w-6 sm:h-8 sm:w-8 text-blue-1000 dark:text-blue-400" />
+                  <Globe className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 dark:text-blue-400" />
                 </div>
               </CardContent>
             </Card>
           </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }} transition={{ duration: 0.6, delay: 0.6 }}>
             <Card className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 border-green-200 dark:border-green-800">
               <CardContent className="p-4 sm:p-6">
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="text-xl sm:text-2xl font-bold text-green-600 dark:text-green-400">
-                      {inView && (
-                        <>
-                          <CountUp
-                            start={0}
-                            end={stats.totalConnections || 0}
-                            duration={2.5}
-                            separator=","
-                          />
-                          +
-                        </>
-                      )}
+                      {inView && <><CountUp start={0} end={stats.totalConnections || 0} duration={2.5} separator="," />+</>}
                     </h3>
-                    <p className="text-xs sm:text-sm text-green-700 dark:text-green-300 font-medium">Professional Connections Made</p>
+                    <p className="text-xs sm:text-sm text-green-700 dark:text-green-300 font-medium">Professional Connections</p>
                   </div>
                   <Users className="h-6 w-6 sm:h-8 sm:w-8 text-green-500 dark:text-green-400" />
                 </div>
@@ -354,50 +258,40 @@ const StatsSection = ({ stats }) => {
 }
 
 const ServicesSection = () => {
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true
-  })
-
+  const { ref, inView } = useInView({ threshold: 0.1, triggerOnce: true })
   return (
     <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-b from-blue-100 to-background dark:from-blue-950/20 dark:to-background w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8 sm:mb-10"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }} transition={{ duration: 0.6 }} className="text-center mb-8 sm:mb-10">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">How It Works</h2>
-          <p className="mt-4 text-lg sm:text-xl text-muted-foreground dark:text-muted-foreground">Get legal help in three simple steps</p>
+          <p className="mt-4 text-lg sm:text-xl text-muted-foreground dark:text-muted-foreground">Your legal journey in three steps</p>
         </motion.div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mt-8 sm:mt-12">
           {[{
             step: "01",
             title: "Find Legal Experts",
-            description: "Browse through our network of verified lawyers specializing in various legal areas. Use filters to find professionals that match your specific needs and location."
+            description: "Browse verified lawyers tailored to your needs and location.",
+            icon: Search
           },
           {
             step: "02",
             title: "Connect & Consult",
-            description: "Send connection requests to lawyers you'd like to work with. Schedule consultations, ask questions, and get professional legal advice through our secure platform."
+            description: "Reach out, schedule consultations, and get advice securely.",
+            icon: Users
           },
           {
             step: "03",
             title: "Get Legal Solutions",
-            description: "Receive personalized legal guidance, document reviews, case strategies, and ongoing support from qualified professionals who understand your situation."
+            description: "Receive personalized guidance and ongoing support.",
+            icon: Gavel
           }].map((item, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.1 * (index + 1) }}
-              className="relative w-full"
-            >
-              <div className="border-t-4 border-blue-1000 dark:border-blue-400 pt-8 sm:pt-10 px-4 sm:px-6 bg-white dark:bg-card rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
-                <div className="absolute top-0 -translate-y-1/2 left-4 sm:left-6 bg-blue-1000 dark:bg-blue-600 text-white rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center font-bold text-base sm:text-lg">
+            <motion.div key={index} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }} transition={{ duration: 0.6, delay: 0.1 * (index + 1) }} className="relative w-full">
+              <div className="border-t-4 border-blue-600 dark:border-blue-400 pt-8 sm:pt-10 px-4 sm:px-6 bg-white dark:bg-card rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300">
+                <div className="absolute top-0 -translate-y-1/2 left-4 sm:left-6 bg-blue-600 dark:bg-blue-600 text-white rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center font-bold text-base sm:text-lg">
                   {item.step}
+                </div>
+                <div className="mb-4 text-blue-600 dark:text-blue-400">
+                  <item.icon className="h-8 w-8" />
                 </div>
                 <h3 className="text-lg sm:text-xl font-bold mb-3 text-gray-900 dark:text-foreground">{item.title}</h3>
                 <p className="text-muted-foreground dark:text-muted-foreground leading-relaxed text-sm sm:text-base">{item.description}</p>
@@ -405,17 +299,9 @@ const ServicesSection = () => {
             </motion.div>
           ))}
         </div>
-        
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex justify-center mt-8 sm:mt-12"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }} transition={{ duration: 0.6, delay: 0.4 }} className="flex justify-center mt-8 sm:mt-12">
           <Button size="lg" className="text-sm sm:text-base" asChild>
-            <Link href="/">
-              Start Your Legal Journey <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
+            <Link href="/">Start Your Legal Journey <ArrowRight className="ml-2 h-4 w-4" /></Link>
           </Button>
         </motion.div>
       </div>
@@ -424,21 +310,12 @@ const ServicesSection = () => {
 }
 
 const LawyersSection = () => {
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true
-  })
-
+  const { ref, inView } = useInView({ threshold: 0.1, triggerOnce: true })
   return (
     <section id="for-lawyers" ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-b from-background to-blue-100 dark:from-background dark:to-blue-950/20 w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.6 }}
-            className="mx-auto lg:mx-0 order-2 lg:order-1 relative aspect-video w-full max-w-[600px] overflow-hidden rounded-xl shadow-2xl"
-          >
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={inView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }} transition={{ duration: 0.6 }} className="mx-auto lg:mx-0 order-2 lg:order-1 relative aspect-video w-full max-w-[600px] overflow-hidden rounded-xl shadow-2xl">
             <Image 
               src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?q=80&w=2126&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
               alt="Legal professionals at work" 
@@ -448,20 +325,13 @@ const LawyersSection = () => {
               className="object-cover w-full h-full"
             />
           </motion.div>
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex flex-col justify-center space-y-4 order-1 lg:order-2 text-center lg:text-left"
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }} transition={{ duration: 0.6, delay: 0.2 }} className="flex flex-col justify-center space-y-4 order-1 lg:order-2 text-center lg:text-left">
             <div className="space-y-2">
               <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">For Legal Professionals</h2>
               <p className="max-w-[600px] text-muted-foreground dark:text-muted-foreground text-base sm:text-lg md:text-xl mx-auto lg:mx-0">
-                Join our network of verified lawyers and expand your practice while helping those who need legal guidance most.
+                Grow your practice and make a difference by joining our network of verified lawyers.
               </p>
             </div>
-            
             <ul className="space-y-3 max-w-[600px] mx-auto lg:mx-0">
               {[
                 "Expand your client base through our verified network",
@@ -470,24 +340,19 @@ const LawyersSection = () => {
                 "Flexible consultation options - in-person or virtual",
                 "Secure payment processing and client management tools"
               ].map((benefit, index) => (
-                <motion.li 
-                  key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
-                  transition={{ duration: 0.4, delay: 0.3 + (index * 0.1) }}
-                  className="flex items-center gap-3 text-left"
-                >
-                  <Check className="h-4 w-4 sm:h-5 sm:w-5 text-blue-1000 dark:text-blue-400 flex-shrink-0" />
+                <motion.li key={index} initial={{ opacity: 0, x: -20 }} animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }} transition={{ duration: 0.4, delay: 0.3 + (index * 0.1) }} className="flex items-center gap-3 text-left">
+                  <Check className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
                   <span className="text-gray-700 dark:text-foreground text-sm sm:text-base">{benefit}</span>
                 </motion.li>
               ))}
             </ul>
-            
+            <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <p className="text-gray-700 dark:text-gray-300 italic">"Joining this platform has transformed my practice. I’ve connected with clients who truly need my expertise."</p>
+              <p className="mt-2 text-right text-gray-600 dark:text-gray-400">- John Doe, Verified Lawyer</p>
+            </div>
             <div className="pt-4 flex justify-center lg:justify-start">
               <Button size="lg" className="text-sm sm:text-base" asChild>
-                <Link href="/in/edit">
-                  Complete Your Profile <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
+                <Link href="/in/edit">Complete Your Profile <ArrowRight className="ml-2 h-4 w-4" /></Link>
               </Button>
             </div>
           </motion.div>
@@ -498,23 +363,21 @@ const LawyersSection = () => {
 }
 
 const TeamSection = () => {
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true
-  })
-
+  const { ref, inView } = useInView({ threshold: 0.1, triggerOnce: true })
   const team = [
     {
-      name: "Beshwar",
+      name: "Ravyar",
       role: "Founder & CEO",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b04b?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      description: "Former corporate lawyer with 15 years of experience in legal technology."
+      image: "/images/about/RavyarPhoto.jpg",
+      description: "Former corporate lawyer with 15 years of experience in legal technology.",
+      quote: "I’m passionate about making legal services accessible to all."
     },
     {
       name: "Aland S. Othman",
       role: "Backend Developer",
       image: "/images/about/AlandPhoto.jpg",
       description: "Software engineer specializing in secure, scalable legal platforms.",
+      quote: "I love building systems that solve real-world problems.",
       LinkedIn: "https://www.linkedin.com/in/aland-s-othman/",
       GitHub: "https://github.com/Alandkf",
       email: "alandsothman@gmail.com",
@@ -525,6 +388,7 @@ const TeamSection = () => {
       role: "Frontend Developer & UI Designer",
       image: "/images/about/RekarPhoto.jpg",
       description: "Frontend developer crafting intuitive user experiences and accessible legal interfaces.",
+      quote: "Design is my way of making the world more user-friendly.",
       LinkedIn: "https://www.linkedin.com/in/rekar-jamal",
       GitHub: "https://github.com/Rekarrr", 
       email: "rekarjamal3@gmail.com",
@@ -535,88 +399,37 @@ const TeamSection = () => {
       role: "Backend Developer",
       image: "/images/about/RedyarPhoto.jpg",
       description: "Building secure APIs and backend systems to connect legal professionals with clients.",
+      quote: "Code is the backbone of impactful solutions.",
       LinkedIn: "https://www.linkedin.com/in/redyar-hawzhin/",
       GitHub: "https://github.com/redyarr",
       email: "Redyarh@gmail.com",
       WhatsApp: "+9647735315101"
     }
   ]
-
   return (
-    <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-b from-blue-100 via-blue-300 to-blue-600  dark:from-blue-950/20 dark:via-blue-900 dark:to-blue-700 w-full">
+    <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-b from-blue-100 via-blue-300 to-blue-600 dark:from-blue-950/20 dark:via-blue-900 dark:to-blue-700 w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8 sm:mb-10"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }} transition={{ duration: 0.6 }} className="text-center mb-8 sm:mb-10">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">Meet Our Team</h2>
-          <p className="mt-4 text-lg sm:text-xl text-muted-foreground dark:text-muted-foreground">Passionate professionals dedicated to making legal help accessible</p>
+          <p className="mt-4 text-lg sm:text-xl text-muted-foreground dark:text-muted-foreground">The people driving accessible justice</p>
         </motion.div>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {team.map((member, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-              transition={{ duration: 0.6, delay: 0.1 * (index + 1) }}
-            >
+            <motion.div key={index} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }} transition={{ duration: 0.6, delay: 0.1 * (index + 1) }}>
               <Card className="h-full hover:shadow-lg transition-shadow duration-300 bg-card dark:bg-card">
                 <CardContent className="p-4 sm:p-6 text-center">
                   <div className="mb-4 overflow-hidden rounded-full aspect-square mx-auto relative w-20 h-20 sm:w-24 sm:h-24">
-                    <Image 
-                      src={member.image} 
-                      alt={member.name} 
-                      width={96}
-                      height={96}
-                      className="object-cover w-full h-full"
-                    />
+                    <Image src={member.image} alt={member.name} width={96} height={96} className="object-cover w-full h-full" />
                   </div>
                   <h3 className="text-base sm:text-lg font-bold mb-1 text-foreground dark:text-foreground">{member.name}</h3>
                   <p className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 font-medium mb-2">{member.role}</p>
                   <p className="text-xs text-muted-foreground dark:text-muted-foreground leading-relaxed">{member.description}</p>
-                  <div className="flex gap-2 mt-2 justify-center">
-                    {member.LinkedIn && (
-                      <Link 
-                        href={member.LinkedIn}
-                        className="text-xs px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        LinkedIn
-                      </Link>
-                    )}
-                    {member.GitHub && (
-                      <Link
-                        href={member.GitHub}
-                        className="text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        GitHub
-                      </Link>
-                    )}
-                    { member.email && (
-                      <Link
-                        href={`mailto:${member.email}`}
-                        className="text-xs px-2 py-1 rounded-full bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-800 transition-colors"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Email
-                      </Link>
-                    )}
-                    { member.WhatsApp && (
-                      <Link
-                        href={`tel:${member.WhatsApp}`}
-                        className="text-xs px-2 py-1 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-800 transition-colors"
-                        rel="noopener noreferrer"
-                      >
-                        WhatsApp
-                      </Link>
-                    )}
+                  <p className="mt-2 text-xs text-gray-600 dark:text-gray-400 italic">"{member.quote}"</p>
+                  <div className="flex gap-2 mt-2 justify-center flex-wrap">
+                    {member.LinkedIn && <Link href={member.LinkedIn} className="text-xs px-2 py-1 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors" target="_blank" rel="noopener noreferrer">LinkedIn</Link>}
+                    {member.GitHub && <Link href={member.GitHub} className="text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors" target="_blank" rel="noopener noreferrer">GitHub</Link>}
+                    {member.email && <Link href={`mailto:${member.email}`} className="text-xs px-2 py-1 rounded-full bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-800 transition-colors" target="_blank" rel="noopener noreferrer">Email</Link>}
+                    {member.WhatsApp && <Link href={`tel:${member.WhatsApp}`} className="text-xs px-2 py-1 rounded-full bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-800 transition-colors" rel="noopener noreferrer">WhatsApp</Link>}
                   </div>
                 </CardContent>
               </Card>
@@ -629,39 +442,25 @@ const TeamSection = () => {
 }
 
 const ContactCTASection = () => {
-  const { ref, inView } = useInView({
-    threshold: 0.1,
-    triggerOnce: true
-  })
-
+  const { ref, inView } = useInView({ threshold: 0.1, triggerOnce: true })
   return (
     <section ref={ref} className="py-8 sm:py-12 md:py-16 lg:py-20 bg-gradient-to-b from-blue-600 to-indigo-700 dark:from-blue-700 dark:to-indigo-800 text-white w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.6 }}
-          className="flex flex-col items-center justify-center space-y-6 text-center"
-        >
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }} transition={{ duration: 0.6 }} className="flex flex-col items-center justify-center space-y-6 text-center">
           <div className="space-y-4">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">Ready to Get Started?</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tighter">Take the First Step Towards Legal Clarity</h2>
             <p className="max-w-[900px] text-blue-100 dark:text-blue-100 text-base sm:text-lg md:text-xl leading-relaxed mx-auto">
-              Continue exploring our platform to connect with legal professionals, find opportunities, and expand your legal network.
+              Join our community of legal professionals and clients making a difference. Start exploring today.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
             <Button size="lg" variant="secondary" className="text-sm sm:text-base" asChild>
-              <Link href="/mynetwork">
-                Explore Network
-              </Link>
+              <Link href="/mynetwork">Explore Network</Link>
             </Button>
             <Button variant="outline" size="lg" className="text-white border-white hover:bg-white hover:text-blue-600 dark:hover:text-blue-700 text-sm sm:text-base" asChild>
-              <Link href="/messaging">
-                Start Conversations
-              </Link>
+              <Link href="/messaging">Start Conversations</Link>
             </Button>
           </div>
-          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mt-8 sm:mt-12 w-full max-w-4xl">
             {[{
               icon: BookOpen,
@@ -678,13 +477,7 @@ const ContactCTASection = () => {
               title: "24/7 Support Community",
               description: "Get support from our community and customer service team"
             }].map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-                transition={{ duration: 0.6, delay: 0.2 + (index * 0.1) }}
-                className="text-center"
-              >
+              <motion.div key={index} initial={{ opacity: 0, y: 20 }} animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }} transition={{ duration: 0.6, delay: 0.2 + (index * 0.1) }} className="text-center">
                 <div className="mb-4 rounded-full w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center bg-white/20 dark:bg-white/20 text-white mx-auto">
                   <feature.icon className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
