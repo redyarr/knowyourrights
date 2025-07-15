@@ -767,17 +767,110 @@ const UserProfile = () => {
       <div className="min-h-screen bg-background">
         <div className="max-w-6xl mx-auto px-4 py-8">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div className="lg:col-span-3">
-              <div className="animate-pulse space-y-6">
-                <div className="h-64 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-lg"></div>
-                <div className="h-48 bg-muted rounded-lg"></div>
-                <div className="h-64 bg-muted rounded-lg"></div>
-              </div>
+            {/* Main Content Loading */}
+            <div className="lg:col-span-3 space-y-6">
+              {/* Profile Header Loading */}
+              <Card className="overflow-hidden rounded-md border border-border">
+                {/* Cover Area */}
+                <div className="h-44 bg-muted animate-pulse relative"></div>
+                
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      {/* Profile Image */}
+                      <div className="relative w-fit -mt-32 mb-6">
+                        <div className="w-40 h-40 bg-muted rounded-full border-4 border-background animate-pulse"></div>
+                      </div>
+                      
+                      {/* Name and Info */}
+                      <div className="space-y-3">
+                        <div className="h-8 bg-muted rounded animate-pulse w-64"></div>
+                        <div className="h-4 bg-muted rounded animate-pulse w-48"></div>
+                        <div className="h-4 bg-muted rounded animate-pulse w-32"></div>
+                      </div>
+                    </div>
+                    
+                    {/* Edit Button */}
+                    <div className="h-10 w-32 bg-muted rounded animate-pulse"></div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* About Section Loading */}
+              <Card className="border rounded-md border-border">
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div className="h-6 bg-muted rounded animate-pulse w-20"></div>
+                  <div className="h-8 w-8 bg-muted rounded animate-pulse"></div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="h-4 bg-muted rounded animate-pulse w-full"></div>
+                    <div className="h-4 bg-muted rounded animate-pulse w-4/5"></div>
+                    <div className="h-4 bg-muted rounded animate-pulse w-3/5"></div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Activity Section Loading */}
+              <Card className="border rounded-md border-border">
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div className="h-6 bg-muted rounded animate-pulse w-20"></div>
+                  <div className="h-10 w-28 bg-muted rounded animate-pulse"></div>
+                </CardHeader>
+                <CardContent>
+                  {/* Tabs Loading */}
+                  <div className="flex space-x-1 mb-6">
+                    <div className="h-10 w-20 bg-muted rounded animate-pulse"></div>
+                    <div className="h-10 w-24 bg-muted rounded animate-pulse"></div>
+                  </div>
+                  
+                  {/* Posts Loading */}
+                  <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
+                    {/* Post 1 */
+                    /* Post 2 */}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Additional Sections Loading */}
+              <Card className="border rounded-md border-border">
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div className="h-6 bg-muted rounded animate-pulse w-32"></div>
+                  <div className="h-8 w-8 bg-muted rounded animate-pulse"></div>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-20 bg-muted rounded animate-pulse w-full"></div>
+                </CardContent>
+              </Card>
             </div>
+            
+            {/* Right Sidebar Loading */}
             <div className="lg:col-span-1">
-              <div className="animate-pulse space-y-4">
-                <div className="h-64 bg-muted rounded-lg"></div>
-              </div>
+              <Card className="border rounded-md border-border">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <div className="h-5 w-5 bg-muted rounded animate-pulse"></div>
+                      <div className="h-5 bg-muted rounded animate-pulse w-32"></div>
+                    </div>
+                    <div className="h-8 w-8 bg-muted rounded animate-pulse"></div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="flex items-center space-x-3">
+                        <div className="w-12 h-12 bg-muted rounded-full animate-pulse"></div>
+                        <div className="flex-1 space-y-2">
+                          <div className="h-4 bg-muted rounded animate-pulse w-full"></div>
+                          <div className="h-3 bg-muted rounded animate-pulse w-2/3"></div>
+                        </div>
+                        <div className="w-16 h-8 bg-muted rounded animate-pulse"></div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
@@ -1410,7 +1503,7 @@ const UserProfile = () => {
         </div>
       </div>
     </div>
-  )
+    )
 }
 
 export default UserProfile
