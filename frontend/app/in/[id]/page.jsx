@@ -44,6 +44,8 @@ import {
   Camera,
   AlertTriangle
 } from 'lucide-react'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 
 const ProfilePage = () => {
   const params = useParams()
@@ -61,6 +63,8 @@ const ProfilePage = () => {
   const [senderOrReceiver, setSenderOrReceiver] = useState(null)
   const [showCreatePost, setShowCreatePost] = useState(false)
   const [posts, setPosts] = useState([])
+  const [showUnfriendDialog, setShowUnfriendDialog] = useState(false)
+  const [isUnfriending, setIsUnfriending] = useState(false)
 
   const fetchProfileData = async () => {
     try {
@@ -335,6 +339,55 @@ const ProfilePage = () => {
     }
   }
 
+  const handleUnfriend = async () => {
+    if (!connectionId) {
+      toast("Error", {
+        description: "Connection ID not found. Please refresh the page and try again."
+      })
+      return
+    }
+
+    setIsUnfriending(true)
+
+    try {
+      const response = await fetch(`http://localhost:3001/mynetwork/unfriend/${connectionId}`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setConnectionStatus(null)
+        setConnectionId(null)
+        setSenderOrReceiver(null)
+        
+        toast("Success", {
+          description: "Connection removed successfully!"
+        })
+        
+        // Optionally refresh the page or update the UI
+        setTimeout(() => {
+          fetchProfileData()
+        }, 1000)
+      } else {
+        console.error('Unfriend failed:', data)
+        throw new Error(data.message || "Failed to remove connection")
+      }
+    } catch (error) {
+      console.error('Unfriend error:', error)
+      toast("Error", {
+        description: error.message || "An error occurred while removing the connection"
+      })
+    } finally {
+      setIsUnfriending(false)
+      setShowUnfriendDialog(false)
+    }
+  }
+
   const getConnectionButton = () => {
     // Don't show connection button if viewing own profile
     if (currentUserId === userId) {
@@ -342,14 +395,14 @@ const ProfilePage = () => {
     }
 
     const getButtonConfig = () => {
-      // If connection is accepted
+      // If connection is accepted - show dropdown with unfriend option
       if (connectionStatus === 'accepted') {
         return {
-          type: 'single',
+          type: 'dropdown',
           text: 'Friends',
           icon: UserCheck,
           variant: 'default',
-          className: 'bg-green-600 hover:bg-green-700 text-white pointer-default',
+          className: 'bg-green-600 hover:bg-green-700 text-white',
           disabled: false
         }
       }
@@ -392,7 +445,34 @@ const ProfilePage = () => {
 
     const config = getButtonConfig()
 
-    if (config.type === 'dual') {
+    if (config.type === 'dropdown') {
+      // Show Friends button with dropdown menu
+      const IconComponent = config.icon
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant={config.variant}
+              className={config.className}
+              disabled={config.disabled}
+            >
+              <IconComponent className="h-4 w-4 me-2" />
+              {config.text}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuItem 
+              onClick={() => setShowUnfriendDialog(true)}
+              className="cursor-pointer text-destructive focus:text-destructive"
+            >
+              <UserX className="h-4 w-4 mr-2" />
+              Unfriend
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    } else if (config.type === 'dual') {
       // Show Accept and Decline buttons side by side
       const AcceptIcon = config.acceptIcon
       const DeclineIcon = config.declineIcon
@@ -862,6 +942,32 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+
+      {/* Unfriend Confirmation Dialog */}
+      <AlertDialog open={showUnfriendDialog} onOpenChange={setShowUnfriendDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <div className="flex items-center space-x-2">
+              <AlertTriangle className="h-5 w-5 text-red-600" />
+              <AlertDialogTitle>Remove Connection</AlertDialogTitle>
+            </div>
+            <AlertDialogDescription>
+              Are you sure you want to remove {getUserDisplayName()} from your connections? 
+              This action cannot be undone and you'll need to send a new connection request to reconnect.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isUnfriending}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleUnfriend}
+              disabled={isUnfriending}
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            >
+              {isUnfriending ? 'Removing...' : 'Remove Connection'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
