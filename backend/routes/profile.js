@@ -20,7 +20,7 @@ router.post('/upload-profile-image', isAuthenticated, ProfileController.uploadPr
 // Post-related routes (must come before /:id to avoid conflicts)
 router.post('/:id/create-post', upload.single('image'), ProfileController.CreatePost);
 router.post('/:id/edit-post', ProfileController.updatePost);
-router.post('/:id/edit', ProfileController.updateProfile);
+router.post('/:id/edit', isAuthenticated ,ProfileController.updateProfile);
 
 // Profile viewing routes (must be last to avoid conflicts)
 router.get('/:id', ProfileController.getProfile);

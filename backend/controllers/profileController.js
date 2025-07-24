@@ -213,36 +213,51 @@ exports.getEditProfile = async (req, res) => {
 exports.updateProfile = async (req, res) => {
     try {
         const { firstName, lastName, summary, lawFirm, licenseNumber, country, city, legalAreas, interests } = req.body;
+        const userId = req.session.user_id;
         
-        // Update user
+        if (!userId) {
+            return res.status(401).json({ success: false, error: 'User not authenticated' });
+        }
+        
+        // Update user basic information
         await User.update(
             { firstName, lastName, country, city, interests },
-            { where: { id: req.session.user_id } }
+            { where: { id: userId } }
         );
 
-        // Update lawyer profile if exists
-        if (req.session.user.role === 'lawyer') {
+        // Update lawyer profile if user is a lawyer
+        const user = await User.findByPk(userId);
+        if (user && user.role === 'lawyer') {
             await Lawyer.update(
                 { 
                     lawFirm,
-                    licenseNumber,
-                    summery: summary,
+                    badgeNumber: licenseNumber, // Map licenseNumber to badgeNumber
+                    summary: summary, // Fix: use 'summary' not 'summery'
                     legalAreas
                 },
-                { where: { userId: req.session.user_id } }
+                { where: { userId: userId } }
             );
         }
 
         // Update session user data
         const updatedUser = await User.findOne({
-            where: { id: req.session.user_id },
-            attributes: { exclude: ['password', 'emailVerifiedAt'] }
+            where: { id: userId },
+            attributes: { exclude: ['password', 'emailVerifiedAt'] },
+            include: [
+                {
+                    model: Lawyer,
+                    required: false
+                }
+            ]
         });
+        
+        // Update session
         req.session.user = updatedUser;
 
-        res.redirect('/in');
+        res.status(200).json({ success: true, message: 'Profile updated successfully' });
     } catch (error) {
-        res.status(500).render('error', { error: error.message });
+        console.error('Error updating profile:', error);
+        res.status(500).json({ success: false, error: 'Failed to update profile' });
     }
 };
 
