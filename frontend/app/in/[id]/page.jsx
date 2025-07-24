@@ -74,7 +74,6 @@ const ProfilePage = () => {
         })
       const data = await response.json()
       
-      console.log('Profile data received:', data)
       
       if (data.success) {
         setProfileData(data?.data?.user)
@@ -83,11 +82,6 @@ const ProfilePage = () => {
         setConnectionStatus(data?.data?.connectionStatus || null)
         setConnectionId(data?.data?.connectionId || null)
         setSenderOrReceiver(data?.data?.senderOrReceiver || null)
-        setPosts(data?.data?.user?.posts || [])
-        
-        console.log('Connection status set to:', data?.data?.connectionStatus)
-        console.log('Connection ID set to:', data?.data?.connectionId)
-        console.log('Sender or Receiver:', data?.data?.senderOrReceiver)
       } else {
         toast("Error", {
           description: "Failed to load profile"
@@ -100,6 +94,28 @@ const ProfilePage = () => {
       })
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Add function to fetch posts from feed
+  const fetchPosts = async () => {
+    try {
+      const response = await fetch(`http://localhost:3001/feed/${userId}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+      const data = await response.json()
+      
+      if (data.success) {
+        console.log('Posts fetched successfully:', data);
+        
+        setPosts(data.posts || [])
+      }
+    } catch (error) {
+      console.error('Error fetching posts:', error)
     }
   }
 
@@ -120,6 +136,7 @@ const ProfilePage = () => {
     if (userId) {
       fetchCurrentUser()
       fetchProfileData()
+      fetchPosts()
     }
   }, [userId])
 

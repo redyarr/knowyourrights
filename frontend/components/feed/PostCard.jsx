@@ -44,7 +44,6 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 const PostCard = ({ post, userData, onPostUpdate, observerRef }) => { 
 
 
-
   const [showComments, setShowComments] = useState(false)
   const [showCommentForm, setShowCommentForm] = useState(false)
   const [showEditDialog, setShowEditDialog] = useState(false)
@@ -61,7 +60,41 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
   const [isSubmittingComment, setIsSubmittingComment] = useState(false)
   const [reactionPickerTimeout, setReactionPickerTimeout] = useState(null)
   const [showFullContent, setShowFullContent] = useState(false)
+  const [currentUser, setCurrentUser] = useState()
   
+   const fetchCurrentUser = async () => {
+    try {
+      const response = await fetch('/api/getuserdata', {
+        method: 'GET',
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setCurrentUser(data.payload);
+      } else {
+        toast("Error", {
+          description: "Error getting user data",
+          action: {
+            label: "Undo",
+          },
+        })
+      }
+    } catch (error) {
+     toast("Ntwork Error", {
+          description: "etwork error during data fetch",
+          action: {
+            label: "Undo",
+          },
+        })
+    }
+  }
+
+  useEffect(() => {
+    fetchCurrentUser()
+  }, [])
+
+
   const modalRef = useRef(null)
   const commentInputRef = useRef(null)
 

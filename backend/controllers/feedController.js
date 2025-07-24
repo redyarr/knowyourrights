@@ -1,6 +1,7 @@
 const { Post, User, Lawyer, React, Comment, Share, Photo, PostPhoto, ProfileImage } = require('../models');
 const { Op } = require('sequelize');
 const imagekit = require('../config/imagekit');
+const { Where } = require('sequelize/lib/utils');
 
 // Create a new post (only lawyers can post)
 exports.createPost = async (req, res) => {
@@ -172,6 +173,88 @@ exports.getAllPosts = async (req, res) => {
                 totalPosts: totalPosts,
                 hasMore: offset + posts.length < totalPosts
             }
+        });
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        return res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+exports.getSingleUserPosts = async (req, res) => {
+    const userId = req.params.id
+    try {
+        const totalPosts = await Post.count({where: { authorId: userId }});
+
+        const posts = await Post.findAll({
+            where:{
+                authorId: userId
+            },
+            include: [
+                {
+                    model: User,
+                    attributes: ['id', 'firstName', 'lastName', 'role'],
+                    include: [{
+                        model: ProfileImage
+                    },
+                {
+                    model: Lawyer
+                }]
+                },
+                {
+                    model: React,
+                    attributes: ['id', 'reaction', 'userId']
+                },
+                {
+                    model: Comment,
+                    include: [{
+                        model: User,
+                        attributes: ['id', 'firstName', 'lastName', 'role'],
+                        include: [
+                            {
+                                model: ProfileImage
+                            }
+                        ]
+                    }],
+                    order: [['createdAt', 'ASC']]
+                },
+                {
+                    model: require('../models').PostPhoto,
+                    include: [{
+                        model: require('../models').Photo,
+                        attributes: ['id', 'photoPath']
+                    }]
+                }
+            ],
+            order: [['createdAt', 'DESC']],
+        });
+
+        
+        // Calculate reaction stats for each post
+        const postsWithStats = posts.map(post => {
+            const reactions = post.reacts || [];
+            const reactionStats = {
+                like: reactions.filter(r => r.reaction === 'like').length,
+                love: reactions.filter(r => r.reaction === 'love').length,
+                haha: reactions.filter(r => r.reaction === 'haha').length,
+                wow: reactions.filter(r => r.reaction === 'wow').length,
+                sad: reactions.filter(r => r.reaction === 'sad').length,
+                angry: reactions.filter(r => r.reaction === 'angry').length
+            };
+
+            // Find user's reaction if logged in
+            const userId = req.session.user_id;
+            const userReaction = userId ? reactions.find(r => r.userId === userId) : null;
+            
+            return {
+                ...post.toJSON(),
+                reactionStats,
+                userReaction: userReaction ? userReaction.reaction : null
+            };
+        });
+
+        return res.json({ 
+            success: true, 
+            posts: postsWithStats,
         });
     } catch (error) {
         console.error('Error fetching posts:', error);
