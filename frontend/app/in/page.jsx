@@ -50,9 +50,7 @@ import PostCard from '../../components/feed/PostCard'
 import { AnimatePresence, motion } from 'framer-motion'
 
 const UserProfile = () => {
-  const [profileData, setProfileData] = useState(null)
-  console.log('profile: ', profileData);
-  
+  const [profileData, setProfileData] = useState(null)  
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [connectionsCount, setConnectionsCount] = useState(0)

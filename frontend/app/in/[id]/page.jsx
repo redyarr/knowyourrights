@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import PostCard from '../../../components/feed/PostCard'
 import { 
   MapPin, 
   Mail, 
@@ -49,14 +50,8 @@ const ProfilePage = () => {
   const id = params.id
   const userId = parseInt(id);
   
-  const [profileData, setProfileData] = useState({})  
+  const [profileData, setProfileData] = useState({})    
   const [loading, setLoading] = useState(true)
-  const [showReactionPicker, setShowReactionPicker] = useState(null)
-  const [showCommentForm, setShowCommentForm] = useState(null)
-  const [showComments, setShowComments] = useState(null)
-  const [editingCommentId, setEditingCommentId] = useState(null)
-  const [editCommentContent, setEditCommentContent] = useState('')
-  const [reactionPickerTimeout, setReactionPickerTimeout] = useState(null)
   const [currentUserId, setCurrentUserId] = useState(null)  
   const [currentUser, setCurrentUser] = useState(null)
   const [connectionsCount, setConnectionsCount] = useState(0)
@@ -65,15 +60,7 @@ const ProfilePage = () => {
   const [isConnecting, setIsConnecting] = useState(false)
   const [senderOrReceiver, setSenderOrReceiver] = useState(null)
   const [showCreatePost, setShowCreatePost] = useState(false)
-  
-  const reactionEmojis = {
-    like: { emoji: '👍', icon: ThumbsUp, label: 'Like' },
-    love: { emoji: '❤️', icon: Heart, label: 'Love' },
-    haha: { emoji: '😂', icon: Laugh, label: 'Haha' },
-    wow: { emoji: '😮', icon: Sparkles, label: 'Wow' },
-    sad: { emoji: '😢', icon: Frown, label: 'Sad' },
-    angry: { emoji: '😠', icon: Angry, label: 'Angry' }
-  }
+  const [posts, setPosts] = useState([])
 
   const fetchProfileData = async () => {
     try {
@@ -96,6 +83,7 @@ const ProfilePage = () => {
         setConnectionStatus(data?.data?.connectionStatus || null)
         setConnectionId(data?.data?.connectionId || null)
         setSenderOrReceiver(data?.data?.senderOrReceiver || null)
+        setPosts(data?.data?.user?.posts || [])
         
         console.log('Connection status set to:', data?.data?.connectionStatus)
         console.log('Connection ID set to:', data?.data?.connectionId)
@@ -178,271 +166,16 @@ const ProfilePage = () => {
     }
   }
 
-  const handleReaction = async (postId, reactionType) => {
-    try {
-      const response = await fetch(`http://localhost:3001/feed/post/${postId}/react`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ reaction: reactionType }),
-        credentials: 'include'
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        setProfileData(prev => ({
-          ...prev,
-          posts: prev.posts.map(post => 
-            post.id === postId 
-              ? { 
-                  ...post, 
-                  reacts: data.reactions || [], // Use the complete reactions array from backend
-                  // Remove the separate userReaction field since we'll get it from reacts array
-                } 
-              : post
-          )
-        }))
-        
-        setShowReactionPicker(null)
-        
-        if (data.userReaction) {
-          toast("Reaction Added", {
-            description: `You ${data.userReaction} this post`
-          })
-        } else {
-          toast("Reaction Removed", {
-            description: "You removed your reaction"
-          })
-        }
-      } else {
-        toast("Reaction Failed", {
-          description: data.error || "Failed to react to post"
-        })
-      }
-    } catch (error) {
-      toast("Error", {
-        description: "Failed to react to post"
-      })
-    }
-  }
-
-  const handleComment = async (e, postId) => {
-    e.preventDefault()
-    const formData = new FormData(e.target)
-    const content = formData.get('content')?.trim()
-    
-    if (!content) return
-
-    try {
-      const response = await fetch(`http://localhost:3001/feed/post/${postId}/comment`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ content }),
-        credentials: 'include'
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        setProfileData(prev => ({
-          ...prev,
-          posts: prev.posts.map(post => 
-            post.id === postId 
-              ? { 
-                  ...post, 
-                  comments: [...(post.comments || []), data.comment]
-                } 
-              : post
-          )
-        }))
-        
-        e.target.reset()
-        setShowCommentForm(null)
-        toast("Comment Posted", {
-          description: "Your comment has been added successfully"
-        })
-      } else {
-        toast("Comment Failed", {
-          description: data.error || "Failed to post comment"
-        })
-      }
-    } catch (error) {
-      toast("Error", {
-        description: "Failed to post comment"
-      })
-    }
-  }
-
-  const handleShare = async (postId) => {
-    try {
-      const response = await fetch(`http://localhost:3001/feed/post/${postId}/share`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        toast("Post Shared", {
-          description: "Post has been shared successfully"
-        })
-      } else {
-        toast("Share Failed", {
-          description: data.error || "Failed to share post"
-        })
-      }
-    } catch (error) {
-      toast("Error", {
-        description: "Failed to share post"
-      })
-    }
-  }
-
-  const toggleCommentForm = (postId) => {
-    setShowCommentForm(prev => prev === postId ? null : postId)
-  }
-
-  const handleReactionHover = (postId, show) => {
-    if (reactionPickerTimeout) {
-      clearTimeout(reactionPickerTimeout)
-      setReactionPickerTimeout(null)
-    }
-    
-    if (show) {
-      setShowReactionPicker(postId)
-    } else {
-      const timeout = setTimeout(() => {
-        setShowReactionPicker(null)
-      }, 300)
-      setReactionPickerTimeout(timeout)
-    }
-  }
-
-  const handleReactionPickerMouseEnter = (postId) => {
-    if (reactionPickerTimeout) {
-      clearTimeout(reactionPickerTimeout)
-      setReactionPickerTimeout(null)
-    }
-  }
-
-  const handleReactionPickerMouseLeave = (postId) => {
-    const timeout = setTimeout(() => {
-      setShowReactionPicker(null)
-    }, 300)
-    setReactionPickerTimeout(timeout)
-  }
-
-  const handleDeleteComment = async (commentId) => {
-    try {
-      const response = await fetch(`http://localhost:3001/feed/comment/${commentId}/delete`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        setProfileData(prev => ({
-          ...prev,
-          posts: prev.posts.map(post => ({
-            ...post,
-            comments: post.comments?.filter(comment => comment.id !== commentId)
-          }))
-        }))
-        
-        toast("Comment Deleted", {
-          description: "Your comment has been deleted successfully"
-        })
-      } else {
-        toast("Delete Failed", {
-          description: data.error || "Failed to delete comment"
-        })
-      }
-    } catch (error) {
-      toast("Error", {
-        description: "Failed to delete comment"
-      })
-    }
-  }
-
-  const startEditingComment = (commentId, content) => {
-    setEditingCommentId(commentId)
-    setEditCommentContent(content)
-  }
-
-  const cancelEditingComment = () => {
-    setEditingCommentId(null)
-    setEditCommentContent('')
-  }
-
-  const handleEditComment = async (commentId) => {
-    if (!editCommentContent.trim()) return
-
-    try {
-      const response = await fetch(`http://localhost:3001/feed/comment/${commentId}/edit`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ content: editCommentContent.trim() }),
-        credentials: 'include'
-      })
-
-      const data = await response.json()
-
-      if (data.success) {
-        setProfileData(prev => ({
-          ...prev,
-          posts: prev.posts.map(post => ({
-            ...post,
-            comments: post.comments?.map(comment => 
-              comment.id === commentId 
-                ? { ...comment, content: editCommentContent.trim() }
-                : comment
-            )
-          }))
-        }))
-        
-        setEditingCommentId(null)
-        setEditCommentContent('')
-        
-        toast("Comment Updated", {
-          description: "Your comment has been updated successfully"
-        })
-      } else {
-        toast("Edit Failed", {
-          description: data.error || "Failed to edit comment"
-        })
-      }
-    } catch (error) {
-      toast("Error", {
-        description: "Failed to edit comment"
-      })
-    }
-  }
-
   const handleConnectionRequest = async () => {
     if (isConnecting) return
 
     setIsConnecting(true)
-  
 
     try {
       let response
       let successMessage
       
       if (connectionStatus === null) {
-        
         response = await fetch(`http://localhost:3001/mynetwork/connect/${userId}`, {
           method: 'POST',
           credentials: 'include',
@@ -495,7 +228,6 @@ const ProfilePage = () => {
           throw new Error("Connection ID not found. Please refresh the page and try again.")
         }
         
-        
         response = await fetch(`http://localhost:3001/mynetwork/accept/${connectionId}`, {
           method: 'POST',
           credentials: 'include',
@@ -517,12 +249,12 @@ const ProfilePage = () => {
       }
       
       if(connectionStatus !== 'accepted'){
-      toast("Success", {
-        description: successMessage
-      })
-    }else{
-      return
-    }
+        toast("Success", {
+          description: successMessage
+        })
+      } else {
+        return
+      }
       
     } catch (error) {
       console.error('Connection request error:', error)
@@ -530,7 +262,6 @@ const ProfilePage = () => {
         description: error.message || "An error occurred with the connection request"
       })
       
-      // If there's an error, refresh the profile data to get current status
       if (connectionStatus === 'pending') {
         console.log('Refreshing profile data due to error...')
         setTimeout(() => {
@@ -685,6 +416,17 @@ const ProfilePage = () => {
           {config.text}
         </Button>
       )
+    }
+  }
+
+  // Post update handler for PostCard
+  const handlePostUpdate = (updatedPost, deletedPostId = null) => {
+    if (deletedPostId) {
+      setPosts(prev => prev.filter(post => post.id !== deletedPostId))
+    } else if (updatedPost) {
+      setPosts(prev => prev.map(post => 
+        post.id === updatedPost.id ? updatedPost : post
+      ))
     }
   }
 
@@ -870,353 +612,22 @@ const ProfilePage = () => {
                   </TabsList>
                   
                   <TabsContent value="posts" className="space-y-6">
-                    {profileData?.posts?.length > 0 ? (
+                    {posts?.length > 0 ? (
                       <>
                         {/* Posts in Flexible Row - Side by Side */}
                         <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
-                          {profileData.posts.slice(0, 2).map((post) => (
+                          {posts.slice(0, 2).map((post) => (
                             <div key={post.id} className="flex-1 min-w-0">
-                              {/* Use existing post display logic but with UserProfile design */}
-                              <div className="border border-border rounded-lg overflow-hidden bg-card">
-                                {/* Post Header */}
-                                <div className="p-4">
-                                  <div className="flex items-start space-x-3">
-                                    <Avatar className="h-12 w-12">
-                                      <AvatarImage src={profileData?.profile_image?.imagePath} alt={getUserDisplayName()} />
-                                      <AvatarFallback className="bg-blue-600 text-white">
-                                        {getUserInitials()}
-                                      </AvatarFallback>
-                                    </Avatar>
-                                    <div className="flex-1 min-w-0">
-                                      <div className="flex items-center space-x-2">
-                                        <h4 className="font-semibold text-foreground">
-                                          {getUserDisplayName()}
-                                        </h4>
-                                        {verificationBadge && (
-                                          <Badge variant="secondary" className={`text-xs ${verificationBadge.color}`}>
-                                            <verificationBadge.icon className="h-3 w-3 me-1" />
-                                            {verificationBadge.label}
-                                          </Badge>
-                                        )}
-                                      </div>
-                                      {profileData?.role === 'lawyer' && profileData.lawyer?.lawFirm && (
-                                        <p className="text-sm text-muted-foreground font-medium">
-                                          {profileData.lawyer.lawFirm}
-                                        </p>
-                                      )}
-                                      <div className="flex items-center text-xs text-muted-foreground mt-1">
-                                        <Clock className="h-3 w-3 me-1" />
-                                        <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {/* Post Content */}
-                                <div className="px-4">
-                                  {post.title && (
-                                    <h3 className="font-semibold text-lg mb-3 leading-tight">
-                                      {post.title}
-                                    </h3>
-                                  )}
-                                  <div className="text-sm leading-relaxed mb-4">
-                                    <p className="whitespace-pre-wrap break-words">
-                                      {post.content.length > 200 ? `${post.content.substring(0, 200)}...` : post.content}
-                                    </p>
-                                  </div>
-                                </div>
-
-                                {/* Post Images - existing logic */}
-                                {post.post_photos && post.post_photos.length > 0 && (
-                                  <div className="mb-4">
-                                    {post.post_photos.length === 1 ? (
-                                      <div className="relative">
-                                        <img
-                                          src={post.post_photos[0].photo?.photoPath}
-                                          alt="Post image"
-                                          className="w-full h-auto object-contain max-h-96"
-                                        />
-                                      </div>
-                                    ) : (
-                                      <div className="grid grid-cols-2 gap-2 px-4">
-                                        {post.post_photos.slice(0, 4).map((postPhoto, index) => (
-                                          <div key={index} className="relative">
-                                            <img
-                                              src={postPhoto.photo?.photoPath}
-                                              alt="Post image"
-                                              className="w-full h-48 object-cover rounded-lg"
-                                            />
-                                            {post.post_photos.length > 4 && index === 3 && (
-                                              <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
-                                                <span className="text-white font-semibold text-lg">
-                                                  +{post.post_photos.length - 4}
-                                                </span>
-                                              </div>
-                                            )}
-                                          </div>
-                                        ))}
-
-                                        {/* Show "See More" button if there are more than 4 photos */}
-                                        {post.post_photos.length > 4 && (
-                                          <div className="col-span-2 text-center">
-                                            <Button
-                                              variant="outline"
-                                              className="w-full"
-                                              onClick={() => {
-                                                // Open a modal or navigate to a new page to show all photos
-                                                console.log('Show all photos for post:', post.id);
-                                              }}
-                                            >
-                                              See all photos
-                                            </Button>
-                                          </div>
-                                        )}
-                                      </div>
-                                    )}
-                                  </div>
-                                )}
-
-                                {/* Post Stats and Actions - using existing handlers but UserProfile design */}
-                                <div className="px-4 py-2">
-                                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                                    <div className="flex items-center space-x-4">
-                                      {post.reacts && post.reacts.length > 0 && (
-                                        <div className="flex items-center space-x-2">
-                                          <div className="flex -space-x-1">
-                                            {[...new Set(post.reacts.map(r => r.reaction))].slice(0, 3).map((reaction, index) => (
-                                              <span key={index} className="text-sm bg-white rounded-full border border-gray-200 w-6 h-6 flex items-center justify-center shadow-sm">
-                                                {reaction === 'like' && '👍'}
-                                                {reaction === 'love' && '❤️'}
-                                                {reaction === 'haha' && '😂'}
-                                                {reaction === 'wow' && '😮'}
-                                                {reaction === 'sad' && '😢'}
-                                                {reaction === 'angry' && '😠'}
-                                              </span>
-                                            ))}
-                                          </div>
-                                          <span className="font-medium">{post.reacts.length}</span>
-                                        </div>
-                                      )}
-                                    </div>
-                                    {post.comments && post.comments.length > 0 && (
-                                      <Button
-                                        variant="ghost"
-                                        className="p-0 h-auto font-medium hover:text-blue-600"
-                                        onClick={() => setShowComments(showComments === post.id ? null : post.id)}
-                                      >
-                                        {post.comments.length} comment{post.comments.length !== 1 ? 's' : ''}
-                                      </Button>
-                                    )}
-                                  </div>
-                                </div>
-
-                                {/* Post Actions */}
-                                <div className="px-4 py-3 border-t border-border">
-                                  <div className="flex items-center justify-around">
-                                    <div className="relative">
-                                      <Button
-                                        variant="ghost"
-                                        className={`flex items-center space-x-2 text-muted-foreground hover:text-blue-600 ${
-                                          post.reacts && post.reacts.some(r => r.userId === currentUserId) ? 'text-blue-600' : ''
-                                        }`}
-                                        onMouseEnter={() => handleReactionHover(post.id, true)}
-                                        onMouseLeave={() => handleReactionHover(post.id, false)}
-                                        onClick={() => handleReaction(post.id, 'like')}
-                                      >
-                                        <ThumbsUp className="h-4 w-4" />
-                                        <span className="text-sm font-medium">
-                                          {(() => {
-                                            const userReact = post.reacts?.find(r => r.userId === currentUserId);
-                                            return userReact ? userReact.reaction.charAt(0).toUpperCase() + userReact.reaction.slice(1) : 'Like';
-                                          })()}
-                                        </span>
-                                      </Button>
-                                      
-                                      {/* Reaction Picker */}
-                                      {showReactionPicker === post.id && (
-                                        <div
-                                          className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-popover border rounded-lg shadow-xl p-2 z-50"
-                                          onMouseEnter={() => handleReactionPickerMouseEnter(post.id)}
-                                          onMouseLeave={() => handleReactionPickerMouseLeave(post.id)}
-                                        >
-                                          <div className="flex space-x-1">
-                                            {Object.entries(reactionEmojis).map(([key, { emoji, label }]) => (
-                                              <Button
-                                                key={key}
-                                                variant="ghost"
-                                                className="text-lg hover:scale-110 transition-transform p-1 h-auto"
-                                                onClick={() => handleReaction(post.id, key)}
-                                                title={label}
-                                              >
-                                                {emoji}
-                                              </Button>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      )}
-                                    </div>
-
-                                    <Button
-                                      variant="ghost"
-                                      className="flex items-center space-x-2 text-muted-foreground hover:text-blue-600"
-                                      onClick={() => {
-                                        toggleCommentForm(post.id)
-                                        if (showCommentForm !== post.id && post.comments && post.comments.length > 0) {
-                                          setShowComments(post.id)
-                                        }
-                                      }}
-                                    >
-                                      <MessageCircle className="h-4 w-4" />
-                                      <span className="text-sm font-medium">Comment</span>
-                                    </Button>
-
-                                    <Button
-                                      variant="ghost"
-                                      className="flex items-center space-x-2 text-muted-foreground hover:text-blue-600"
-                                      onClick={() => handleShare(post.id)}
-                                    >
-                                      <Share2 className="h-4 w-4" />
-                                      <span className="text-sm font-medium">Share</span>
-                                    </Button>
-                                  </div>
-                                </div>
-
-                                {/* Comment Form and Comments Section - existing logic */}
-                                {showCommentForm === post.id && (
-                                  <div className="px-4 py-3 border-t border-border">
-                                    <form onSubmit={(e) => handleComment(e, post.id)} className="flex items-center space-x-3">
-                                      <Avatar className="h-8 w-8">
-                                        <AvatarImage src={profileData?.profile_image?.imagePath} alt="Your avatar" />
-                                        <AvatarFallback className="bg-blue-600 text-white text-xs">
-                                          {getUserInitials()}
-                                        </AvatarFallback>
-                                      </Avatar>
-                                      <div className="flex-1 flex space-x-2">
-                                        <Input
-                                          placeholder="Write a comment..."
-                                          className="flex-1"
-                                          name="content"
-                                          required
-                                        />
-                                        <Button type="submit" size="sm">
-                                          Post
-                                        </Button>
-                                      </div>
-                                    </form>
-                                  </div>
-                                )}
-
-                                {/* Comments Section */}
-                                {showComments === post.id && post.comments && post.comments.length > 0 && (
-                                  <div className="px-4 py-3 border-t border-border">
-                                    <div className="space-y-3">
-                                      <div className="space-y-3">
-                                        {post.comments.map((comment) => (
-                                          <div key={comment.id} className="flex items-start space-x-3">
-                                            <Avatar className="h-8 w-8">
-                                              <AvatarImage 
-                                                src={comment.user?.profile_image?.imagePath} 
-                                                alt="Commenter" 
-                                              />
-                                              <AvatarFallback className="bg-gray-500 text-white text-xs">
-                                                {comment.user ? `${comment.user.firstName?.[0] || ''}${comment.user.lastName?.[0] || ''}`.toUpperCase() : 'U'}
-                                              </AvatarFallback>
-                                            </Avatar>
-                                            <div className="flex-1 min-w-0">
-                                              {editingCommentId === comment.id ? (
-                                                <div className="space-y-2">
-                                                  <Textarea
-                                                    value={editCommentContent}
-                                                    onChange={(e) => setEditCommentContent(e.target.value)}
-                                                    className="min-h-[60px] text-sm"
-                                                    placeholder="Edit your comment..."
-                                                  />
-                                                  <div className="flex space-x-2">
-                                                    <Button 
-                                                      size="sm" 
-                                                      onClick={() => handleEditComment(comment.id)}
-                                                      disabled={!editCommentContent.trim()}
-                                                    >
-                                                      Save
-                                                    </Button>
-                                                    <Button 
-                                                      size="sm" 
-                                                      variant="outline" 
-                                                      onClick={cancelEditingComment}
-                                                    >
-                                                      Cancel
-                                                    </Button>
-                                                  </div>
-                                                </div>
-                                              ) : (
-                                                <div className="bg-muted rounded-lg px-3 py-2">
-                                                  <div className="flex items-center justify-between">
-                                                    <div className="font-medium text-sm">
-                                                      {comment.user ? `${comment.user.firstName} ${comment.user.lastName}` : 'Unknown User'}
-                                                    </div>
-                                                    {/* Show edit/delete options only if current logged-in user owns this comment */}
-                                                    {currentUser && comment.userId === currentUser.id && (
-                                                      <div className="flex space-x-1">
-                                                        <Button
-                                                          variant="ghost"
-                                                          size="sm"
-                                                          className="h-6 w-6 p-0 text-gray-400 hover:text-blue-600"
-                                                          onClick={() => startEditingComment(comment.id, comment.content)}
-                                                        >
-                                                          <Edit3 className="h-3 w-3" />
-                                                        </Button>
-                                                        <Button
-                                                          variant="ghost"
-                                                          size="sm"
-                                                          className="h-6 w-6 p-0 text-gray-400 hover:text-red-600"
-                                                          onClick={() => handleDeleteComment(comment.id)}
-                                                        >
-                                                          <Trash2 className="h-3 w-3" />
-                                                        </Button>
-                                                      </div>
-                                                    )}
-                                                  </div>
-                                                  <p className="text-sm mt-1">{comment.content}</p>
-                                                </div>
-                                              )}
-                                              <div className="flex items-center space-x-4 mt-1 text-xs text-muted-foreground">
-                                                <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
-                                                <Button variant="ghost" className="p-0 h-auto text-xs hover:text-blue-600">
-                                                  Like
-                                                </Button>
-                                                <Button variant="ghost" className="p-0 h-auto text-xs hover:text-blue-600">
-                                                  Reply
-                                                </Button>
-                                              </div>
-                                            </div>
-                                          </div>
-                                        ))}
-
-                                        {/* Show "Load more comments" button if there are more than 3 comments */}
-                                        {post.comments.length > 3 && (
-                                          <div className="text-center">
-                                            <Button
-                                              variant="outline"
-                                              className="mt-2"
-                                              onClick={() => {
-                                                // Load more comments logic
-                                                console.log('Load more comments for post:', post.id);
-                                              }}
-                                            >
-                                              Load more comments
-                                            </Button>
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
+                              <PostCard
+                                post={post}
+                                userData={profileData}
+                                onPostUpdate={handlePostUpdate}
+                              />
                             </div>
                           ))}
                           
                           {/* If only 1 post exists, add empty div to maintain flex layout */}
-                          {profileData.posts.length === 1 && (
+                          {posts.length === 1 && (
                             <div className="flex-1 min-w-0 hidden lg:block"></div>
                           )}
                         </div>
@@ -1224,7 +635,7 @@ const ProfilePage = () => {
                         {/* Show All Posts Button */}
                         <div className="border-t border-border pt-6 text-center">
                           <Button variant="outline" className="w-full border-input text-foreground hover:bg-muted">
-                            Show all posts ({profileData.posts.length})
+                            Show all posts ({posts.length})
                           </Button>
                         </div>
                       </>
@@ -1237,11 +648,11 @@ const ProfilePage = () => {
                   </TabsContent>
                   
                   <TabsContent value="comments" className="space-y-4">
-                    {profileData?.posts?.length > 0 && profileData.posts.some(post => post.comments?.length > 0) ? (
+                    {posts?.length > 0 && posts.some(post => post.comments?.length > 0) ? (
                       <>
                         {/* Comments in a single column - more compact */}
                         <div className="space-y-4">
-                          {profileData.posts
+                          {posts
                             .flatMap(post => post.comments || [])
                             .slice(0, 5)
                             .map((comment) => (
