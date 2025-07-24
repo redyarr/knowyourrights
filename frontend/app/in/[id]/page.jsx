@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { 
   MapPin, 
   Mail, 
@@ -38,7 +39,9 @@ import {
   UserCheck,
   UserX,
   Plus,
-  Loader2
+  Loader2,
+  Camera,
+  AlertTriangle
 } from 'lucide-react'
 
 const ProfilePage = () => {
@@ -60,7 +63,8 @@ const ProfilePage = () => {
   const [connectionStatus, setConnectionStatus] = useState(null)
   const [connectionId, setConnectionId] = useState(null)
   const [isConnecting, setIsConnecting] = useState(false)
-  const [senderOrReceiver, setSenderOrReceiver] = useState(null) // Add senderOrReceiver state
+  const [senderOrReceiver, setSenderOrReceiver] = useState(null)
+  const [showCreatePost, setShowCreatePost] = useState(false)
   
   const reactionEmojis = {
     like: { emoji: '👍', icon: ThumbsUp, label: 'Like' },
@@ -91,11 +95,11 @@ const ProfilePage = () => {
         setConnectionsCount(data?.data?.connectionsCount)
         setConnectionStatus(data?.data?.connectionStatus || null)
         setConnectionId(data?.data?.connectionId || null)
-        setSenderOrReceiver(data?.data?.senderOrReceiver || null) // Add this line
+        setSenderOrReceiver(data?.data?.senderOrReceiver || null)
         
         console.log('Connection status set to:', data?.data?.connectionStatus)
         console.log('Connection ID set to:', data?.data?.connectionId)
-        console.log('Sender or Receiver:', data?.data?.senderOrReceiver) // Add this line
+        console.log('Sender or Receiver:', data?.data?.senderOrReceiver)
       } else {
         toast("Error", {
           description: "Failed to load profile"
@@ -111,7 +115,6 @@ const ProfilePage = () => {
     }
   }
 
-  // Fetch current user data from session/cookies
   const fetchCurrentUser = async () => {
     try {
       const response = await fetch('/api/getuserdata')
@@ -127,7 +130,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (userId) {
-      fetchCurrentUser() // Add this line
+      fetchCurrentUser()
       fetchProfileData()
     }
   }, [userId])
@@ -687,57 +690,22 @@ const ProfilePage = () => {
 
   const verificationBadge = getVerificationBadge()
 
- if (loading) {
+  if (loading) {
     return (
       <div className="min-h-screen bg-background">
-        <div className="max-w-6xl mx-auto px-2 sm:px-4 py-4 sm:py-8">
-          {/* Profile Header Skeleton */}
-          <Card className="mb-4 sm:mb-6 overflow-hidden">
-            <div className="h-24 sm:h-32 md:h-48 bg-gradient-to-r from-blue-600 to-indigo-600 relative animate-pulse"></div>
-            <CardContent className="p-3 sm:p-6">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start -mt-8 sm:-mt-12 md:-mt-16 mb-4 sm:mb-6">
-                <div className="relative self-center sm:self-start">
-                  <div className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 rounded-full border-2 sm:border-4 border-white bg-muted animate-pulse"></div>
-                </div>
-                <div className="mt-3 sm:mt-4 md:mt-16 flex justify-center sm:justify-end space-x-2">
-                  <div className="w-20 h-8 sm:w-24 sm:h-10 bg-muted rounded-md animate-pulse"></div>
-                  <div className="w-20 h-8 sm:w-24 sm:h-10 bg-muted rounded-md animate-pulse"></div>
-                </div>
+        <div className="max-w-6xl mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3">
+              <div className="animate-pulse space-y-6">
+                <div className="h-64 bg-muted rounded-lg"></div>
+                <div className="h-48 bg-muted rounded-lg"></div>
+                <div className="h-64 bg-muted rounded-lg"></div>
               </div>
-              <div className="space-y-2 sm:space-y-3 text-center sm:text-start">
-                <div className="h-5 sm:h-6 bg-muted rounded w-1/2 sm:w-1/3 mx-auto sm:mx-0 animate-pulse"></div>
-                <div className="h-3 sm:h-4 bg-muted rounded w-2/3 sm:w-1/2 mx-auto sm:mx-0 animate-pulse"></div>
-                <div className="h-3 sm:h-4 bg-muted rounded w-1/2 sm:w-1/4 mx-auto sm:mx-0 animate-pulse"></div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Content Skeleton */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-6">
-            <div className="lg:col-span-2 space-y-3 sm:space-y-6">
-              {[1, 2, 3].map((i) => (
-                <Card key={i}>
-                  <CardContent className="p-3 sm:p-6 space-y-3 sm:space-y-4">
-                    <div className="h-3 sm:h-4 bg-muted rounded w-1/3 sm:w-1/4 animate-pulse"></div>
-                    <div className="space-y-2">
-                      <div className="h-3 sm:h-4 bg-muted rounded animate-pulse"></div>
-                      <div className="h-3 sm:h-4 bg-muted rounded w-5/6 animate-pulse"></div>
-                      <div className="h-3 sm:h-4 bg-muted rounded w-4/6 animate-pulse"></div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
             </div>
-            <div className="space-y-3 sm:space-y-6">
-              {[1, 2].map((i) => (
-                <Card key={i}>
-                  <CardContent className="p-3 sm:p-6 space-y-3 sm:space-y-4">
-                    <div className="h-3 sm:h-4 bg-muted rounded w-1/2 sm:w-1/3 animate-pulse"></div>
-                    <div className="h-3 sm:h-4 bg-muted rounded w-3/4 sm:w-2/3 animate-pulse"></div>
-                    <div className="h-3 sm:h-4 bg-muted rounded w-2/3 sm:w-1/2 animate-pulse"></div>
-                  </CardContent>
-                </Card>
-              ))}
+            <div className="lg:col-span-1">
+              <div className="animate-pulse space-y-4">
+                <div className="h-64 bg-muted rounded-lg"></div>
+              </div>
             </div>
           </div>
         </div>
@@ -745,750 +713,640 @@ const ProfilePage = () => {
     )
   }
 
-  if (!profileData) {
+  if (!profileData || Object.keys(profileData).length === 0) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <div className="text-center">
-          <h1 className="text-xl sm:text-2xl font-bold text-muted-foreground">Profile Not Found</h1>
-          <p className="text-muted-foreground mt-2 text-sm sm:text-base">The user profile you're looking for doesn't exist.</p>
-        </div>
+        <Card className="w-full rounded-md max-w-md">
+          <CardContent className="p-6 text-center">
+            <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Profile Not Found</h3>
+            <p className="text-muted-foreground mb-4">The user profile you're looking for doesn't exist.</p>
+            <Button asChild>
+              <Link href="/feed">Go Back to Feed</Link>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8">
-        {/* Profile Header */}
-        <div className="bg-card rounded-lg border overflow-hidden">
-          {/* Cover Photo */}
-          <div className="h-24 sm:h-32 md:h-48 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
-          
-          {/* Profile Info */}
-          <div className="p-3 sm:p-6">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:space-x-6">
-              <div className="relative self-center sm:self-start">
-                <Avatar className="w-16 h-16 sm:w-24 sm:h-24 md:w-32 md:h-32 border-2 sm:border-4 border-white shadow-lg">
-                  <AvatarImage src={profileData?.profile_image?.imagePath} alt={getUserDisplayName()} />
-                  <AvatarFallback className="bg-blue-600 text-white text-lg sm:text-xl md:text-2xl">
-                    {getUserInitials()}
-                  </AvatarFallback>
-                </Avatar>
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Main Left Side */}
+          <div className="lg:col-span-3 space-y-6">
+            {/* Profile Header Section */}
+            <Card className="overflow-hidden rounded-md border border-border py-0">
+              {/* Cover Image */}
+              <div className="h-44 bg-gradient-to-r from-blue-600 to-indigo-600 relative">
+                {currentUserId === userId && (
+                  <Button 
+                    variant="secondary" 
+                    size="sm" 
+                    className="absolute top-4 right-4 bg-white/20 hover:bg-white/30 text-white border-white/20 dark:bg-black/20 dark:hover:bg-black/30"
+                  >
+                    <Camera className="h-4 w-4 mr-2" />
+                    Edit Cover
+                  </Button>
+                )}
               </div>
               
-              {/* Profile Info and Connection Button Container */}
-              <div className="flex-1 flex flex-col sm:flex-row sm:items-start sm:justify-between text-center sm:text-start">
-                {/* Left Side - Profile Info */}
-                <div className="flex-1">
-                  <div className="mb-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between sm:mb-2">
-                      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-2 sm:mb-0">
+              <CardContent className="p-6">
+                <div className="flex justify-between items-start">
+                  {/* Left Side - Profile Info */}
+                  <div className="flex-1">
+                    {/* Profile Image */}
+                    <div className="relative w-fit -mt-32 mb-6">
+                      <Avatar className="w-40 h-40 border-4 border-background shadow-lg">
+                        <AvatarImage src={profileData?.profile_image?.imagePath || profileData?.profilePicture} alt={getUserDisplayName()} />
+                        <AvatarFallback className="bg-blue-600 text-white text-2xl font-bold">
+                          {getUserInitials()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
+                    
+                    {/* Name and Badge */}
+                    <div className="flex items-center gap-3 mb-2">
+                      <h1 className="text-3xl font-bold text-foreground">
                         {getUserDisplayName()}
                       </h1>
-                      
-                      {/* Connection Button - Desktop (next to name) */}
-                      <div className="hidden sm:block">
-                        {getConnectionButton()}
-                      </div>
+                      {profileData?.role === 'lawyer' && profileData.lawyer?.badgeIssuingAuthority && (
+                        <Badge variant="secondary" className="text-sm font-medium bg-muted text-foreground">
+                          {profileData.lawyer.badgeIssuingAuthority}
+                        </Badge>
+                      )}
                     </div>
                     
-                    {verificationBadge && (
-                      <Badge variant="secondary" className={`text-xs sm:text-sm mb-2 ${verificationBadge.color.replace('bg-green-100', 'bg-green-100 dark:bg-green-900').replace('text-green-600', 'text-green-600 dark:text-green-100').replace('bg-yellow-100', 'bg-yellow-100 dark:bg-yellow-900').replace('text-yellow-600', 'text-yellow-600 dark:text-yellow-100').replace('bg-blue-100', 'bg-blue-100 dark:bg-blue-900').replace('text-blue-600', 'text-blue-600 dark:text-blue-100')}`}>
-                        <verificationBadge.icon className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                        {verificationBadge.label}
-                      </Badge>
+                    {/* Location */}
+                    {profileData?.city && profileData?.country && (
+                      <div className="flex items-center text-muted-foreground mb-3">
+                        <MapPin className="h-4 w-4 mr-2" />
+                        <span>{profileData.city}, {profileData.country}</span>
+                      </div>
                     )}
                     
-                    {profileData?.role === 'lawyer' && profileData.lawyer?.lawFirm && (
-                      <p className="text-base sm:text-lg font-medium text-muted-foreground flex items-center justify-center sm:justify-start">
-                        <Building className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                        <span className="text-sm sm:text-base">{profileData.lawyer.lawFirm}</span>
-                      </p>
-                    )}
-                    
-                    {profileData?.lawyer?.badgeNumber && (
-                      <p className="text-xs sm:text-sm text-muted-foreground flex items-center justify-center sm:justify-start mt-1">
-                        <Shield className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                        License: {profileData.lawyer.badgeNumber}
-                      </p>
-                    )}
+                    {/* Connections */}
+                    <div className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium">
+                      {connectionsCount || 0} connections
+                    </div>
                   </div>
                   
-                  {profileData?.city && profileData?.country && (
-                    <div className="flex items-center justify-center sm:justify-start text-muted-foreground mb-4">
-                      <MapPin className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                      <span className="text-sm">{profileData.city}, {profileData.country}</span>
-                    </div>
-                  )}
-                  
-                  {/* Contact Information */}
-                  {profileData?.contacts && profileData.contacts.length > 0 && (
-                    <div className="flex items-center justify-center sm:justify-start text-muted-foreground mb-4">
-                      <Phone className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                      <span className="text-sm">{profileData.contacts[0].number}</span>
-                    </div>
-                  )}
-
-                  {/* Connection Button - Mobile (below contact info) */}
-                  <div className="flex justify-center sm:hidden mb-6">
-                    {getConnectionButton()}
-                  </div>
-
-                  {/* Edit Profile Buttons - Mobile */}
-                  {currentUserId === userId && (
-                    <div className="flex justify-center sm:hidden mb-6">
-                      <div className="flex flex-col gap-2 w-full">
-                        <Button asChild className="w-full">
-                          <Link href="/in/edit">
-                            <Edit3 className="h-4 w-4 me-2" />
-                            Edit Profile
-                          </Link>
-                        </Button>
-                        <Button variant="outline" className="w-full">
-                          <Plus className="h-4 w-4 me-2" />
-                          Add Section
-                        </Button>
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Stats */}
-                  <div className="grid grid-cols-3 gap-2 sm:gap-4 mt-4 sm:mt-6">
-                    <div className="text-center p-2 sm:p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg">
-                      <div className="text-lg sm:text-2xl font-bold text-blue-600 dark:text-blue-400">{connectionsCount || 0}</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">Connections</div>
-                    </div>
-                    <div className="text-center p-2 sm:p-4 bg-green-50 dark:bg-green-950/30 rounded-lg">
-                      <div className="text-lg sm:text-2xl font-bold text-green-600 dark:text-green-400">{profileData?.posts?.length || 0}</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">Posts</div>
-                    </div>
-                    <div className="text-center p-2 sm:p-4 bg-purple-50 dark:bg-purple-950/30 rounded-lg">
-                      <div className="text-lg sm:text-2xl font-bold text-purple-600 dark:text-purple-400">{profileData?.profileViews || 0}</div>
-                      <div className="text-xs sm:text-sm text-muted-foreground">Profile Views</div>
-                    </div>
+                  {/* Right Side - Action Buttons */}
+                  <div className="flex items-center gap-2">
+                    {currentUserId === userId ? (
+                      <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90">
+                        <Link href="/in/edit">
+                          <Edit3 className="h-4 w-4 mr-2" />
+                          Edit Profile
+                        </Link>
+                      </Button>
+                    ) : (
+                      getConnectionButton()
+                    )}
                   </div>
                 </div>
+              </CardContent>
+            </Card>
 
-                {/* Right Side - Edit Profile Buttons (Desktop only) */}
+            {/* About Section */}
+            <Card className="border rounded-md border-border">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <h2 className="text-xl font-semibold text-foreground">About</h2>
                 {currentUserId === userId && (
-                  <div className="hidden sm:flex gap-2 sm:ml-6">
-                    <Button asChild>
-                      <Link href="/in/edit">
-                        <Edit3 className="h-4 w-4 me-2" />
-                        Edit Profile
-                      </Link>
-                    </Button>
-                    <Button variant="outline">
-                      <Plus className="h-4 w-4 me-2" />
-                      Add Section
-                    </Button>
-                  </div>
+                  <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                    <Edit3 className="h-4 w-4" />
+                  </Button>
                 )}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Profile Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-6 mt-4 sm:mt-6">
-          {/* Main Content */}
-          <div className="lg:col-span-2">
-            <Tabs defaultValue="about" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="about" className="text-xs sm:text-sm">About</TabsTrigger>
-                <TabsTrigger value="posts" className="text-xs sm:text-sm">Posts</TabsTrigger>
-                {profileData?.role === 'lawyer' && (
-                  <TabsTrigger value="credentials" className="text-xs sm:text-sm">Credentials</TabsTrigger>
+              </CardHeader>
+              <CardContent>
+                {profileData?.role === 'lawyer' && profileData.lawyer?.summary ? (
+                  <p className="text-muted-foreground leading-relaxed">
+                    {profileData.lawyer.summary}
+                  </p>
+                ) : (
+                  <p className="text-muted-foreground leading-relaxed">
+                    Welcome to my profile! I'm a {profileData?.role === 'admin' ? 'Administrator' : 'Member'} on LegalNet.
+                  </p>
                 )}
-                <TabsTrigger value="activity" className="text-xs sm:text-sm">Activity</TabsTrigger>
-              </TabsList>
+              </CardContent>
+            </Card>
 
-              <TabsContent value="about" className="mt-3 sm:mt-6">
-                <Card>
-                  <CardHeader className="p-3 sm:p-6">
-                    <h3 className="text-lg sm:text-xl font-semibold flex items-center">
-                      <Users className="h-4 w-4 sm:h-5 sm:w-5 me-2 text-blue-600" />
-                      About
-                    </h3>
-                  </CardHeader>
-                  <CardContent className="space-y-3 sm:space-y-4 p-3 sm:p-6 pt-0">
-                    {profileData?.role === 'lawyer' && profileData.lawyer ? (
-                      <>
-                        {profileData.lawyer.summary && (
-                          <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
-                            {profileData.lawyer.summary}
-                          </p>
-                        )}
-                        
-                        {profileData.lawyer.legalAreas && (
-                          <div>
-                            <h4 className="font-semibold mb-2 text-sm sm:text-base">Legal Specializations</h4>
-                            <div className="flex flex-wrap gap-1 sm:gap-2">
-                              {profileData.lawyer.legalAreas.split(',').map((area, index) => (
-                                <Badge key={index} variant="secondary" className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100 text-xs">
-                                  {area.trim()}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                        
-                        <div className="space-y-2">
-                          <div className="flex items-center text-muted-foreground">
-                            <Building className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                            <span className="text-sm sm:text-base">{profileData.lawyer.lawFirm}</span>
-                          </div>
-                          
-                          {profileData.lawyer.badgeNumber && (
-                            <div className="flex items-center text-muted-foreground">
-                              <Shield className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                              <span className="text-sm sm:text-base">License: {profileData.lawyer.badgeNumber}</span>
-                            </div>
-                          )}
-                          
-                          {profileData.lawyer.badgeIssueDate && (
-                            <div className="flex items-center text-muted-foreground">
-                              <Calendar className="h-3 w-3 sm:h-4 sm:w-4 me-2" />
-                              <span className="text-sm sm:text-base">Licensed since: {new Date(profileData.lawyer.badgeIssueDate).toLocaleDateString()}</span>
-                            </div>
-                          )}
+            {/* Activity Section */}
+            <Card className="border rounded-md border-border">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <h2 className="text-xl font-semibold text-foreground">Activity</h2>
+                {currentUserId === userId && (
+                  <Dialog open={showCreatePost} onOpenChange={setShowCreatePost}>
+                    <DialogTrigger asChild>
+                      <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Create Post
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-md bg-background border border-border">
+                      <DialogHeader>
+                        <DialogTitle className="text-foreground">Create a new post</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <Input placeholder="Post title..." className="bg-background border-input text-foreground" />
+                        <Textarea placeholder="What's on your mind?" rows={4} className="bg-background border-input text-foreground" />
+                        <div className="flex justify-end space-x-2">
+                          <Button variant="outline" onClick={() => setShowCreatePost(false)} className="border-input text-foreground hover:bg-muted">
+                            Cancel
+                          </Button>
+                          <Button className="bg-primary text-primary-foreground hover:bg-primary/90">Post</Button>
                         </div>
-                      </>
-                    ) : (
-                      <>
-                        <p className="text-muted-foreground text-sm sm:text-base">
-                          {profileData?.role === 'admin' ? 'Administrator' : 'Member'} on LegalNet.
-                        </p>
-                        {profileData?.interests && (
-                          <div>
-                            <h4 className="font-semibold mb-2 text-sm sm:text-base">Interests</h4>
-                            <p className="text-muted-foreground text-sm sm:text-base">{profileData.interests}</p>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              <TabsContent value="posts" className="mt-3 sm:mt-6">
-                <Card>
-                  <CardHeader>
-                    <h3 className="text-lg sm:text-xl font-semibold flex items-center">
-                      <FileText className="h-5 w-5 me-2 text-blue-600" />
-                      Posts ({profileData?.posts?.length || 0})
-                    </h3>
-                  </CardHeader>
-                  <CardContent>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                )}
+              </CardHeader>
+              <CardContent>
+                <Tabs defaultValue="posts" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 mb-6 bg-muted">
+                    <TabsTrigger value="posts" className="data-[state=active]:bg-background data-[state=active]:text-foreground">Posts</TabsTrigger>
+                    <TabsTrigger value="comments" className="data-[state=active]:bg-background data-[state=active]:text-foreground">Comments</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="posts" className="space-y-6">
                     {profileData?.posts?.length > 0 ? (
-                      <div className="space-y-6">
-                        {profileData.posts.map((post) => (
-                          <div key={post.id} className="border border-border rounded-lg overflow-hidden bg-card">
-                            {/* Post Header */}
-                            <div className="p-4">
-                              <div className="flex items-start space-x-3">
-                                <Avatar className="h-12 w-12">
-                                  <AvatarImage src={profileData?.profile_image?.imagePath} alt={getUserDisplayName()} />
-                                  <AvatarFallback className="bg-blue-600 text-white">
-                                    {getUserInitials()}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center space-x-2">
-                                    <h4 className="font-semibold text-foreground">
-                                      {getUserDisplayName()}
-                                    </h4>
-                                    {verificationBadge && (
-                                      <Badge variant="secondary" className={`text-xs ${verificationBadge.color}`}>
-                                        <verificationBadge.icon className="h-3 w-3 me-1" />
-                                        {verificationBadge.label}
-                                      </Badge>
-                                    )}
-                                  </div>
-                                  {profileData?.role === 'lawyer' && profileData.lawyer?.lawFirm && (
-                                    <p className="text-sm text-muted-foreground font-medium">
-                                      {profileData.lawyer.lawFirm}
-                                    </p>
-                                  )}
-                                  <div className="flex items-center text-xs text-muted-foreground mt-1">
-                                    <Clock className="h-3 w-3 me-1" />
-                                    <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                      <>
+                        {/* Posts in Flexible Row - Side by Side */}
+                        <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
+                          {profileData.posts.slice(0, 2).map((post) => (
+                            <div key={post.id} className="flex-1 min-w-0">
+                              {/* Use existing post display logic but with UserProfile design */}
+                              <div className="border border-border rounded-lg overflow-hidden bg-card">
+                                {/* Post Header */}
+                                <div className="p-4">
+                                  <div className="flex items-start space-x-3">
+                                    <Avatar className="h-12 w-12">
+                                      <AvatarImage src={profileData?.profile_image?.imagePath} alt={getUserDisplayName()} />
+                                      <AvatarFallback className="bg-blue-600 text-white">
+                                        {getUserInitials()}
+                                      </AvatarFallback>
+                                    </Avatar>
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center space-x-2">
+                                        <h4 className="font-semibold text-foreground">
+                                          {getUserDisplayName()}
+                                        </h4>
+                                        {verificationBadge && (
+                                          <Badge variant="secondary" className={`text-xs ${verificationBadge.color}`}>
+                                            <verificationBadge.icon className="h-3 w-3 me-1" />
+                                            {verificationBadge.label}
+                                          </Badge>
+                                        )}
+                                      </div>
+                                      {profileData?.role === 'lawyer' && profileData.lawyer?.lawFirm && (
+                                        <p className="text-sm text-muted-foreground font-medium">
+                                          {profileData.lawyer.lawFirm}
+                                        </p>
+                                      )}
+                                      <div className="flex items-center text-xs text-muted-foreground mt-1">
+                                        <Clock className="h-3 w-3 me-1" />
+                                        <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            </div>
 
-                            {/* Post Content */}
-                            <div className="px-4">
-                              {post.title && (
-                                <h3 className="font-semibold text-lg mb-3 leading-tight">
-                                  {post.title}
-                                </h3>
-                              )}
-                              <div className="text-sm leading-relaxed mb-4">
-                                <p className="whitespace-pre-wrap break-words">
-                                  {post.content.length > 200 ? `${post.content.substring(0, 200)}...` : post.content}
-                                </p>
-                              </div>
-                            </div>
-
-                            {/* Post Images */}
-                            {post.post_photos && post.post_photos.length > 0 && (
-                              <div className="mb-4">
-                                {post.post_photos.length === 1 ? (
-                                  <div className="relative">
-                                    <img
-                                      src={post.post_photos[0].photo?.photoPath}
-                                      alt="Post image"
-                                      className="w-full h-auto object-contain max-h-96"
-                                    />
+                                {/* Post Content */}
+                                <div className="px-4">
+                                  {post.title && (
+                                    <h3 className="font-semibold text-lg mb-3 leading-tight">
+                                      {post.title}
+                                    </h3>
+                                  )}
+                                  <div className="text-sm leading-relaxed mb-4">
+                                    <p className="whitespace-pre-wrap break-words">
+                                      {post.content.length > 200 ? `${post.content.substring(0, 200)}...` : post.content}
+                                    </p>
                                   </div>
-                                ) : (
-                                  <div className="grid grid-cols-2 gap-2 px-4">
-                                    {post.post_photos.slice(0, 4).map((postPhoto, index) => (
-                                      <div key={index} className="relative">
+                                </div>
+
+                                {/* Post Images - existing logic */}
+                                {post.post_photos && post.post_photos.length > 0 && (
+                                  <div className="mb-4">
+                                    {post.post_photos.length === 1 ? (
+                                      <div className="relative">
                                         <img
-                                          src={postPhoto.photo?.photoPath}
+                                          src={post.post_photos[0].photo?.photoPath}
                                           alt="Post image"
-                                          className="w-full h-48 object-cover rounded-lg"
+                                          className="w-full h-auto object-contain max-h-96"
                                         />
-                                        {post.post_photos.length > 4 && index === 3 && (
-                                          <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
-                                            <span className="text-white font-semibold text-lg">
-                                              +{post.post_photos.length - 4}
-                                            </span>
+                                      </div>
+                                    ) : (
+                                      <div className="grid grid-cols-2 gap-2 px-4">
+                                        {post.post_photos.slice(0, 4).map((postPhoto, index) => (
+                                          <div key={index} className="relative">
+                                            <img
+                                              src={postPhoto.photo?.photoPath}
+                                              alt="Post image"
+                                              className="w-full h-48 object-cover rounded-lg"
+                                            />
+                                            {post.post_photos.length > 4 && index === 3 && (
+                                              <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
+                                                <span className="text-white font-semibold text-lg">
+                                                  +{post.post_photos.length - 4}
+                                                </span>
+                                              </div>
+                                            )}
+                                          </div>
+                                        ))}
+
+                                        {/* Show "See More" button if there are more than 4 photos */}
+                                        {post.post_photos.length > 4 && (
+                                          <div className="col-span-2 text-center">
+                                            <Button
+                                              variant="outline"
+                                              className="w-full"
+                                              onClick={() => {
+                                                // Open a modal or navigate to a new page to show all photos
+                                                console.log('Show all photos for post:', post.id);
+                                              }}
+                                            >
+                                              See all photos
+                                            </Button>
                                           </div>
                                         )}
                                       </div>
-                                    ))}
-
-                                    {/* Show "See More" button if there are more than 4 photos */}
-                                    {post.post_photos.length > 4 && (
-                                      <div className="col-span-2 text-center">
-                                        <Button
-                                          variant="outline"
-                                          className="w-full"
-                                          onClick={() => {
-                                            // Open a modal or navigate to a new page to show all photos
-                                            console.log('Show all photos for post:', post.id);
-                                          }}
-                                        >
-                                          See all photos
-                                        </Button>
-                                      </div>
                                     )}
                                   </div>
                                 )}
-                              </div>
-                            )}
 
-                            {/* Post Stats */}
-                            <div className="px-4 py-2">
-                              <div className="flex items-center justify-between text-sm text-muted-foreground">
-                                <div className="flex items-center space-x-4">
-                                  {post.reacts && post.reacts.length > 0 && (
-                                    <div className="flex items-center space-x-2">
-                                      <div className="flex -space-x-1">
-                                        {[...new Set(post.reacts.map(r => r.reaction))].slice(0, 3).map((reaction, index) => (
-                                          <span key={index} className="text-sm bg-white rounded-full border border-gray-200 w-6 h-6 flex items-center justify-center shadow-sm">
-                                            {reaction === 'like' && '👍'}
-                                            {reaction === 'love' && '❤️'}
-                                            {reaction === 'haha' && '😂'}
-                                            {reaction === 'wow' && '😮'}
-                                            {reaction === 'sad' && '😢'}
-                                            {reaction === 'angry' && '😠'}
-                                          </span>
-                                        ))}
-                                      </div>
-                                      <span className="font-medium">{post.reacts.length}</span>
+                                {/* Post Stats and Actions - using existing handlers but UserProfile design */}
+                                <div className="px-4 py-2">
+                                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+                                    <div className="flex items-center space-x-4">
+                                      {post.reacts && post.reacts.length > 0 && (
+                                        <div className="flex items-center space-x-2">
+                                          <div className="flex -space-x-1">
+                                            {[...new Set(post.reacts.map(r => r.reaction))].slice(0, 3).map((reaction, index) => (
+                                              <span key={index} className="text-sm bg-white rounded-full border border-gray-200 w-6 h-6 flex items-center justify-center shadow-sm">
+                                                {reaction === 'like' && '👍'}
+                                                {reaction === 'love' && '❤️'}
+                                                {reaction === 'haha' && '😂'}
+                                                {reaction === 'wow' && '😮'}
+                                                {reaction === 'sad' && '😢'}
+                                                {reaction === 'angry' && '😠'}
+                                              </span>
+                                            ))}
+                                          </div>
+                                          <span className="font-medium">{post.reacts.length}</span>
+                                        </div>
+                                      )}
                                     </div>
-                                  )}
-                                </div>
-                                {post.comments && post.comments.length > 0 && (
-                                  <Button
-                                    variant="ghost"
-                                    className="p-0 h-auto font-medium hover:text-blue-600"
-                                    onClick={() => setShowComments(showComments === post.id ? null : post.id)}
-                                  >
-                                    {post.comments.length} comment{post.comments.length !== 1 ? 's' : ''}
-                                  </Button>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* Post Actions */}
-                            <div className="px-4 py-3 border-t border-border">
-                              <div className="flex items-center justify-around">
-                                <div className="relative">
-                                  <Button
-                                    variant="ghost"
-                                    className={`flex items-center space-x-2 text-muted-foreground hover:text-blue-600 ${
-                                      post.reacts && post.reacts.some(r => r.userId === currentUserId) ? 'text-blue-600' : ''
-                                    }`}
-                                    onMouseEnter={() => handleReactionHover(post.id, true)}
-                                    onMouseLeave={() => handleReactionHover(post.id, false)}
-                                    onClick={() => handleReaction(post.id, 'like')}
-                                  >
-                                    <ThumbsUp className="h-4 w-4" />
-                                    <span className="text-sm font-medium">
-                                      {(() => {
-                                        const userReact = post.reacts?.find(r => r.userId === currentUserId);
-                                        return userReact ? userReact.reaction.charAt(0).toUpperCase() + userReact.reaction.slice(1) : 'Like';
-                                      })()}
-                                    </span>
-                                  </Button>
-                                  
-                                  {/* Reaction Picker */}
-                                  {showReactionPicker === post.id && (
-                                    <div
-                                      className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-popover border rounded-lg shadow-xl p-2 z-50"
-                                      onMouseEnter={() => handleReactionPickerMouseEnter(post.id)}
-                                      onMouseLeave={() => handleReactionPickerMouseLeave(post.id)}
-                                    >
-                                      <div className="flex space-x-1">
-                                        {Object.entries(reactionEmojis).map(([key, { emoji, label }]) => (
-                                          <Button
-                                            key={key}
-                                            variant="ghost"
-                                            className="text-lg hover:scale-110 transition-transform p-1 h-auto"
-                                            onClick={() => handleReaction(post.id, key)}
-                                            title={label}
-                                          >
-                                            {emoji}
-                                          </Button>
-                                        ))}
-                                      </div>
-                                    </div>
-                                  )}
-                                </div>
-
-                                <Button
-                                  variant="ghost"
-                                  className="flex items-center space-x-2 text-muted-foreground hover:text-blue-600"
-                                  onClick={() => {
-                                    toggleCommentForm(post.id)
-                                    if (showCommentForm !== post.id && post.comments && post.comments.length > 0) {
-                                      setShowComments(post.id)
-                                    }
-                                  }}
-                                >
-                                  <MessageCircle className="h-4 w-4" />
-                                  <span className="text-sm font-medium">Comment</span>
-                                </Button>
-
-                                <Button
-                                  variant="ghost"
-                                  className="flex items-center space-x-2 text-muted-foreground hover:text-blue-600"
-                                  onClick={() => handleShare(post.id)}
-                                >
-                                  <Share2 className="h-4 w-4" />
-                                  <span className="text-sm font-medium">Share</span>
-                                </Button>
-                              </div>
-                            </div>
-
-                            {/* Comment Form */}
-                            {showCommentForm === post.id && (
-                              <div className="px-4 py-3 border-t border-border">
-                                <form onSubmit={(e) => handleComment(e, post.id)} className="flex items-center space-x-3">
-                                  <Avatar className="h-8 w-8">
-                                    <AvatarImage src={profileData?.profile_image?.imagePath} alt="Your avatar" />
-                                    <AvatarFallback className="bg-blue-600 text-white text-xs">
-                                      {getUserInitials()}
-                                    </AvatarFallback>
-                                  </Avatar>
-                                  <div className="flex-1 flex space-x-2">
-                                    <Input
-                                      placeholder="Write a comment..."
-                                      className="flex-1"
-                                      name="content"
-                                      required
-                                    />
-                                    <Button type="submit" size="sm">
-                                      Post
-                                    </Button>
+                                    {post.comments && post.comments.length > 0 && (
+                                      <Button
+                                        variant="ghost"
+                                        className="p-0 h-auto font-medium hover:text-blue-600"
+                                        onClick={() => setShowComments(showComments === post.id ? null : post.id)}
+                                      >
+                                        {post.comments.length} comment{post.comments.length !== 1 ? 's' : ''}
+                                      </Button>
+                                    )}
                                   </div>
-                                </form>
-                              </div>
-                            )}
+                                </div>
 
-                            {/* Comments Section */}
-                            {showComments === post.id && post.comments && post.comments.length > 0 && (
-                              <div className="px-4 py-3 border-t border-border">
-                                <div className="space-y-3">
-                                  <div className="space-y-3">
-                                    {post.comments.map((comment) => (
-                                      <div key={comment.id} className="flex items-start space-x-3">
-                                        <Avatar className="h-8 w-8">
-                                          <AvatarImage 
-                                            src={comment.user?.profile_image?.imagePath} 
-                                            alt="Commenter" 
-                                          />
-                                          <AvatarFallback className="bg-gray-500 text-white text-xs">
-                                            {comment.user ? `${comment.user.firstName?.[0] || ''}${comment.user.lastName?.[0] || ''}`.toUpperCase() : 'U'}
-                                          </AvatarFallback>
-                                        </Avatar>
-                                        <div className="flex-1 min-w-0">
-                                          {editingCommentId === comment.id ? (
-                                            <div className="space-y-2">
-                                              <Textarea
-                                                value={editCommentContent}
-                                                onChange={(e) => setEditCommentContent(e.target.value)}
-                                                className="min-h-[60px] text-sm"
-                                                placeholder="Edit your comment..."
-                                              />
-                                              <div className="flex space-x-2">
-                                                <Button 
-                                                  size="sm" 
-                                                  onClick={() => handleEditComment(comment.id)}
-                                                  disabled={!editCommentContent.trim()}
-                                                >
-                                                  Save
-                                                </Button>
-                                                <Button 
-                                                  size="sm" 
-                                                  variant="outline" 
-                                                  onClick={cancelEditingComment}
-                                                >
-                                                  Cancel
-                                                </Button>
-                                              </div>
-                                            </div>
-                                          ) : (
-                                            <div className="bg-muted rounded-lg px-3 py-2">
-                                              <div className="flex items-center justify-between">
-                                                <div className="font-medium text-sm">
-                                                  {comment.user ? `${comment.user.firstName} ${comment.user.lastName}` : 'Unknown User'}
-                                                </div>
-                                                {/* Show edit/delete options only if current logged-in user owns this comment */}
-                                                {currentUser && comment.userId === currentUser.id && (
-                                                  <div className="flex space-x-1">
-                                                    <Button
-                                                      variant="ghost"
-                                                      size="sm"
-                                                      className="h-6 w-6 p-0 text-gray-400 hover:text-blue-600"
-                                                      onClick={() => startEditingComment(comment.id, comment.content)}
-                                                    >
-                                                      <Edit3 className="h-3 w-3" />
-                                                    </Button>
-                                                    <Button
-                                                      variant="ghost"
-                                                      size="sm"
-                                                      className="h-6 w-6 p-0 text-gray-400 hover:text-red-600"
-                                                      onClick={() => handleDeleteComment(comment.id)}
-                                                    >
-                                                      <Trash2 className="h-3 w-3" />
-                                                    </Button>
-                                                  </div>
-                                                )}
-                                              </div>
-                                              <p className="text-sm mt-1">{comment.content}</p>
-                                            </div>
-                                          )}
-                                          <div className="flex items-center space-x-4 mt-1 text-xs text-muted-foreground">
-                                            <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
-                                            <Button variant="ghost" className="p-0 h-auto text-xs hover:text-blue-600">
-                                              Like
-                                            </Button>
-                                            <Button variant="ghost" className="p-0 h-auto text-xs hover:text-blue-600">
-                                              Reply
-                                            </Button>
+                                {/* Post Actions */}
+                                <div className="px-4 py-3 border-t border-border">
+                                  <div className="flex items-center justify-around">
+                                    <div className="relative">
+                                      <Button
+                                        variant="ghost"
+                                        className={`flex items-center space-x-2 text-muted-foreground hover:text-blue-600 ${
+                                          post.reacts && post.reacts.some(r => r.userId === currentUserId) ? 'text-blue-600' : ''
+                                        }`}
+                                        onMouseEnter={() => handleReactionHover(post.id, true)}
+                                        onMouseLeave={() => handleReactionHover(post.id, false)}
+                                        onClick={() => handleReaction(post.id, 'like')}
+                                      >
+                                        <ThumbsUp className="h-4 w-4" />
+                                        <span className="text-sm font-medium">
+                                          {(() => {
+                                            const userReact = post.reacts?.find(r => r.userId === currentUserId);
+                                            return userReact ? userReact.reaction.charAt(0).toUpperCase() + userReact.reaction.slice(1) : 'Like';
+                                          })()}
+                                        </span>
+                                      </Button>
+                                      
+                                      {/* Reaction Picker */}
+                                      {showReactionPicker === post.id && (
+                                        <div
+                                          className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-popover border rounded-lg shadow-xl p-2 z-50"
+                                          onMouseEnter={() => handleReactionPickerMouseEnter(post.id)}
+                                          onMouseLeave={() => handleReactionPickerMouseLeave(post.id)}
+                                        >
+                                          <div className="flex space-x-1">
+                                            {Object.entries(reactionEmojis).map(([key, { emoji, label }]) => (
+                                              <Button
+                                                key={key}
+                                                variant="ghost"
+                                                className="text-lg hover:scale-110 transition-transform p-1 h-auto"
+                                                onClick={() => handleReaction(post.id, key)}
+                                                title={label}
+                                              >
+                                                {emoji}
+                                              </Button>
+                                            ))}
                                           </div>
                                         </div>
-                                      </div>
-                                    ))}
+                                      )}
+                                    </div>
 
-                                    {/* Show "Load more comments" button if there are more than 3 comments */}
-                                    {post.comments.length > 3 && (
-                                      <div className="text-center">
-                                        <Button
-                                          variant="outline"
-                                          className="mt-2"
-                                          onClick={() => {
-                                            // Load more comments logic
-                                            console.log('Load more comments for post:', post.id);
-                                          }}
-                                        >
-                                          Load more comments
-                                        </Button>
-                                      </div>
-                                    )}
+                                    <Button
+                                      variant="ghost"
+                                      className="flex items-center space-x-2 text-muted-foreground hover:text-blue-600"
+                                      onClick={() => {
+                                        toggleCommentForm(post.id)
+                                        if (showCommentForm !== post.id && post.comments && post.comments.length > 0) {
+                                          setShowComments(post.id)
+                                        }
+                                      }}
+                                    >
+                                      <MessageCircle className="h-4 w-4" />
+                                      <span className="text-sm font-medium">Comment</span>
+                                    </Button>
+
+                                    <Button
+                                      variant="ghost"
+                                      className="flex items-center space-x-2 text-muted-foreground hover:text-blue-600"
+                                      onClick={() => handleShare(post.id)}
+                                    >
+                                      <Share2 className="h-4 w-4" />
+                                      <span className="text-sm font-medium">Share</span>
+                                    </Button>
                                   </div>
                                 </div>
-                              </div>
-                            )}
-                          </div>
-                        ))}
 
-                        {/* Show "Load more posts" button if there are more than 3 posts */}
-                        {profileData.posts.length > 3 && (
-                          <div className="text-center">
-                            <Button
-                              variant="outline"
-                              className="mt-4"
-                              onClick={() => {
-                                // Load more posts logic
-                                console.log('Load more posts');
-                              }}
-                            >
-                              Load more posts
-                            </Button>
-                          </div>
-                        )}
-                      </div>
+                                {/* Comment Form and Comments Section - existing logic */}
+                                {showCommentForm === post.id && (
+                                  <div className="px-4 py-3 border-t border-border">
+                                    <form onSubmit={(e) => handleComment(e, post.id)} className="flex items-center space-x-3">
+                                      <Avatar className="h-8 w-8">
+                                        <AvatarImage src={profileData?.profile_image?.imagePath} alt="Your avatar" />
+                                        <AvatarFallback className="bg-blue-600 text-white text-xs">
+                                          {getUserInitials()}
+                                        </AvatarFallback>
+                                      </Avatar>
+                                      <div className="flex-1 flex space-x-2">
+                                        <Input
+                                          placeholder="Write a comment..."
+                                          className="flex-1"
+                                          name="content"
+                                          required
+                                        />
+                                        <Button type="submit" size="sm">
+                                          Post
+                                        </Button>
+                                      </div>
+                                    </form>
+                                  </div>
+                                )}
+
+                                {/* Comments Section */}
+                                {showComments === post.id && post.comments && post.comments.length > 0 && (
+                                  <div className="px-4 py-3 border-t border-border">
+                                    <div className="space-y-3">
+                                      <div className="space-y-3">
+                                        {post.comments.map((comment) => (
+                                          <div key={comment.id} className="flex items-start space-x-3">
+                                            <Avatar className="h-8 w-8">
+                                              <AvatarImage 
+                                                src={comment.user?.profile_image?.imagePath} 
+                                                alt="Commenter" 
+                                              />
+                                              <AvatarFallback className="bg-gray-500 text-white text-xs">
+                                                {comment.user ? `${comment.user.firstName?.[0] || ''}${comment.user.lastName?.[0] || ''}`.toUpperCase() : 'U'}
+                                              </AvatarFallback>
+                                            </Avatar>
+                                            <div className="flex-1 min-w-0">
+                                              {editingCommentId === comment.id ? (
+                                                <div className="space-y-2">
+                                                  <Textarea
+                                                    value={editCommentContent}
+                                                    onChange={(e) => setEditCommentContent(e.target.value)}
+                                                    className="min-h-[60px] text-sm"
+                                                    placeholder="Edit your comment..."
+                                                  />
+                                                  <div className="flex space-x-2">
+                                                    <Button 
+                                                      size="sm" 
+                                                      onClick={() => handleEditComment(comment.id)}
+                                                      disabled={!editCommentContent.trim()}
+                                                    >
+                                                      Save
+                                                    </Button>
+                                                    <Button 
+                                                      size="sm" 
+                                                      variant="outline" 
+                                                      onClick={cancelEditingComment}
+                                                    >
+                                                      Cancel
+                                                    </Button>
+                                                  </div>
+                                                </div>
+                                              ) : (
+                                                <div className="bg-muted rounded-lg px-3 py-2">
+                                                  <div className="flex items-center justify-between">
+                                                    <div className="font-medium text-sm">
+                                                      {comment.user ? `${comment.user.firstName} ${comment.user.lastName}` : 'Unknown User'}
+                                                    </div>
+                                                    {/* Show edit/delete options only if current logged-in user owns this comment */}
+                                                    {currentUser && comment.userId === currentUser.id && (
+                                                      <div className="flex space-x-1">
+                                                        <Button
+                                                          variant="ghost"
+                                                          size="sm"
+                                                          className="h-6 w-6 p-0 text-gray-400 hover:text-blue-600"
+                                                          onClick={() => startEditingComment(comment.id, comment.content)}
+                                                        >
+                                                          <Edit3 className="h-3 w-3" />
+                                                        </Button>
+                                                        <Button
+                                                          variant="ghost"
+                                                          size="sm"
+                                                          className="h-6 w-6 p-0 text-gray-400 hover:text-red-600"
+                                                          onClick={() => handleDeleteComment(comment.id)}
+                                                        >
+                                                          <Trash2 className="h-3 w-3" />
+                                                        </Button>
+                                                      </div>
+                                                    )}
+                                                  </div>
+                                                  <p className="text-sm mt-1">{comment.content}</p>
+                                                </div>
+                                              )}
+                                              <div className="flex items-center space-x-4 mt-1 text-xs text-muted-foreground">
+                                                <span>{new Date(comment.createdAt).toLocaleDateString()}</span>
+                                                <Button variant="ghost" className="p-0 h-auto text-xs hover:text-blue-600">
+                                                  Like
+                                                </Button>
+                                                <Button variant="ghost" className="p-0 h-auto text-xs hover:text-blue-600">
+                                                  Reply
+                                                </Button>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        ))}
+
+                                        {/* Show "Load more comments" button if there are more than 3 comments */}
+                                        {post.comments.length > 3 && (
+                                          <div className="text-center">
+                                            <Button
+                                              variant="outline"
+                                              className="mt-2"
+                                              onClick={() => {
+                                                // Load more comments logic
+                                                console.log('Load more comments for post:', post.id);
+                                              }}
+                                            >
+                                              Load more comments
+                                            </Button>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                          
+                          {/* If only 1 post exists, add empty div to maintain flex layout */}
+                          {profileData.posts.length === 1 && (
+                            <div className="flex-1 min-w-0 hidden lg:block"></div>
+                          )}
+                        </div>
+                        
+                        {/* Show All Posts Button */}
+                        <div className="border-t border-border pt-6 text-center">
+                          <Button variant="outline" className="w-full border-input text-foreground hover:bg-muted">
+                            Show all posts ({profileData.posts.length})
+                          </Button>
+                        </div>
+                      </>
                     ) : (
                       <div className="text-center py-8">
                         <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                         <p className="text-muted-foreground">No posts yet.</p>
                       </div>
                     )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
-
-              {profileData?.role === 'lawyer' && (
-                <TabsContent value="credentials" className="mt-3 sm:mt-6">
-                  <Card>
-                    <CardHeader>
-                      <h3 className="text-lg sm:text-xl font-semibold flex items-center">
-                        <Award className="h-5 w-5 me-2 text-blue-600" />
-                        Credentials & Education
-                      </h3>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      {verificationBadge && (
-                        <div className={`rounded-xl p-6 border-2 ${verificationBadge.color.includes('green') ? 'bg-green-50 border-green-200' : verificationBadge.color.includes('yellow') ? 'bg-yellow-50 border-yellow-200' : 'bg-blue-50 border-blue-200'}`}>
-                          <div className="flex items-center mb-3">
-                            <div className={`w-12 h-12 rounded-full flex items-center justify-center me-4 ${verificationBadge.color.includes('green') ? 'bg-green-600' : verificationBadge.color.includes('yellow') ? 'bg-yellow-600' : 'bg-blue-600'}`}>
-                              {verificationBadge && <verificationBadge.icon className="h-6 w-6 text-white" />}
-                            </div>
-                            <div>
-                              <h4 className="font-bold text-lg">{verificationBadge?.label}</h4>
-                              <p className="text-sm opacity-80">Professional Status</p>
-                            </div>
-                          </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="comments" className="space-y-4">
+                    {profileData?.posts?.length > 0 && profileData.posts.some(post => post.comments?.length > 0) ? (
+                      <>
+                        {/* Comments in a single column - more compact */}
+                        <div className="space-y-4">
+                          {profileData.posts
+                            .flatMap(post => post.comments || [])
+                            .slice(0, 5)
+                            .map((comment) => (
+                              <div key={comment.id} className="border border-border rounded-lg p-4 bg-card">
+                                <div className="flex items-start space-x-3">
+                                  <Avatar className="h-8 w-8">
+                                    <AvatarImage src={comment.user?.profile_image?.imagePath} />
+                                    <AvatarFallback className="bg-muted text-muted-foreground text-xs">
+                                      {comment.user ? `${comment.user.firstName?.[0]}${comment.user.lastName?.[0]}` : 'U'}
+                                    </AvatarFallback>
+                                  </Avatar>
+                                  <div className="flex-1">
+                                    <div className="flex items-center space-x-2 mb-1">
+                                      <span className="font-medium text-sm text-foreground">
+                                        {comment.user ? `${comment.user.firstName} ${comment.user.lastName}` : 'Unknown User'}
+                                      </span>
+                                      <span className="text-xs text-muted-foreground">
+                                        {new Date(comment.createdAt).toLocaleDateString()}
+                                      </span>
+                                    </div>
+                                    <p className="text-sm text-foreground">{comment.content}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
                         </div>
-                      )}
-                      
-                      {profileData.lawyer?.badgeNumber && (
-                        <div className="bg-muted/50 rounded-lg p-4 border">
-                          <h4 className="font-semibold mb-2 flex items-center">
-                            <Shield className="h-4 w-4 me-2" />
-                            Professional License
-                          </h4>
-                          <div className="space-y-2">
-                            <p className="text-sm">
-                              Badge Number: <span className="font-mono bg-background px-2 py-1 rounded">{profileData.lawyer.badgeNumber}</span>
-                            </p>
-                            {profileData.lawyer.badgeIssueDate && (
-                              <p className="text-sm">
-                                Issued: {new Date(profileData.lawyer.badgeIssueDate).toLocaleDateString()}
-                              </p>
-                            )}
-                            {profileData.lawyer.badgeIssuingAuthority && (
-                              <p className="text-sm">
-                                Authority Level: <span className="capitalize font-medium">{profileData.lawyer.badgeIssuingAuthority}</span>
-                              </p>
-                            )}
-                          </div>
+                        
+                        {/* Show All Comments Button */}
+                        <div className="border-t border-border pt-4 text-center">
+                          <Button variant="outline" className="w-full border-input text-foreground hover:bg-muted">
+                            Show all comments
+                          </Button>
                         </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-              )}
-
-              <TabsContent value="activity" className="mt-3 sm:mt-6">
-                <Card>
-                  <CardHeader>
-                    <h3 className="text-lg sm:text-xl font-semibold">Recent Activity</h3>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-muted-foreground">Activity timeline coming soon...</p>
-                  </CardContent>
-                </Card>
-              </TabsContent>
-            </Tabs>
-          </div>
-
-          {/* Sidebar */}
-          <div className="lg:col-span-1 space-y-3 sm:space-y-6">
-            {/* Contact Info */}
-            <Card>
-              <CardHeader className="p-3 sm:p-6">
-                <h3 className="text-base sm:text-lg font-semibold flex items-center">
-                  <Mail className="h-4 w-4 sm:h-5 sm:w-5 me-2 text-blue-600" />
-                  Contact Info
-                </h3>
-              </CardHeader>
-              <CardContent className="space-y-2 sm:space-y-3 p-3 sm:p-6 pt-0">
-                <div className="flex items-center">
-                  <Mail className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground me-2 sm:me-3" />
-                  <span className="text-xs sm:text-sm break-all">{profileData?.email}</span>
-                </div>
-                {profileData?.city && profileData?.country && (
-                  <div className="flex items-center">
-                    <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground me-2 sm:me-3" />
-                    <span className="text-xs sm:text-sm">{profileData.city}, {profileData.country}</span>
-                  </div>
-                )}
-                {profileData?.contacts && profileData.contacts.length > 0 && (
-                  <div className="flex items-center">
-                    <Phone className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground me-2 sm:me-3" />
-                    <span className="text-xs sm:text-sm">{profileData.contacts[0].number}</span>
-                  </div>
-                )}
-                <div className="flex items-center">
-                  <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground me-2 sm:me-3" />
-                  <span className="text-xs sm:text-sm">Joined {new Date(profileData?.createdAt).toLocaleDateString()}</span>
-                </div>
+                      </>
+                    ) : (
+                      <div className="text-center py-8">
+                        <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                        <p className="text-muted-foreground">No comments yet.</p>
+                      </div>
+                    )}
+                  </TabsContent>
+                </Tabs>
               </CardContent>
             </Card>
 
-            {/* Professional Status */}
+            {/* Professional Status - For Lawyers */}
             {profileData?.role === 'lawyer' && verificationBadge && (
-              <Card>
-                <CardHeader className="p-3 sm:p-6">
-                  <h3 className="text-base sm:text-lg font-semibold flex items-center">
-                    <Award className="h-4 w-4 sm:h-5 sm:w-5 me-2 text-blue-600" />
+              <Card className="border rounded-md border-border">
+                <CardHeader>
+                  <h3 className="text-xl font-semibold flex items-center text-foreground">
+                    <Award className="h-5 w-5 mr-2 text-blue-600 dark:text-blue-400" />
                     Professional Status
                   </h3>
                 </CardHeader>
-                <CardContent className="p-3 sm:p-6 pt-0">
-                  <div className={`rounded-xl p-3 sm:p-4 border-2 ${verificationBadge.color.replace('bg-green-100', 'bg-green-100 dark:bg-green-900').replace('text-green-600', 'text-green-600 dark:text-green-100').replace('bg-yellow-100', 'bg-yellow-100 dark:bg-yellow-900').replace('text-yellow-600', 'text-yellow-600 dark:text-yellow-100').replace('bg-blue-100', 'bg-blue-100 dark:bg-blue-900').replace('text-blue-600', 'text-blue-600 dark:text-blue-100')}`}>
-                    <div className="flex items-center mb-2">
-                      <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center me-2 sm:me-3 ${verificationBadge.color.replace('text-', 'bg-').replace('bg-', 'bg-').replace('-100', '-600')}`}>
-                        <verificationBadge.icon className="h-3 w-3 sm:h-5 sm:w-5 text-white" />
+                <CardContent>
+                  <div className={`rounded-xl p-6 border-2 ${
+                    verificationBadge.color.includes('green') 
+                      ? 'bg-green-50 border-green-200 dark:bg-green-950/30 dark:border-green-800' 
+                      : verificationBadge.color.includes('yellow') 
+                      ? 'bg-yellow-50 border-yellow-200 dark:bg-yellow-950/30 dark:border-yellow-800' 
+                      : 'bg-blue-50 border-blue-200 dark:bg-blue-950/30 dark:border-blue-800'
+                  }`}>
+                    <div className="flex items-center mb-4">
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center mr-4 ${
+                        verificationBadge.color.includes('green') 
+                          ? 'bg-green-600' 
+                          : verificationBadge.color.includes('yellow') 
+                          ? 'bg-yellow-600' 
+                          : 'bg-blue-600'
+                      }`}>
+                        <verificationBadge.icon className="h-6 w-6 text-white" />
                       </div>
                       <div>
-                        <h4 className="font-bold text-sm sm:text-base">{verificationBadge.label}</h4>
-                        <p className="text-xs sm:text-sm opacity-80">Current Status</p>
+                        <h4 className="font-bold text-lg text-foreground">{verificationBadge.label}</h4>
+                        <p className="text-sm text-muted-foreground">Current Status</p>
                       </div>
                     </div>
                     
-                    <div className="mt-3 sm:mt-4 space-y-2 sm:space-y-3">
+                    <div className="grid grid-cols-1 gap-4">
                       {profileData.lawyer?.badgeNumber && (
-                        <div className="p-2 sm:p-3 bg-muted/50 rounded-lg">
-                          <p className="text-xs sm:text-sm font-medium">License Number</p>
-                          <p className="text-xs sm:text-sm font-mono bg-background px-2 py-1 rounded mt-1">
+                        <div className="bg-background/50 dark:bg-background/20 rounded-lg p-4 border border-border/50">
+                          <p className="text-sm font-medium text-foreground mb-1">License Number</p>
+                          <p className="font-mono text-sm bg-background border border-border px-3 py-2 rounded">
                             {profileData.lawyer.badgeNumber}
                           </p>
                         </div>
                       )}
                       
                       {profileData.lawyer?.badgeIssueDate && (
-                        <div className="p-2 sm:p-3 bg-muted/50 rounded-lg">
-                          <p className="text-xs sm:text-sm font-medium">License Issue Date</p>
-                          <p className="text-xs sm:text-sm bg-background px-2 py-1 rounded mt-1">
-                            {new Date(profileData.lawyer.badgeIssueDate).toLocaleDateString()}
+                        <div className="bg-background/50 dark:bg-background/20 rounded-lg p-4 border border-border/50">
+                          <p className="text-sm font-medium text-foreground mb-1">License Issue Date</p>
+                          <p className="text-sm bg-background border border-border px-3 py-2 rounded">
+                            {new Date(profileData.lawyer.badgeIssueDate).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
                           </p>
                         </div>
                       )}
                       
                       {profileData.lawyer?.badgeIssuingAuthority && (
-                        <div className="p-2 sm:p-3 bg-muted/50 rounded-lg">
-                          <p className="text-xs sm:text-sm font-medium">Authority Level</p>
-                          <p className="text-xs sm:text-sm bg-background px-2 py-1 rounded mt-1 capitalize">
+                        <div className="bg-background/50 dark:bg-background/20 rounded-lg p-4 border border-border/50">
+                          <p className="text-sm font-medium text-foreground mb-1">Authority Level</p>
+                          <p className="text-sm bg-background border border-border px-3 py-2 rounded capitalize">
                             {profileData.lawyer.badgeIssuingAuthority}
                           </p>
                         </div>
@@ -1498,9 +1356,83 @@ const ProfilePage = () => {
                 </CardContent>
               </Card>
             )}
+
+            {/* Experience Section - Placeholder */}
+            <Card className="border rounded-md border-border">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <h2 className="text-xl font-semibold text-foreground">Experience</h2>
+                {currentUserId === userId && (
+                  <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                )}
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground text-center py-8">
+                  Experience section coming soon...
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Education Section - Placeholder */}
+            <Card className="border rounded-md border-border">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <h2 className="text-xl font-semibold text-foreground">Education</h2>
+                {currentUserId === userId && (
+                  <div className="flex gap-2">
+                    <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                      <Edit3 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground text-center py-8">
+                  Education section coming soon...
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Sidebar - Contact Info */}
+          <div className="lg:col-span-1">
+            <Card className="border rounded-md border-border">
+              <CardHeader>
+                <h3 className="font-semibold flex items-center text-foreground">
+                  <Mail className="h-5 w-5 mr-2" />
+                  Contact Info
+                </h3>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <Mail className="h-4 w-4 text-muted-foreground me-3" />
+                    <span className="text-sm break-all">{profileData?.email}</span>
+                  </div>
+                  {profileData?.city && profileData?.country && (
+                    <div className="flex items-center">
+                      <MapPin className="h-4 w-4 text-muted-foreground me-3" />
+                      <span className="text-sm">{profileData.city}, {profileData.country}</span>
+                    </div>
+                  )}
+                  {profileData?.contacts && profileData.contacts.length > 0 && (
+                    <div className="flex items-center">
+                      <Phone className="h-4 w-4 text-muted-foreground me-3" />
+                      <span className="text-sm">{profileData.contacts[0].number}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center">
+                    <Calendar className="h-4 w-4 text-muted-foreground me-3" />
+                    <span className="text-sm">Joined {new Date(profileData?.createdAt).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
-        
       </div>
     </div>
   )
