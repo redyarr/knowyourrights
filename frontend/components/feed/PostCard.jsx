@@ -628,7 +628,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
             </div>
             
             {/* Three-dot menu for post owner */}
-            {userData && post.authorId === userData.id &&
+            {currentUser && post.authorId === currentUser.id &&
              (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -843,9 +843,9 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
             <div className="mt-4 mb-2 pt-4 border-t px-6">
               <form onSubmit={handleComment} className="flex items-center space-x-3">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={userData?.profileImage} alt="Your avatar" />
+                  <AvatarImage src={currentUser?.profile_image?.imagePath || currentUser?.profileImage} alt="Your avatar" />
                   <AvatarFallback className="bg-blue-600 text-white text-xs">
-                    {getUserInitials(userData)}
+                    {getUserInitials(currentUser)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 flex space-x-2">
@@ -911,7 +911,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                             {getUserDisplayName(comment.User || comment.user)}
                           </div>
                           {/* Comment actions for comment author */}
-                          {userData && comment.userId === userData.id && (
+                          {currentUser && comment.userId === currentUser.id && (
                             <div className="flex space-x-1">
                               <Button
                                 variant="ghost"
@@ -1265,9 +1265,9 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
               <div className="px-3 md:px-4 flex-shrink-0">
                 <form onSubmit={handleModalComment} className="flex items-center space-x-2 md:space-x-3">
                   <Avatar className="h-6 w-6 md:h-8 md:w-8">
-                    <AvatarImage src={userData?.profileImage} alt="Your avatar" />
+                    <AvatarImage src={currentUser?.profile_image?.imagePath || currentUser?.profileImage} alt="Your avatar" />
                     <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                      {getUserInitials(userData)}
+                      {getUserInitials(currentUser)}
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 flex items-center space-x-1 md:space-x-2">
@@ -1350,7 +1350,7 @@ const PostCard = ({ post, userData, onPostUpdate, observerRef }) => {
                                 <div className="font-medium text-xs md:text-sm text-foreground dark:text-foreground">
                                   {getUserDisplayName(comment.User || comment.user)}
                                 </div>
-                                {userData && comment.userId === userData.id && (
+                                {currentUser && comment.userId === currentUser.id && (
                                   <div className="flex space-x-1">
                                     <Button
                                       variant="ghost"

@@ -637,7 +637,7 @@ const ProfilePage = () => {
                             <div key={post.id} className="flex-1 min-w-0">
                               <PostCard
                                 post={post}
-                                userData={profileData}
+                                userData={currentUser}
                                 onPostUpdate={handlePostUpdate}
                               />
                             </div>
