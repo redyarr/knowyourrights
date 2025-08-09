@@ -63,7 +63,7 @@ const EditProfile = () => {
       })
       
       if (!userResponse.ok) {
-        throw new Error('Failed to get user data')
+        throw new Error('Failed to get user data') 
       }
       
       const profileData = await userResponse.json()
