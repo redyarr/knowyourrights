@@ -8,10 +8,10 @@ import RightSidebar from '../components/feed/RightSidebar';
 import PostCard from '../components/feed/PostCard';
 import PostCreateForm from '../components/feed/PostCreateForm';
 import Link from 'next/link';
-import { X, AlertTriangle, Clock, Eye, HelpCircle, ShieldCheck } from 'lucide-react';
+import { X, AlertTriangle, Clock, HelpCircle, Compass, Sparkles } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
-
+import { Card } from '../components/ui/card';
 
 const FeedPage = () => {
   const [userData, setUserData] = useState(null);  
@@ -24,7 +24,7 @@ const FeedPage = () => {
   const observerRef = useRef(null);
   const targetPostIndex = useRef(10); 
   
-  // Custom hook to handle authentication refresh
+  // Handle authentication refresh
   useAuth();
 
   // Fetch user data
@@ -71,15 +71,11 @@ const FeedPage = () => {
           targetPostIndex.current = posts.length + 10;
         }
       } else {
-        toast("Failed to load posts", {
-          description:  "Please try again later"
-        });
+        toast.error("Failed to load posts from legal community");
       }
     } catch (error) {
       console.error('Error fetching posts:', error);
-      toast("Network Error", {
-        description: "Failed to load posts. Please check your connection."
-      });
+      toast.error("Network Error: Failed to load posts.");
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -124,10 +120,8 @@ const FeedPage = () => {
 
   const handlePostUpdate = (updatedPost, deletedPostId = null) => {
     if (deletedPostId) {
-      // Remove deleted post from the list
       setPosts(prev => prev.filter(post => post.id !== deletedPostId));
     } else if (updatedPost) {
-      // Update existing post
       setPosts(prev => prev.map(post => 
         post.id === updatedPost.id ? updatedPost : post
       ));
@@ -136,48 +130,43 @@ const FeedPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 gap-4 lg:gap-6">
-            {/* Left Sidebar Skeleton - visible from md up */}
             <div className="hidden md:block md:col-span-4 lg:col-span-3 space-y-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="bg-card rounded-lg border p-4 space-y-4">
-                  <div className="h-4 bg-muted rounded animate-pulse"></div>
-                  <div className="h-4 bg-muted rounded w-3/4 animate-pulse"></div>
-                  <div className="h-4 bg-muted rounded w-1/2 animate-pulse"></div>
+                <div key={i} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/50 dark:border-slate-800/50 p-4 space-y-3 animate-pulse">
+                  <div className="h-4.5 bg-muted rounded w-2/3"></div>
+                  <div className="h-4 bg-muted rounded w-3/4"></div>
+                  <div className="h-3.5 bg-muted rounded w-1/2"></div>
                 </div>
               ))}
             </div>
             
-            {/* Main Content Skeleton */}
             <div className="md:col-span-8 lg:col-span-6 space-y-6">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="bg-card rounded-lg border p-6 space-y-4">
+              {[1, 2].map((i) => (
+                <div key={i} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/50 dark:border-slate-800/50 p-6 space-y-4 animate-pulse">
                   <div className="flex items-center space-x-3">
-                    <div className="h-12 w-12 bg-muted rounded-full animate-pulse"></div>
-                    <div className="space-y-2 flex-1">
-                      <div className="h-4 bg-muted rounded w-1/3 animate-pulse"></div>
-                      <div className="h-3 bg-muted rounded w-1/4 animate-pulse"></div>
+                    <div className="h-11 w-11 bg-muted rounded-full"></div>
+                    <div className="space-y-1.5 flex-1">
+                      <div className="h-4 bg-muted rounded w-1/4"></div>
+                      <div className="h-3 bg-muted rounded w-1/5"></div>
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <div className="h-4 bg-muted rounded animate-pulse"></div>
-                    <div className="h-4 bg-muted rounded w-5/6 animate-pulse"></div>
-                    <div className="h-4 bg-muted rounded w-4/6 animate-pulse"></div>
+                    <div className="h-3.5 bg-muted rounded w-full"></div>
+                    <div className="h-3.5 bg-muted rounded w-5/6"></div>
                   </div>
-                  <div className="h-48 bg-muted rounded animate-pulse"></div>
+                  <div className="h-40 bg-muted rounded-lg"></div>
                 </div>
               ))}
             </div>
             
-            {/* Right Sidebar Skeleton - only visible on lg+ */}
             <div className="hidden lg:block lg:col-span-3 space-y-4">
               {[1, 2].map((i) => (
-                <div key={i} className="bg-card rounded-lg border p-4 space-y-4">
-                  <div className="h-4 bg-muted rounded animate-pulse"></div>
-                  <div className="h-4 bg-muted rounded w-3/4 animate-pulse"></div>
-                  <div className="h-4 bg-muted rounded w-1/2 animate-pulse"></div>
+                <div key={i} className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200/50 dark:border-slate-800/50 p-4 space-y-3 animate-pulse">
+                  <div className="h-4 bg-muted rounded w-3/4"></div>
+                  <div className="h-3.5 bg-muted rounded w-1/2"></div>
                 </div>
               ))}
             </div>
@@ -188,169 +177,159 @@ const FeedPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-20 relative overflow-hidden">
+      {/* Visual background blurred ambient lighting */}
+      <div className="absolute top-20 left-10 w-[400px] h-[400px] rounded-full bg-blue-500/5 blur-[100px] pointer-events-none"></div>
+      <div className="absolute bottom-20 right-10 w-[400px] h-[400px] rounded-full bg-indigo-500/5 blur-[100px] pointer-events-none"></div>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-12 lg:grid-cols-12 gap-4 lg:gap-6">
-          {/* Left Sidebar - visible from md up, smaller on md */}
+          {/* Left Sidebar */}
           <div className="md:col-span-4 lg:col-span-3">
             <LeftSidebar userData={userData} />
           </div>
 
-          {/* Main Content - takes remaining space */}
+          {/* Main Content */}
           <main className="md:col-span-8 lg:col-span-6 space-y-6">
-            {/* Verification Warning */}
+            {/* Pending Advocate Verification Alert */}
             {userData?.role === 'lawyer' && 
              userData?.lawyerVerivicationStatus !== 'approved' && 
              showVerificationWarning && (
-              <div className="relative bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-6 shadow-sm">
-                {/* Dismiss Button */}
+              <div className="relative bg-gradient-to-r from-amber-50 to-orange-50/50 dark:from-amber-950/20 dark:to-orange-950/20 border border-amber-200/80 dark:border-amber-900/40 rounded-2xl p-5 shadow-sm">
                 <button
                   onClick={() => setShowVerificationWarning(false)}
-                  className="absolute top-4 right-4 p-1 text-amber-500 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-200 hover:bg-amber-100 dark:hover:bg-amber-900/30 rounded-full transition-colors duration-200"
-                  aria-label="Dismiss notification"
+                  className="absolute top-4 right-4 p-1 text-amber-500 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-200 hover:bg-amber-100/50 dark:hover:bg-amber-900/30 rounded-full transition"
+                  aria-label="Dismiss warning"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4.5 w-4.5" />
                 </button>
 
-                <div className="flex items-start space-x-4">
-                  {/* Warning Icon */}
+                <div className="flex items-start space-x-3.5">
                   <div className="flex-shrink-0">
-                    <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center shadow-md">
-                      <AlertTriangle className="h-6 w-6 text-white" />
+                    <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center shadow-md shadow-orange-500/10">
+                      <AlertTriangle className="h-5 w-5 text-white" />
                     </div>
                   </div>
 
-                  {/* Content */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <h3 className="text-lg font-semibold text-amber-900 dark:text-amber-100">
-                        Account Verification Pending
+                    <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
+                      <h3 className="text-sm font-extrabold text-amber-950 dark:text-slate-100">
+                        Credentials Verification Underway
                       </h3>
-                      <Badge variant="secondary" className="text-xs bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200">
-                        {userData?.lawyerVerivicationStatus === 'pending' ? 'Under Review' : 'Verification Required'}
+                      <Badge className="text-[9px] font-extrabold bg-amber-100 text-amber-800 border border-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:border-amber-900/40">
+                        {userData?.lawyerVerivicationStatus === 'pending' ? 'Reviewing' : 'Awaiting Docs'}
                       </Badge>
                     </div>
                     
-                    <p className="text-amber-800 dark:text-amber-200 text-sm leading-relaxed mb-4">
+                    <p className="text-xs text-amber-800 dark:text-amber-350 leading-relaxed mb-4 font-medium">
                       {userData?.lawyerVerivicationStatus === 'pending' 
-                        ? "Thank you for submitting your verification documents! Our team is currently reviewing your credentials to ensure the highest quality of legal professionals on our platform."
-                        : "To maintain the integrity of our legal community, we require all lawyers to complete verification before sharing content."
+                        ? "We are currently validating your badge and bar credentials. This usually completes within 48 hours."
+                        : "To participate in active legal discussions, please upload your certification papers in Settings."
                       }
                     </p>
 
-                    <div className="bg-white/60 dark:bg-black/20 rounded-lg p-4 mb-4">
-                      <h4 className="font-medium text-amber-900 dark:text-amber-100 mb-2 flex items-center">
-                        <Clock className="h-4 w-4 mr-2" />
-                        What happens next?
+                    <div className="bg-white/60 dark:bg-slate-950/50 rounded-xl p-3.5 mb-3.5 border border-amber-100/50 dark:border-amber-900/30">
+                      <h4 className="text-xs font-bold text-amber-900 dark:text-amber-200 mb-2 flex items-center gap-1">
+                        <Clock className="h-3.5 w-3.5 text-amber-500" />
+                        Verification Timeline
                       </h4>
-                      <ul className="text-sm text-amber-800 dark:text-amber-200 space-y-1">
+                      <ul className="text-[11px] text-amber-800 dark:text-amber-350 space-y-1.5 font-medium">
                         {userData?.lawyerVerivicationStatus === 'pending' ? (
                           <>
-                            <li className="flex items-center">
-                              <div className="w-1.5 h-1.5 bg-amber-500 rounded-full mr-2"></div>
-                              Our verification team will review your documents within 2-3 business days
+                            <li className="flex items-center gap-1.5">
+                              <span className="w-1 h-1 bg-amber-500 rounded-full shrink-0"></span>
+                              Our verification team verifies bar registers (2-3 business days)
                             </li>
-                            <li className="flex items-center">
-                              <div className="w-1.5 h-1.5 bg-amber-500 rounded-full mr-2"></div>
-                              You'll receive an email notification once the review is complete
-                            </li>
-                            <li className="flex items-center">
-                              <div className="w-1.5 h-1.5 bg-amber-500 rounded-full mr-2"></div>
-                              Once approved, you'll be able to share legal insights and connect with the community
+                            <li className="flex items-center gap-1.5">
+                              <span className="w-1 h-1 bg-amber-500 rounded-full shrink-0"></span>
+                              Email alerts will be sent immediately upon status update
                             </li>
                           </>
                         ) : (
                           <>
-                            <li className="flex items-center">
-                              <div className="w-1.5 h-1.5 bg-amber-500 rounded-full mr-2"></div>
-                              Complete your profile with required legal credentials
+                            <li className="flex items-center gap-1.5">
+                              <span className="w-1 h-1 bg-amber-500 rounded-full shrink-0"></span>
+                              Submit license codes & certificates
                             </li>
-                            <li className="flex items-center">
-                              <div className="w-1.5 h-1.5 bg-amber-500 rounded-full mr-2"></div>
-                              Upload verification documents (bar certification, license, etc.)
-                            </li>
-                            <li className="flex items-center">
-                              <div className="w-1.5 h-1.5 bg-amber-500 rounded-full mr-2"></div>
-                              Wait for our team to verify your credentials
+                            <li className="flex items-center gap-1.5">
+                              <span className="w-1 h-1 bg-amber-500 rounded-full shrink-0"></span>
+                              Gain client recommendation capabilities upon approval
                             </li>
                           </>
                         )}
                       </ul>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      {userData?.lawyerVerivicationStatus === 'pending' && (
-                        <>
-                          <Button variant="ghost" className="text-amber-700 hover:text-amber-900 hover:bg-amber-100/50 dark:text-amber-300 dark:hover:text-amber-100 dark:hover:bg-amber-900/20 w-fit" asChild>
-                            <Link href="/help/verification" className="flex items-center">
-                              <HelpCircle className="h-4 w-4 mr-2" />
-                              Get Help
-                            </Link>
-                          </Button>
-                        </>
-                      ) }
-                    </div>
+                    {userData?.lawyerVerivicationStatus === 'pending' && (
+                      <Button variant="outline" size="sm" className="text-amber-700 hover:text-amber-900 dark:text-amber-350 dark:hover:text-amber-250 border-amber-200 dark:border-amber-900 hover:bg-amber-100/40 text-xs font-bold" asChild>
+                        <Link href="/help" className="flex items-center">
+                          <HelpCircle className="h-3.5 w-3.5 mr-1" /> Help Desk
+                        </Link>
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Post Creation Form */}
-            <PostCreateForm 
-              userData={userData} 
-              onPostCreated={handlePostCreated} 
-            />
+            {/* Create Post Interface */}
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 p-4 shadow-sm">
+              <PostCreateForm 
+                userData={userData} 
+                onPostCreated={handlePostCreated} 
+              />
+            </div>
 
-            {/* Posts */}
+            {/* Posts Feed */}
             <div className="space-y-6">
-             
               {posts.length === 0 ? (
-                <div className="bg-card rounded-lg border p-8 text-center">
-                  <div className="bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 rounded-xl p-6">
-                    <h3 className="text-lg font-medium mb-2">No posts found</h3>
-                    <p className="text-sm">
+                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/50 dark:border-slate-800/50 p-12 text-center">
+                  <div className="space-y-3.5 max-w-sm mx-auto">
+                    <Compass className="h-8 w-8 text-slate-300 mx-auto" />
+                    <h3 className="text-sm font-extrabold text-slate-900 dark:text-slate-100">Welcome to your home feed</h3>
+                    <p className="text-xs text-slate-500">
                       {userData?.userType === 'lawyer' 
-                        ? "Be the first to share your legal insights!" 
-                        : "Check back later for legal insights from our verified lawyers."
+                        ? "Be the first to publish legal articles and counsel references!" 
+                        : "Verified attorney write-ups and advisory listings will appear here."
                       }
                     </p>
                   </div>
                 </div>
               ) : (
                 posts.map((post, index) => (
-                  <PostCard
-                    key={post.id}
-                    post={post}
-                    userData={userData}
-                    onPostUpdate={handlePostUpdate}
-                    // Add observer ref to the target post (10th, 30th, 50th, etc.)
-                    observerRef={index === targetPostIndex.current - 1 ? observerRef : null}
-                  />
+                  <Card key={post.id} className="border border-slate-200/80 dark:border-slate-800/80 shadow-sm bg-white dark:bg-slate-900 p-5 rounded-2xl overflow-hidden">
+                    <PostCard
+                      post={post}
+                      userData={userData}
+                      onPostUpdate={handlePostUpdate}
+                      observerRef={index === targetPostIndex.current - 1 ? observerRef : null}
+                    />
+                  </Card>
                 ))
               )}
               
-              {/* Loading indicator for infinite scroll */}
+              {/* Infinite Scroll Loader */}
               {loadingMore && (
-                <div className="flex justify-center py-8">
-                  <div className="flex items-center space-x-2 text-muted-foreground">
+                <div className="flex justify-center py-6">
+                  <div className="flex items-center gap-2 text-slate-400">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                    <span className="text-sm">Loading more posts...</span>
+                    <span className="text-xs font-semibold">Fetching community posts...</span>
                   </div>
                 </div>
               )}
               
-              {/* End of posts indicator */}
+              {/* End of Posts Indicator */}
               {!hasMore && posts.length > 0 && (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground text-sm">
-                    You've reached the end of your feed
+                <div className="text-center py-8 border-t border-dashed border-slate-200 dark:border-slate-800">
+                  <p className="text-slate-400 text-xs font-bold flex items-center justify-center gap-1">
+                    <Sparkles className="h-3.5 w-3.5 text-blue-500" /> You're completely up to date
                   </p>
                 </div>
               )}
             </div>
           </main>
 
-          {/* Right Sidebar - only visible on lg+ */}
+          {/* Right Sidebar */}
           <div className="hidden lg:block lg:col-span-3">
             <RightSidebar />
           </div>

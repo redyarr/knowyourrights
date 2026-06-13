@@ -16,6 +16,9 @@ exports.getJobs = async (req, res) => {
             order: [['createdAt', 'DESC']]
         });
 
+        if (req.headers.accept?.includes('application/json') || req.query.json === 'true' || req.xhr) {
+            return res.status(200).json({ success: true, jobs });
+        }
         res.render('job/index', {
             title: 'Jobs | Legal Network',
             jobs,
@@ -43,6 +46,9 @@ exports.createJob = async (req, res) => {
         const { summary, country, city } = req.body;
 
         if (!summary || !country || !city) {
+            if (req.headers.accept?.includes('application/json') || req.query.json === 'true' || req.xhr) {
+                return res.status(400).json({ success: false, error: "All fields are required." });
+            }
             return res.render('job/create', {
                 title: 'Create Job | Legal Network',
                 user: req.session.user,
@@ -58,6 +64,9 @@ exports.createJob = async (req, res) => {
             createdAt: new Date()
         });
 
+        if (req.headers.accept?.includes('application/json') || req.query.json === 'true' || req.xhr) {
+            return res.status(201).json({ success: true, job });
+        }
         res.redirect('/jobs');
     } catch (error) {
         console.error('Error creating job:', error);
@@ -88,6 +97,9 @@ exports.getJobDetails = async (req, res) => {
         });
 
         if (!job) {
+            if (req.headers.accept?.includes('application/json') || req.query.json === 'true' || req.xhr) {
+                return res.status(404).json({ success: false, error: "Job not found" });
+            }
             return res.status(404).render('error', { error: "Job not found" });
         }
 
@@ -123,6 +135,9 @@ exports.getJobDetails = async (req, res) => {
             hasApplied = !!application;
         }
 
+        if (req.headers.accept?.includes('application/json') || req.query.json === 'true' || req.xhr) {
+            return res.status(200).json({ success: true, job, isAuthor, applicants, hasApplied });
+        }
         res.render('job/details', {
             title: 'Job Details | Legal Network',
             job,
@@ -146,12 +161,18 @@ exports.applyForJob = async (req, res) => {
 
         // Verify user is a lawyer
         if (req.session.user.role !== 'lawyer') {
+            if (req.headers.accept?.includes('application/json') || req.query.json === 'true' || req.xhr) {
+                return res.status(403).json({ success: false, error: "Only lawyers can apply for jobs" });
+            }
             return res.status(403).render('error', { error: "Only lawyers can apply for jobs" });
         }
 
         // Check if job exists
         const job = await Job.findByPk(jobId);
         if (!job) {
+            if (req.headers.accept?.includes('application/json') || req.query.json === 'true' || req.xhr) {
+                return res.status(404).json({ success: false, error: "Job not found" });
+            }
             return res.status(404).render('error', { error: "Job not found" });
         }
 
@@ -164,6 +185,9 @@ exports.applyForJob = async (req, res) => {
         });
 
         if (existingApplication) {
+            if (req.headers.accept?.includes('application/json') || req.query.json === 'true' || req.xhr) {
+                return res.status(400).json({ success: false, error: "You have already applied for this job" });
+            }
             return res.status(400).render('error', { error: "You have already applied for this job" });
         }
 
@@ -176,6 +200,9 @@ exports.applyForJob = async (req, res) => {
             createdAt: new Date()
         });
 
+        if (req.headers.accept?.includes('application/json') || req.query.json === 'true' || req.xhr) {
+            return res.status(200).json({ success: true, message: "Applied successfully" });
+        }
         res.redirect(`/jobs/${jobId}`);
     } catch (error) {
         console.error("Error applying for job:", error);
@@ -250,6 +277,9 @@ exports.acceptLawyer = async (req, res) => {
             isRead: false
         });
 
+        if (req.headers.accept?.includes('application/json') || req.query.json === 'true' || req.xhr) {
+            return res.status(200).json({ success: true, message: "Lawyer accepted successfully" });
+        }
         res.redirect(`/jobs/${jobId}`);
     } catch (error) {
         console.error("Error accepting lawyer:", error);

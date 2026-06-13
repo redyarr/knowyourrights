@@ -40,6 +40,9 @@ exports.searchUsers = async (req, res) => {
         // Calculate pagination info
         const totalPages = Math.ceil(totalUsers / limit);
         
+        if (req.headers.accept?.includes('application/json') || req.query.json === 'true' || req.xhr) {
+            return res.status(200).json({ success: true, users, pagination: { page, limit, totalUsers, totalPages } });
+        }
         res.render('messaging/search', {
             title: 'Find Users',
             users,
@@ -146,6 +149,9 @@ exports.getMessages = async (req, res) => {
         console.log('15. Final sorted conversations:', JSON.stringify(conversationsWithLastMessage, null, 2));
         
         console.log('16. Rendering view...');
+        if (req.headers.accept?.includes('application/json') || req.query.json === 'true' || req.xhr) {
+            return res.status(200).json({ success: true, messages: conversationsWithLastMessage, userId });
+        }
         res.render('messaging/index', {
             title: 'Messages',
             messages: conversationsWithLastMessage,
@@ -280,6 +286,16 @@ exports.getConversation = async (req, res) => {
             return new Date(b.lastMessage.createdAt) - new Date(a.lastMessage.createdAt);
         });
         
+        if (req.headers.accept?.includes('application/json') || req.query.json === 'true' || req.xhr) {
+            return res.status(200).json({
+                success: true,
+                conversations: conversationsWithLastMessage,
+                messages,
+                conversationPartner,
+                userId,
+                activeConversation: conversationId
+            });
+        }
         res.render('messaging/conversation', {
             title: `Conversation with ${conversationPartner.firstName} ${conversationPartner.lastName}`,
             conversations: conversationsWithLastMessage,

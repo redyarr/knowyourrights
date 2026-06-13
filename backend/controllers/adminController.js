@@ -135,10 +135,15 @@ class AdminController {
             });
 
             // Create notification for the lawyer
-            await Notification.create({
+            const notification = await Notification.create({
                 userId: lawyer.userId,
-                type: 'verification_approved',
-                message: 'Congratulations! Your lawyer verification has been approved. You can now post and connect with other users.',
+                title: 'Verification Approved',
+                message: 'Congratulations! Your lawyer verification has been approved. You can now post and connect with other users.'
+            });
+
+            await UserNotification.create({
+                userId: lawyer.userId,
+                notification_id: notification.id,
                 isRead: false
             });
 
@@ -201,10 +206,15 @@ class AdminController {
             });
 
             // Create notification for the lawyer
-            await Notification.create({
+            const notification = await Notification.create({
                 userId: lawyer.userId,
-                type: 'verification_rejected',
-                message: `Your lawyer verification has been rejected. Reason: ${reason.trim()}. Please update your information and resubmit.`,
+                title: 'Verification Rejected',
+                message: `Your lawyer verification has been rejected. Reason: ${reason.trim()}. Please update your information and resubmit.`
+            });
+
+            await UserNotification.create({
+                userId: lawyer.userId,
+                notification_id: notification.id,
                 isRead: false
             });
 

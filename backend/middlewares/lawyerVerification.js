@@ -34,6 +34,9 @@ const isVerifiedLawyer = async (req, res, next) => {
         }
 
         if (user.lawyer.verificationStatus === 'pending') {
+            if (req.headers.accept?.includes('application/json') || req.query.json === 'true' || req.xhr) {
+                return res.status(403).json({ success: false, status: 'pending', error: 'Verification pending' });
+            }
             return res.render('lawyer/pending-verification', {
                 user: user,
                 lawyer: user.lawyer
@@ -41,6 +44,9 @@ const isVerifiedLawyer = async (req, res, next) => {
         }
 
         if (user.lawyer.verificationStatus === 'rejected') {
+            if (req.headers.accept?.includes('application/json') || req.query.json === 'true' || req.xhr) {
+                return res.status(403).json({ success: false, status: 'rejected', error: 'Verification rejected', reason: user.lawyer.rejectionReason });
+            }
             return res.render('lawyer/verification-rejected', {
                 user: user,
                 lawyer: user.lawyer,

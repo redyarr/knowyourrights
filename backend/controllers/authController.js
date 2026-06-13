@@ -231,7 +231,7 @@ exports.register = async (req, res) => {
       lastName: user.lastName,
       email: user.email,
       role: user.role,
-      lawyerVerivicationStatus : user?.lawyer?.verificationStatus,
+      lawyerVerivicationStatus : lawyer ? lawyer.verificationStatus : undefined,
       profileImage: profileImage?.imagePath
     } 
     //generate JWT token
@@ -375,7 +375,7 @@ if (!isValidPassword) {
       lastName: user.lastName,
       email: user.email,
       role: user.role,
-      lawyerVerivicationStatus : user?.lawyer?.verificationStatus,
+      lawyerVerivicationStatus : user?.Lawyer?.verificationStatus || user?.lawyer?.verificationStatus,
       profileImage: profileImage?.imagePath
     } 
 
@@ -452,7 +452,7 @@ exports.refreshToken = async (req, res) => {
       lastName: user.lastName,
       email: user.email,
       role: user.role,
-      lawyerVerivicationStatus : user?.lawyer?.verificationStatus,
+      lawyerVerivicationStatus : user?.Lawyer?.verificationStatus || user?.lawyer?.verificationStatus,
       profileImage: profileImage?.imagePath
     };
 
