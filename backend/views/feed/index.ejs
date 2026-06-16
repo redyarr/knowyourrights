@@ -1,0 +1,783 @@
+<!-- Clean Feed Page with LinkedIn-style layout -->
+<% // Define reaction icons for use in grouping and popup 
+ let reactionTypes={ like: '👍' , love: '❤️' , haha: '😂' , wow: '😮' , sad: '😢' , angry: '😠' };
+%>
+
+<div class="min-h-screen bg-gray-100">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Left Sidebar -->
+      <aside class="hidden lg:block lg:col-span-3 space-y-6">
+        <!-- Profile Card -->
+        <div class="bg-white rounded-lg border border-gray-200 p-4">
+          <% if (locals.loggedInUserId) { %>
+            <div class="flex flex-col items-center">
+              <img src="<%= locals.user && locals.user.profilePicture ? locals.user.profilePicture : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(locals.user ? (locals.user.firstName + ' ' + locals.user.lastName) : 'User') + '&size=64&background=3b82f6&color=ffffff' %>" alt="Profile" class="w-16 h-16 rounded-full object-cover border-4 border-white">
+              <h3 class="mt-2 text-lg font-semibold text-gray-900"><%= locals.user ? (locals.user.firstName + ' ' + locals.user.lastName) : 'User' %></h3>
+              <p class="text-sm text-gray-600"><%= locals.user ? locals.user.headline || 'Professional' : '' %></p>
+              <a href="/in/<%= locals.loggedInUserId %>" class="text-blue-600 hover:text-blue-700 text-xs font-semibold mt-2">View profile</a>
+            </div>
+            <div class="flex justify-between text-xs text-gray-600 mt-4">
+              <span>Profile viewers</span>
+              <span class="text-blue-600 font-medium">12</span>
+            </div>
+            <div class="flex justify-between text-xs text-gray-600 mt-2">
+              <span>Post impressions</span>
+              <span class="text-blue-600 font-medium">1,204</span>
+            </div>
+            <div class="mt-4 pt-3 border-t border-gray-200">
+              <a href="/premium" class="flex items-center text-xs text-gray-600 hover:text-gray-900">
+                <i class="fas fa-crown mr-2 text-yellow-500"></i>
+                Try Premium for free
+              </a>
+            </div>
+          <% } %>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-lg border border-gray-200">
+          <div class="px-4 py-3 border-b border-gray-200">
+            <h3 class="font-semibold text-gray-900 text-sm">Recent</h3>
+          </div>
+          <div class="px-4 py-3">
+            <a href="/groups/family-law" class="flex items-center py-2 text-xs text-gray-600 hover:text-gray-900">
+              <i class="fas fa-users mr-3 text-gray-400"></i>
+              Family Law Group
+            </a>
+            <a href="/groups/employment" class="flex items-center py-2 text-xs text-gray-600 hover:text-gray-900">
+              <i class="fas fa-users mr-3 text-gray-400"></i>
+              Employment Rights
+            </a>
+            <a href="/groups/consumer" class="flex items-center py-2 text-xs text-gray-600 hover:text-gray-900">
+              <i class="fas fa-users mr-3 text-gray-400"></i>
+              Consumer Protection
+            </a>
+          </div>
+        </div>
+        
+        <!-- Groups -->
+        <div class="bg-white rounded-lg border border-gray-200">
+          <div class="px-4 py-3 border-b border-gray-200">
+            <h3 class="font-semibold text-gray-900 text-sm">Groups</h3>
+          </div>
+          <div class="px-4 py-3">
+            <a href="/groups" class="flex items-center py-2 text-xs text-gray-600 hover:text-gray-900">
+              <i class="fas fa-users mr-3 text-gray-400"></i>
+              Legal Professionals
+            </a>
+            <a href="/groups" class="flex items-center py-2 text-xs text-gray-600 hover:text-gray-900">
+              <i class="fas fa-users mr-3 text-gray-400"></i>
+              Know Your Rights
+            </a>
+            <div class="mt-3">
+              <a href="/groups" class="text-xs text-gray-500 hover:text-blue-600">Show all (5)</a>
+            </div>
+          </div>
+          <div class="px-4 py-3 border-t border-gray-200">
+            <h3 class="font-semibold text-gray-900 text-sm mb-2">Followed Hashtags</h3>
+            <a href="/hashtag/legaladvice" class="flex items-center py-2 text-xs text-gray-600 hover:text-gray-900">
+              <span class="mr-3">#</span>
+              legaladvice
+            </a>
+            <a href="/hashtag/knowyourrights" class="flex items-center py-2 text-xs text-gray-600 hover:text-gray-900">
+              <span class="mr-3">#</span>
+              knowyourrights
+            </a>
+          </div>
+          <div class="px-4 py-3 border-t border-gray-200">
+            <a href="/discover" class="text-xs text-gray-500 hover:text-blue-600">Discover more</a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="lg:col-span-6 space-y-6">
+        <!-- Post Creation Box for Lawyers -->
+        <% if (locals.loggedInUserId && locals.userRole === 'lawyer') { %>
+          <div class="bg-white rounded-lg border border-gray-200 p-4">
+            <div class="flex items-center space-x-3">
+              <img src="<%= locals.user && locals.user.profilePicture ? locals.user.profilePicture : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(locals.user ? (locals.user.firstName + ' ' + locals.user.lastName) : 'User') + '&size=48&background=3b82f6&color=ffffff' %>" alt="Profile" class="w-12 h-12 rounded-full object-cover">
+              <button onclick="togglePostModal()" class="flex-1 border border-gray-300 rounded-full px-4 py-3 text-left text-gray-500 hover:bg-gray-50 transition-colors duration-200">Share legal insights...</button>
+            </div>
+            <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-200">
+              <button onclick="addLegalCategory()" class="flex items-center space-x-2 text-gray-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition-colors duration-200 group">
+                <i class="fas fa-tags text-blue-600 group-hover:scale-110 transition-transform"></i>
+                <span class="text-sm font-medium">Category</span>
+              </button>
+              <button onclick="addCaseStudy()" class="flex items-center space-x-2 text-gray-600 hover:bg-green-50 px-3 py-2 rounded-lg transition-colors duration-200 group">
+                <i class="fas fa-gavel text-green-600 group-hover:scale-110 transition-transform"></i>
+                <span class="text-sm font-medium">Case Study</span>
+              </button>
+              <button onclick="addLegalAdvice()" class="flex items-center space-x-2 text-gray-600 hover:bg-purple-50 px-3 py-2 rounded-lg transition-colors duration-200 group">
+                <i class="fas fa-balance-scale text-purple-600 group-hover:scale-110 transition-transform"></i>
+                <span class="text-sm font-medium">Legal Tip</span>
+              </button>
+              <button onclick="addConsultation()" class="flex items-center space-x-2 text-gray-600 hover:bg-orange-50 px-3 py-2 rounded-lg transition-colors duration-200 group">
+                <i class="fas fa-handshake text-orange-600 group-hover:scale-110 transition-transform"></i>
+                <span class="text-sm font-medium">Consultation</span>
+              </button>
+            </div>
+          </div>
+        <% } %>
+        
+        <!-- Feed Posts -->
+        <% if (posts && posts.length > 0) { %>
+          <% posts.forEach(post => { 
+            let groupedReactions = {}; 
+            if (post.reacts && post.reacts.length > 0) { 
+              post.reacts.forEach(r => { 
+                groupedReactions[r.reaction] = (groupedReactions[r.reaction] || 0) + 1; 
+              }); 
+            } 
+          %>
+            <article id="post-<%= post.id %>" class="post-card bg-white rounded-lg border border-gray-200">
+              <!-- Post Header -->
+              <div class="p-4">
+                <div class="flex items-start justify-between">
+                  <div class="flex items-center w-full gap-3">
+                    <a href="/in/<%= post.user ? post.user.id : '#' %>" class="flex-shrink-0">
+                      <img src="<%= post.user && post.user.profilePicture ? post.user.profilePicture : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(post.user ? (post.user.firstName + ' ' + post.user.lastName) : 'User') + '&size=48&background=0D47A1&color=fff' %>" alt="Profile" class="w-12 h-12 rounded-full object-cover border border-gray-300">
+                    </a>
+                    <div class="flex flex-col min-w-0 flex-1">
+                      <div class="flex items-center min-w-0 gap-2">
+                        <a href="/in/<%= post.user ? post.user.id : '#' %>" class="text-gray-900 hover:text-blue-600 hover:underline leading-tight font-medium">
+                          <%= post.user ? post.user.firstName : '' %> <%= post.user ? post.user.lastName : '' %>
+                        </a>
+                        <% if (post.user && post.user.role==='lawyer' && post.user.lawyer) { %>
+                          <% 
+                            let rankBadge = 'Training Lawyer';
+                            let rankIcon = 'fas fa-graduation-cap';
+                            let rankColor = 'text-blue-600';
+                            if (post.user.lawyer.verificationStatus === 'approved') {
+                              rankBadge = 'Verified';
+                              rankIcon = 'fas fa-certificate';
+                              rankColor = 'text-green-600';
+                            } else if (post.user.lawyer.verificationStatus === 'pending') {
+                              rankBadge = 'Pending';
+                              rankIcon = 'fas fa-clock';
+                              rankColor = 'text-yellow-600';
+                            } else if (post.user.lawyer.verificationStatus === 'rejected') {
+                              rankBadge = 'Rejected';
+                              rankIcon = 'fas fa-times-circle';
+                              rankColor = 'text-red-600';
+                            }
+                          %>
+                          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-gray-100 <%= rankColor %>">
+                            <i class="<%= rankIcon %> mr-1 text-xs"></i>
+                            <%= rankBadge %>
+                          </span>
+                        <% } %>
+                      </div>
+                      <% if (post.user && post.user.role==='lawyer' && post.user.lawyer && post.user.lawyer.lawFirm) { %>
+                        <div class="text-xs text-gray-600 font-medium leading-tight mt-0.5">
+                          <%= post.user.lawyer.lawFirm %>
+                        </div>
+                      <% } %>
+                      <% if (post.user && post.user.headline) { %>
+                        <div class="text-xs text-gray-500 leading-tight mt-0.5">
+                          <%= post.user.headline %>
+                        </div>
+                      <% } %>
+                      <div class="flex items-center text-xs text-gray-500 mt-1.5">
+                        <time class="font-medium"><%= new Date(post.createdAt).toLocaleDateString() %></time>
+                        <span class="mx-1.5">•</span>
+                        <div class="flex items-center">
+                          <i class="fas fa-globe-americas mr-1 text-xs"></i>
+                          <span>Public</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <% if (locals.loggedInUserId && post.authorId === locals.loggedInUserId) { %>
+                    <div class="flex items-center space-x-1">
+                      <button class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors edit-post-btn" title="Edit Post" data-post-id="<%= post.id %>" data-title="<%- post.title.replace(/&/g, '&amp;').replace(/\"/g, '&quot;') %>" data-content="<%- post.content.replace(/&/g, '&amp;').replace(/\"/g, '&quot;') %>">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-2.828 0L9 13zm0 0V21h8"></path>
+                        </svg>
+                      </button>
+                      <button class="p-2 text-gray-400 hover:text-red-500 hover:bg-gray-100 rounded-full transition-colors delete-post-btn" title="Delete Post" data-post-id="<%= post.id %>">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+              
+              <!-- Post Content -->
+              <div class="px-4">
+                <% if (post.title && post.title.trim()) { %>
+                  <h2 class="text-gray-900 font-medium text-base mb-3 leading-snug"><%= post.title %></h2>
+                <% } %>
+                <div class="text-gray-700 text-sm leading-relaxed mb-3">
+                  <p><%= post.content.length > 300 ? post.content.substring(0, 300) + '...' : post.content %></p>
+                  <% if (post.content.length > 300) { %>
+                    <button class="text-blue-600 hover:text-blue-800 font-medium mt-2 text-sm">...see more</button>
+                  <% } %>
+                </div>
+              </div>
+              
+              <!-- Post Images -->
+              <% if (post.post_photos && post.post_photos.length > 0) { %>
+                <div class="mb-3">
+                  <% if (post.post_photos.length === 1) { %>
+                    <% post.post_photos.forEach(postPhoto => { %>
+                      <% if (postPhoto.photo && postPhoto.photo.photoPath) { %>
+                        <div class="relative">
+                          <img src="<%= postPhoto.photo.photoPath %>" alt="Post Image" class="post-image w-full max-h-96 object-contain rounded-lg">
+                        </div>
+                      <% } %>
+                    <% }); %>
+                  <% } else { %>
+                    <div class="grid grid-cols-2 gap-2 px-4">
+                      <% post.post_photos.forEach(postPhoto => { %>
+                        <% if (postPhoto.photo && postPhoto.photo.photoPath) { %>
+                          <div class="relative">
+                            <img src="<%= postPhoto.photo.photoPath %>" alt="Post Image" class="post-image w-full h-48 object-cover rounded-lg">
+                          </div>
+                        <% } %>
+                      <% }); %>
+                    </div>
+                  <% } %>
+                </div>
+              <% } %>
+              
+              <!-- Post Stats -->
+              <div class="px-4 py-2">
+                <div class="flex items-center justify-between text-sm text-gray-500">
+                  <div class="flex items-center space-x-4">
+                    <% if (post.reacts && post.reacts.length > 0) { %>
+                      <button class="flex items-center space-x-2 hover:text-blue-600 transition-colors" id="reactionStats-<%= post.id %>">
+                        <div class="flex -space-x-1">
+                          <% Object.keys(groupedReactions).slice(0, 3).forEach(key => { %>
+                            <span class="text-sm bg-white rounded-full border border-gray-200 w-6 h-6 flex items-center justify-center shadow-sm"><%= reactionTypes[key] %></span>
+                          <% }); %>
+                        </div>
+                        <span class="reaction-count font-medium"><%= post.reacts.length %></span>
+                      </button>
+                    <% } else { %>
+                      <div class="hidden flex items-center space-x-2" id="reactionStats-<%= post.id %>">
+                        <div class="flex -space-x-1" id="reactionIcons-<%= post.id %>"></div>
+                        <span class="reaction-count font-medium">0</span>
+                      </div>
+                    <% } %>
+                  </div>
+                  <button class="hover:text-blue-600 transition-colors font-medium" onclick="toggleComments(<%= post.id %>)">
+                    <span class="comment-count"><%= post.comments ? post.comments.length : 0 %> comments</span>
+                  </button>
+                </div>
+              </div>
+              
+              <!-- Post Actions -->
+              <div class="px-4 py-3 border-t border-gray-100">
+                <div class="flex items-center justify-around">
+                  <div class="relative">
+                    <button class="flex items-center space-x-1 sm:space-x-2 text-gray-600 hover:bg-gray-100 px-2 sm:px-6 py-2 rounded-lg transition-colors like-button" onclick="toggleReactionPopup(<%= post.id %>, this)">
+                      <i class="far fa-thumbs-up text-lg"></i>
+                      <span class="text-xs sm:text-sm font-medium hidden xs:inline">Like</span>
+                    </button>
+                    <div id="reactionPopup-<%= post.id %>" class="hidden absolute bg-white rounded-lg shadow-lg border border-gray-200 p-2 z-40 reaction-popup" style="bottom: 100%; left: 50%; transform: translateX(-50%); margin-bottom: 8px;">
+                      <div class="flex space-x-1">
+                        <% Object.entries(reactionTypes).forEach(([key, emoji]) => { %>
+                          <button onclick="submitReaction(<%= post.id %>, '<%= key %>', this)" class="reaction-btn text-xl hover:scale-110 transition-transform p-1 rounded" title="<%= key.charAt(0).toUpperCase() + key.slice(1) %>" data-reaction="<%= key %>">
+                            <%= emoji %>
+                          </button>
+                        <% }); %>
+                      </div>
+                      <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-l-transparent border-r-4 border-r-transparent border-t-4 border-t-gray-200"></div>
+                    </div>
+                  </div>
+                  <button class="flex items-center space-x-1 sm:space-x-2 text-gray-600 hover:bg-gray-100 px-2 sm:px-6 py-2 rounded-lg transition-colors" onclick="toggleCommentForm(<%= post.id %>)">
+                    <i class="far fa-comment text-lg"></i>
+                    <span class="text-xs sm:text-sm font-medium hidden xs:inline">Comment</span>
+                  </button>
+                  <% if (locals.loggedInUserId) { %>
+                    <button class="flex items-center space-x-1 sm:space-x-2 text-gray-600 hover:bg-gray-100 px-2 sm:px-6 py-2 rounded-lg transition-colors" onclick="sharePost(<%= post.id %>)">
+                      <i class="fas fa-share text-lg"></i>
+                      <span class="text-xs sm:text-sm font-medium hidden xs:inline">Share</span>
+                    </button>
+                  <% } else { %>
+                    <button class="flex items-center space-x-1 sm:space-x-2 text-gray-400 px-2 sm:px-6 py-2 rounded-lg cursor-not-allowed" disabled>
+                      <i class="far fa-share text-lg"></i>
+                      <span class="text-xs sm:text-sm font-medium hidden xs:inline">Share</span>
+                    </button>
+                  <% } %>
+                </div>
+                
+                <!-- Comments Section -->
+                <div class="px-4 py-2 border-t border-gray-200 mt-3">
+                  <% if (post.comments && post.comments.length > 0) { %>
+                    <button id="showCommentsBtn-<%= post.id %>" class="text-sm text-blue-600 hover:text-blue-800 mb-3" onclick="toggleComments(<%= post.id %>)">Show Comments (<%= post.comments.length %>)</button>
+                    <div id="commentsList-<%= post.id %>" class="space-y-3 hidden">
+                      <% const initialComments = post.comments.slice(0, 4); const hasMoreComments = post.comments.length > 4; %>
+                      <% initialComments.forEach(comment => { %>
+                        <div class="px-3 py-3 border-t border-gray-100 comment-item" data-comment-id="<%= comment.id %>">
+                          <div class="flex items-start space-x-3">
+                            <a href="/in/<%= comment.user ? comment.user.id : '#' %>" class="flex-shrink-0">
+                              <img src="https://ui-avatars.com/api/?name=<%= comment.user ? comment.user.firstName + ' ' + comment.user.lastName : 'User' %>" alt="Commenter" class="w-8 h-8 rounded-full">
+                            </a>
+                            <div class="flex-1 min-w-0">
+                              <div class="bg-gray-100 rounded-lg px-3 py-2">
+                                <div class="flex items-center justify-between mb-1">
+                                  <a href="/in/<%= comment.user ? comment.user.id : '#' %>" class="text-sm font-medium text-gray-900 hover:text-blue-600">
+                                    <%= comment.user ? comment.user.firstName + ' ' + comment.user.lastName : 'User' %>
+                                  </a>
+                                  <% if (locals.loggedInUserId && comment.userId === locals.loggedInUserId) { %>
+                                    <div class="flex space-x-1">
+                                      <button class="text-gray-400 hover:text-blue-500 edit-comment-inline-btn" data-comment-id="<%= comment.id %>" data-content="<%- comment.content.replace(/&/g, '&amp;').replace(/\"/g, '&quot;') %>">
+                                        <i class="fas fa-edit text-xs"></i>
+                                      </button>
+                                      <button class="text-gray-400 hover:text-red-500 delete-comment-btn" data-comment-id="<%= comment.id %>" data-post-id="<%= post.id %>">
+                                        <i class="fas fa-trash text-xs"></i>
+                                      </button>
+                                    </div>
+                                  <% } %>
+                                </div>
+                                <p class="text-sm text-gray-800"><%= comment.content %></p>
+                              </div>
+                              <div class="flex items-center space-x-4 mt-1 text-xs text-gray-500">
+                                <span><%= new Date(comment.createdAt).toLocaleDateString() %></span>
+                                <button class="hover:text-blue-600">Like</button>
+                                <button class="hover:text-blue-600">Reply</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      <% }); %>
+                    </div>
+                  <% } %>
+                  
+                  <!-- Comment Form -->
+                  <% if (locals.loggedInUserId) { %>
+                    <div id="commentForm-<%= post.id %>" class="px-3 py-3 border-t border-gray-100 hidden">
+                      <div class="flex items-start space-x-3">
+                        <img src="https://ui-avatars.com/api/?background=random" alt="Your avatar" class="w-8 h-8 rounded-full">
+                        <form class="flex-1" onsubmit="event.preventDefault(); submitComment(this, <%= post.id %>);">
+                          <div class="flex items-center space-x-2">
+                            <input type="text" name="content" placeholder="Write a comment..." class="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:border-blue-500 bg-white">
+                            <button type="submit" class="bg-blue-600 text-white rounded-full px-4 py-2 text-sm hover:bg-blue-700 transition-colors">
+                              Post
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+            </article>
+          <% }); %>
+        <% } else { %>
+          <div class="bg-white rounded-lg border border-gray-200 p-8">
+            <div class="bg-blue-100 text-blue-700 rounded-xl p-6 text-center text-lg font-medium">
+              No posts found. <% if (locals.loggedInUserId && locals.userRole === 'lawyer') { %><a href="#" onclick="togglePostModal()" class="text-blue-600 underline">Share your legal insights</a><% } %>
+            </div>
+          </div>
+        <% } %>
+      </main>
+
+      <!-- Right Sidebar -->
+      <aside class="hidden lg:block lg:col-span-3 space-y-6">
+        <!-- Legal News Widget -->
+        <div class="bg-white rounded-lg border border-gray-200">
+          <div class="p-4 border-b border-gray-200">
+            <h3 class="font-semibold text-gray-900">Legal News</h3>
+          </div>
+          <div class="p-4">
+            <div class="space-y-3">
+              <a href="#" class="block hover:bg-gray-50 p-2 rounded transition-colors">
+                <h4 class="text-sm font-medium text-gray-900 mb-1">New Employment Law Changes</h4>
+                <p class="text-xs text-gray-500">2 hours ago • 1,234 readers</p>
+              </a>
+              <a href="#" class="block hover:bg-gray-50 p-2 rounded transition-colors">
+                <h4 class="text-sm font-medium text-gray-900 mb-1">Supreme Court Ruling Impact</h4>
+                <p class="text-xs text-gray-500">5 hours ago • 2,567 readers</p>
+              </a>
+              <a href="#" class="block hover:bg-gray-50 p-2 rounded transition-colors">
+                <h4 class="text-sm font-medium text-gray-900 mb-1">Consumer Rights Update</h4>
+                <p class="text-xs text-gray-500">1 day ago • 892 readers</p>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- People you may know -->
+        <div class="bg-white rounded-lg border border-gray-200">
+          <div class="p-4 border-b border-gray-200">
+            <h3 class="font-semibold text-gray-900">People you may know</h3>
+          </div>
+          <div class="p-4">
+            <ul id="suggestedLawyers" class="space-y-3">
+              <!-- Suggested lawyers will be populated here -->
+            </ul>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<!-- Mobile Bottom Navigation -->
+<div class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-40">
+  <div class="flex justify-around items-center py-2">
+    <a href="/feed" class="flex flex-col items-center p-2 text-blue-600">
+      <i class="fas fa-home text-lg"></i>
+      <span class="text-xs mt-1">Home</span>
+    </a>
+    <a href="/mynetwork" class="flex flex-col items-center p-2 text-gray-600 hover:text-blue-600">
+      <i class="fas fa-users text-lg"></i>
+      <span class="text-xs mt-1">Network</span>
+    </a>
+    <a href="/jobs" class="flex flex-col items-center p-2 text-gray-600 hover:text-blue-600">
+      <i class="fas fa-briefcase text-lg"></i>
+      <span class="text-xs mt-1">Jobs</span>
+    </a>
+    <a href="/messaging" class="flex flex-col items-center p-2 text-gray-600 hover:text-blue-600">
+      <i class="fas fa-comments text-lg"></i>
+      <span class="text-xs mt-1">Messages</span>
+    </a>
+    <a href="/in/<%= locals.loggedInUserId || '#' %>" class="flex flex-col items-center p-2 text-gray-600 hover:text-blue-600">
+      <i class="fas fa-user text-lg"></i>
+      <span class="text-xs mt-1">Me</span>
+    </a>
+  </div>
+</div>
+
+<!-- Post Creation Modal for Lawyers -->
+<% if (locals.userRole === 'lawyer') { %>
+<div id="postModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+  <div class="bg-white rounded-2xl shadow-2xl w-96 p-8 relative">
+    <button onclick="togglePostModal()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+    <h3 class="text-2xl font-bold mb-6 text-blue-700">Share Legal Insights</h3>
+    <form action="/in/<%= typeof user !== 'undefined' && user ? user.id : '' %>/create-post" method="POST" enctype="multipart/form-data">
+      <div class="mb-5">
+        <label for="title" class="block text-md font-medium text-gray-700 mb-1">Article Title</label>
+        <input type="text" name="title" id="title" required class="w-full border border-blue-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="e.g., Understanding Employment Rights">
+      </div>
+      <div class="mb-5">
+        <label for="content" class="block text-md font-medium text-gray-700 mb-1">Legal Content</label>
+        <textarea name="content" id="content" rows="4" required class="w-full border border-blue-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500" placeholder="Share your legal expertise and insights..."></textarea>
+      </div>
+      <div class="mb-5">
+        <label for="image" class="block text-md font-medium text-gray-700 mb-1">Supporting Image (optional)</label>
+        <input type="file" name="image" id="image" accept="image/*" class="w-full border border-blue-200 rounded-lg px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500">
+      </div>
+      <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 focus:outline-none font-semibold">Share Insights</button>
+    </form>
+  </div>
+</div>
+<% } %>
+
+<!-- JavaScript for interactions -->
+<script>
+// Toggle post modal
+function togglePostModal() {
+  const modal = document.getElementById('postModal');
+  modal.classList.toggle('hidden');
+}
+
+// Toggle reaction popup
+function toggleReactionPopup(postId, button) {
+  const popup = document.getElementById(`reactionPopup-${postId}`);
+  popup.classList.toggle('hidden');
+}
+
+// Submit reaction
+function submitReaction(postId, reaction, button) {
+  fetch(`/feed/post/${postId}/react`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ reaction: reaction })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Update reaction display
+      updateReactionDisplay(postId, data.reactions);
+    }
+  })
+  .catch(error => console.error('Error:', error));
+  
+  // Hide popup
+  document.getElementById(`reactionPopup-${postId}`).classList.add('hidden');
+}
+
+// Toggle comments
+function toggleComments(postId) {
+  const commentsList = document.getElementById(`commentsList-${postId}`);
+  const showBtn = document.getElementById(`showCommentsBtn-${postId}`);
+  
+  commentsList.classList.toggle('hidden');
+  showBtn.textContent = commentsList.classList.contains('hidden') ? 
+    `Show Comments (${commentsList.children.length})` : 
+    `Hide Comments`;
+}
+
+// Toggle comment form
+function toggleCommentForm(postId) {
+  const commentForm = document.getElementById(`commentForm-${postId}`);
+  const commentsSection = commentForm.parentElement;
+  
+  // Move comment form to top of comments section
+  if (commentForm.classList.contains('hidden')) {
+    commentsSection.insertBefore(commentForm, commentsSection.firstChild);
+  }
+  
+  commentForm.classList.toggle('hidden');
+  
+  // Focus on input when showing
+  if (!commentForm.classList.contains('hidden')) {
+    const input = commentForm.querySelector('input[name="content"]');
+    if (input) {
+      setTimeout(() => input.focus(), 100);
+    }
+  }
+}
+
+// Submit comment
+function submitComment(form, postId) {
+  const formData = new FormData(form);
+  const commentInput = form.querySelector('input[name="content"]');
+  const commentText = commentInput.value.trim();
+  
+  if (!commentText) {
+    return;
+  }
+  
+  fetch(`/feed/post/${postId}/comment`, {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Add new comment to the UI without page refresh
+      addCommentToUI(postId, data.comment);
+      // Clear the input
+      commentInput.value = '';
+      // Hide the comment form
+      toggleCommentForm(postId);
+    }
+  })
+  .catch(error => console.error('Error:', error));
+}
+
+// Share post
+function sharePost(postId) {
+  fetch(`/feed/post/${postId}/share`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      alert('Post shared successfully!');
+    } else {
+      alert('Failed to share post');
+    }
+  })
+  .catch(error => {
+    console.error('Error sharing post:', error);
+    alert('An error occurred while sharing the post');
+  });
+}
+
+// Update reaction display
+function updateReactionDisplay(postId, reactions) {
+  const reactionStats = document.getElementById(`reactionStats-${postId}`);
+  if (reactions && reactions.length > 0) {
+    reactionStats.classList.remove('hidden');
+    // Update reaction count and icons
+    const countElement = reactionStats.querySelector('.reaction-count');
+    if (countElement) {
+      countElement.textContent = reactions.length;
+    }
+    
+    // Update reaction icons
+    const reactionIcons = reactionStats.querySelector('.flex.-space-x-1');
+    if (reactionIcons) {
+      reactionIcons.innerHTML = '';
+      const uniqueReactions = [...new Set(reactions.map(r => r.reaction))];
+      uniqueReactions.slice(0, 3).forEach(reaction => {
+        const span = document.createElement('span');
+        span.className = 'inline-flex items-center justify-center w-6 h-6 text-xs bg-white border-2 border-white rounded-full';
+        // Map reaction text to emoji
+        const emojiMap = {
+          'like': '👍',
+          'love': '❤️',
+          'laugh': '😂',
+          'wow': '😮',
+          'sad': '😢',
+          'angry': '😠'
+        };
+        span.textContent = emojiMap[reaction.toLowerCase()] || reaction;
+        reactionIcons.appendChild(span);
+      });
+    }
+  } else {
+    reactionStats.classList.add('hidden');
+  }
+}
+
+// Add new comment to UI
+function addCommentToUI(postId, comment) {
+  const commentsList = document.getElementById(`commentsList-${postId}`);
+  const showCommentsBtn = document.getElementById(`showCommentsBtn-${postId}`);
+  
+  // Create new comment element
+  const commentDiv = document.createElement('div');
+  commentDiv.className = 'px-3 py-3 border-t border-gray-100 comment-item';
+  commentDiv.setAttribute('data-comment-id', comment.id);
+  
+  commentDiv.innerHTML = `
+    <div class="flex items-start space-x-3">
+      <a href="/in/${comment.user.id}" class="flex-shrink-0">
+        <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(comment.user.firstName + ' ' + comment.user.lastName)}" alt="Commenter" class="w-8 h-8 rounded-full">
+      </a>
+      <div class="flex-1 min-w-0">
+        <div class="bg-gray-100 rounded-lg px-3 py-2">
+          <div class="flex items-center justify-between mb-1">
+            <a href="/in/${comment.user.id}" class="text-sm font-medium text-gray-900 hover:text-blue-600">
+              ${comment.user.firstName} ${comment.user.lastName}
+            </a>
+            <div class="flex space-x-1">
+              <button class="text-gray-400 hover:text-blue-500 edit-comment-inline-btn" data-comment-id="${comment.id}" data-content="${comment.content.replace(/"/g, '&quot;')}">
+                <i class="fas fa-edit text-xs"></i>
+              </button>
+              <button class="text-gray-400 hover:text-red-500 delete-comment-btn" data-comment-id="${comment.id}" data-post-id="${postId}">
+                <i class="fas fa-trash text-xs"></i>
+              </button>
+            </div>
+          </div>
+          <p class="text-sm text-gray-800">${comment.content}</p>
+        </div>
+        <div class="flex items-center space-x-4 mt-1 text-xs text-gray-500">
+          <span>${new Date(comment.createdAt).toLocaleDateString()}</span>
+          <button class="hover:text-blue-600">Like</button>
+          <button class="hover:text-blue-600">Reply</button>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // Add to comments list
+  if (commentsList) {
+    commentsList.appendChild(commentDiv);
+    commentsList.classList.remove('hidden');
+    
+    // Update show comments button
+    if (showCommentsBtn) {
+      const currentCount = commentsList.children.length;
+      showCommentsBtn.textContent = `Hide Comments`;
+    }
+  } else {
+    // Create comments list if it doesn't exist
+    const commentsSection = document.querySelector(`#commentForm-${postId}`).parentElement;
+    const newCommentsList = document.createElement('div');
+    newCommentsList.id = `commentsList-${postId}`;
+    newCommentsList.className = 'space-y-3';
+    newCommentsList.appendChild(commentDiv);
+    
+    // Create show comments button if it doesn't exist
+    const newShowBtn = document.createElement('button');
+    newShowBtn.id = `showCommentsBtn-${postId}`;
+    newShowBtn.className = 'text-sm text-blue-600 hover:text-blue-800 mb-3';
+    newShowBtn.textContent = 'Hide Comments';
+    newShowBtn.onclick = () => toggleComments(postId);
+    
+    commentsSection.insertBefore(newShowBtn, commentsSection.firstChild);
+    commentsSection.insertBefore(newCommentsList, document.getElementById(`commentForm-${postId}`));
+  }
+}
+
+// Load suggested lawyers
+document.addEventListener('DOMContentLoaded', function() {
+  fetch('/mynetwork/suggested-lawyers')
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        displaySuggestedLawyers(data.lawyers);
+      }
+    })
+    .catch(error => console.error('Error loading suggested lawyers:', error));
+});
+
+// Display suggested lawyers
+function displaySuggestedLawyers(lawyers) {
+  const container = document.getElementById('suggestedLawyers');
+  
+  if (!lawyers || lawyers.length === 0) {
+    container.innerHTML = '<li class="text-center text-gray-500 py-2">No suggestions available</li>';
+    return;
+  }
+  
+  let html = '';
+  lawyers.forEach(lawyer => {
+    const imageSrc = lawyer.ProfileImage && lawyer.ProfileImage.imagePath ?
+      lawyer.ProfileImage.imagePath :
+      `https://ui-avatars.com/api/?name=${lawyer.firstName}+${lawyer.lastName}`;
+      
+    html += `
+    <li class="flex items-center">
+      <img src="${imageSrc}" alt="${lawyer.firstName}'s Profile" class="rounded-full mr-3"
+          style="width: 40px; height: 40px; object-fit: cover;">
+      <div class="flex-1">
+        <h6 class="font-semibold">${lawyer.firstName} ${lawyer.lastName}</h6>
+        <p class="text-gray-500">${lawyer.Lawyer ? lawyer.Lawyer.lawFirm : 'Lawyer'}</p>
+      </div>
+      <button class="connect-btn text-blue-600 border border-blue-600 rounded px-2 py-1 text-xs"
+          data-user-id="${lawyer.id}">Connect</button>
+    </li>`;
+  });
+  
+  container.innerHTML = html;
+  
+  // Add event listeners to connect buttons
+  document.querySelectorAll('.connect-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const userId = this.getAttribute('data-user-id');
+      sendConnectionRequest(userId, this);
+    });
+  });
+}
+
+// Send connection request
+function sendConnectionRequest(userId, button) {
+  button.disabled = true;
+  button.textContent = 'Sending...';
+  
+  fetch(`/mynetwork/connect/${userId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      button.textContent = 'Request Sent';
+      button.classList.remove('text-blue-600', 'border-blue-600');
+      button.classList.add('text-gray-400', 'border-gray-400');
+    } else {
+      button.textContent = 'Connect';
+      button.disabled = false;
+      alert(data.message);
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    button.textContent = 'Connect';
+    button.disabled = false;
+    alert('An error occurred. Please try again.');
+  });
+}
+
+// Set logged in user ID for JavaScript
+window.loggedInUserId = <%= locals.loggedInUserId ? locals.loggedInUserId : 'null' %>;
+</script>

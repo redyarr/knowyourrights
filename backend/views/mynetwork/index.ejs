@@ -1,0 +1,716 @@
+<style>
+    .glass-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .glass-button {
+        background: rgba(59, 130, 246, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(59, 130, 246, 0.2);
+        transition: all 0.3s ease;
+    }
+    
+    .glass-button:hover {
+        background: rgba(59, 130, 246, 0.2);
+        transform: translateY(-2px);
+    }
+    
+    .network-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+    
+    .network-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .network-nav {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 1rem;
+        padding: 0.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .network-nav-item {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.75rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #6b7280;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+    
+    .network-nav-item:hover {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+    }
+    
+    .network-nav-item.active {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: white;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    }
+    
+    .badge {
+        background: rgba(239, 68, 68, 0.9);
+        color: white;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 9999px;
+        margin-left: 0.5rem;
+        min-width: 1.25rem;
+        text-align: center;
+    }
+    
+    .network-nav-item.active .badge {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+    }
+    
+    .status-pending {
+        background: rgba(251, 191, 36, 0.1);
+        color: #d97706;
+        border: 1px solid rgba(251, 191, 36, 0.2);
+    }
+    
+    .status-connected {
+        background: rgba(34, 197, 94, 0.1);
+        color: #059669;
+        border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+    
+    .action-button {
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        text-decoration: none;
+    }
+    
+    .action-accept {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+    }
+    
+    .action-accept:hover {
+        background: linear-gradient(135deg, #059669, #047857);
+        transform: translateY(-1px);
+    }
+    
+    .action-decline {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    
+    .action-decline:hover {
+        background: rgba(239, 68, 68, 0.2);
+    }
+    
+    .action-cancel {
+        background: rgba(107, 114, 128, 0.1);
+        color: #4b5563;
+        border: 1px solid rgba(107, 114, 128, 0.2);
+    }
+    
+    .action-cancel:hover {
+        background: rgba(107, 114, 128, 0.2);
+    }
+    
+    .action-message {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: white;
+    }
+    
+    .action-message:hover {
+        background: linear-gradient(135deg, #1d4ed8, #1e40af);
+        transform: translateY(-1px);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 1rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .empty-state-icon {
+        font-size: 3rem;
+        color: #9ca3af;
+        margin-bottom: 1rem;
+    }
+    
+    .search-box {
+        position: relative;
+        margin-bottom: 2rem;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+        z-index: 10;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 3rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 9999px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        font-size: 0.875rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .search-input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 4px 15px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+    }
+    
+    /* Search animation styles */
+    .searchable-item {
+        transition: all 0.3s ease;
+    }
+    
+    .searchable-item.hidden {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    
+    .empty-search-message {
+        animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Search highlight styles */
+    mark {
+        background-color: #fef08a !important;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-weight: 600;
+    }
+    
+    .floating-add {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        transition: all 0.3s ease;
+        z-index: 1000;
+        text-decoration: none;
+    }
+    
+    .floating-add:hover {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+    }
+    
+    .tab-content {
+        animation: fadeIn 0.3s ease-in-out;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="min-h-screen bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Header -->
+        <div class="mb-6">
+            <h1 class="text-2xl font-semibold text-gray-900 mb-2">
+                My Network
+            </h1>
+            <p class="text-gray-600 text-sm">
+                Manage your professional relationships
+            </p>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="bg-white rounded-lg border border-gray-200 mb-6">
+            <div class="flex border-b border-gray-200">
+                <button id="requests-tab" class="network-nav-item active flex-1 px-4 py-3 text-sm font-medium text-center border-b-2 border-blue-600 text-blue-600" data-tab="requests">
+                    Requests
+                    <% if (connectionRequests && connectionRequests.length > 0) { %>
+                        <span class="ml-2 bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs"><%= connectionRequests.length %></span>
+                    <% } %>
+                </button>
+                <button id="pending-tab" class="network-nav-item flex-1 px-4 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="pending">
+                    Pending
+                    <% if (pendingRequests && pendingRequests.length > 0) { %>
+                        <span class="ml-2 bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs"><%= pendingRequests.length %></span>
+                    <% } %>
+                </button>
+                <button id="connections-tab" class="network-nav-item flex-1 px-4 py-3 text-sm font-medium text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="connections">
+                    Connections
+                    <% if (friends && friends.length > 0) { %>
+                        <span class="ml-2 bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs"><%= friends.length %></span>
+                    <% } %>
+                </button>
+            </div>
+        </div>
+
+        <!-- Search Box -->
+         <div class="relative mb-6">
+             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                 <i class="fas fa-search text-gray-400"></i>
+             </div>
+             <input type="text" class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white shadow-sm transition-all duration-200" placeholder="Search your network..." id="networkSearch">
+             <button type="button" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-colors duration-200" id="clearSearch" style="display: none;">
+                 <i class="fas fa-times"></i>
+             </button>
+         </div>
+         
+         <!-- Search Results Counter -->
+         <div id="searchResultsCounter" class="mb-4 text-sm text-gray-600" style="display: none;">
+             <span id="resultsCount">0</span> results found
+         </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content-container">
+        <!-- Connection Requests Tab -->
+        <div id="requests-content" class="tab-content">
+            <% if (connectionRequests && connectionRequests.length > 0) { %>
+                <div class="space-y-4">
+                    <% connectionRequests.forEach(request => { %>
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 searchable-item" data-name="<%= request.requester.firstName %> <%= request.requester.lastName %>">
+                            <div class="flex items-start space-x-4">
+                                <!-- Profile Image -->
+                                <div class="flex-shrink-0">
+                                    <% if (request.requester.ProfileImage && request.requester.ProfileImage.imagePath) { %>
+                                        <img src="<%= request.requester.ProfileImage.imagePath %>" alt="Profile"
+                                            class="w-12 h-12 rounded-full object-cover">
+                                    <% } else { %>
+                                        <img src="https://ui-avatars.com/api/?name=<%= encodeURIComponent(request.requester.firstName + ' ' + request.requester.lastName) %>&size=48&background=3b82f6&color=ffffff" alt="Profile"
+                                            class="w-12 h-12 rounded-full object-cover">
+                                    <% } %>
+                                </div>
+                                
+                                <!-- User Info -->
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-medium text-gray-900">
+                                        <%= request.requester.firstName %> <%= request.requester.lastName %>
+                                    </h3>
+                                    <p class="text-sm text-gray-600">
+                                        <%= request.requester.role %>
+                                        <% if (request.requester.role === 'lawyer' && request.requester.Lawyer) { %>
+                                            • <%= request.requester.Lawyer.lawFirm || 'Independent Practice' %>
+                                        <% } %>
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-1">Wants to connect</p>
+                                </div>
+                                
+                                <!-- Action Buttons -->
+                                <div class="flex space-x-2">
+                                    <button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md" onclick="acceptRequest('<%= request.id %>')">
+                                        Accept
+                                    </button>
+                                    <button class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md" onclick="declineRequest('<%= request.id %>')">
+                                        Decline
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <div class="bg-white border border-gray-200 rounded-lg p-8 text-center">
+                    <div class="text-gray-400 mb-4">
+                        <i class="fas fa-user-clock text-4xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No Connection Requests</h3>
+                    <p class="text-gray-600">You don't have any pending connection requests at the moment.</p>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Pending Requests Tab -->
+        <div id="pending-content" class="tab-content hidden">
+            <% if (pendingRequests && pendingRequests.length > 0) { %>
+                <div class="space-y-4">
+                    <% pendingRequests.forEach(request => { %>
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 searchable-item" data-name="<%= request.receiver.firstName %> <%= request.receiver.lastName %>">
+                            <div class="flex items-start space-x-4">
+                                <!-- Profile Image -->
+                                <div class="flex-shrink-0">
+                                    <% if (request.receiver.ProfileImage && request.receiver.ProfileImage.imagePath) { %>
+                                        <img src="<%= request.receiver.ProfileImage.imagePath %>" alt="Profile"
+                                            class="w-12 h-12 rounded-full object-cover">
+                                    <% } else { %>
+                                        <img src="https://ui-avatars.com/api/?name=<%= encodeURIComponent(request.receiver.firstName + ' ' + request.receiver.lastName) %>&size=48&background=3b82f6&color=ffffff" alt="Profile"
+                                            class="w-12 h-12 rounded-full object-cover">
+                                    <% } %>
+                                </div>
+                                
+                                <!-- User Info -->
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-medium text-gray-900">
+                                        <%= request.receiver.firstName %> <%= request.receiver.lastName %>
+                                    </h3>
+                                    <p class="text-sm text-gray-600">
+                                        <%= request.receiver.role %>
+                                        <% if (request.receiver.role === 'lawyer' && request.receiver.Lawyer) { %>
+                                            • <%= request.receiver.Lawyer.lawFirm || 'Independent Practice' %>
+                                        <% } %>
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-1">Invitation sent</p>
+                                </div>
+                                
+                                <!-- Action Button -->
+                                <div>
+                                    <button class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md" onclick="cancelRequest('<%= request.id %>')">
+                                        Withdraw
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <div class="bg-white border border-gray-200 rounded-lg p-8 text-center">
+                    <div class="text-gray-400 mb-4">
+                        <i class="fas fa-clock text-4xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No Pending Requests</h3>
+                    <p class="text-gray-600">You haven't sent any connection requests that are waiting for a response.</p>
+                </div>
+            <% } %>
+        </div>
+
+        <!-- Connections Tab -->
+        <div id="connections-content" class="tab-content hidden">
+            <% if (friends && friends.length > 0) { %>
+                <div class="space-y-4">
+                    <% friends.forEach(friend => { %>
+                        <% 
+                            // Get the connected user from the friend object
+                            const connectedUser = friend.connectedUser;
+                        %>
+                        <div class="bg-white border border-gray-200 rounded-lg p-4 searchable-item" data-name="<%= connectedUser.firstName %> <%= connectedUser.lastName %>">
+                            <div class="flex items-start space-x-4">
+                                <!-- Profile Image -->
+                                <div class="flex-shrink-0">
+                                    <% if (connectedUser.ProfileImage && connectedUser.ProfileImage.imagePath) { %>
+                                        <img src="<%= connectedUser.ProfileImage.imagePath %>" alt="Profile"
+                                            class="w-12 h-12 rounded-full object-cover">
+                                    <% } else { %>
+                                        <img src="https://ui-avatars.com/api/?name=<%= encodeURIComponent(connectedUser.firstName + ' ' + connectedUser.lastName) %>&size=48&background=3b82f6&color=ffffff" alt="Profile"
+                                            class="w-12 h-12 rounded-full object-cover">
+                                    <% } %>
+                                </div>
+                                
+                                <!-- User Info -->
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="font-medium text-gray-900">
+                                        <%= connectedUser.firstName %> <%= connectedUser.lastName %>
+                                    </h3>
+                                    <p class="text-sm text-gray-600">
+                                        <%= connectedUser.role %>
+                                        <% if (connectedUser.role === 'lawyer' && connectedUser.Lawyer) { %>
+                                            • <%= connectedUser.Lawyer.lawFirm || 'Independent Practice' %>
+                                        <% } %>
+                                    </p>
+                                    <p class="text-xs text-gray-500 mt-1">Connected</p>
+                                </div>
+                                
+                                <!-- Action Button -->
+                                <div>
+                                    <a href="/messaging/<%= connectedUser.id %>" class="px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-md no-underline">
+                                        Message
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <div class="bg-white border border-gray-200 rounded-lg p-8 text-center">
+                    <div class="text-gray-400 mb-4">
+                        <i class="fas fa-users text-4xl"></i>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No Connections Yet</h3>
+                    <p class="text-gray-600 mb-4">Start building your professional network by connecting with other users.</p>
+                    <a href="/search" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition no-underline">
+                        Find People
+                    </a>
+                </div>
+            <% } %>
+        </div>
+    </div>
+    </div>
+</div>
+
+
+
+<!-- Floating Action Button -->
+<a href="/search" class="floating-add" title="Find People">
+    <i class="fas fa-user-plus text-xl"></i>
+</a>
+
+<script>
+// Tab switching functionality
+function showTab(tabName) {
+    // Remove active class from all nav items
+    document.querySelectorAll('.network-nav-item').forEach(nav => {
+        nav.classList.remove('active');
+        nav.classList.remove('border-blue-600', 'text-blue-600');
+        nav.classList.add('border-transparent', 'text-gray-500');
+    });
+    
+    // Add active class to clicked item
+    const activeTabButton = document.getElementById(tabName + '-tab');
+    if (activeTabButton) {
+        activeTabButton.classList.add('active');
+        activeTabButton.classList.remove('border-transparent', 'text-gray-500');
+        activeTabButton.classList.add('border-blue-600', 'text-blue-600');
+    }
+    
+    // Hide all tab content
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+    
+    // Show selected tab content
+    const tabContent = document.getElementById(tabName + '-content');
+    if (tabContent && tabContent.classList.contains('tab-content')) {
+        tabContent.classList.remove('hidden');
+    }
+}
+
+// Legacy support for data-tab clicks
+document.querySelectorAll('.network-nav-item').forEach(item => {
+    item.addEventListener('click', function() {
+        if (this.dataset.tab) {
+            showTab(this.dataset.tab);
+        }
+    });
+});
+
+// Enhanced LinkedIn-style search functionality
+const searchInput = document.getElementById('networkSearch');
+const clearButton = document.getElementById('clearSearch');
+
+// Clear search functionality
+clearButton.addEventListener('click', function() {
+    searchInput.value = '';
+    searchInput.focus();
+    clearButton.style.display = 'none';
+    // Trigger input event to reset search
+    searchInput.dispatchEvent(new Event('input'));
+});
+
+// Combined search functionality with clear button toggle
+searchInput.addEventListener('input', function() {
+    // Show/hide clear button
+    const hasValue = this.value.trim().length > 0;
+    clearButton.style.display = hasValue ? 'flex' : 'none';
+    const searchTerm = this.value.toLowerCase().trim();
+    const activeTab = document.querySelector('.network-nav-item.active').dataset.tab;
+    const activeTabContent = document.getElementById(activeTab + '-content');
+    
+    if (!activeTabContent) return;
+    
+    const items = activeTabContent.querySelectorAll('.searchable-item');
+    let visibleCount = 0;
+    
+    items.forEach(item => {
+        const name = item.dataset.name.toLowerCase();
+        const nameElement = item.querySelector('h3, .font-semibold');
+        const titleElement = item.querySelector('.text-gray-600, .text-sm');
+        
+        let searchableText = name;
+        if (titleElement) {
+            searchableText += ' ' + titleElement.textContent.toLowerCase();
+        }
+        
+        const isVisible = searchTerm === '' || searchableText.includes(searchTerm);
+        
+        if (isVisible) {
+            item.style.display = 'block';
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+            visibleCount++;
+            
+            // Highlight matching text
+            if (searchTerm && nameElement) {
+                const originalText = nameElement.textContent;
+                const regex = new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+                const highlightedText = originalText.replace(regex, '<mark class="bg-yellow-200 px-1 rounded">$1</mark>');
+                nameElement.innerHTML = highlightedText;
+            }
+        } else {
+            item.style.display = 'none';
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(-10px)';
+        }
+    });
+    
+    // Update search results counter
+     const resultsCounter = document.getElementById('searchResultsCounter');
+     const resultsCount = document.getElementById('resultsCount');
+     
+     if (searchTerm !== '') {
+         resultsCounter.style.display = 'block';
+         resultsCount.textContent = visibleCount;
+     } else {
+         resultsCounter.style.display = 'none';
+     }
+     
+     // Show/hide empty state message
+     let emptyMessage = activeTabContent.querySelector('.empty-search-message');
+     if (visibleCount === 0 && searchTerm !== '') {
+         if (!emptyMessage) {
+             emptyMessage = document.createElement('div');
+             emptyMessage.className = 'empty-search-message text-center py-8 text-gray-500';
+             emptyMessage.innerHTML = `
+                 <i class="fas fa-search text-4xl mb-4 text-gray-300"></i>
+                 <p class="text-lg font-medium">No results found</p>
+                 <p class="text-sm">Try adjusting your search terms</p>
+             `;
+             activeTabContent.appendChild(emptyMessage);
+         }
+         emptyMessage.style.display = 'block';
+     } else if (emptyMessage) {
+         emptyMessage.style.display = 'none';
+     }
+    
+    // Clear highlights when search is empty
+    if (searchTerm === '') {
+        items.forEach(item => {
+            const nameElement = item.querySelector('h3, .font-semibold');
+            if (nameElement && nameElement.innerHTML.includes('<mark')) {
+                nameElement.innerHTML = nameElement.textContent;
+            }
+        });
+    }
+});
+
+// Connection request functions
+function acceptRequest(requestId) {
+    fetch(`/mynetwork/accept/${requestId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.message || 'An error occurred');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred');
+    });
+}
+
+function declineRequest(requestId) {
+    fetch(`/mynetwork/decline/${requestId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.message || 'An error occurred');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred');
+    });
+}
+
+function cancelRequest(requestId) {
+    fetch(`/mynetwork/cancel/${requestId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.message || 'An error occurred');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred');
+    });
+}
+</script>

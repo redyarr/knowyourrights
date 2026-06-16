@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Legal Network - Register</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<div class="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+  <div class="max-w-md w-full space-y-8">
+    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-8">
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-12 h-12 bg-blue-600 rounded-lg mb-4">
+          <i class="fas fa-balance-scale text-white text-xl"></i>
+        </div>
+        <h2 class="text-2xl font-semibold text-gray-900 mb-2">Join Legal Network</h2>
+        <p class="text-sm text-gray-600">Make the most of your professional life</p>
+      </div>
+
+      <% if (error) { %>
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 text-sm">
+          <%= error %>
+        </div>
+      <% } %>
+
+      <form action="/register" method="POST" enctype="multipart/form-data" class="space-y-6">
+        <!-- Role Selection -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-3">
+            I am a:
+          </label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="relative cursor-pointer">
+              <input type="radio" name="role" value="visitor" onchange="toggleLawyerFields()" class="sr-only peer">
+              <div class="bg-white border border-gray-300 rounded-lg p-3 text-center hover:border-blue-500 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all duration-200">
+                <i class="fas fa-user text-lg text-gray-600 peer-checked:text-blue-600 mb-1"></i>
+                <p class="text-sm font-medium text-gray-700 peer-checked:text-blue-700">Regular User</p>
+                <p class="text-xs text-gray-500">Seeking legal services</p>
+              </div>
+            </label>
+            <label class="relative cursor-pointer">
+              <input type="radio" name="role" value="lawyer" onchange="toggleLawyerFields()" class="sr-only peer">
+              <div class="bg-white border border-gray-300 rounded-lg p-3 text-center hover:border-blue-500 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all duration-200">
+                <i class="fas fa-gavel text-lg text-gray-600 peer-checked:text-blue-600 mb-1"></i>
+                <p class="text-sm font-medium text-gray-700 peer-checked:text-blue-700">Lawyer</p>
+                <p class="text-xs text-gray-500">Providing legal services</p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Basic Information -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="firstName">
+              First name
+            </label>
+            <input type="text" id="firstName" name="firstName" required 
+                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="First name">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="lastName">
+              Last name
+            </label>
+            <input type="text" id="lastName" name="lastName" required 
+                   class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                   placeholder="Last name">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1" for="email">
+            Email
+          </label>
+          <input type="email" id="email" name="email" required 
+                 class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                 placeholder="Email">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1" for="password">
+            Password (6+ characters)
+          </label>
+          <input type="password" id="password" name="password" required minlength="6"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                 placeholder="Password">
+        </div>
+
+        <!-- Lawyer-specific fields (hidden by default) -->
+        <div id="lawyerFields" class="hidden space-y-6 border-t border-gray-200 pt-6">
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h3 class="text-sm font-medium text-blue-800 mb-1">
+              Professional Information
+            </h3>
+            <p class="text-blue-700 text-xs">Please provide your legal credentials for verification.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Badge Number -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1" for="badgeNumber">
+                Badge Number
+              </label>
+              <input type="text" name="badgeNumber" id="badgeNumber" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Badge number">
+            </div>
+
+            <!-- Badge Issue Date -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1" for="badgeIssueDate">
+                Badge Issue Date
+              </label>
+              <input type="date" name="badgeIssueDate" id="badgeIssueDate" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+
+            <!-- Badge Issuing Authority -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1" for="badgeIssuingAuthority">
+                Badge Issuing Authority
+              </label>
+              <select name="badgeIssuingAuthority" id="badgeIssuingAuthority" required 
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="">Select Authority Level</option>
+                <option value="training">Training</option>
+                <option value="approved">Approved</option>
+                <option value="consultant">Consultant</option>
+              </select>
+            </div>
+
+            <!-- Badge Upload -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1" for="badgeUpload">
+                Badge Document
+              </label>
+              <input type="file" name="badgeUpload" id="badgeUpload" accept="image/*,.pdf" required
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:text-xs file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+            </div>
+          </div>
+
+          <!-- Summary -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="summary">
+              Professional Summary
+            </label>
+            <textarea name="summary" id="summary" rows="3"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              placeholder="Brief description of your legal expertise and experience"></textarea>
+          </div>
+
+          <!-- Contact Number -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="contactNumber">
+              Contact Number
+            </label>
+            <input type="tel" name="contactNumber" id="contactNumber" required
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Contact number">
+          </div>
+
+          <!-- Law Firm Checkbox -->
+          <div class="space-y-3">
+            <div class="flex items-center">
+              <input type="checkbox" id="inLawFirm" name="inLawFirm" value="true" onchange="toggleLawFirmField()"
+                class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+              <label for="inLawFirm" class="ml-2 block text-sm font-medium text-gray-700">
+                I work at a law firm
+              </label>
+            </div>
+
+            <!-- Law Firm Input (hidden by default) -->
+            <div id="lawFirmInputContainer" class="hidden">
+              <label class="block text-sm font-medium text-gray-700 mb-1" for="lawFirm">
+                Law Firm Name
+              </label>
+              <input type="text" name="lawFirm" id="lawFirm"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Law firm name">
+            </div>
+          </div>
+
+          <!-- University Selection -->
+          <div class="space-y-3">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1" for="universitySelect">
+                University
+              </label>
+              <select name="universitySelect" id="universitySelect" required onchange="toggleInput('universitySelect', 'universityInput')"
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <% educations.forEach(function(edu) { %>
+                  <option value="<%= edu.university %>"><%= edu.university %></option>
+                <% }) %>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <!-- Custom University Input (hidden by default) -->
+            <div id="universityInputContainer" class="hidden">
+              <label class="block text-sm font-medium text-gray-700 mb-1" for="universityInput">
+                University Name
+              </label>
+              <input type="text" name="university" id="universityInput"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Enter new university">
+            </div>
+
+            <!-- Degree (Dropdown) -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1" for="degreeSelect">
+                Degree
+              </label>
+              <select name="degree" id="degreeSelect" required 
+                      class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <option value="">Select Degree</option>
+                <option value="Bachelor of Laws (LLB)">Bachelor of Laws (LLB)</option>
+                <option value="Master of Laws (LLM)">Master of Laws (LLM)</option>
+                <option value="Juris Doctor (JD)">Juris Doctor (JD)</option>
+                <option value="Doctor of Juridical Science (SJD)">Doctor of Juridical Science (SJD)</option>
+                <option value="Doctor of Laws (LLD)">Doctor of Laws (LLD)</option>
+                <option value="Bachelor of Civil Law (BCL)">Bachelor of Civil Law (BCL)</option>
+                <option value="Master of Legal Studies (MLS)">Master of Legal Studies (MLS)</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit"
+                class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors duration-200">
+          Agree & Join
+        </button>
+      </form>
+
+      <!-- Divider -->
+      <div class="mt-6">
+        <div class="relative">
+          <div class="absolute inset-0 flex items-center">
+            <div class="w-full border-t border-gray-300"></div>
+          </div>
+          <div class="relative flex justify-center text-sm">
+            <span class="px-2 bg-white text-gray-500">or</span>
+          </div>
+        </div>
+
+        <!-- Google Sign In -->
+        <div class="mt-6">
+          <a href="/google" 
+             class="w-full flex justify-center items-center px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200">
+            <svg class="w-5 h-5 mr-2" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Continue with Google
+          </a>
+        </div>
+      </div>
+
+      <!-- Login Link -->
+      <div class="text-center mt-6 pt-6 border-t border-gray-200">
+        <p class="text-sm text-gray-600">
+          Already on Legal Network?
+          <a href="/user/login" class="font-medium text-blue-600 hover:text-blue-500">Sign in</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+  // Call toggleLawyerFields when the page loads
+  document.addEventListener('DOMContentLoaded', function() {
+    toggleLawyerFields();
+  });
+
+  function toggleLawyerFields() {
+    const roleInputs = document.querySelectorAll('input[name="role"]');
+    let selectedRole = null;
+    
+    roleInputs.forEach(input => {
+      if (input.checked) {
+        selectedRole = input.value;
+      }
+    });
+    
+    const lawyerFields = document.getElementById('lawyerFields');
+    const lawyerInputs = [
+      'badgeNumber',
+      'badgeIssueDate',
+      'badgeIssuingAuthority',
+      'badgeUpload',
+      'summary',
+      'contactNumber',
+      'universitySelect',
+      'universityInput',
+      'degreeSelect'
+    ];
+  
+    if (selectedRole === 'lawyer') {
+      lawyerFields.classList.remove('hidden');
+      lawyerInputs.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+          field.disabled = false;
+          // Restore the name attribute to ensure form submission includes these fields
+          if (field.dataset.originalName) {
+            field.name = field.dataset.originalName;
+          }
+          if (!field.id.endsWith('Input')) {
+            field.required = true;
+          }
+        }
+      });
+      // Initialize law firm field state
+      document.getElementById('inLawFirm').disabled = false;
+      toggleLawFirmField();
+    } else {
+      lawyerFields.classList.add('hidden');
+      lawyerInputs.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        if (field) {
+          // Store the original name attribute before removing it
+          if (field.name) {
+            field.dataset.originalName = field.name;
+            field.name = ''; // Remove name attribute to prevent form submission
+          }
+          field.disabled = true;
+          field.required = false;
+          if (field.tagName === 'SELECT') {
+            field.selectedIndex = 0;
+          } else {
+            field.value = '';
+          }
+        }
+      });
+      // Disable law firm checkbox and field
+      const inLawFirmCheckbox = document.getElementById('inLawFirm');
+      if (inLawFirmCheckbox) {
+        inLawFirmCheckbox.disabled = true;
+        inLawFirmCheckbox.checked = false;
+      }
+      const lawFirmField = document.getElementById('lawFirm');
+      if (lawFirmField) {
+        lawFirmField.disabled = true;
+        lawFirmField.value = '';
+        if (lawFirmField.name) {
+          lawFirmField.dataset.originalName = lawFirmField.name;
+          lawFirmField.name = '';
+        }
+      }
+      document.getElementById('lawFirmInputContainer').classList.add('hidden');
+    }
+  }
+
+  // Function to toggle law firm input field based on checkbox
+  function toggleLawFirmField() {
+    const inLawFirm = document.getElementById('inLawFirm');
+    const lawFirmContainer = document.getElementById('lawFirmInputContainer');
+    const lawFirmInput = document.getElementById('lawFirm');
+    
+    if (inLawFirm.checked) {
+      lawFirmContainer.classList.remove('hidden');
+      lawFirmInput.disabled = false;
+      lawFirmInput.required = true;
+      if (lawFirmInput.dataset.originalName) {
+        lawFirmInput.name = lawFirmInput.dataset.originalName;
+      }
+    } else {
+      lawFirmContainer.classList.add('hidden');
+      lawFirmInput.disabled = true;
+      lawFirmInput.required = false;
+      lawFirmInput.value = '';
+      // Store original name and remove it from form submission
+      if (lawFirmInput.name) {
+        lawFirmInput.dataset.originalName = lawFirmInput.name;
+        lawFirmInput.name = '';
+      }
+    }
+  }
+
+  // Generic function to toggle text input visibility when "Other" is selected
+  function toggleInput(selectId, inputId) {
+    const selectElem = document.getElementById(selectId);
+    const inputElem = document.getElementById(inputId);
+    if (selectElem.value === 'other') {
+      inputElem.classList.remove('hidden');
+      inputElem.required = true;
+    } else {
+      inputElem.classList.add('hidden');
+      inputElem.required = false;
+    }
+  }
+</script>
+</body>
+</html>

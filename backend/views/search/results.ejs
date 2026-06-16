@@ -1,0 +1,396 @@
+<!-- LinkedIn-inspired Search Results Header -->
+<div class="bg-white border-b border-gray-200 sticky top-0 z-40">
+  <div class="max-w-6xl mx-auto px-4 py-4">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <a href="/search" class="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all duration-200" title="Back to Search">
+          <i class="fas fa-arrow-left text-lg"></i>
+        </a>
+        <div>
+          <h1 class="text-2xl font-semibold text-gray-900">Search Results</h1>
+          <p class="text-sm text-gray-600 mt-1">
+            <% const totalResults = lawyers.length + users.length; %>
+            <span class="font-medium"><%= totalResults %></span> results for "<span class="font-medium"><%= query %></span>"
+            <% if (searchType !== 'all') { %>
+              in <span class="capitalize font-medium"><%= searchType %></span>
+            <% } %>
+          </p>
+        </div>
+      </div>
+      
+      <!-- Search Type Filter -->
+      <div class="flex items-center space-x-2">
+        <div class="flex bg-gray-100 rounded-lg p-1">
+          <a href="/search/results?query=<%= encodeURIComponent(query) %>&searchType=all" 
+             class="px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 <%= searchType === 'all' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900' %>">
+            All
+          </a>
+          <a href="/search/results?query=<%= encodeURIComponent(query) %>&searchType=lawyers" 
+             class="px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 <%= searchType === 'lawyers' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900' %>">
+            Lawyers
+          </a>
+          <a href="/search/results?query=<%= encodeURIComponent(query) %>&searchType=users" 
+             class="px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 <%= searchType === 'users' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-900' %>">
+            Users
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="bg-gray-50 min-h-screen">
+  <div class="max-w-6xl mx-auto px-4 py-6">
+
+    <% if (lawyers.length === 0 && users.length === 0) { %>
+      <!-- No Results State -->
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+        <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <i class="fas fa-search text-gray-400 text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-3">No results found</h3>
+        <p class="text-gray-600 mb-6 max-w-md mx-auto">We couldn't find any matches for "<span class="font-medium"><%= query %></span>". Try adjusting your search terms or browse our categories.</p>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <a href="/search" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium">
+            <i class="fas fa-search mr-2"></i>
+            Try New Search
+          </a>
+          <a href="/" class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors duration-200 font-medium">
+            <i class="fas fa-home mr-2"></i>
+            Back to Home
+          </a>
+        </div>
+      </div>
+    <% } else { %>
+      <!-- Results Grid -->
+      <div class="space-y-6">
+        
+        <!-- Lawyers Section -->
+        <% if (searchType === 'all' || searchType === 'lawyers') { %>
+          <% if (lawyers.length > 0) { %>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                <div class="flex items-center justify-between">
+                  <h2 class="text-lg font-semibold text-gray-900 flex items-center">
+                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                      <i class="fas fa-balance-scale text-blue-600 text-sm"></i>
+                    </div>
+                    Lawyers
+                    <span class="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full"><%= lawyers.length %></span>
+                  </h2>
+                  <% if (searchType === 'all' && lawyers.length > 3) { %>
+                    <a href="/search/results?query=<%= encodeURIComponent(query) %>&searchType=lawyers" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                      View all lawyers
+                    </a>
+                  <% } %>
+                </div>
+              </div>
+              
+              <div class="divide-y divide-gray-100">
+                <% lawyers.slice(0, searchType === 'all' ? 3 : lawyers.length).forEach((lawyer, index) => { %>
+                  <div class="p-6 hover:bg-gray-50 transition-colors duration-200 group">
+                    <div class="flex items-start space-x-4">
+                      <div class="relative flex-shrink-0">
+                        <img src="<%= lawyer.profileImage %>" 
+                             alt="<%= lawyer.title %>" 
+                             class="w-16 h-16 rounded-full object-cover ring-2 ring-<%= lawyer.authorityColor %>-200 group-hover:ring-<%= lawyer.authorityColor %>-300 transition-all duration-200">
+                        <div class="absolute -bottom-1 -right-1 bg-<%= lawyer.authorityColor %>-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs border-2 border-white shadow-sm">
+                          <%= lawyer.authorityIcon %>
+                        </div>
+                      </div>
+                      
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between">
+                          <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors duration-200">
+                              <a href="<%= lawyer.link %>" class="hover:underline"><%= lawyer.title %></a>
+                            </h3>
+                            <div class="flex items-center space-x-2 mb-2">
+                              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-<%= lawyer.authorityColor %>-100 text-<%= lawyer.authorityColor %>-800">
+                                <i class="fas fa-certificate mr-1"></i>
+                                <%= lawyer.authorityBadge %>
+                              </span>
+                              <span class="text-gray-400">•</span>
+                              <span class="text-sm text-gray-600">Legal Professional</span>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-3"><%= lawyer.summary %></p>
+                            <div class="flex items-center space-x-4 text-xs text-gray-500">
+                              <span class="flex items-center">
+                                <i class="fas fa-map-marker-alt mr-1"></i>
+                                Location
+                              </span>
+                              <span class="flex items-center">
+                                <i class="fas fa-star mr-1"></i>
+                                Verified
+                              </span>
+                            </div>
+                          </div>
+                          
+                          <div class="flex flex-col space-y-2 ml-4">
+                            <a href="/in/<%= lawyer.id %>" 
+                               class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-sm">
+                              <i class="fas fa-user mr-2"></i>
+                              View Profile
+                            </a>
+                            <% if (loggedInUserId && lawyer.id !== loggedInUserId) { %>
+                               <% if (lawyer.connectionStatus === 'accepted') { %>
+                                 <button class="inline-flex items-center px-4 py-2 bg-green-100 border border-green-300 text-green-700 text-sm font-medium rounded-lg cursor-default">
+                                   <i class="fas fa-check mr-2"></i>
+                                   Connected
+                                 </button>
+                               <% } else if (lawyer.connectionStatus === 'pending') { %>
+                                 <button class="inline-flex items-center px-4 py-2 bg-yellow-100 border border-yellow-300 text-yellow-700 text-sm font-medium rounded-lg cursor-default">
+                                   <i class="fas fa-clock mr-2"></i>
+                                   Pending
+                                 </button>
+                               <% } else { %>
+                                 <button class="connect-btn inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200" data-user-id="<%= lawyer.id %>">
+                                   <i class="fas fa-plus mr-2"></i>
+                                   Connect
+                                 </button>
+                               <% } %>
+                             <% } %>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <% }); %>
+              </div>
+            </div>
+          <% } %>
+        <% } %>
+        
+        <!-- Users Section -->
+        <% if (searchType === 'all' || searchType === 'users') { %>
+          <% if (users.length > 0) { %>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                <div class="flex items-center justify-between">
+                  <h2 class="text-lg font-semibold text-gray-900 flex items-center">
+                    <div class="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mr-3">
+                      <i class="fas fa-users text-gray-600 text-sm"></i>
+                    </div>
+                    Users
+                    <span class="ml-2 px-2 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded-full"><%= users.length %></span>
+                  </h2>
+                  <% if (searchType === 'all' && users.length > 3) { %>
+                    <a href="/search/results?query=<%= encodeURIComponent(query) %>&searchType=users" class="text-blue-600 hover:text-blue-700 text-sm font-medium">
+                      View all users
+                    </a>
+                  <% } %>
+                </div>
+              </div>
+              
+              <div class="divide-y divide-gray-100">
+                <% users.slice(0, searchType === 'all' ? 3 : users.length).forEach((user, index) => { %>
+                  <div class="p-6 hover:bg-gray-50 transition-colors duration-200 group">
+                    <div class="flex items-start space-x-4">
+                      <div class="relative flex-shrink-0">
+                        <img src="<%= user.profileImage %>" 
+                             alt="<%= user.title %>" 
+                             class="w-16 h-16 rounded-full object-cover ring-2 ring-gray-200 group-hover:ring-gray-300 transition-all duration-200">
+                        <div class="absolute -bottom-1 -right-1 bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs border-2 border-white shadow-sm">
+                          <i class="fas fa-user"></i>
+                        </div>
+                      </div>
+                      
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between">
+                          <div class="flex-1">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-1 group-hover:text-blue-600 transition-colors duration-200">
+                              <a href="<%= user.link %>" class="hover:underline"><%= user.title %></a>
+                            </h3>
+                            <div class="flex items-center space-x-2 mb-2">
+                              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <i class="fas fa-user mr-1"></i>
+                                Community Member
+                              </span>
+                              <span class="text-gray-400">•</span>
+                              <span class="text-sm text-gray-600">Active User</span>
+                            </div>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-3"><%= user.summary %></p>
+                            <div class="flex items-center space-x-4 text-xs text-gray-500">
+                              <span class="flex items-center">
+                                <i class="fas fa-calendar-alt mr-1"></i>
+                                Member since 2024
+                              </span>
+                              <span class="flex items-center">
+                                <i class="fas fa-comments mr-1"></i>
+                                Active
+                              </span>
+                            </div>
+                          </div>
+                          
+                          <div class="flex flex-col space-y-2 ml-4">
+                            <a href="/in/<%= user.id %>" 
+                               class="inline-flex items-center px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors duration-200 shadow-sm">
+                              <i class="fas fa-user mr-2"></i>
+                              View Profile
+                            </a>
+                            <% if (loggedInUserId && user.id !== loggedInUserId) { %>
+                               <% if (user.connectionStatus === 'accepted') { %>
+                                 <button class="inline-flex items-center px-4 py-2 bg-green-100 border border-green-300 text-green-700 text-sm font-medium rounded-lg cursor-default">
+                                   <i class="fas fa-check mr-2"></i>
+                                   Connected
+                                 </button>
+                               <% } else if (user.connectionStatus === 'pending') { %>
+                                 <button class="inline-flex items-center px-4 py-2 bg-yellow-100 border border-yellow-300 text-yellow-700 text-sm font-medium rounded-lg cursor-default">
+                                   <i class="fas fa-clock mr-2"></i>
+                                   Pending
+                                 </button>
+                               <% } else { %>
+                                 <button class="connect-btn inline-flex items-center px-4 py-2 bg-white border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200" data-user-id="<%= user.id %>">
+                                   <i class="fas fa-plus mr-2"></i>
+                                   Connect
+                                 </button>
+                               <% } %>
+                             <% } %>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                <% }); %>
+              </div>
+            </div>
+          <% } %>
+        <% } %>
+        
+      </div>
+    <% } %>
+    
+    <!-- Additional Search Suggestions (if no results or few results) -->
+    <% if (totalResults < 3) { %>
+      <div class="mt-8 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <div class="w-8 h-8 bg-yellow-100 rounded-lg flex items-center justify-center mr-3">
+            <i class="fas fa-lightbulb text-yellow-600 text-sm"></i>
+          </div>
+          Search Suggestions
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <a href="/search?query=family%20law" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200 group">
+            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-200 transition-colors duration-200">
+              <i class="fas fa-home text-blue-600"></i>
+            </div>
+            <div>
+              <div class="font-medium text-gray-900">Family Law</div>
+              <div class="text-sm text-gray-600">Divorce, custody, adoption</div>
+            </div>
+          </a>
+          <a href="/search?query=criminal%20law" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200 group">
+            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-red-200 transition-colors duration-200">
+              <i class="fas fa-gavel text-red-600"></i>
+            </div>
+            <div>
+              <div class="font-medium text-gray-900">Criminal Law</div>
+              <div class="text-sm text-gray-600">Defense, appeals, consultation</div>
+            </div>
+          </a>
+          <a href="/search?query=business%20law" class="flex items-center p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200 group">
+            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-green-200 transition-colors duration-200">
+              <i class="fas fa-briefcase text-green-600"></i>
+            </div>
+            <div>
+              <div class="font-medium text-gray-900">Business Law</div>
+              <div class="text-sm text-gray-600">Corporate, contracts, compliance</div>
+            </div>
+          </a>
+        </div>
+      </div>
+    <% } %>
+    
+  </div>
+</div>
+
+<!-- Add some custom styles for the search results page -->
+<style>
+  /* Smooth hover animations */
+  .group:hover .group-hover\:ring-blue-300 {
+    --tw-ring-color: rgb(147 197 253);
+  }
+  
+  .group:hover .group-hover\:ring-gray-300 {
+    --tw-ring-color: rgb(209 213 219);
+  }
+  
+  /* Enhanced focus states */
+  .focus\:ring-2:focus {
+    --tw-ring-offset-width: 2px;
+  }
+  
+  /* Smooth transitions for all interactive elements */
+  a, button {
+    transition: all 0.2s ease-in-out;
+  }
+  
+  /* Custom scrollbar for better UX */
+  .overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+  }
+  
+  .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+     background: #94a3b8;
+   }
+ </style>
+
+ <!-- JavaScript for connection functionality -->
+ <script>
+ document.addEventListener('DOMContentLoaded', function() {
+     // Add event listeners to connect buttons
+     document.querySelectorAll('.connect-btn').forEach(button => {
+         button.addEventListener('click', function() {
+             const userId = this.getAttribute('data-user-id');
+             sendConnectionRequest(userId, this);
+         });
+     });
+ });
+
+ // Function to send connection request
+ function sendConnectionRequest(userId, button) {
+     // Disable button and show loading state
+     button.disabled = true;
+     const originalText = button.innerHTML;
+     button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Connecting...';
+
+     fetch(`/mynetwork/connect/${userId}`, {
+         method: 'POST',
+         headers: {
+             'Content-Type': 'application/json',
+         },
+         credentials: 'same-origin'
+     })
+     .then(response => response.json())
+     .then(data => {
+         if (data.success) {
+             // Update button to show pending state
+             button.innerHTML = '<i class="fas fa-clock mr-2"></i>Pending';
+             button.className = 'inline-flex items-center px-4 py-2 bg-yellow-100 border border-yellow-300 text-yellow-700 text-sm font-medium rounded-lg cursor-default';
+             button.disabled = true;
+         } else {
+             // Show error and restore button
+             alert(data.message || 'Failed to send connection request');
+             button.innerHTML = originalText;
+             button.disabled = false;
+         }
+     })
+     .catch(error => {
+         console.error('Error:', error);
+         alert('An error occurred while sending the connection request');
+         button.innerHTML = originalText;
+         button.disabled = false;
+     });
+ }
+ </script>

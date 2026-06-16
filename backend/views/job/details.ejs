@@ -1,0 +1,203 @@
+<div class="max-w-4xl mx-auto py-8">
+    <div class="bg-gray-50 min-h-screen">
+        <div class="max-w-4xl mx-auto px-4 py-6">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center">
+                    <a href="/jobs" class="inline-flex items-center text-gray-600 hover:text-gray-900 mr-4">
+                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                        Back to jobs
+                    </a>
+                </div>
+                <% if (isAuthor) { %>
+                    <button onclick="confirmDelete()" class="inline-flex items-center px-3 py-2 text-red-600 hover:text-red-700 text-sm font-medium">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        Delete
+                    </button>
+                <% } %>
+            </div>
+            
+            <!-- Job Details -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+                <div class="flex items-start space-x-4 mb-6">
+                    <% if (job.user.ProfileImage && job.user.ProfileImage.imagePath) { %>
+                        <img src="<%= job.user.ProfileImage.imagePath %>" alt="<%= job.user.firstName %>'s profile image" class="w-12 h-12 rounded-full object-cover">
+                    <% } else { %>
+                        <img src="https://ui-avatars.com/api/?name=<%= job.user.firstName %>+<%= job.user.lastName %>" alt="Profile image" class="w-12 h-12 rounded-full object-cover">
+                    <% } %>
+                    <div class="flex-1">
+                        <h1 class="text-xl font-semibold text-gray-900 mb-1"><%= job.user.firstName %> <%= job.user.lastName %></h1>
+                        <p class="text-sm text-gray-500 mb-2">
+                            Posted on <%= new Date(job.createdAt).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                        </p>
+                        <div class="flex items-center text-sm text-gray-500">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <%= job.city %>, <%= job.country %>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-200 pt-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-3">Job Description</h2>
+                    <p class="text-gray-700 leading-relaxed">
+                        <%= job.summary %>
+                    </p>
+                </div>
+
+                
+                <% if (locals.user && user.role==='lawyer' && !isAuthor && !hasApplied) { %>
+                    <div class="border-t border-gray-200 pt-6 mt-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-4">Apply for this job</h3>
+                        <form action="/jobs/<%= job.id %>/apply" method="POST" class="space-y-4">
+                            <div>
+                                <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Cover message</label>
+                                <textarea id="message" name="message" rows="4" required
+                                    class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    placeholder="Explain why you're a good fit for this job..."></textarea>
+                            </div>
+                            <div class="flex justify-end">
+                                <button type="submit" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                                    Submit application
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                <% } else if (locals.user && user.role==='lawyer' && hasApplied) { %>
+                    <div class="border-t border-gray-200 pt-6 mt-6">
+                        <div class="bg-blue-50 border border-blue-200 text-blue-800 p-4 rounded-lg">
+                            <p class="text-sm">You have already applied for this job. The client will contact you if they're interested.</p>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+
+            <% if (isAuthor && applicants && applicants.length > 0) { %>
+                <!-- Applications -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                    <h2 class="text-lg font-semibold text-gray-900 mb-6">Applications (<%= applicants.length %>)</h2>
+                    <div class="space-y-4">
+                        <% applicants.forEach(application => { %>
+                            <div class="border rounded-lg p-4 <%= application.status === 'accepted' ? 'border-green-200 bg-green-50' : (application.status === 'rejected' ? 'border-red-200 bg-red-50' : 'border-gray-200') %>">
+                                <div class="flex items-start justify-between">
+                                    <div class="flex items-start space-x-3 flex-1">
+                                        <% if (application.user.ProfileImage && application.user.ProfileImage.imagePath) { %>
+                                            <img src="<%= application.user.ProfileImage.imagePath %>" alt="<%= application.user.firstName %>'s profile image" class="w-10 h-10 rounded-full object-cover">
+                                        <% } else { %>
+                                            <img src="https://ui-avatars.com/api/?name=<%= application.user.firstName %>+<%= application.user.lastName %>" alt="Profile image" class="w-10 h-10 rounded-full object-cover">
+                                        <% } %>
+                                        <div class="flex-1">
+                                            <div class="flex items-center space-x-2 mb-1">
+                                                <h3 class="font-medium text-gray-900">
+                                                    <%= application.user.firstName %> <%= application.user.lastName %>
+                                                </h3>
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium 
+                                                    <% if (application.user.lawyer.verificationStatus === 'approved') { %>
+                                                        bg-green-100 text-green-800
+                                                    <% } else if (application.user.lawyer.verificationStatus === 'pending') { %>
+                                                        bg-yellow-100 text-yellow-800
+                                                    <% } else if (application.user.lawyer.verificationStatus === 'rejected') { %>
+                                                        bg-red-100 text-red-800
+                                                    <% } else { %>
+                                                        bg-gray-100 text-gray-800
+                                                    <% } %>">
+                                                    <% if (application.user.lawyer.verificationStatus === 'approved') { %>
+                                                        Verified
+                                                    <% } else if (application.user.lawyer.verificationStatus === 'pending') { %>
+                                                        Pending
+                                                    <% } else if (application.user.lawyer.verificationStatus === 'rejected') { %>
+                                                        Rejected
+                                                    <% } else { %>
+                                                        Unverified
+                                                    <% } %>
+                                                </span>
+                                            </div>
+                                            <p class="text-sm text-gray-500 mb-2">
+                                                <% if (application.user.lawyer.lawFirm) { %>
+                                                    <%= application.user.lawyer.lawFirm %>
+                                                    <% if (application.user.lawyer.badgeNumber) { %> • <% } %>
+                                                <% } %>
+                                                <% if (application.user.lawyer.badgeNumber) { %>
+                                                    Badge: <%= application.user.lawyer.badgeNumber %>
+                                                <% } %>
+                                            </p>
+                                            <p class="text-sm text-gray-700 mb-2">
+                                                <%= application.message %>
+                                            </p>
+                                            <p class="text-xs text-gray-500">
+                                                Applied <%= new Date(application.createdAt).toLocaleDateString() %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="ml-4">
+                                        <% if (application.status==='pending' ) { %>
+                                            <form action="/jobs/<%= job.id %>/accept/<%= application.id %>" method="POST">
+                                                <button type="submit" class="px-3 py-1.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                                                    Accept
+                                                </button>
+                                            </form>
+                                        <% } else if (application.status==='accepted' ) { %>
+                                            <span class="inline-block px-2.5 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                                                Accepted
+                                            </span>
+                                        <% } else { %>
+                                            <span class="inline-block px-2.5 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">
+                                                Rejected
+                                            </span>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+            <% } else if (isAuthor) { %>
+                <!-- No applications -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center">
+                    <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No applications yet</h3>
+                    <p class="text-sm text-gray-500">Lawyers will see your job posting and can apply to work with you.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <% if (isAuthor) { %>
+        <div id="deleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+            <div class="flex items-center justify-center min-h-screen px-4">
+                <div class="bg-white rounded-lg p-6 max-w-md w-full">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Delete job posting</h3>
+                    <p class="text-sm text-gray-600 mb-6">Are you sure you want to delete this job? This action cannot be undone and will also remove all applications.</p>
+                    <div class="flex justify-end space-x-3">
+                        <button onclick="closeDeleteModal()" class="px-4 py-2 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                            Cancel
+                        </button>
+                        <form action="/jobs/<%= job.id %>?_method=DELETE" method="POST" class="inline">
+                            <button type="submit" class="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition-colors duration-200">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function confirmDelete() {
+                document.getElementById('deleteModal').classList.remove('hidden');
+            }
+
+            function closeDeleteModal() {
+                document.getElementById('deleteModal').classList.add('hidden');
+            }
+        </script>
+    <% } %>

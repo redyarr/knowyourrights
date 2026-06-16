@@ -1,0 +1,126 @@
+<div class="min-h-screen bg-gray-50 pt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- LinkedIn-style Messaging Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 py-6">
+            
+            <!-- Left Sidebar - Conversations List -->
+            <div class="lg:col-span-4 xl:col-span-3">
+                <div class="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+                    <!-- Header -->
+                    <div class="p-4 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h1 class="text-xl font-semibold text-gray-900">Messaging</h1>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="window.location.href='/messaging/search'" class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                </button>
+                                <button class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Search Bar -->
+                        <div class="mt-4">
+                            <div class="relative">
+                                <input type="text" placeholder="Search messages" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <!-- Filter Tabs -->
+                        <div class="mt-4 flex space-x-1">
+                            <button class="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-full border border-blue-200">Focused</button>
+                            <button class="px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">Other</button>
+                            <button class="px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">Unread</button>
+                            <button class="px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">InMail</button>
+                            <button class="px-3 py-1.5 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors">Starred</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Conversations List -->
+                    <div class="divide-y divide-gray-100 max-h-96 overflow-y-auto">
+                        <% if (messages.length === 0) { %>
+                            <div class="p-8 text-center">
+                                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">No conversations yet</h3>
+                                <p class="text-gray-500 text-sm">Start connecting with legal professionals</p>
+                            </div>
+                        <% } else { %>
+                            <% messages.forEach(message => { %>
+                                <a href="/messaging/<%= message.user.id %>" class="block hover:bg-gray-50 transition-colors">
+                                    <div class="p-4">
+                                        <div class="flex items-start space-x-3">
+                                            <div class="relative">
+                                                <img src="https://ui-avatars.com/api/?name=<%= message.user.firstName %>+<%= message.user.lastName %>&background=0ea5e9&color=ffffff"
+                                                     alt="<%= message.user.firstName %> <%= message.user.lastName %>" 
+                                                     class="w-12 h-12 rounded-full">
+                                                <% if (message.user.role === 'lawyer') { %>
+                                                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full"></div>
+                                                <% } %>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center justify-between mb-1">
+                                                    <h3 class="text-sm font-semibold text-gray-900 truncate">
+                                                        <%= message.user.firstName %> <%= message.user.lastName %>
+                                                        <% if (message.user.role === 'lawyer') { %>
+                                                            <span class="ml-1 text-xs text-blue-600">✓</span>
+                                                        <% } %>
+                                                    </h3>
+                                                    <span class="text-xs text-gray-500 flex-shrink-0">
+                                                        <%= new Date(message.lastMessage.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %>
+                                                    </span>
+                                                </div>
+                                                <p class="text-sm text-gray-600 truncate mb-1"><%= message.lastMessage.content %></p>
+                                                <% if (message.user.role === 'lawyer') { %>
+                                                    <p class="text-xs text-gray-500"><%= message.user.specialization || 'Legal Professional' %></p>
+                                                <% } %>
+                                            </div>
+                                            <% if (message.unreadCount > 0) { %>
+                                                <div class="flex flex-col items-center">
+                                                    <div class="w-2 h-2 bg-blue-500 rounded-full mb-1"></div>
+                                                    <span class="text-xs text-blue-600 font-medium"><%= message.unreadCount %></span>
+                                                </div>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </a>
+                            <% }) %>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content Area -->
+            <div class="lg:col-span-8 xl:col-span-9">
+                <div class="bg-white rounded-lg border border-gray-200 shadow-sm h-96 lg:h-[600px]">
+                    <div class="flex items-center justify-center h-full">
+                        <div class="text-center">
+                            <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                </svg>
+                            </div>
+                            <h2 class="text-xl font-semibold text-gray-900 mb-2">Select a conversation</h2>
+                            <p class="text-gray-500">Choose from your existing conversations or start a new one</p>
+                            <button onclick="window.location.href='/messaging/search'" class="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                                Start new conversation
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>

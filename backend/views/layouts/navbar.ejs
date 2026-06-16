@@ -1,0 +1,537 @@
+<!-- Mobile Navigation (visible only on mobile, hidden on messaging page) -->
+<% if (!path.includes('/messaging')) { %>
+<div class="lg:hidden sticky top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+  <div class="flex items-center justify-between px-4 py-2.5">
+    <!-- Profile Picture -->
+    <% if (locals.loggedInUserId) { %>
+      <a href="/in/<%= locals.loggedInUserId %>" class="flex items-center touch-manipulation p-1">
+        <img src="<%= locals.user && locals.user.profilePicture ? locals.user.profilePicture : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(locals.user ? (locals.user.firstName + ' ' + locals.user.lastName) : 'User') + '&size=36&background=3b82f6&color=ffffff' %>" alt="Profile" class="w-9 h-9 rounded-full object-cover">
+      </a>
+    <% } else { %>
+      <div class="w-9 h-9 bg-gradient-to-br from-blue-600 to-blue-800 rounded-full flex items-center justify-center">
+        <i class="fas fa-balance-scale text-white text-sm"></i>
+      </div>
+    <% } %>
+    
+    <!-- Search Bar -->
+    <div class="flex-1 mx-3">
+      <form action="/search" method="GET" class="relative">
+        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <i class="fas fa-search text-gray-400 text-sm"></i>
+        </div>
+        <input type="text" name="query" placeholder="Search" class="w-full pl-9 pr-4 py-2.5 text-sm bg-gray-50 border-0 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:bg-white transition-all duration-200 placeholder-gray-500">
+      </form>
+    </div>
+    
+    <!-- Empty space for balance -->
+    <div class="w-9"></div>
+  </div>
+</div>
+<% } %>
+
+<!-- Desktop Navigation (hidden on mobile) -->
+<% if (!path.includes('/messaging')) { %>
+<nav class="bg-white shadow-sm border-b border-gray-200 sticky top-0 left-0 right-0 z-50 backdrop-blur-md bg-white/95 hidden lg:block">
+  <div class="max-w-6xl mx-auto px-3 sm:px-4 lg:px-6">
+    <div class="flex justify-between h-14 sm:h-16 items-center">
+      <!-- Mobile menu button -->
+      <div class="lg:hidden">
+        <button id="mobile-menu-button" class="p-2 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Left nav -->
+      <div class="flex items-center space-x-2 sm:space-x-4">
+        <a href="/" class="flex items-center text-blue-700 font-bold text-lg sm:text-xl">
+          <!-- Simplified LinkedIn-inspired LegalNet Logo -->
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-600 to-blue-800 rounded-lg flex items-center justify-center shadow-md">
+              <i class="fas fa-balance-scale text-white text-sm sm:text-base"></i>
+            </div>
+            <span class="hidden sm:block font-bold text-gray-800 tracking-tight">LegalNet</span>
+          </div>
+        </a>
+        
+        <!-- Search Bar - LinkedIn style -->
+        <form action="/search" method="GET" class="relative ml-2 sm:ml-4 hidden md:block">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-search text-gray-400 text-sm"></i>
+            </div>
+            <input type="text" name="query" id="searchInput" placeholder="Search" autocomplete="off"
+              class="w-48 lg:w-64 xl:w-80 pl-10 pr-4 py-2 rounded-md bg-gray-100 border-0 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all duration-200 text-gray-700 placeholder-gray-500 text-sm">
+            <div id="searchResults"
+              class="absolute mt-3 w-full bg-white shadow-2xl rounded-2xl overflow-hidden hidden z-50 border border-gray-200 max-h-96 overflow-y-auto">
+              <div class="p-6">
+                <div class="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Quick Actions</div>
+                <div class="space-y-1">
+                  <div class="flex items-center space-x-4 p-3 hover:bg-blue-50 rounded-xl cursor-pointer transition-all duration-200 group">
+                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors duration-200">
+                      <i class="fas fa-user-tie text-blue-600"></i>
+                    </div>
+                    <div>
+                      <div class="font-medium text-gray-800">Find lawyers by specialty</div>
+                      <div class="text-sm text-gray-500">Browse verified legal professionals</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-4 p-3 hover:bg-green-50 rounded-xl cursor-pointer transition-all duration-200 group">
+                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors duration-200">
+                      <i class="fas fa-users text-green-600"></i>
+                    </div>
+                    <div>
+                      <div class="font-medium text-gray-800">Connect with professionals</div>
+                      <div class="text-sm text-gray-500">Expand your legal network</div>
+                    </div>
+                  </div>
+                  <div class="flex items-center space-x-4 p-3 hover:bg-purple-50 rounded-xl cursor-pointer transition-all duration-200 group">
+                    <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors duration-200">
+                      <i class="fas fa-file-alt text-purple-600"></i>
+                    </div>
+                    <div>
+                      <div class="font-medium text-gray-800">Browse legal resources</div>
+                      <div class="text-sm text-gray-500">Access legal documents and guides</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Center nav -->
+      <% if (locals.loggedInUserId) { %>
+        <div class="hidden lg:flex items-center space-x-6 xl:space-x-8">
+          <a href="/" class="flex flex-col items-center text-gray-600 hover:text-gray-900 transition-colors duration-200 group px-3 py-2 <%= (path === '/' || path === '/blog') ? 'text-gray-900 border-b-2 border-gray-900' : '' %>">
+            <i class="fas fa-home text-xl mb-1"></i>
+            <span class="text-xs font-medium">Home</span>
+          </a>
+          <a href="/mynetwork" class="flex flex-col items-center text-gray-600 hover:text-gray-900 transition-colors duration-200 group px-3 py-2 <%= path.includes('/user/network') ? 'text-gray-900 border-b-2 border-gray-900' : '' %>">
+            <i class="fas fa-users text-xl mb-1"></i>
+            <span class="text-xs font-medium">My Network</span>
+          </a>
+          <a href="/jobs" class="flex flex-col items-center text-gray-600 hover:text-gray-900 transition-colors duration-200 group px-3 py-2 <%= path.includes('/jobs') ? 'text-gray-900 border-b-2 border-gray-900' : '' %>">
+            <i class="fas fa-briefcase text-xl mb-1"></i>
+            <span class="text-xs font-medium">Jobs</span>
+          </a>
+          <a href="/messaging" class="flex flex-col items-center text-gray-600 hover:text-gray-900 transition-colors duration-200 group relative px-3 py-2 <%= path.includes('/messages') ? 'text-gray-900 border-b-2 border-gray-900' : '' %>">
+            <i class="fas fa-comment-dots text-xl mb-1"></i>
+            <span class="text-xs font-medium">Messaging</span>
+            <% if (locals.unreadMessageCount> 0) { %>
+              <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold text-[10px]">
+                <%= locals.unreadMessageCount %>
+              </span>
+              <% } %>
+          </a>
+          <!-- <a href="/notifications"
+            class="relative flex flex-col items-center text-gray-500 hover:text-gray-900 text-sm <%= path.includes('/notifications') ? 'font-bold text-blue-700' : '' %>">
+            <i class="fas fa-bell text-xl"></i>
+            <span>Notifications</span>
+            <% if (locals.unreadNotificationCount> 0) { %>
+              <span
+                class="absolute top-0 right-0 bg-red-500 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center">
+                <%= locals.unreadNotificationCount %>
+              </span>
+              <% } %>
+          </a>
+        </div> -->
+        <% } %>
+
+          <!-- Right nav -->
+          <div class="flex items-center space-x-3">
+            <% if (locals.loggedInUserId) { %>
+              <div class="relative group">
+                <button id="profileButton"
+                  class="flex items-center px-3 py-2 rounded-lg text-gray-600 hover:text-blue-600 hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
+                  <img src="<%= locals.user && locals.user.profilePicture ? locals.user.profilePicture : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(locals.user ? (locals.user.firstName + ' ' + locals.user.lastName) : 'User') + '&size=28&background=3b82f6&color=ffffff' %>" alt="Profile" class="h-7 w-7 rounded-full ring-1 ring-gray-200 shadow-sm object-cover">
+                  <span class="ml-2 text-sm font-medium hidden sm:block">Me <i class="fas fa-caret-down ml-1 transition-transform duration-200 text-xs"></i></span>
+                </button>
+                <div id="profileMenu"
+                  class="absolute right-0 mt-2 w-64 glass-card bg-white/95 backdrop-blur-lg border border-white/20 rounded-xl shadow-xl hidden z-[200]">
+                  <div class="p-4 border-b border-white/20">
+                    <div class="flex items-center space-x-3">
+                      <img src="https://ui-avatars.com/api/?name=<%= locals.user ? encodeURIComponent(locals.user.firstName + ' ' + locals.user.lastName) : 'User' %>&size=64&background=3b82f6&color=ffffff" alt="Profile"
+                        class="h-16 w-16 rounded-full ring-4 ring-white shadow-lg">
+                      <div>
+                        <h4 class="font-bold text-gray-800">
+                          <% if (typeof user !=='undefined' && user) { %>
+                            <%= user.firstName %>
+                              <%= user.lastName %>
+                                <% } else { %>
+                                  Guest User
+                                  <% } %>
+                        </h4>
+                        <p class="text-sm text-gray-600 font-medium">
+                          <%= locals.userRole==='admin' ? 'Administrator' : locals.userRole==='lawyer' ? 'Lawyer' : 'Member' %>
+                        </p>
+                      </div>
+                    </div>
+                    <a href="/in"
+                      class="block mt-3 px-4 py-2 text-sm text-white bg-gradient-to-r from-blue-600 to-indigo-600 text-center hover:from-blue-700 hover:to-indigo-700 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5">View
+                      Profile</a>
+                  </div>
+                  <div class="py-2">
+                    <a href="/in/edit" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 transition-all duration-200 rounded-lg mx-2">
+                      <i class="fas fa-pencil-alt mr-3 text-blue-500"></i>Edit Profile
+                    </a>
+                    <a href="/settings" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 transition-all duration-200 rounded-lg mx-2">
+                      <i class="fas fa-cog mr-3 text-gray-500"></i>Settings & Privacy
+                    </a>
+                    <a href="/help" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 transition-all duration-200 rounded-lg mx-2">
+                      <i class="fas fa-question-circle mr-3 text-green-500"></i>Help Center
+                    </a>
+                    <a href="/about" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50/80 hover:text-blue-600 transition-all duration-200 rounded-lg mx-2">
+                      <i class="fas fa-info-circle mr-3 text-purple-500"></i>About Us
+                    </a>
+                    <form action="/signout" method="POST" class="mx-2">
+                      <button type="submit" class="flex items-center w-full px-4 py-3 text-sm text-gray-700 hover:bg-red-50/80 hover:text-red-600 transition-all duration-200 rounded-lg">
+                        <i class="fas fa-sign-out-alt mr-3 text-red-500"></i>Sign Out
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <% } else { %>
+                <a href="/login" class="text-gray-600 hover:text-blue-600 transition-colors duration-200 text-sm font-semibold px-3 py-2 rounded-full hover:bg-gray-100">Sign in</a>
+                <a href="/register" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition-colors duration-200 text-sm font-semibold border border-blue-600">Join now</a>
+                <% } %>
+          </div>
+    </div>
+    
+
+  </div>
+</nav>
+<% } %>
+
+<!-- Mobile Bottom Navigation (visible only on mobile) -->
+<% if (locals.loggedInUserId) { %>
+<div class="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 mobile-bottom-nav safe-area-bottom">
+  <% if (locals.user && locals.user.userType === 'lawyer') { %>
+    <!-- Lawyer Navigation (5 items with Post and Messaging) -->
+    <div class="flex items-center justify-around h-full">
+      <!-- Home -->
+      <a href="/" class="flex flex-col items-center justify-center py-2 px-2 text-gray-600 hover:text-blue-600 transition-colors duration-200 touch-manipulation min-w-0 flex-1 <%= (path === '/' || path === '/blog') ? 'text-blue-600' : '' %>">
+        <i class="fas fa-home text-lg mb-1"></i>
+        <span class="text-xs font-normal">Home</span>
+      </a>
+      
+      <!-- My Network -->
+      <a href="/mynetwork" class="flex flex-col items-center justify-center py-2 px-2 text-gray-600 hover:text-blue-600 transition-colors duration-200 touch-manipulation min-w-0 flex-1 <%= path.includes('/user/network') ? 'text-blue-600' : '' %>">
+        <i class="fas fa-users text-lg mb-1"></i>
+        <span class="text-xs font-normal">Network</span>
+      </a>
+      
+      <!-- Post (Plus Icon) - Only for lawyers -->
+      <a href="/profile/createPost" class="flex flex-col items-center justify-center py-2 px-2 text-gray-600 hover:text-blue-600 transition-colors duration-200 touch-manipulation min-w-0 flex-1">
+        <div class="w-5 h-5 bg-blue-600 rounded flex items-center justify-center mb-1">
+          <i class="fas fa-plus text-white text-xs"></i>
+        </div>
+        <span class="text-xs font-normal">Post</span>
+      </a>
+      
+      <!-- Messaging -->
+      <a href="/messaging" class="flex flex-col items-center justify-center py-2 px-2 text-gray-600 hover:text-blue-600 transition-colors duration-200 touch-manipulation min-w-0 flex-1 relative <%= path.includes('/messaging') ? 'text-blue-600' : '' %>">
+        <i class="fas fa-comment-dots text-lg mb-1"></i>
+        <span class="text-xs font-normal">Messaging</span>
+        <% if (locals.unreadMessagesCount && locals.unreadMessagesCount > 0) { %>
+          <span class="absolute top-1 right-2 bg-red-500 text-white rounded-full h-4 w-4 flex items-center justify-center font-bold" style="font-size: 9px;"><%= locals.unreadMessagesCount > 9 ? '9+' : locals.unreadMessagesCount %></span>
+        <% } %>
+      </a>
+      
+      <!-- Jobs -->
+      <a href="/jobs" class="flex flex-col items-center justify-center py-2 px-2 text-gray-600 hover:text-blue-600 transition-colors duration-200 touch-manipulation min-w-0 flex-1 <%= path.includes('/jobs') ? 'text-blue-600' : '' %>">
+        <i class="fas fa-briefcase text-lg mb-1"></i>
+        <span class="text-xs font-normal">Jobs</span>
+      </a>
+    </div>
+  <% } else { %>
+    <!-- Regular User Navigation (4 items with Messaging) -->
+    <div class="flex items-center justify-around h-full">
+      <!-- Home -->
+      <a href="/" class="flex flex-col items-center justify-center py-2 px-3 text-gray-600 hover:text-blue-600 transition-colors duration-200 touch-manipulation min-w-0 flex-1 <%= (path === '/' || path === '/blog') ? 'text-blue-600' : '' %>">
+        <i class="fas fa-home text-lg mb-1"></i>
+        <span class="text-xs font-normal">Home</span>
+      </a>
+      
+      <!-- My Network -->
+      <a href="/mynetwork" class="flex flex-col items-center justify-center py-2 px-3 text-gray-600 hover:text-blue-600 transition-colors duration-200 touch-manipulation min-w-0 flex-1 <%= path.includes('/user/network') ? 'text-blue-600' : '' %>">
+        <i class="fas fa-users text-lg mb-1"></i>
+        <span class="text-xs font-normal">Network</span>
+      </a>
+      
+      <!-- Messaging -->
+      <a href="/messaging" class="flex flex-col items-center justify-center py-2 px-3 text-gray-600 hover:text-blue-600 transition-colors duration-200 touch-manipulation min-w-0 flex-1 relative <%= path.includes('/messaging') ? 'text-blue-600' : '' %>">
+        <i class="fas fa-comment-dots text-lg mb-1"></i>
+        <span class="text-xs font-normal">Messaging</span>
+        <% if (locals.unreadMessagesCount && locals.unreadMessagesCount > 0) { %>
+          <span class="absolute top-1 right-3 bg-red-500 text-white rounded-full h-4 w-4 flex items-center justify-center font-bold" style="font-size: 9px;"><%= locals.unreadMessagesCount > 9 ? '9+' : locals.unreadMessagesCount %></span>
+        <% } %>
+      </a>
+      
+      <!-- Jobs -->
+      <a href="/jobs" class="flex flex-col items-center justify-center py-2 px-3 text-gray-600 hover:text-blue-600 transition-colors duration-200 touch-manipulation min-w-0 flex-1 <%= path.includes('/jobs') ? 'text-blue-600' : '' %>">
+        <i class="fas fa-briefcase text-lg mb-1"></i>
+        <span class="text-xs font-normal">Jobs</span>
+      </a>
+    </div>
+  <% } %>
+</div>
+<% } %>
+
+
+
+<style>
+  .glass-nav {
+    background-color: rgba(255, 255, 255, 0.95);
+  }
+  
+  .glass-card {
+    background-color: rgba(255, 255, 255, 0.95);
+  }
+  
+  #profileButton:hover .fa-caret-down {
+    transform: rotate(180deg);
+  }
+  
+  /* Mobile menu animation */
+  #mobileMenu.hidden {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  #mobileMenu {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  
+  #mobileMenuPanel.show {
+    transform: translateX(0);
+  }
+  
+  /* Touch-friendly improvements */
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Ensure mobile menu panel is always solid */
+  #mobileMenuPanel {
+    background-color: white !important;
+    backdrop-filter: none !important;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Mobile-specific improvements */
+    @media (max-width: 1024px) {
+      /* Add padding to body to account for fixed top and bottom bars */
+      body {
+        padding-top: 60px !important; /* Height of mobile top bar */
+        padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)) !important; /* Height of mobile bottom bar + safe area */
+      }
+      
+      /* Remove top padding on messaging page */
+      body.messaging-page {
+        padding-top: 0;
+      }
+      
+      /* Ensure main content doesn't overlap with fixed navbars */
+      .main-content {
+        margin-top: 0 !important;
+        padding-top: 0 !important;
+      }
+      
+      /* Improve touch targets */
+      button, a {
+        min-height: 44px;
+      }
+      
+      /* Mobile bottom navigation styling - LinkedIn style */
+      .mobile-bottom-nav {
+        background-color: #ffffff;
+        border-top: 1px solid #e5e7eb;
+        box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+        margin: 0;
+        border-radius: 0;
+        height: 64px; /* Increased height for better text visibility */
+        min-height: 64px;
+      }
+      
+      /* Fixed bottom navigation container */
+      .mobile-bottom-nav > div {
+        height: 100%;
+        align-items: center;
+        padding: 0;
+      }
+      
+      /* LinkedIn-style bottom nav item styling */
+      .mobile-bottom-nav a {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 4px 2px !important;
+        text-decoration: none !important;
+        transition: all 0.15s ease !important;
+        flex: 1 !important;
+        min-width: 0 !important;
+        height: 100% !important;
+        position: relative !important;
+      }
+      
+      /* LinkedIn-style icon sizing */
+       .mobile-bottom-nav a i {
+         font-size: 20px !important;
+         margin-bottom: 3px !important;
+         line-height: 1 !important;
+         display: block !important;
+         color: inherit !important;
+       }
+      
+      /* LinkedIn-style text styling */
+      .mobile-bottom-nav a span {
+        font-size: 11px !important;
+        font-weight: 400 !important;
+        line-height: 1.2 !important;
+        text-align: center !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        max-width: 100% !important;
+        color: inherit !important;
+        margin-top: 1px !important;
+      }
+      
+      /* Post button specific styling - LinkedIn style */
+       .mobile-bottom-nav a div {
+         width: 22px !important;
+         height: 22px !important;
+         margin-bottom: 3px !important;
+         display: flex !important;
+         align-items: center !important;
+         justify-content: center !important;
+         border-radius: 3px !important;
+       }
+       
+       .mobile-bottom-nav a div i {
+         font-size: 14px !important;
+         margin-bottom: 0 !important;
+       }
+       
+       /* Notification badge styling - LinkedIn style */
+       .mobile-bottom-nav .absolute {
+         min-width: 16px !important;
+         height: 16px !important;
+         font-size: 9px !important;
+         font-weight: 600 !important;
+         border: 2px solid white !important;
+         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+       }
+      
+      /* Safe area support for bottom navigation */
+      .safe-area-bottom {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+      }
+    
+    /* Active state for bottom nav items */
+    .bottom-nav-active {
+      color: #2563eb !important;
+    }
+    
+    /* Notification badge positioning */
+    .mobile-bottom-nav .relative span {
+      position: absolute !important;
+      top: -2px !important;
+      right: 8px !important;
+      background-color: #ef4444 !important;
+      color: white !important;
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      border-radius: 50% !important;
+      width: 18px !important;
+      height: 18px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      line-height: 1 !important;
+      border: 2px solid white !important;
+      z-index: 10 !important;
+    }
+    
+    /* Ensure messaging badge is properly positioned */
+    .mobile-bottom-nav a.relative {
+      position: relative !important;
+    }
+  }
+  
+  /* Desktop adjustments */
+  @media (min-width: 1025px) {
+    body {
+      padding-top: 64px; /* Height of desktop navbar */
+      padding-bottom: 0;
+    }
+  }
+</style>
+
+<script>
+  // Profile menu toggle
+  const profileButton = document.getElementById('profileButton');
+  if (profileButton) {
+    profileButton.addEventListener('click', function () {
+      var menu = document.getElementById('profileMenu');
+      menu.classList.toggle('hidden');
+    });
+  }
+  
+
+
+  // Enhanced search functionality
+  const navSearchInput = document.getElementById('searchInput');
+  const searchResults = document.getElementById('searchResults');
+  
+  // Show search suggestions on focus
+  navSearchInput.addEventListener('focus', function() {
+    searchResults.classList.remove('hidden');
+  });
+  
+  // Hide search results when clicking outside
+  document.addEventListener('click', function(event) {
+    if (!event.target.closest('form')) {
+      searchResults.classList.add('hidden');
+    }
+  });
+  
+  // Keyboard shortcut (Cmd/Ctrl + K)
+  document.addEventListener('keydown', function(event) {
+    if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
+      event.preventDefault();
+      navSearchInput.focus();
+    }
+    
+    // Hide search results on Escape
+    if (event.key === 'Escape') {
+      searchResults.classList.add('hidden');
+      navSearchInput.blur();
+    }
+  });
+  
+  // Real-time search suggestions (optional - can be enhanced with AJAX)
+  let searchTimeout;
+  navSearchInput.addEventListener('input', function() {
+    clearTimeout(searchTimeout);
+    const query = this.value.trim();
+    
+    if (query.length > 0) {
+      searchTimeout = setTimeout(() => {
+        // Here you can add AJAX call to get real-time suggestions
+        console.log('Searching for:', query);
+      }, 300);
+    }
+  });
+</script>

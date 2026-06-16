@@ -1,0 +1,258 @@
+<div class="verification-status-container">
+    <div class="status-card pending">
+        <div class="status-icon">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div class="status-content">
+            <h1>Verification Pending</h1>
+            <p class="status-message">
+                Your lawyer verification is currently under review by our admin team. 
+                We'll notify you once the review is complete.
+            </p>
+            
+            <div class="verification-details">
+                <h3>Your Submitted Information:</h3>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <label>Law Firm:</label>
+                        <span><%= lawyer.lawFirm || 'Independent Practice' %></span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Badge Number:</label>
+                        <span><%= lawyer.badgeNumber %></span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Badge Issue Date:</label>
+                        <span><%= new Date(lawyer.badgeIssueDate).toLocaleDateString() %></span>
+                    </div>
+                    <div class="detail-item">
+                        <label>Issuing Authority:</label>
+                        <span><%= lawyer.badgeIssuingAuthority.charAt(0).toUpperCase() + lawyer.badgeIssuingAuthority.slice(1) %></span>
+                    </div>
+                    <% if (lawyer.legalAreas) { %>
+                    <div class="detail-item full-width">
+                        <label>Legal Areas:</label>
+                        <div class="legal-areas">
+                            <% lawyer.legalAreas.split(',').forEach(area => { %>
+                                <span class="area-tag"><%= area.trim() %></span>
+                            <% }); %>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="/in/<%= user.id %>" class="btn btn-primary">
+                    <i class="fas fa-user"></i> View Profile
+                </a>
+                <a href="/feed" class="btn btn-secondary">
+                    <i class="fas fa-home"></i> Go to Feed
+                </a>
+            </div>
+            
+            <div class="info-box">
+                <h4>What happens next?</h4>
+                <ul>
+                    <li>Our admin team will review your submitted documents and information</li>
+                    <li>The verification process typically takes 2-3 business days</li>
+                    <li>You'll receive a notification once your verification is approved or if additional information is needed</li>
+                    <li>Once approved, you'll have full access to post content and connect with other users</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.verification-status-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+.status-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    overflow: hidden;
+    text-align: center;
+}
+
+.status-card.pending {
+    border-top: 5px solid #f39c12;
+}
+
+.status-icon {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: white;
+    padding: 30px;
+    font-size: 3em;
+}
+
+.status-content {
+    padding: 40px;
+}
+
+.status-content h1 {
+    color: #2c3e50;
+    margin: 0 0 15px 0;
+    font-size: 2.2em;
+}
+
+.status-message {
+    font-size: 1.1em;
+    color: #7f8c8d;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.verification-details {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 25px;
+    margin: 30px 0;
+    text-align: left;
+}
+
+.verification-details h3 {
+    color: #2c3e50;
+    margin: 0 0 20px 0;
+    text-align: center;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+}
+
+.detail-item.full-width {
+    grid-column: 1 / -1;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.detail-item label {
+    font-weight: 600;
+    color: #34495e;
+    min-width: 120px;
+    margin-right: 10px;
+}
+
+.detail-item.full-width label {
+    margin-bottom: 8px;
+}
+
+.legal-areas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.area-tag {
+    background: #3498db;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 24px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn i {
+    margin-right: 8px;
+}
+
+.btn-primary {
+    background: #3498db;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #2980b9;
+}
+
+.btn-secondary {
+    background: #95a5a6;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #7f8c8d;
+}
+
+.info-box {
+    background: #e8f4fd;
+    border: 1px solid #bee5eb;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: left;
+    margin-top: 30px;
+}
+
+.info-box h4 {
+    color: #0c5460;
+    margin: 0 0 15px 0;
+}
+
+.info-box ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #0c5460;
+}
+
+.info-box li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .verification-status-container {
+        margin: 20px auto;
+        padding: 10px;
+    }
+    
+    .status-content {
+        padding: 20px;
+    }
+    
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .detail-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .detail-item label {
+        margin-bottom: 5px;
+        min-width: auto;
+    }
+}
+</style>

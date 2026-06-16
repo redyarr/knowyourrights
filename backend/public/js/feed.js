@@ -1,0 +1,622 @@
+// Feed page functionality for reactions and comments
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Show message for non-lawyers trying to post
+    window.showLawyerOnlyMessage = function() {
+        alert('Only verified lawyers can create posts. If you are a lawyer, please complete your verification process.');
+    };
+    // Toggle comments visibility
+    window.toggleComments = function (postId) {
+        const commentsList = document.getElementById(`commentsList-${postId}`);
+        const showCommentsBtn = document.getElementById(`showCommentsBtn-${postId}`);
+        if (commentsList) {
+            const isHidden = commentsList.classList.contains('hidden');
+            commentsList.classList.toggle('hidden');
+            if (showCommentsBtn) {
+                const commentCount = showCommentsBtn.textContent.match(/\d+/)[0];
+                showCommentsBtn.textContent = isHidden ?
+                    `Hide Comments (${commentCount})` :
+                    `Show Comments (${commentCount})`;
+            }
+        }
+    };
+    window.showMoreComments = function (postId) {
+        const additionalComments = document.getElementById(`additionalComments-${postId}`);
+        const showMoreBtn = document.getElementById(`showMoreComments-${postId}`);
+        if (additionalComments) {
+            additionalComments.classList.remove('hidden');
+            if (showMoreBtn) {
+                showMoreBtn.classList.add('hidden');
+            }
+        }
+    };
+    window.toggleReactionPopup = function (postId) {
+        const popup = document.getElementById(`reactionPopup-${postId}`);
+        if (popup) {
+            popup.classList.toggle('hidden');
+        }
+    };
+    window.submitReaction = function (postId, reaction) {
+        const popup = document.getElementById(`reactionPopup-${postId}`);
+        if (popup) {
+            popup.classList.add('hidden');
+        }
+        fetch(`/feed/post/${postId}/react`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ reaction: reaction }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const reactionButton = document.querySelector(`button[onclick="toggleReactionPopup(${postId})"]`);
+                    if (reactionButton) {
+                        const reactionEmoji = getReactionEmoji(reaction);
+                        reactionButton.innerHTML = `<span class="text-xl">${reactionEmoji}</span>`;
+                        reactionButton.classList.add('text-blue-500');
+                        
+                        // Add visual feedback
+                        reactionButton.style.transform = 'scale(1.2)';
+                        setTimeout(() => {
+                            reactionButton.style.transform = 'scale(1)';
+                        }, 200);
+                    }
+                    
+                    // Update reaction display with counts and icons
+                    if (typeof updateReactionDisplay === 'function' && data.reactions) {
+                        updateReactionDisplay(postId, data.reactions, data.userReaction);
+                    }
+                    
+                    showNotification('Reaction added!', 'success');
+                } else {
+                    console.error('Error submitting reaction:', data.error);
+                    showNotification('Error: ' + data.error, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('An error occurred while submitting your reaction.', 'error');
+            });
+    };
+    function getReactionEmoji(reaction) {
+        const reactionTypes = {
+            'like': '👍',
+            'love': '❤️',
+            'haha': '😂',
+            'wow': '😮',
+            'sad': '😢',
+            'angry': '😠'
+        };
+        return reactionTypes[reaction] || '👍';
+    }
+    window.toggleCommentForm = function (postId) {
+        const commentForm = document.getElementById(`commentForm-${postId}`);
+        if (commentForm) {
+            const input = commentForm.querySelector('input[name="content"]');
+            
+            if (commentForm.classList.contains('hidden')) {
+                commentForm.classList.remove('hidden');
+                commentForm.style.opacity = '0';
+                commentForm.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    commentForm.style.transition = 'all 0.3s ease';
+                    commentForm.style.opacity = '1';
+                    commentForm.style.transform = 'translateY(0)';
+                    if (input) input.focus();
+                }, 10);
+            } else {
+                commentForm.style.opacity = '0';
+                commentForm.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    commentForm.classList.add('hidden');
+                }, 300);
+            }
+        }
+    };
+    window.submitComment = function (form, postId) {
+        const contentInput = form.querySelector('input[name="content"]');
+        const content = contentInput.value.trim();
+        
+        if (!content) {
+            showNotification('Please enter a comment.', 'warning');
+            return;
+        }
+        
+        const submitButton = form.querySelector('button[type="submit"]');
+        const originalContent = submitButton.innerHTML;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin text-xs"></i>';
+        submitButton.disabled = true;
+        
+        fetch(`/feed/post/${postId}/comment`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ content: content }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    contentInput.value = '';
+                    let commentsList = document.getElementById(`commentsList-${postId}`);
+                    let showCommentsBtn = document.getElementById(`showCommentsBtn-${postId}`);
+                    if (!commentsList) {
+                        const postContainer = document.getElementById(`post-${postId}`);
+                        if (postContainer) {
+                            commentsList = document.createElement('div');
+                            commentsList.id = `commentsList-${postId}`;
+                            commentsList.className = 'space-y-3';
+                            postContainer.querySelector('.px-4.py-2.border-t.border-gray-200.mt-3').prepend(commentsList);
+                        }
+                    }
+                    if (!showCommentsBtn) {
+                        const postContainer = document.getElementById(`post-${postId}`);
+                        if (postContainer) {
+                            showCommentsBtn = document.createElement('button');
+                            showCommentsBtn.id = `showCommentsBtn-${postId}`;
+                            showCommentsBtn.className = 'text-sm text-blue-600 hover:text-blue-800 mb-3';
+                            showCommentsBtn.onclick = function () { toggleComments(postId); };
+                            showCommentsBtn.textContent = 'Hide Comments (1)';
+                            commentsList.before(showCommentsBtn);
+                        }
+                    }
+                    if (commentsList && commentsList.classList.contains('hidden')) {
+                        toggleComments(postId);
+                    }
+                    if (commentsList) {
+                        const newComment = createCommentElement(data.comment);
+                        if (commentsList.firstChild) {
+                            commentsList.insertBefore(newComment, commentsList.firstChild);
+                        } else {
+                            commentsList.appendChild(newComment);
+                        }
+                        const countElement = document.querySelector(`#post-${postId} .comment-count`);
+                        if (countElement) {
+                            const currentCount = parseInt(countElement.textContent.split(' ')[0] || '0');
+                            countElement.textContent = `${currentCount + 1} comments`;
+                        }
+                        if (showCommentsBtn && commentsList) {
+                            const commentCount = commentsList.childElementCount;
+                            showCommentsBtn.textContent = `Hide Comments (${commentCount})`;
+                        }
+                    }
+                    toggleCommentForm(postId);
+                    showNotification('Comment added successfully!', 'success');
+                } else {
+                    console.error('Error submitting comment:', data.error);
+                    showNotification('Error: ' + data.error, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('An error occurred while submitting your comment.', 'error');
+            })
+            .finally(() => {
+                submitButton.innerHTML = originalContent;
+                submitButton.disabled = false;
+            });
+    };
+    function createCommentElement(comment) {
+        const commentDiv = document.createElement('div');
+        commentDiv.className = 'flex items-start space-x-3';
+        const userName = `${comment.user.firstName} ${comment.user.lastName}`;
+        const loggedInUserId = window.loggedInUserId || null;
+        const isOwner = loggedInUserId && comment.userId === loggedInUserId;
+        
+        commentDiv.innerHTML = `
+            <a href="/in/${comment.user.id}" class="hover:opacity-80 transition-opacity">
+                <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}" 
+                    alt="Commenter" class="rounded-full shadow" style="width: 32px; height: 32px; object-fit: cover;">
+            </a>
+            <div>
+                <div class="mb-1">
+                    <a href="/in/${comment.user.id}" class="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+                        ${userName}
+                    </a>
+                </div>
+                <div class="bg-blue-50 rounded-lg px-3 py-2 relative">
+                    <div class="pr-16">
+                        <p class="text-sm text-gray-800 break-words whitespace-normal" style="word-wrap: break-word; max-width: 100%; overflow-wrap: break-word;">${comment.content.replace(/(.{50})/g, "$1\n")}</p>
+                    </div>
+                    ${isOwner ? `
+                        <div class="absolute right-2 top-2">
+                            <span class="flex space-x-1 items-center">
+                                <button class="p-1 text-gray-500 hover:text-blue-500 transition-all duration-200 ease-in-out edit-comment-inline-btn" title="Edit Comment" data-comment-id="${comment.id}" data-content="${comment.content.replace(/&/g, '&amp;').replace(/"/g, '&quot;')}">
+                                    <i class="fas fa-edit text-xs"></i>
+                                </button>
+                                <button class="p-1 text-gray-500 hover:text-red-500 transition-all duration-200 ease-in-out delete-comment-btn" title="Delete Comment" data-comment-id="${comment.id}" data-post-id="${comment.postId}">
+                                    <i class="fas fa-trash text-xs"></i>
+                                </button>
+                            </span>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="mt-1 text-xs text-gray-500">
+                    <span>${new Date(comment.createdAt).toLocaleDateString()}</span>
+                </div>
+            </div>
+        `;
+        return commentDiv;
+    }
+    window.showEditPostModal = function (postId, title, content) {
+        document.getElementById('editPostId').value = postId;
+        document.getElementById('editTitle').value = title;
+        document.getElementById('editContent').value = content;
+        document.getElementById('editPostModal').classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+    };
+    window.toggleEditPostModal = function () {
+        document.getElementById('editPostModal').classList.toggle('hidden');
+        document.body.classList.toggle('overflow-hidden');
+    };
+    document.getElementById('editPostForm').onsubmit = function (e) {
+        e.preventDefault();
+        const postId = document.getElementById('editPostId').value;
+        const title = document.getElementById('editTitle').value;
+        const content = document.getElementById('editContent').value;
+        fetch(`/feed/post/${postId}/edit`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, content })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    const postDiv = document.getElementById(`post-${postId}`);
+                    if (postDiv) {
+                        const titleElement = postDiv.querySelector('h2');
+                        const contentElement = postDiv.querySelector('div.text-gray-700 p');
+                        if (titleElement) titleElement.textContent = title;
+                        if (contentElement) contentElement.textContent = content.length > 300 ? content.substring(0, 300) + '...' : content;
+                    }
+                    toggleEditPostModal();
+                } else {
+                    alert(data.error || 'Failed to edit post.');
+                }
+            });
+    };
+    document.getElementById('editCommentForm').onsubmit = function (e) {
+        e.preventDefault();
+        const commentId = document.getElementById('editCommentId').value;
+        const content = document.getElementById('editCommentContent').value;
+        fetch(`/feed/comment/${commentId}/edit`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content })
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelectorAll(`[data-comment-id="${commentId}"]`).forEach(btn => {
+                        const commentContainer = btn.closest('.bg-blue-50') || btn.closest('.bg-gray-100');
+                        if (commentContainer) {
+                            const commentText = commentContainer.querySelector('p.text-sm');
+                            if (commentText) commentText.textContent = content;
+                        }
+                    });
+                    toggleEditCommentModal();
+                } else {
+                    alert(data.error || 'Failed to edit comment.');
+                }
+            });
+    };
+    window.showEditPostModalFromButton = function (btn) {
+        const postId = btn.getAttribute('data-post-id');
+        const title = btn.getAttribute('data-title');
+        const content = btn.getAttribute('data-content');
+        // Removed global showEditPostModalFromButton function as listener is now attached dynamically
+    };
+    // Attach event listeners for edit post buttons
+    document.querySelectorAll('.edit-post-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const postId = this.getAttribute('data-post-id');
+            const title = this.getAttribute('data-title');
+            const content = this.getAttribute('data-content');
+            showEditPostModal(postId, title, content);
+        });
+    });
+
+    // Attach event listeners for inline comment editing using event delegation
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.edit-comment-inline-btn')) {
+            const button = e.target.closest('.edit-comment-inline-btn');
+            const commentId = button.getAttribute('data-comment-id');
+            const content = button.getAttribute('data-content');
+            // Look for either bg-blue-50 or bg-gray-100 comment containers
+            const commentContainer = button.closest('.bg-blue-50') || button.closest('.bg-gray-100');
+            if (!commentContainer) {
+                console.error('Comment container not found');
+                return;
+            }
+            const commentText = commentContainer.querySelector('p.text-sm');
+            if (!commentText) {
+                console.error('Comment text element not found');
+                return;
+            }
+
+            // Create inline editing form
+            const originalContent = commentText.innerHTML;
+            const textArea = document.createElement('textarea');
+            textArea.className = 'w-full text-sm border border-blue-300 rounded p-2 focus:outline-none focus:ring-1 focus:ring-blue-500';
+            textArea.value = content.replace(/\n/g, '');
+            textArea.rows = 3;
+
+            // Create save and cancel buttons
+            const buttonsDiv = document.createElement('div');
+            buttonsDiv.className = 'flex justify-end space-x-2 mt-2';
+
+            const saveButton = document.createElement('button');
+            saveButton.className = 'px-3 py-1 bg-blue-500 text-white text-xs rounded hover:bg-blue-600 transition-all';
+            saveButton.textContent = 'Save';
+
+            const cancelButton = document.createElement('button');
+            cancelButton.className = 'px-3 py-1 bg-gray-300 text-gray-700 text-xs rounded hover:bg-gray-400 transition-all';
+            cancelButton.textContent = 'Cancel';
+
+            buttonsDiv.appendChild(cancelButton);
+            buttonsDiv.appendChild(saveButton);
+
+            // Replace comment text with editing form
+            commentText.innerHTML = '';
+            commentText.appendChild(textArea);
+            commentText.appendChild(buttonsDiv);
+
+            // Hide edit and delete buttons while editing
+            const actionButtons = button.closest('.absolute');
+            if (actionButtons) actionButtons.style.display = 'none';
+
+            // Handle save button click
+            saveButton.addEventListener('click', function () {
+                const newContent = textArea.value.trim();
+                if (!newContent) return;
+
+                fetch(`/feed/comment/${commentId}/edit`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: newContent })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update the comment text with line breaks
+                            commentText.innerHTML = newContent.replace(/(.{50})/g, "$1\n");
+                            // Update the data-content attribute for future edits
+                            button.setAttribute('data-content', newContent);
+                            // Show action buttons again
+                            if (actionButtons) actionButtons.style.display = '';
+                        } else {
+                            alert(data.error || 'Failed to edit comment.');
+                        }
+                    });
+            });
+
+            // Handle cancel button click
+            cancelButton.addEventListener('click', function () {
+                // Clear the edit form completely
+                commentText.innerHTML = '';
+
+                // Add back the original content with proper formatting (line breaks every 50 chars)
+                commentText.innerHTML = content.replace(/(.{50})/g, "$1\n");
+
+                // Restore proper styling
+                commentText.className = 'text-sm text-gray-800 break-words whitespace-normal';
+                commentText.style.cssText = 'word-wrap: break-word; max-width: 100%; overflow-wrap: break-word;';
+
+                // Show action buttons again
+                if (actionButtons) actionButtons.style.display = '';
+            });
+
+            // Focus the textarea
+            textArea.focus();
+        }
+    });
+
+    window.showEditCommentModalFromButton = function (btn) {
+        const commentId = btn.getAttribute('data-comment-id');
+        const content = btn.getAttribute('data-content');
+        document.getElementById('editCommentId').value = commentId;
+        document.getElementById('editCommentContent').value = content;
+        document.getElementById('editCommentModal').classList.remove('hidden');
+        document.body.classList.add('overflow-hidden');
+    };
+    // Custom delete confirmation modal logic
+    let pendingDelete = { type: null, id: null, postId: null };
+    window.showDeleteModal = function (type, id, postId) {
+        pendingDelete = { type, id, postId };
+        const modal = document.getElementById('deleteConfirmModal');
+        modal.classList.remove('hidden'); // Revert to Tailwind hidden class
+        // document.body.classList.add('overflow-hidden'); // Removed to test conflict
+    };
+    window.hideDeleteModal = function () {
+        pendingDelete = { type: null, id: null, postId: null };
+        const modal = document.getElementById('deleteConfirmModal');
+        modal.classList.add('hidden'); // Revert to Tailwind hidden class
+        // document.body.classList.remove('overflow-hidden'); // Removed to test conflict
+    };
+
+    // Attach event listeners for delete buttons
+    document.querySelectorAll('.delete-post-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const postId = this.getAttribute('data-post-id');
+            showDeleteModal('post', postId);
+        });
+    });
+
+    // Attach event listeners for delete comment using event delegation
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.delete-comment-btn')) {
+            const button = e.target.closest('.delete-comment-btn');
+            const commentId = button.getAttribute('data-comment-id');
+            const postId = button.getAttribute('data-post-id');
+            showDeleteModal('comment', commentId, postId);
+        }
+    });
+    window.confirmDelete = function () {
+        if (pendingDelete.type === 'comment') {
+            fetch(`/feed/comment/${pendingDelete.id}/delete`, { method: 'DELETE' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        document.querySelectorAll(`[data-comment-id="${pendingDelete.id}"]`).forEach(btn => {
+                            const commentDiv = btn.closest('.flex.items-start');
+                            if (commentDiv) commentDiv.remove();
+                        });
+                        const commentsList = document.getElementById(`commentsList-${pendingDelete.postId}`);
+                        const showCommentsBtn = document.getElementById(`showCommentsBtn-${pendingDelete.postId}`);
+                        if (commentsList && showCommentsBtn) {
+                            const commentCount = commentsList.childElementCount;
+                            showCommentsBtn.textContent = `Hide Comments (${commentCount})`;
+                            const countElement = document.querySelector(`#post-${pendingDelete.postId} .comment-count`);
+                            if (countElement) countElement.textContent = `${commentCount} comments`;
+                        }
+                    } else {
+                        alert(data.error || 'Failed to delete comment.');
+                    }
+                    hideDeleteModal();
+                });
+        } else if (pendingDelete.type === 'post') {
+            fetch(`/feed/post/${pendingDelete.id}/delete`, { method: 'DELETE' })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        const postDiv = document.getElementById(`post-${pendingDelete.id}`);
+                        if (postDiv) postDiv.remove();
+                    } else {
+                        alert(data.error || 'Failed to delete post.');
+                    }
+                    hideDeleteModal();
+                });
+        }
+    };
+    // Removed global deleteComment and deletePost functions as listeners are now attached dynamically
+    window.toggleEditCommentModal = function () {
+        document.getElementById('editCommentModal').classList.toggle('hidden');
+        document.body.classList.toggle('overflow-hidden');
+    };
+    
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full`;
+        
+        const colors = {
+            success: 'bg-green-500 text-white',
+            error: 'bg-red-500 text-white',
+            warning: 'bg-yellow-500 text-white',
+            info: 'bg-blue-500 text-white'
+        };
+        
+        notification.className += ` ${colors[type] || colors.info}`;
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+        
+        setTimeout(() => {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    // Legal-focused post creation features
+    window.addLegalCategory = function() {
+        const modal = document.getElementById('postModal');
+        const contentTextarea = document.getElementById('content');
+        const titleInput = document.getElementById('title');
+        
+        if (modal && !modal.classList.contains('hidden')) {
+            // Show category selection dropdown
+            const categories = [
+                'Family Law', 'Employment Law', 'Criminal Defense', 'Corporate Law',
+                'Real Estate Law', 'Immigration Law', 'Personal Injury', 'Tax Law',
+                'Intellectual Property', 'Consumer Protection', 'Constitutional Law'
+            ];
+            
+            const categoryHtml = categories.map(cat => 
+                `<span class="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full mr-2 mb-2 cursor-pointer hover:bg-blue-200" onclick="selectCategory('${cat}')">${cat}</span>`
+            ).join('');
+            
+            showNotification('Select a legal category to add to your post', 'info');
+            
+            // Create category selector if it doesn't exist
+            let categorySelector = document.getElementById('categorySelector');
+            if (!categorySelector) {
+                categorySelector = document.createElement('div');
+                categorySelector.id = 'categorySelector';
+                categorySelector.className = 'mb-4 p-3 border border-blue-200 rounded-lg bg-blue-50';
+                categorySelector.innerHTML = `
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Legal Categories</label>
+                    <div class="flex flex-wrap">${categoryHtml}</div>
+                `;
+                titleInput.parentNode.insertBefore(categorySelector, titleInput.nextSibling);
+            }
+        } else {
+            togglePostModal();
+            setTimeout(() => addLegalCategory(), 100);
+        }
+    };
+
+    window.selectCategory = function(category) {
+        const titleInput = document.getElementById('title');
+        if (titleInput && !titleInput.value.includes(`[${category}]`)) {
+            titleInput.value = `[${category}] ${titleInput.value}`.trim();
+        }
+        showNotification(`Added ${category} category`, 'success');
+    };
+
+    window.addCaseStudy = function() {
+        const modal = document.getElementById('postModal');
+        const contentTextarea = document.getElementById('content');
+        
+        if (modal && !modal.classList.contains('hidden')) {
+            const caseTemplate = `\n\n📋 CASE STUDY:\n\n🔍 Background:\n[Describe the legal situation]\n\n⚖️ Legal Issues:\n[Key legal questions or challenges]\n\n📖 Analysis:\n[Your legal analysis and reasoning]\n\n✅ Outcome/Recommendation:\n[Result or recommended course of action]\n\n💡 Key Takeaway:\n[Important lesson for others]`;
+            
+            contentTextarea.value += caseTemplate;
+            contentTextarea.focus();
+            showNotification('Case study template added to your post', 'success');
+        } else {
+            togglePostModal();
+            setTimeout(() => addCaseStudy(), 100);
+        }
+    };
+
+    window.addLegalAdvice = function() {
+        const modal = document.getElementById('postModal');
+        const contentTextarea = document.getElementById('content');
+        
+        if (modal && !modal.classList.contains('hidden')) {
+            const adviceTemplate = `\n\n💡 LEGAL TIP:\n\n📌 Quick Advice:\n[Your practical legal tip]\n\n⚠️ Important Note:\n[Key warnings or considerations]\n\n📚 Legal Basis:\n[Relevant laws or precedents]\n\n🎯 Action Steps:\n1. [First step]\n2. [Second step]\n3. [Third step]\n\n⚖️ Disclaimer: This is general information only. Consult with a qualified attorney for advice specific to your situation.`;
+            
+            contentTextarea.value += adviceTemplate;
+            contentTextarea.focus();
+            showNotification('Legal tip template added to your post', 'success');
+        } else {
+            togglePostModal();
+            setTimeout(() => addLegalAdvice(), 100);
+        }
+    };
+
+    window.addConsultation = function() {
+        const modal = document.getElementById('postModal');
+        const contentTextarea = document.getElementById('content');
+        
+        if (modal && !modal.classList.contains('hidden')) {
+            const consultationTemplate = `\n\n🤝 CONSULTATION AVAILABLE:\n\n📋 Service Offered:\n[Type of legal consultation]\n\n🎯 Specialization:\n[Your area of expertise]\n\n⏰ Availability:\n[Your consultation hours/schedule]\n\n💼 What's Included:\n• [Service 1]\n• [Service 2]\n• [Service 3]\n\n📞 How to Book:\n[Contact information or booking process]\n\n💰 Consultation: [Free initial consultation/Paid service details]`;
+            
+            contentTextarea.value += consultationTemplate;
+            contentTextarea.focus();
+            showNotification('Consultation template added to your post', 'success');
+        } else {
+            togglePostModal();
+            setTimeout(() => addConsultation(), 100);
+        }
+    };
+});

@@ -1,0 +1,49 @@
+const express = require('express');
+const router = express.Router();
+const { isAuthenticated, isVerifiedLawyer} = require('../middlewares/auth');
+const multer = require('multer');
+
+// Import controllers
+const FeedController = require('../controllers/feedController');
+
+// Configure multer for memory storage (ImageKit will handle file storage)
+const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB limit
+    },
+    fileFilter: (req, file, cb) => {
+        // Accept only image files
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed!'), false);
+        }
+    }
+});
+
+// Create post route
+
+// Feed routes
+router.get('/', FeedController.getAllPosts);
+router.get('/:id', FeedController.getSingleUserPosts);
+
+// Post reaction and comment routes
+router.post('/create-post', isAuthenticated, isVerifiedLawyer, upload.single('image'), FeedController.createPost);
+router.post('/post/:id/react', isAuthenticated, FeedController.reactToPost);
+router.post('/post/:id/comment', isAuthenticated, FeedController.commentOnPost);
+
+// Edit and delete post routes
+router.put('/post/:id/edit', isAuthenticated, isVerifiedLawyer, FeedController.editPost);
+router.delete('/post/:id/delete', isAuthenticated, isVerifiedLawyer, FeedController.deletePost);
+
+// Edit and delete comment routes
+router.put('/comment/:id/edit', isAuthenticated, FeedController.editComment);
+router.delete('/comment/:id/delete', isAuthenticated, FeedController.deleteComment);
+
+// Share routes
+router.post('/post/:id/share', isAuthenticated, FeedController.sharePost);
+router.get('/users/:userId/shared-posts', isAuthenticated, FeedController.getSharedPosts);
+router.get('/shared-posts', isAuthenticated, FeedController.getSharedPosts);
+
+module.exports = router;

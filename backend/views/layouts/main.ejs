@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title : 'LegalNet' %></title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/modern-enhancements.css">
+  <link rel="stylesheet" href="/css/nav.css">
+  <link rel="stylesheet" href="/css/profile.css">
+  <link rel="stylesheet" href="/css/auth.css">
+  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="/css/userTable.css">
+  <link rel="stylesheet" href="/css/feedback.css">
+  <link rel="stylesheet" href="/css/responsive-utilities.css">
+  <style>
+    /* Custom styles for Messaging Popup */
+    .messaging-popup {
+      transition: transform 0.3s ease-in-out;
+    }
+    .messaging-popup-collapsed {
+      transform: translateY(calc(100% - 3rem)); /* Only header visible */
+    }
+  </style>
+</head>
+
+<% // Set the current path for active nav highlighting %>
+<% let path = '';
+   if (typeof originalUrl !== 'undefined' && typeof originalUrl === 'string') {
+     path = originalUrl;
+   } else if (typeof req !== 'undefined') {
+     path = req.originalUrl || req.url || '';
+   }
+%>
+
+<body class="bg-gray-100 min-h-screen overflow-x-hidden <%= path.includes('/messaging') ? 'messaging-page' : '' %>">
+
+  <%- include('./navbar', { path: path, locals: locals }) %>
+
+  <% if (path.includes('/messaging')) { %>
+    <main class="min-h-screen">
+      <%- body %>
+    </main>
+  <% } else { %>
+    <main class="pt-24 pb-8 min-h-screen">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <%- body %>
+      </div>
+    </main>
+  <% } %>
+
+  <!-- Messaging Popup -->
+
+
+  <% if (locals.loggedInUserId) { %>
+    <div id="messagingPopup" class="messaging-popup messaging-popup-collapsed fixed bottom-0 right-6 w-80 bg-white shadow-lg rounded-t-lg z-[90]">
+      <div id="messagingPopupHeader" class="flex justify-between items-center p-3 border-b border-gray-200 cursor-pointer">
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-comment-dots text-gray-600"></i>
+          <span class="font-semibold">Messaging</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <i class="fas fa-edit text-gray-600"></i>
+          <i id="messagingPopupToggle" class="fas fa-chevron-up text-gray-600"></i>
+        </div>
+      </div>
+      <div class="messaging-popup-body p-3">
+        <div class="space-y-4">
+          <!-- Messaging contacts -->
+          <div class="flex items-center space-x-3">
+            <img src="https://media.licdn.com/dms/image/v2/D4D03AQFf1-ylWdRSmA/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1730536131542?e=1746662400&v=beta&t=xkZtJvNlDZIZ6X-3ZQxbzTDcv_Z5fFgSr1Y7cJGZKvY" alt="Contact" class="w-10 h-10 rounded-full">
+            <div>
+              <div class="font-medium">Jane Smith</div>
+              <div class="text-sm text-gray-500">Online</div>
+            </div>
+          </div>
+          <div class="flex items-center space-x-3">
+            <img src="https://media.licdn.com/dms/image/v2/D4D03AQE3Z-yWzw_vJA/profile-displayphoto-shrink_400_400/B4DZR2TJJpHUAg-/0/1737151519033?e=1746662400&v=beta&t=GoX2z9wgCdLQxmuxpZgPf0TT7LDpacM4bHwZt_oMcpA" alt="Contact" class="w-10 h-10 rounded-full">
+            <div>
+              <div class="font-medium">John Doe</div>
+              <div class="text-sm text-gray-500">Last seen 2h ago</div>
+            </div>
+          </div>
+          <div class="flex items-center space-x-3">
+            <img src="https://media.licdn.com/dms/image/v2/D4D03AQHZ-bGav5EClA/profile-displayphoto-shrink_400_400/B4DZP9EYnHHcAg-/0/1735117606288?e=1746662400&v=beta&t=v6Kfu8DAqqyfzFszdYLN54ZAFBc8Fckg4myxqGEV0-I" alt="Contact" class="w-10 h-10 rounded-full">
+            <div>
+              <div class="font-medium">Sarah Johnson</div>
+              <div class="text-sm text-gray-500">Online</div>
+            </div>
+          </div>
+          <div class="flex items-center space-x-3">
+            <img src="https://media.licdn.com/dms/image/v2/D4D03AQFNmASyBMQboA/profile-displayphoto-shrink_400_400/B4DZRbZ7x9HYAg-/0/1736700313203?e=1746662400&v=beta&t=qfhBlmBJDcKbzGyYfcKH2cCgtIzQzSDvXuGmLKBxY0U" alt="Contact" class="w-10 h-10 rounded-full">
+            <div>
+              <div class="font-medium">Michael Brown</div>
+              <div class="text-sm text-gray-500">Last seen yesterday</div>
+            </div>
+          </div>
+          <div class="flex items-center space-x-3">
+            <img src="https://media.licdn.com/dms/image/v2/D4D03AQFc2wKXZPhTkA/profile-displayphoto-shrink_100_100/B4DZVbrzTbG4AU-/0/1740999964826?e=2147483647&v=beta&t=2cw_b3nJDcnPvvyvsHOcyZ6g6lLFhpM_B_cReXn47-c" alt="Contact" class="w-10 h-10 rounded-full">
+            <div>
+              <div class="font-medium">Emily Davis</div>
+              <div class="text-sm text-gray-500">Online</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- Footer -->
+  <%- include('./footer') %>
+  
+  <!-- Core Scripts -->
+  <script src="/js/notifications.js"></script>
+  <script src="/js/main.js"></script>
+  
+  <!-- Feature-specific Scripts -->
+  <% if (typeof title !== 'undefined' && title.includes('Home')) { %>
+    <script src="/js/feed.js"></script>
+  <% } %>
+  
+  <!-- Search Script -->
+  <script src="/js/search.js"></script>
+  
+  
+</body>
+
+</html>

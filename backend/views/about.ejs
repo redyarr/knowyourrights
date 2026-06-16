@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Know Your Rights</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .card {
+            transition: all 0.4s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* Responsive adjustments for About page cards */
+        @media screen and (max-width: 480px) {
+            .card {
+                width: 100% !important;
+                max-width: 320px;
+                height: 24rem !important;
+                margin: 0 auto;
+            }
+            
+            .card .absolute.-top-32 {
+                top: -6rem !important;
+            }
+            
+            .card .w-64.h-64 {
+                width: 12rem !important;
+                height: 12rem !important;
+            }
+            
+            .card .pt-36 {
+                padding-top: 7rem !important;
+            }
+            
+            .card h2 {
+                font-size: 1.25rem !important;
+            }
+            
+            .card p {
+                font-size: 0.9rem !important;
+            }
+        }
+        
+        @media screen and (min-width: 481px) and (max-width: 768px) {
+            .card {
+                width: 100% !important;
+                max-width: 350px;
+                height: 26rem !important;
+                margin: 0 auto;
+            }
+            
+            .card .absolute.-top-32 {
+                top: -7rem !important;
+            }
+            
+            .card .w-64.h-64 {
+                width: 14rem !important;
+                height: 14rem !important;
+            }
+            
+            .card .pt-36 {
+                padding-top: 8rem !important;
+            }
+            
+            .card h2 {
+                font-size: 1.375rem !important;
+            }
+        }
+        
+        @media screen and (min-width: 769px) and (max-width: 1024px) {
+            .card {
+                width: 22rem !important;
+                height: 26rem !important;
+            }
+            
+            .card .absolute.-top-32 {
+                top: -7rem !important;
+            }
+            
+            .card .w-64.h-64 {
+                width: 15rem !important;
+                height: 15rem !important;
+            }
+            
+            .card .pt-36 {
+                padding-top: 8.5rem !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <%- include('layouts/navbar') %>
+    
+    <div class="min-h-screen flex items-center justify-center p-4 sm:p-6 md:p-8 pt-32 sm:pt-36 md:pt-40 pb-16">
+        <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 gap-y-16 sm:gap-y-18 md:gap-y-20 items-center justify-center max-w-6xl w-full">
+            <!-- First Card - CEO -->
+            <div class="card relative bg-white rounded-2xl p-8 w-96 h-[28rem] shadow-xl overflow-visible group">
+                <!-- CEO Image - Breaking out of card without frame -->
+                 <div class="absolute -top-32 left-1/2 transform -translate-x-1/2 z-10">
+                       <img src="https://ik.imagekit.io/redyar/ceo-developer/Adobe%20Express%20-%20file.png?updatedAt=1749341446181" 
+                            alt="CEO" 
+                            class="w-64 h-64 object-cover object-center
+                                   transition-all duration-500 ease-out
+                                   group-hover:scale-110 group-hover:-translate-y-3
+                                   filter grayscale group-hover:grayscale-0 group-hover:brightness-110
+                                   shadow-lg group-hover:shadow-xl">
+                   </div>
+                
+                <!-- Content -->
+                 <div class="pt-36 text-center h-full flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-3">Chief Executive Officer</h2>
+                        <div class="w-20 h-1 bg-blue-500 mx-auto mb-6"></div>
+                    </div>
+                    
+                    <div class="flex-1 flex items-center">
+                        <p class="text-gray-600 leading-relaxed">
+                            Visionary leader with 15+ years in legal technology, democratizing access to justice.
+                        </p>
+                    </div>
+                    
+                    <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div class="bg-blue-50 rounded-lg p-4">
+                            <span class="text-blue-600 text-sm font-medium">Explore Leadership →</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Second Card - CTO -->
+            <div class="card relative bg-white rounded-2xl p-8 w-96 h-[28rem] shadow-xl overflow-visible group">
+                <!-- CTO Image - Breaking out of card without frame -->
+                 <div class="absolute -top-32 left-1/2 transform -translate-x-1/2 z-10">
+                       <img src="https://ik.imagekit.io/redyar/tr:w-1920,h-1000,c-at_max_enlarge/ceo-developer/rava1.png?updatedAt=1749343818845" 
+                            alt="CTO" 
+                            class="w-64 h-64 object-cover object-center
+                                   transition-all duration-500 ease-out
+                                   group-hover:scale-110 group-hover:-translate-y-3
+                                   filter grayscale group-hover:grayscale-0 group-hover:brightness-110
+                                   shadow-lg group-hover:shadow-xl">
+                   </div>
+                
+                <!-- Content -->
+                 <div class="pt-36 text-center h-full flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-3">Chief Technology Officer</h2>
+                        <div class="w-20 h-1 bg-purple-500 mx-auto mb-6"></div>
+                    </div>
+                    
+                    <div class="flex-1 flex items-center">
+                        <p class="text-gray-600 leading-relaxed">
+                            Innovation expert with deep expertise in AI and blockchain, driving technological advancement.
+                        </p>
+                    </div>
+                    
+                    <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div class="bg-purple-50 rounded-lg p-4">
+                            <span class="text-purple-600 text-sm font-medium">View Technology →</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Third Card - Frontend Developer -->
+            <div class="card relative bg-white rounded-2xl p-8 w-96 h-[28rem] shadow-xl overflow-visible group">
+                <!-- Frontend Developer Image - Breaking out of card without frame -->
+                <div class="absolute -top-32 left-1/2 transform -translate-x-1/2 z-10">
+                     <img src="https://ik.imagekit.io/redyar/ceo-developer/ala1-fotor-bg-remover-202506084548.png?updatedAt=1749344802301" 
+                          alt="Frontend Developer" 
+                          class="w-64 h-64 object-cover object-center
+                                 transition-all duration-500 ease-out
+                                 group-hover:scale-110 group-hover:-translate-y-3
+                                 filter grayscale group-hover:grayscale-0 group-hover:brightness-110
+                                 shadow-lg group-hover:shadow-xl">
+                 </div>
+                
+                <!-- Content -->
+                <div class="pt-36 text-center h-full flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-3">Frontend Developer</h2>
+                        <div class="w-20 h-1 bg-green-500 mx-auto mb-6"></div>
+                    </div>
+                    
+                    <div class="flex-1 flex items-center">
+                        <p class="text-gray-600 leading-relaxed">
+                            Creative UI/UX specialist crafting intuitive interfaces with modern web technologies and responsive design.
+                        </p>
+                    </div>
+                    
+                    <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div class="bg-green-50 rounded-lg p-4">
+                            <button class="w-full bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">
+                                View Portfolio
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Fourth Card - Backend Developer -->
+            <div class="card relative bg-white rounded-2xl p-8 w-96 h-[28rem] shadow-xl overflow-visible group">
+                <!-- Backend Developer Image - Breaking out of card without frame -->
+                <div class="absolute -top-32 left-1/2 transform -translate-x-1/2 z-10">
+                     <img src="https://ik.imagekit.io/redyar/ceo-developer/redyar1-fotor-bg-remover-202506084444.png?updatedAt=1749344809394" 
+                          alt="Backend Developer" 
+                          class="w-64 h-64 object-cover object-center
+                                 transition-all duration-500 ease-out
+                                 group-hover:scale-110 group-hover:-translate-y-3
+                                 filter grayscale group-hover:grayscale-0 group-hover:brightness-110
+                                 shadow-lg group-hover:shadow-xl">
+                 </div>
+                
+                <!-- Content -->
+                <div class="pt-36 text-center h-full flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-3">Backend Developer</h2>
+                        <div class="w-20 h-1 bg-orange-500 mx-auto mb-6"></div>
+                    </div>
+                    
+                    <div class="flex-1 flex items-center">
+                        <p class="text-gray-600 leading-relaxed">
+                            Server-side architect building robust APIs, databases, and scalable infrastructure for seamless performance.
+                        </p>
+                    </div>
+                    
+                    <div class="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div class="bg-orange-50 rounded-lg p-4">
+                            <button class="w-full bg-orange-600 text-white py-2 px-4 rounded-lg hover:bg-orange-700 transition-colors duration-200 font-medium">
+                                View Projects
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <%- include('layouts/footer') %>
+</body>
+</html>

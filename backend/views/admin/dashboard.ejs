@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/modern-enhancements.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/nav.css">
+    <link rel="stylesheet" href="/css/auth.css">
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body class="min-h-screen bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Dashboard Header -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-4">
+                    <i class="fas fa-tachometer-alt text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
+                    <p class="text-gray-600 mt-1">Manage lawyer verifications and platform oversight</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-yellow-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-clock text-white"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-2xl font-bold text-gray-900"><%= pendingLawyers.length %></h3>
+                        <p class="text-sm text-gray-600">Pending Verifications</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-check-circle text-white"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-2xl font-bold text-gray-900"><%= recentlyVerified.filter(l => l.verificationStatus === 'approved').length %></h3>
+                        <p class="text-sm text-gray-600">Recently Approved</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-red-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-times-circle text-white"></i>
+                        </div>
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-2xl font-bold text-gray-900"><%= recentlyVerified.filter(l => l.verificationStatus === 'rejected').length %></h3>
+                        <p class="text-sm text-gray-600">Recently Rejected</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            <!-- Pending Verifications -->
+            <div class="xl:col-span-2">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-lg font-semibold text-gray-900">Pending Lawyer Verifications</h2>
+                            <a href="/admin/lawyers?status=pending" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                                View All
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6">
+                        <% if (pendingLawyers.length === 0) { %>
+                            <div class="text-center py-8">
+                                <i class="fas fa-check-circle text-4xl text-green-500 mb-4"></i>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">All caught up!</h3>
+                                <p class="text-gray-500">No pending lawyer verifications at the moment.</p>
+                            </div>
+                        <% } else { %>
+                            <!-- Dynamic pending lawyers -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <% pendingLawyers.slice(0, 4).forEach((lawyer, index) => { %>
+                                    <% 
+                                        const colors = ['bg-blue-500', 'bg-purple-500', 'bg-green-500', 'bg-orange-500'];
+                                        const bgColor = colors[index % colors.length];
+                                        const initials = lawyer.user.firstName.charAt(0) + lawyer.user.lastName.charAt(0);
+                                    %>
+                                    <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                                        <div class="flex items-start space-x-3">
+                                            <div class="flex-shrink-0">
+                                                <div class="w-10 h-10 <%= bgColor %> rounded-full flex items-center justify-center text-white font-medium">
+                                                    <%= initials %>
+                                                </div>
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <h4 class="text-sm font-medium text-gray-900 truncate"><%= lawyer.user.firstName %> <%= lawyer.user.lastName %></h4>
+                                                <p class="text-xs text-gray-500 truncate"><%= lawyer.user.email %></p>
+                                                <% if (lawyer.lawFirm) { %>
+                                                    <p class="text-xs text-gray-600 mt-1"><%= lawyer.lawFirm %></p>
+                                                <% } %>
+                                                <% if (lawyer.badgeNumber) { %>
+                                                    <p class="text-xs text-gray-500 mt-1">Badge: #<%= lawyer.badgeNumber %></p>
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <a href="/admin/lawyers/<%= lawyer.id %>" class="w-full inline-flex justify-center items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                                                <i class="fas fa-eye mr-2"></i>
+                                                Review
+                                            </a>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Verifications -->
+            <div class="xl:col-span-1">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h2 class="text-lg font-semibold text-gray-900">Recent Verifications</h2>
+                            <a href="/admin/lawyers" class="text-sm text-blue-600 hover:text-blue-700 font-medium">
+                                View All
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="divide-y divide-gray-200">
+                        <!-- Recent Verification 1 -->
+                        <div class="p-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                                        RJ
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">Robert Johnson</p>
+                                    <p class="text-xs text-gray-500 truncate">r.johnson@legal.com</p>
+                                    <div class="flex items-center mt-1">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                            Approved
+                                        </span>
+                                        <span class="text-xs text-gray-500 ml-2">May 28, 2025</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <a href="/admin/lawyers/5" class="text-xs text-blue-600 hover:text-blue-700 font-medium">
+                                    <i class="fas fa-eye mr-1"></i>View
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Recent Verification 2 -->
+                        <div class="p-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                                        AD
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">Amanda Davis</p>
+                                    <p class="text-xs text-gray-500 truncate">a.davis@lawgroup.com</p>
+                                    <div class="flex items-center mt-1">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800">
+                                            Rejected
+                                        </span>
+                                        <span class="text-xs text-gray-500 ml-2">May 27, 2025</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <a href="/admin/lawyers/6" class="text-xs text-blue-600 hover:text-blue-700 font-medium">
+                                    <i class="fas fa-eye mr-1"></i>View
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Recent Verification 3 -->
+                        <div class="p-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-teal-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                                        DL
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">David Lee</p>
+                                    <p class="text-xs text-gray-500 truncate">d.lee@associates.com</p>
+                                    <div class="flex items-center mt-1">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                            Approved
+                                        </span>
+                                        <span class="text-xs text-gray-500 ml-2">May 26, 2025</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <a href="/admin/lawyers/7" class="text-xs text-blue-600 hover:text-blue-700 font-medium">
+                                    <i class="fas fa-eye mr-1"></i>View
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Recent Verification 4 -->
+                        <div class="p-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
+                                        LT
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">Lisa Thompson</p>
+                                    <p class="text-xs text-gray-500 truncate">l.thompson@firm.com</p>
+                                    <div class="flex items-center mt-1">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+                                            Approved
+                                        </span>
+                                        <span class="text-xs text-gray-500 ml-2">May 25, 2025</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <a href="/admin/lawyers/8" class="text-xs text-blue-600 hover:text-blue-700 font-medium">
+                                    <i class="fas fa-eye mr-1"></i>View
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

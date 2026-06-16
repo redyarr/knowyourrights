@@ -1,0 +1,799 @@
+<div class="bg-gray-50 min-h-screen">
+    <div class="h-screen flex flex-col lg:max-w-7xl lg:mx-auto lg:px-4 lg:py-6">
+        <!-- LinkedIn-style Messaging Layout -->
+        <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 lg:gap-6 h-full">
+            
+            <!-- Left Sidebar - Conversations List (Hidden on mobile when in conversation) -->
+            <div class="<%= conversationPartner ? 'hidden lg:block lg:col-span-4 xl:col-span-3' : 'h-full lg:col-span-4 xl:col-span-3' %>">
+                <div class="bg-white h-full lg:rounded-lg lg:border lg:border-gray-200 lg:shadow-sm overflow-hidden flex flex-col">
+                    <!-- Header -->
+                    <div class="p-4 border-b border-gray-200">
+                        <div class="flex items-center justify-between">
+                            <h1 class="text-xl font-semibold text-gray-900">Messaging</h1>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="window.location.href='/messaging/search'" class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                </button>
+                                <button class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Search Bar -->
+                        <div class="mt-4">
+                            <div class="relative">
+                                <input type="text" placeholder="Search messages" class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm">
+                                <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Conversations List -->
+                    <div class="flex-1 divide-y divide-gray-100 overflow-y-auto">
+                        <!-- Add conversation list items here if needed -->
+                        <div class="p-4 text-center text-gray-500 text-sm">
+                            <a href="/messaging" class="text-blue-600 hover:text-blue-700">← Back to all conversations</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Conversation Area -->
+            <div class="<%= conversationPartner ? 'h-full lg:col-span-8 xl:col-span-9' : 'hidden lg:block lg:col-span-8 xl:col-span-9' %>">
+                <div class="bg-white h-full lg:rounded-lg lg:border lg:border-gray-200 lg:shadow-sm overflow-hidden flex flex-col">
+        <!-- Conversation Content -->
+        <div class="flex-1 flex flex-col h-full bg-white">
+            <% if (conversationPartner) { %>
+                <!-- Conversation Header -->
+                <div class="flex items-center p-3 sm:p-4 border-b border-gray-200 bg-white flex-shrink-0">
+                    <button onclick="window.location.href='/messaging'" class="lg:hidden mr-2 sm:mr-3 p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors">
+                        <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="flex items-center flex-1 min-w-0">
+                        <div class="relative flex-shrink-0">
+                            <img src="https://ui-avatars.com/api/?name=<%= conversationPartner.firstName %>+<%= conversationPartner.lastName %>&background=0ea5e9&color=ffffff" 
+                                 alt="<%= conversationPartner.firstName %> <%= conversationPartner.lastName %>" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full">
+                            <% if (conversationPartner.role === 'lawyer') { %>
+                                <div class="absolute -bottom-0.5 -right-0.5 sm:-bottom-1 sm:-right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-400 border-2 border-white rounded-full"></div>
+                            <% } %>
+                        </div>
+                        <div class="ml-2 sm:ml-3 flex-1 min-w-0">
+                            <div class="flex items-center">
+                                <h3 class="font-semibold text-gray-900 text-sm sm:text-base truncate"><%= conversationPartner.firstName %> <%= conversationPartner.lastName %></h3>
+                                <% if (conversationPartner.role === 'lawyer') { %>
+                                    <span class="ml-1 text-blue-600 text-xs flex-shrink-0">✓</span>
+                                <% } %>
+                            </div>
+                            <p class="text-xs sm:text-sm text-gray-500 truncate">
+                                <% if (conversationPartner.role === 'lawyer') { %>
+                                    <%= conversationPartner.specialization || 'Legal Professional' %> • Active now
+                                <% } else { %>
+                                    Active now
+                                <% } %>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-0.5 sm:space-x-1">
+                        <button class="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                            </svg>
+                        </button>
+                        <button class="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                            </svg>
+                        </button>
+                        <button class="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Messages Container -->
+                <div class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-3 sm:space-y-4" id="messageContainer">
+                    <% if (messages.length === 0) { %>
+                        <div class="flex items-center justify-center h-full">
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <i class="fas fa-comments text-gray-400 text-xl"></i>
+                                </div>
+                                <h3 class="text-lg font-medium text-gray-900 mb-2">No messages yet</h3>
+                                <p class="text-gray-600">Start the conversation by sending a message below.</p>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <!-- Date Headers -->
+                        <% 
+                            let currentDate = null;
+                            messages.forEach(message => {
+                                const messageDate = new Date(message.createdAt).toDateString();
+                                if (currentDate !== messageDate) {
+                                    currentDate = messageDate;
+                        %>
+                                    <div class="text-center my-4">
+                                        <span class="bg-gray-100 text-gray-600 text-xs px-3 py-1 rounded-full">
+                                            <%= new Date(message.createdAt).toLocaleDateString('en-US', { 
+                                                weekday: 'long', 
+                                                year: 'numeric', 
+                                                month: 'long', 
+                                                day: 'numeric' 
+                                            }) %>
+                                        </span>
+                                    </div>
+                        <% 
+                                }
+                        %>
+                                <div class="flex <%= message.senderId == userId ? 'justify-end' : 'justify-start' %> mb-3">
+                                    <% if (message.senderId != userId) { %>
+                                        <div class="flex-shrink-0 mr-2">
+                                            <img src="https://ui-avatars.com/api/?name=<%= conversationPartner.firstName %>+<%= conversationPartner.lastName %>&background=0ea5e9&color=ffffff" 
+                                                 class="w-7 h-7 sm:w-8 sm:h-8 rounded-full">
+                                        </div>
+                                    <% } %>
+                                    <div class="max-w-[75%] sm:max-w-xs lg:max-w-md">
+                                        <div class="<%= message.senderId == userId ? 'bg-blue-600 text-white ml-auto' : 'bg-gray-100 text-gray-900' %> rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5 shadow-sm">
+                                            <p class="text-sm leading-relaxed break-words"><%= message.content %></p>
+                                        </div>
+                                        <p class="text-xs text-gray-500 mt-1 px-1 <%= message.senderId == userId ? 'text-right' : 'text-left' %>">
+                                            <%= new Date(message.createdAt).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) %>
+                                        </p>
+                                    </div>
+                                    <% if (message.senderId == userId) { %>
+                                        <div class="flex-shrink-0 ml-2">
+                                            <img src="https://ui-avatars.com/api/?name=<%= user.firstName %>+<%= user.lastName %>&background=0ea5e9&color=ffffff" 
+                                                 class="w-7 h-7 sm:w-8 sm:h-8 rounded-full">
+                                        </div>
+                                    <% } %>
+                                </div>
+                        <% 
+                            });
+                        %>
+                    <% } %>
+                </div>
+
+                <!-- Message Input -->
+                <div class="p-3 sm:p-4 border-t border-gray-200 bg-white flex-shrink-0">
+                    <!-- Quick Reply Buttons -->
+                    <div class="flex items-center space-x-2 mb-3 overflow-x-auto pb-1">
+                        <button class="bg-blue-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium hover:bg-blue-700 transition-colors whitespace-nowrap">
+                            👍 Sent
+                        </button>
+                        <button class="bg-green-600 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium hover:bg-green-700 transition-colors whitespace-nowrap">
+                            🙏 Thanks
+                        </button>
+                        <% if (conversationPartner && conversationPartner.role === 'lawyer') { %>
+                        <button id="giveFeedbackBtn" class="bg-yellow-500 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium hover:bg-yellow-600 transition-colors whitespace-nowrap">
+                            ⭐ Feedback
+                        </button>
+                        <% } %>
+                        <button class="bg-gray-500 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-full text-xs sm:text-sm font-medium hover:bg-gray-600 transition-colors whitespace-nowrap">
+                            📅 Schedule
+                        </button>
+                    </div>
+                    
+                    <!-- Message Input Form -->
+                    <form action="/messaging/<%= conversationPartner.id %>/send" method="POST" class="flex items-end space-x-2 sm:space-x-3" id="messageForm">
+                        <div class="flex-1">
+                            <div class="relative">
+                                <textarea name="content" placeholder="Write a message..." required id="messageInput"
+                                    class="w-full px-3 py-2.5 sm:px-4 sm:py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-900 placeholder-gray-500 resize-none"
+                                    rows="1" style="min-height: 40px; max-height: 120px;"></textarea>
+                                <div class="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center space-x-0.5 sm:space-x-1">
+                                    <button type="button" class="p-1 sm:p-1.5 text-gray-400 hover:text-blue-500 transition-colors" title="Attach file">
+                                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+                                        </svg>
+                                    </button>
+                                    <button type="button" class="p-1 sm:p-1.5 text-gray-400 hover:text-blue-500 transition-colors" title="Add emoji">
+                                        <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white p-2.5 sm:p-3 rounded-full transition-colors shadow-sm">
+                            <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
+            <% } else { %>
+                <!-- No Conversation Selected -->
+                <div class="flex-1 flex items-center justify-center bg-white">
+                    <div class="text-center p-8 sm:p-12">
+                        <div class="w-16 h-16 sm:w-20 sm:h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                            <svg class="w-8 h-8 sm:w-10 sm:h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2 sm:mb-3">Your Messages</h3>
+                        <p class="text-gray-600 text-sm sm:text-lg mb-4 sm:mb-6">Select a conversation from the sidebar or start a new one</p>
+                        <a href="/messaging/search" class="inline-flex items-center px-4 py-2 sm:px-6 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm transition-all duration-200 text-sm sm:text-base">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            Find Users to Message
+                        </a>
+                    </div>
+                </div>
+            <% } %>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<!-- Feedback Modal -->
+<div id="feedbackModal" class="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center" style="display: none;">
+    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-md mx-4">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-bold text-gray-900">Give Feedback</h3>
+            <button id="closeFeedbackModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <form id="feedbackForm">
+            <input type="hidden" id="feedbackLawyerId" name="lawyerId" value="<%= conversationPartner ? conversationPartner.id : '' %>">
+            <input type="hidden" id="feedbackConversationId" name="conversationId" value="<%= activeConversation ? activeConversation : '' %>"> <!-- Assuming activeConversation holds the conversation ID -->
+            <div class="mb-6">
+                <label for="rating" class="block text-sm font-semibold text-gray-700 mb-3">Rating</label>
+                <div class="flex items-center space-x-1" id="starRating">
+                    <% for(let i = 1; i <= 5; i++) { %>
+                        <i class="far fa-star text-2xl text-yellow-400 cursor-pointer star hover:text-yellow-500 transition-colors" data-value="<%= i %>"></i>
+                    <% } %>
+                </div>
+                <input type="hidden" name="rating" id="feedbackRating" required>
+            </div>
+            <div class="mb-6">
+                <label for="review" class="block text-sm font-semibold text-gray-700 mb-3">Comment (Optional)</label>
+                <textarea id="feedbackReview" name="review" rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"></textarea>
+            </div>
+            <div class="flex justify-end space-x-3">
+                <button type="button" id="cancelFeedback" class="px-6 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">Cancel</button>
+                <button type="submit" class="px-6 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">Submit Feedback</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Improved function to scroll to bottom of message container
+    function scrollToBottom() {
+        const messageContainer = document.getElementById('messageContainer');
+        if (messageContainer) {
+            // Force scroll to absolute bottom
+            messageContainer.scrollTop = messageContainer.scrollHeight + 1000;
+            console.log('Scrolled to bottom, height:', messageContainer.scrollHeight);
+        }
+    }
+    
+    // Function to focus the message input
+    function focusMessageInput() {
+        const messageInput = document.getElementById('messageInput');
+        if (messageInput) {
+            messageInput.focus();
+            console.log('Message input focused');
+        }
+    }
+    
+    // Function to add a message to the UI without page refresh
+    function addMessageToUI(content, isSent, timestamp) {
+        const messageContainer = document.getElementById('messageContainer');
+        if (!messageContainer) return;
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `flex ${isSent ? 'justify-end' : 'justify-start'} mb-3`;
+        
+        const timeString = new Date(timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        // Get user data for avatars
+        const currentUser = {
+            firstName: '<%= user.firstName %>',
+            lastName: '<%= user.lastName %>'
+        };
+        const conversationPartner = {
+            firstName: '<%= conversationPartner ? conversationPartner.firstName : "" %>',
+            lastName: '<%= conversationPartner ? conversationPartner.lastName : "" %>'
+        };
+        
+        messageDiv.innerHTML = `
+            ${!isSent ? `
+                <div class="flex-shrink-0 mr-2">
+                    <img src="https://ui-avatars.com/api/?name=${conversationPartner.firstName}+${conversationPartner.lastName}&background=0ea5e9&color=ffffff" 
+                         class="w-7 h-7 sm:w-8 sm:h-8 rounded-full">
+                </div>
+            ` : ''}
+            <div class="max-w-[75%] sm:max-w-xs lg:max-w-md">
+                <div class="${isSent ? 'bg-blue-600 text-white ml-auto' : 'bg-gray-100 text-gray-900'} rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5 shadow-sm">
+                    <p class="text-sm leading-relaxed break-words">${escapeHtml(content)}</p>
+                </div>
+                <p class="text-xs text-gray-500 mt-1 px-1 ${isSent ? 'text-right' : 'text-left'}">
+                    ${timeString}
+                </p>
+            </div>
+            ${isSent ? `
+                <div class="flex-shrink-0 ml-2">
+                    <img src="https://ui-avatars.com/api/?name=${currentUser.firstName}+${currentUser.lastName}&background=0ea5e9&color=ffffff" 
+                         class="w-7 h-7 sm:w-8 sm:h-8 rounded-full">
+                </div>
+            ` : ''}
+        `;
+        
+        messageContainer.appendChild(messageDiv);
+    }
+    
+    // Function to escape HTML to prevent XSS
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+    
+    // Function to update conversation preview in sidebar
+    function updateConversationPreview(lastMessage) {
+        const currentUrl = window.location.pathname;
+        const userId = currentUrl.split('/messaging/')[1];
+        if (!userId) return;
+        
+        const conversationLink = document.querySelector(`a[href="/messaging/${userId}"]`);
+        if (conversationLink) {
+            const previewElement = conversationLink.querySelector('.message-preview');
+            if (previewElement) {
+                previewElement.textContent = lastMessage;
+                previewElement.classList.add('font-semibold', 'text-gray-800');
+            }
+            
+            // Update timestamp
+            const timestampElement = conversationLink.querySelector('.text-xs.text-gray-500');
+            if (timestampElement) {
+                timestampElement.textContent = new Date().toLocaleDateString();
+            }
+        }
+    }
+    
+    // Polling function to check for new messages
+    let lastMessageId = null;
+    let pollingInterval = null;
+    
+    function startMessagePolling() {
+        const currentUrl = window.location.pathname;
+        const userId = currentUrl.split('/messaging/')[1];
+        if (!userId) return;
+        
+        // Get the last message ID from the current conversation
+        const messages = document.querySelectorAll('#messageContainer > div');
+        if (messages.length > 0) {
+            // For now, we'll use timestamp as a simple way to track new messages
+            lastMessageId = Date.now();
+        }
+        
+        pollingInterval = setInterval(async () => {
+            try {
+                const conversationId = userId;
+                const response = await fetch(`/messaging/${conversationId}/check-new?since=${lastMessageId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.newMessages && data.newMessages.length > 0) {
+                         // Hide typing indicator if showing
+                         hideTypingIndicator();
+                         
+                         data.newMessages.forEach(message => {
+                             addMessageToUI(message.content, false, message.createdAt);
+                             lastMessageId = Math.max(lastMessageId, new Date(message.createdAt).getTime());
+                         });
+                         scrollToBottom();
+                         
+                         // Update conversation preview with the latest message
+                         const latestMessage = data.newMessages[data.newMessages.length - 1];
+                         updateConversationPreview(latestMessage.content);
+                         
+                         // Show notification for new messages (only if page is not focused)
+                         if (document.hidden) {
+                             showMessageStatus(`${data.newMessages.length} new message${data.newMessages.length > 1 ? 's' : ''}`, 'info');
+                         }
+                         
+                         // Play notification sound (optional)
+                         playNotificationSound();
+                     }
+                }
+            } catch (error) {
+                console.error('Error checking for new messages:', error);
+            }
+        }, 3000); // Check every 3 seconds
+    }
+    
+    function stopMessagePolling() {
+         if (pollingInterval) {
+             clearInterval(pollingInterval);
+             pollingInterval = null;
+         }
+     }
+     
+     // Function to show message status feedback
+     function showMessageStatus(message, type = 'info') {
+         const statusDiv = document.createElement('div');
+         statusDiv.className = `fixed top-4 right-4 px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300 ${
+             type === 'success' ? 'bg-green-500 text-white' :
+             type === 'error' ? 'bg-red-500 text-white' :
+             'bg-blue-500 text-white'
+         }`;
+         statusDiv.textContent = message;
+         
+         document.body.appendChild(statusDiv);
+         
+         // Animate in
+         setTimeout(() => {
+             statusDiv.style.transform = 'translateX(0)';
+             statusDiv.style.opacity = '1';
+         }, 100);
+         
+         // Remove after 3 seconds
+         setTimeout(() => {
+             statusDiv.style.transform = 'translateX(100%)';
+             statusDiv.style.opacity = '0';
+             setTimeout(() => {
+                 if (statusDiv.parentNode) {
+                     statusDiv.parentNode.removeChild(statusDiv);
+                 }
+             }, 300);
+         }, 3000);
+     }
+     
+     // Function to show typing indicator
+     function showTypingIndicator() {
+         const messageContainer = document.getElementById('messageContainer');
+         if (!messageContainer) return;
+         
+         // Remove existing typing indicator
+         const existingIndicator = document.getElementById('typingIndicator');
+         if (existingIndicator) {
+             existingIndicator.remove();
+         }
+         
+         const conversationPartner = {
+             firstName: '<%= conversationPartner ? conversationPartner.firstName : "" %>',
+             lastName: '<%= conversationPartner ? conversationPartner.lastName : "" %>'
+         };
+         
+         const typingDiv = document.createElement('div');
+         typingDiv.id = 'typingIndicator';
+         typingDiv.className = 'flex justify-start mb-3';
+         typingDiv.innerHTML = `
+             <div class="flex-shrink-0 mr-2">
+                 <img src="https://ui-avatars.com/api/?name=${conversationPartner.firstName}+${conversationPartner.lastName}&background=0ea5e9&color=ffffff" 
+                      class="w-7 h-7 sm:w-8 sm:h-8 rounded-full">
+             </div>
+             <div class="max-w-[75%] sm:max-w-xs lg:max-w-md">
+                 <div class="bg-gray-100 text-gray-900 rounded-2xl px-3 py-2 sm:px-4 sm:py-2.5 shadow-sm">
+                     <div class="flex items-center space-x-1">
+                         <div class="flex space-x-1">
+                             <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                             <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                             <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                         </div>
+                         <span class="text-xs text-gray-500 ml-2">typing...</span>
+                     </div>
+                 </div>
+             </div>
+         `;
+         
+         messageContainer.appendChild(typingDiv);
+         scrollToBottom();
+     }
+     
+     function hideTypingIndicator() {
+          const typingIndicator = document.getElementById('typingIndicator');
+          if (typingIndicator) {
+              typingIndicator.remove();
+          }
+      }
+      
+      // Function to play notification sound
+      function playNotificationSound() {
+          try {
+              // Create a subtle notification sound using Web Audio API
+              const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+              const oscillator = audioContext.createOscillator();
+              const gainNode = audioContext.createGain();
+              
+              oscillator.connect(gainNode);
+              gainNode.connect(audioContext.destination);
+              
+              oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+              oscillator.frequency.setValueAtTime(600, audioContext.currentTime + 0.1);
+              
+              gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+              gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01);
+              gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+              
+              oscillator.start(audioContext.currentTime);
+              oscillator.stop(audioContext.currentTime + 0.2);
+          } catch (error) {
+              // Fallback: no sound if Web Audio API is not supported
+              console.log('Notification sound not available');
+          }
+      }
+
+    // Scroll on page load with multiple attempts and focus input
+    document.addEventListener('DOMContentLoaded', function() {
+        // Scroll immediately
+        scrollToBottom();
+        
+        // Schedule multiple scroll attempts with increasing delays
+        [100, 300, 500, 1000].forEach(delay => {
+            setTimeout(scrollToBottom, delay);
+        });
+        
+        // Focus the message input after a short delay
+        setTimeout(focusMessageInput, 300);
+        
+        // Start polling for new messages if we're in a conversation
+        const currentUrl = window.location.pathname;
+        if (currentUrl.includes('/messaging/') && currentUrl.split('/messaging/')[1]) {
+            setTimeout(startMessagePolling, 1000); // Start polling after 1 second
+        }
+        
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Enter key to send message (without Shift)
+            if (e.key === 'Enter' && !e.shiftKey) {
+                const messageInput = document.getElementById('messageInput');
+                if (messageInput && document.activeElement === messageInput) {
+                    e.preventDefault();
+                    const messageForm = document.getElementById('messageForm');
+                    if (messageForm) {
+                        messageForm.dispatchEvent(new Event('submit'));
+                    }
+                }
+            }
+            
+            // Escape key to focus message input
+            if (e.key === 'Escape') {
+                focusMessageInput();
+            }
+        });
+        
+        // Handle message search functionality
+        const messageSearch = document.getElementById('messageSearch');
+        if (messageSearch) {
+            messageSearch.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const conversationLinks = document.querySelectorAll('.col-span-4 .border-r a[href^="/messaging/"]');
+                
+                conversationLinks.forEach(link => {
+                    const nameElement = link.querySelector('h4');
+                    const previewElement = link.querySelector('p');
+                    
+                    if (!nameElement || !previewElement) return;
+                    
+                    const name = nameElement.textContent.toLowerCase();
+                    const preview = previewElement.textContent.toLowerCase();
+                    
+                    if (name.includes(searchTerm) || preview.includes(searchTerm)) {
+                        link.style.display = 'block';
+                    } else {
+                        link.style.display = 'none';
+                    }
+                });
+            });
+        }
+        
+        // Enhanced AJAX form submission handler
+        const messageForm = document.getElementById('messageForm');
+        if (messageForm) {
+            messageForm.addEventListener('submit', async function(e) {
+                e.preventDefault(); // Prevent default form submission
+                
+                const messageInput = document.getElementById('messageInput');
+                const submitButton = messageForm.querySelector('button[type="submit"]');
+                const messageContent = messageInput.value.trim();
+                
+                if (!messageContent) return;
+                
+                // Disable form during submission
+                messageInput.disabled = true;
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                
+                try {
+                    // Construct AJAX URL properly
+                    const conversationId = '<%= conversationPartner.id %>';
+                    const ajaxUrl = `/messaging/${conversationId}/send-ajax`;
+                    const response = await fetch(ajaxUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ content: messageContent })
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (result.success) {
+                            // Clear input and add message to UI immediately
+                            messageInput.value = '';
+                            addMessageToUI(messageContent, true, new Date());
+                            scrollToBottom();
+                            
+                            // Update conversation list preview
+                        updateConversationPreview(messageContent);
+                        
+                        // Show success feedback
+                        showMessageStatus('Message sent!', 'success');
+                        } else {
+                            throw new Error(result.error || 'Failed to send message');
+                        }
+                    } else {
+                        const errorResult = await response.json();
+                        throw new Error(errorResult.error || 'Failed to send message');
+                    }
+                } catch (error) {
+                     console.error('Error sending message:', error);
+                     showMessageStatus('Failed to send message. Please try again.', 'error');
+                 } finally {
+                    // Re-enable form
+                    messageInput.disabled = false;
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
+                    messageInput.focus();
+                }
+            });
+        }
+    });
+    
+    // Also scroll when all resources are fully loaded and focus input
+    window.addEventListener('load', function() {
+        scrollToBottom();
+        // Try again after a short delay
+        setTimeout(scrollToBottom, 200);
+        // Focus the message input
+        focusMessageInput();
+    });
+    
+    // Handle page visibility changes to pause/resume polling
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden) {
+            // Page is hidden, stop polling to save resources
+            stopMessagePolling();
+        } else {
+            // Page is visible again, resume polling
+            const currentUrl = window.location.pathname;
+            if (currentUrl.includes('/messaging/') && currentUrl.split('/messaging/')[1]) {
+                startMessagePolling();
+            }
+        }
+    });
+    
+    // Clean up polling when leaving the page
+    window.addEventListener('beforeunload', function() {
+        stopMessagePolling();
+    });
+    
+    // Handle navigation away from messaging
+    window.addEventListener('popstate', function() {
+        stopMessagePolling();
+    });
+    
+    // Check if we just sent a message and need to scroll
+    if (localStorage.getItem('messageSent') === 'true') {
+        // Clear the flag
+        localStorage.removeItem('messageSent');
+        // Scroll to bottom with multiple attempts
+        scrollToBottom();
+        [100, 300, 500].forEach(delay => {
+            setTimeout(scrollToBottom, delay);
+        });
+        // Focus the message input after a short delay
+        setTimeout(focusMessageInput, 300);
+    }
+
+    // Feedback Modal Logic
+    const giveFeedbackBtn = document.getElementById('giveFeedbackBtn');
+    const feedbackModal = document.getElementById('feedbackModal');
+    const closeFeedbackModalBtn = document.getElementById('closeFeedbackModal');
+    const cancelFeedbackBtn = document.getElementById('cancelFeedback');
+    const feedbackForm = document.getElementById('feedbackForm');
+    const stars = document.querySelectorAll('#starRating .star');
+    const feedbackRatingInput = document.getElementById('feedbackRating');
+
+    if (giveFeedbackBtn) {
+        giveFeedbackBtn.addEventListener('click', () => {
+            if (feedbackModal) feedbackModal.style.display = 'flex';
+        });
+    }
+
+    if (closeFeedbackModalBtn) {
+        closeFeedbackModalBtn.addEventListener('click', () => {
+            if (feedbackModal) feedbackModal.style.display = 'none';
+        });
+    }
+
+    if (cancelFeedbackBtn) {
+        cancelFeedbackBtn.addEventListener('click', () => {
+            if (feedbackModal) feedbackModal.style.display = 'none';
+        });
+    }
+
+    // Close modal if clicked outside of it
+    if (feedbackModal) {
+        feedbackModal.addEventListener('click', (event) => {
+            if (event.target === feedbackModal) {
+                feedbackModal.style.display = 'none';
+            }
+        });
+    }
+
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            const value = parseInt(star.dataset.value);
+            feedbackRatingInput.value = value;
+            stars.forEach((s, index) => {
+                if (index < value) {
+                    s.classList.remove('far');
+                    s.classList.add('fas');
+                } else {
+                    s.classList.remove('fas');
+                    s.classList.add('far');
+                }
+            });
+        });
+    });
+
+    if (feedbackForm) {
+        feedbackForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(feedbackForm);
+            const data = Object.fromEntries(formData.entries());
+
+            // Ensure lawyerId and conversationId are correctly populated
+            // These might need to be dynamically set if the conversationPartner changes without a page reload
+            data.lawyerId = document.getElementById('feedbackLawyerId').value;
+            data.conversationId = document.getElementById('feedbackConversationId').value;
+
+            if (!data.rating) {
+                    notifications.warning('Please select a rating.');
+                    return;
+                }
+
+            try {
+                const response = await fetch('/feedback/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    notifications.success(result.message || 'Feedback submitted successfully!');
+                    if (feedbackModal) feedbackModal.style.display = 'none';
+                    feedbackForm.reset();
+                    stars.forEach(s => {
+                        s.classList.remove('fas');
+                        s.classList.add('far');
+                    });
+                } else {
+                    notifications.error(result.message || 'Failed to submit feedback.');
+                }
+            } catch (error) {
+                console.error('Error submitting feedback:', error);
+                notifications.error('An error occurred. Please try again.');
+            }
+        });
+    }
+</script>
